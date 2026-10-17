@@ -21,6 +21,10 @@ The **recommended delivery order is RF01 → RF02 → RF03 → RF04 → RF05 →
 
 [RF01 coverage and verification ledger](rf01-evidence.md) maps A1–A8 and F01–F15 to the tests added in [PR #4](https://github.com/step3software/outer-loops/pull/4), documents synthetic legacy saves and reproducible browser/worker execution, and records original R01/R04/R08/R15 hazards. RF01 is **in review**, not on the default branch until its PR is merged. The other five refactors are not approved to begin.
 
+## Product-direction reconciliation — new Real World system
+
+The later [Real World outer-loop concept](../design/outer-loop/README.md) supersedes **the eventual product presentation** of the inherited standalone Prestige Perks and Challenges menus, but it does **not** change this refactoring program's approval status or retroactively rewrite RF acceptance tests. [Integration guidance](../design/outer-loop/integration-with-refactoring.md) identifies the **RF04 scope tension**: a refactor that preserves old challenge behavior may still be useful for compatibility, but final Real World may adapt or retire those modes. Obtain explicit revised implementation authorization before changing RF04's scope. RF01/RF02 remain critical to preserving veterans' saved data.
+
 ## Global invariants
 
 Every milestone implementation must:

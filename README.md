@@ -36,9 +36,14 @@ Run `npm run test:model`, `npm run test:action`, `npm run test:rf01:model`, `npm
 - [AI-assisted change workflow](docs/development/ai-workflow.md)
 - [RF01–RF06 refactoring program and milestone status](docs/refactoring/README.md)
 - [RF01 regression tests — coverage and observed original behavior](docs/refactoring/rf01-evidence.md)
+- [**Real World / Outer Loop — design documents (not implemented)**](docs/design/outer-loop/README.md)
 - [Comprehensive technical/gameplay audit](docs/audit/README.md)
 - [All 157 executable actions: formulas and gates](docs/reference/action-mechanics.generated.md)
 - [Per-zone gameplay guides](docs/gameplay/zones/README.md)
+
+## Forward-looking game direction
+
+[Real World](docs/design/outer-loop/README.md) is the designed **outer timeloop nexus** reached after the existing `Restore Time` ending: meet another self, gain significant permanent abilities, and begin another timeline with ~10× baseline replay speed. The inherited standalone prestige and challenge menus are planned to be **replaced**, with their individual effects/disposition and veteran-save conversion still undecided. **None of this is implemented in the current game.**
 
 ## Layout
 
