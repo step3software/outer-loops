@@ -74,7 +74,7 @@ The F01–F15 IDs are defined in the [cross-milestone matrix](validation-matrix.
 | **R08** | `Action.Escape.canStart` mutates `escapeStarted` while checking eligibility. | Characterization only: no permanent endorsement of side-effecting predicates. RF03 owns pure predicate conversion. |
 | **R15** | Predictor's `Gods Trial` model grants one power on its 99th-floor counter, while actual `TrialAction.loopsFinished` gives it upon completing floor100. | **Confirmed parity discrepancy**, not corrected in RF01. Future predictor work should add failing/green parity coverage at the boundary. |
 
-These issues have distinct owners; RF01 intentionally does **not** alter their production behavior.
+These issues have distinct owners; RF01 intentionally does **not** alter their production behavior. **Issue tracker limitation:** attempts to open dedicated R01 and R15 GitHub Issues returned HTTP 410 because Issues is disabled for this repository. Until tracking is enabled, this evidence ledger, [audit findings](../audit/findings.md) and [PR #4](https://github.com/step3software/outer-loops/pull/4) are the persistent tracking references. Any later fix PR should cite the relevant risk ID. The separate-issue portion of charter A6 is **blocked by repository configuration**, not silently marked done.
 
 ## Acceptance criteria A1–A8: readiness assessment
 
@@ -85,11 +85,11 @@ These issues have distinct owners; RF01 intentionally does **not** alter their p
 | **A3** Reset/challenge/prestige, queue behavior | **Met for critical boundaries**, with residual untested fractional-tick, pause and background timing noted above. |
 | **A4** Current/legacy and invalid imports | **Met for two distinct synthetic legacy shapes and truncated JSON**, while R01 unsafe storage is treated as a defect. |
 | **A5** Challenge modes 1–3 / return to normal | **Met for entry/exit/reload and primary formulas** in Chrome and VM. |
-| **A6** Foreground and worker parity | **Met for one representative action**, documented numeric tolerance and R15; no claim of broad predictor parity. |
+| **A6** Foreground and worker parity | **Met for one representative action** and documented numeric tolerance, with R15 explicitly logged/quarantined. **Partial against literal charter wording:** can't link a dedicated GitHub Issue while Issues is disabled (HTTP 410); risk is tracked in audit/PR. No broad predictor parity claim. |
 | **A7** CI + real Chrome | **Met** — both new model commands and expanded Chrome test run in GitHub Actions alongside original checks. |
 | **A8** Coverage and limitations | **Met by this ledger**, with explicit partial and untested scenarios. |
 
-RF01 is therefore **implemented for the agreed regression-coverage foundation and ready for review**, not merged and **not proof of comprehensive gameplay correctness**. Later milestones must grow specific assertions as they refactor the affected systems.
+RF01 is therefore **implemented as a substantial regression-coverage foundation and ready for review**, not merged and **not proof of comprehensive gameplay correctness**. The separate GitHub Issue required by the literal A6 criterion is blocked because Issues are disabled; tracking stays in the audit and PR until enabled. Later milestones must grow specific assertions as they refactor the affected systems.
 
 ## CI evidence and rollback
 
