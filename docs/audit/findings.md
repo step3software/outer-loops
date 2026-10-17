@@ -56,6 +56,7 @@ These are **auditable findings**, not an assertion that every candidate is a rep
 | R11 | Medium | Source-confirmed behavior | `PrestigeUpgrade` calls `addBuffAmt` then subtracts cost; `addBuffAmt` is a no-op at the hard cap | Verify UI disallows at-cap purchase before concluding points can be lost; add explicit model guard if reproducible |
 | R12 | Low | Naming/history ambiguity | `doSave` writes `storyReqs` while runtime uses `storyFlags`; queue migration renames old actions, and some older fields use `version75` | Preserve serialized legacy names and add migration fixtures |
 | R13 | Medium | Technical debt | No runtime bundler/module graph and major mutable-globals dependencies | Prefer small reversible patches, document script-order and worker imports |
+| R15 | Medium | Confirmed source comment, parity not tested | `Action.GodsTrial.floorReward` explicitly warns the predictor expects prior end-of-trial power behavior | Test full 100th Gods Trial floor and worker/foreground prediction before any floor reward changes |
 | R14 | Low | Documentation limitation | Static metadata extracts direct effects, but callbacks invoke indirect helpers and conditionals | Treat the generated action reference as an index, inspect linked callback code for exact results |
 
 ## Verification policy

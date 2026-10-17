@@ -2,7 +2,7 @@
 
 > **Generated reference.** Run `node scripts/generate-action-mechanics.mjs --write` after changing `actionList.js`. The CI checker uses `--check` to detect drift. Do not hand-edit this file.
 
-This inventory reads **actual Action instances**, including Survey/Ruins/Haul factories and inherited assassin types. It is not read from the experimental XML editor. Costs and gates below are **source expressions**, not guaranteed prices/availability in every save. Callback effect labels identify only *direct textual calls* within the listed callbacks; other functions, indirect effects, and conditional branches must be reviewed in source.
+This inventory reads **actual Action instances**, including Survey/Ruins/Haul factories and inherited assassin types. It is not read from the experimental XML editor. Costs and gates below are **source expressions**, not guaranteed prices/availability in every save. Action `goldCost()` can represent rewards or payments, depending on the caller; never infer the direction from the name alone. Callback effect labels identify only *direct textual calls* within the listed callbacks; other functions, indirect effects, and conditional branches must be reviewed in source.
 
 Action identity, `varName`, town indexing, skills and stat weights are save/balance contracts. Classify proposed changes using [gameplay](../gameplay.md), [state](../state-and-saving.md) and [review](../audit/README.md).
 
@@ -21,11 +21,11 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### AssassinZ0 — `Action.AssassinZ0`
 
 - **Identity:** `multipart` / `AssassinAction` · `townNum=0` · `varName=AssassinZ0` · `segments=5` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L761)
-- **Cost:** mana —
-- **Gates:** visible — · unlocked —
+- **Cost:** mana `50000` · allowed `1`
+- **Gates:** visible `getSkillLevel("Assassin") > 0` · unlocked `getSkillLevel("Assassin") > 0` · canStart `loopCounter === 0`
 - **Growth:** stat weights `Per:0.2, Int:0.1, Dex:0.3, Luck:0.2, Spd:0.2`; skills `none`
-- **Effects:** resource:heart. **Story:** None declared here.
-- **Extra hooks:** `loopCost`; inspect segment/floor formulas in source.
+- **Effects:** resource:reputation, resource:heart. **Story:** story checkpoints 1.
+- **Extra hooks:** `loopCost`, `tickProgress`; inspect segment/floor formulas in source.
 
 ### Buy Glasses — `Action.BuyGlasses`
 
@@ -38,7 +38,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Buy Mana Z1 — `Action.BuyManaZ1`
 
 - **Identity:** `normal` / `Action` · `townNum=0` · `varName=BuyManaZ1` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L1037)
-- **Cost:** mana `100` · gold `Math.floor(50 * getSkillBonus("Mercantilism") * adjustGoldCostFromPrestige())`
+- **Cost:** mana `100` · goldCost() `Math.floor(50 * getSkillBonus("Mercantilism") * adjustGoldCostFromPrestige())`
 - **Gates:** visible `towns[0].getLevel("Wander") >= 3` · unlocked `towns[0].getLevel("Wander") >= 20`
 - **Growth:** stat weights `Cha:0.7, Int:0.2, Luck:0.1`; skills `none`
 - **Effects:** mana budget. **Story:** story checkpoints 1.
@@ -104,7 +104,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Long Quest — `Action.LongQuest`
 
 - **Identity:** `limited` / `Action` · `townNum=0` · `varName=LQuests` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L1254)
-- **Cost:** mana `1500` · gold `Math.floor(base * getSkillMod("Practical",200,400,1))`
+- **Cost:** mana `1500` · goldCost() `Math.floor(base * getSkillMod("Practical",200,400,1))`
 - **Gates:** visible `towns[0].getLevel("Secrets") >= 1` · unlocked `towns[0].getLevel("Secrets") >= 10`
 - **Growth:** stat weights `Str:0.2, Int:0.2, Con:0.4, Spd:0.2`; skills `none`
 - **Effects:** resource:reputation, resource:gold, limited-item discovery. **Story:** story checkpoints 1, 2, 3.
@@ -120,7 +120,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Map — `Action.Map`
 
 - **Identity:** `normal` / `Action` · `townNum=0` · `varName=Map` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L792)
-- **Cost:** mana `200` · gold `15`
+- **Cost:** mana `200` · goldCost() `15`
 - **Gates:** visible `getExploreProgress() > 0` · unlocked `getExploreProgress() > 0` · canStart `resources.gold >= 15`
 - **Growth:** stat weights `Cha:0.8, Luck:0.1, Soul:0.1`; skills `none`
 - **Effects:** resource:gold, resource:map. **Story:** story checkpoints 1.
@@ -144,7 +144,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Pick Locks — `Action.PickLocks`
 
 - **Identity:** `limited` / `Action` · `townNum=0` · `varName=Locks` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L922)
-- **Cost:** mana `400` · gold `Math.floor(base * getSkillMod("Practical",0,200,1) * getSkillBonus("Thievery"))`
+- **Cost:** mana `400` · goldCost() `Math.floor(base * getSkillMod("Practical",0,200,1) * getSkillBonus("Thievery"))`
 - **Gates:** visible `towns[0].getLevel("Wander") >= 3` · unlocked `towns[0].getLevel("Wander") >= 20`
 - **Growth:** stat weights `Dex:0.5, Per:0.3, Spd:0.1, Luck:0.1`; skills `none`
 - **Effects:** resource:gold, limited-item discovery. **Story:** story checkpoints 1, 2, 3, 4.
@@ -152,7 +152,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Short Quest — `Action.ShortQuest`
 
 - **Identity:** `limited` / `Action` · `townNum=0` · `varName=SQuests` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L1157)
-- **Cost:** mana `600` · gold `Math.floor(base * getSkillMod("Practical",100,300,1))`
+- **Cost:** mana `600` · goldCost() `Math.floor(base * getSkillMod("Practical",100,300,1))`
 - **Gates:** visible `towns[0].getLevel("Met") >= 1` · unlocked `towns[0].getLevel("Met") >= 5`
 - **Growth:** stat weights `Str:0.2, Dex:0.1, Cha:0.3, Spd:0.2, Luck:0.1, Soul:0.1`; skills `none`
 - **Effects:** resource:gold, limited-item discovery. **Story:** story checkpoints 1, 2, 3.
@@ -169,7 +169,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Smash Pots — `Action.SmashPots`
 
 - **Identity:** `limited` / `Action` · `townNum=0` · `varName=Pots` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L881)
-- **Cost:** mana `Math.ceil(50 * getSkillBonus("Practical"))` · gold `Math.floor(100 * getSkillBonus("Dark"))`
+- **Cost:** mana `Math.ceil(50 * getSkillBonus("Practical"))` · goldCost() `Math.floor(100 * getSkillBonus("Dark"))`
 - **Gates:** visible `true` · unlocked `true`
 - **Growth:** stat weights `Str:0.2, Per:0.2, Spd:0.6`; skills `none`
 - **Effects:** mana budget, limited-item discovery. **Story:** story checkpoints 1, 2.
@@ -227,11 +227,11 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### AssassinZ1 — `Action.AssassinZ1`
 
 - **Identity:** `multipart` / `AssassinAction` · `townNum=1` · `varName=AssassinZ1` · `segments=5` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L764)
-- **Cost:** mana —
-- **Gates:** visible — · unlocked —
+- **Cost:** mana `50000` · allowed `1`
+- **Gates:** visible `getSkillLevel("Assassin") > 0` · unlocked `getSkillLevel("Assassin") > 0` · canStart `loopCounter === 0`
 - **Growth:** stat weights `Per:0.2, Int:0.1, Dex:0.3, Luck:0.2, Spd:0.2`; skills `none`
-- **Effects:** resource:heart. **Story:** None declared here.
-- **Extra hooks:** `loopCost`; inspect segment/floor formulas in source.
+- **Effects:** resource:reputation, resource:heart. **Story:** story checkpoints 1.
+- **Extra hooks:** `loopCost`, `tickProgress`; inspect segment/floor formulas in source.
 
 ### Bird Watching — `Action.BirdWatching`
 
@@ -276,7 +276,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Dark Ritual — `Action.DarkRitual`
 
 - **Identity:** `multipart` / `MultipartAction` · `townNum=1` · `varName=DarkRitual` · `segments=3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L2621)
-- **Cost:** mana `Math.ceil(50000 * (1 - towns[1].getLevel("Witch") * 0.005))` · gold `Math.ceil(50 * (getBuffLevel("Ritual") + 1) * getSkillBonus("Commune"))` · allowed `1`
+- **Cost:** mana `Math.ceil(50000 * (1 - towns[1].getLevel("Witch") * 0.005))` · goldCost() `Math.ceil(50 * (getBuffLevel("Ritual") + 1) * getSkillBonus("Commune"))` · allowed `1`
 - **Gates:** visible `towns[1].getLevel("Witch") >= 20` · unlocked `towns[1].getLevel("Witch") >= 50 && getSkillLevel("Dark") >= 50` · canStart `resources.reputation <= -5 && loopCounter === 0 && checkSoulstoneSac(this.goldCost()) && getBuffLevel("Ritual") < getBuffCap("Ritual")`
 - **Growth:** stat weights `Spd:0.1, Int:0.1, Soul:0.8`; skills `none`; grants `Ritual`
 - **Effects:** buff, story flag. **Story:** story checkpoints 1, 2, 3, 4, 5.
@@ -405,7 +405,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Wild Mana — `Action.WildMana`
 
 - **Identity:** `limited` / `Action` · `townNum=1` · `varName=WildMana` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L1944)
-- **Cost:** mana `Math.ceil(150 * getSkillBonus("Practical"))` · gold `Math.floor(250 * getSkillBonus("Dark"))`
+- **Cost:** mana `Math.ceil(150 * getSkillBonus("Practical"))` · goldCost() `Math.floor(250 * getSkillBonus("Dark"))`
 - **Gates:** visible `true` · unlocked `towns[1].getLevel("Forest") >= 2`
 - **Growth:** stat weights `Con:0.2, Int:0.6, Soul:0.2`; skills `none`
 - **Effects:** mana budget, limited-item discovery. **Story:** story checkpoints 1, 2, 3.
@@ -440,16 +440,16 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### AssassinZ2 — `Action.AssassinZ2`
 
 - **Identity:** `multipart` / `AssassinAction` · `townNum=2` · `varName=AssassinZ2` · `segments=5` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L767)
-- **Cost:** mana —
-- **Gates:** visible — · unlocked —
+- **Cost:** mana `50000` · allowed `1`
+- **Gates:** visible `getSkillLevel("Assassin") > 0` · unlocked `getSkillLevel("Assassin") > 0` · canStart `loopCounter === 0`
 - **Growth:** stat weights `Per:0.2, Int:0.1, Dex:0.3, Luck:0.2, Spd:0.2`; skills `none`
-- **Effects:** resource:heart. **Story:** None declared here.
-- **Extra hooks:** `loopCost`; inspect segment/floor formulas in source.
+- **Effects:** resource:reputation, resource:heart. **Story:** story checkpoints 1.
+- **Extra hooks:** `loopCost`, `tickProgress`; inspect segment/floor formulas in source.
 
 ### Buy Mana Z3 — `Action.BuyManaZ3`
 
 - **Identity:** `normal` / `Action` · `townNum=2` · `varName=BuyManaZ3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L2980)
-- **Cost:** mana `100` · gold `Math.floor(50 * getSkillBonus("Mercantilism") * adjustGoldCostFromPrestige())`
+- **Cost:** mana `100` · goldCost() `Math.floor(50 * getSkillBonus("Mercantilism") * adjustGoldCostFromPrestige())`
 - **Gates:** visible `true` · unlocked `true` · canStart `!portalUsed`
 - **Growth:** stat weights `Cha:0.7, Int:0.2, Luck:0.1`; skills `none`
 - **Effects:** mana budget, story flag. **Story:** story checkpoints 1.
@@ -518,7 +518,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 - **Gates:** visible `towns[this.townNum].getLevel("Survey") >= 100` · unlocked `towns[this.townNum].getLevel("Survey") >= 100` · canStart `this.currentFloor() < trialFloors[this.trialNum]`
 - **Growth:** stat weights `Dex:0.11, Str:0.11, Con:0.11, Spd:0.11, Per:0.11, Cha:0.11, Int:0.11, Luck:0.11, Soul:0.11`; skills `Combat:500, Pyromancy:100, Restoration:100`; grants `Heroism`
 - **Effects:** skill XP, buff, story flag. **Story:** story checkpoints 1, 2, 3, 4. **Affected by:** `Team`.
-- **Extra hooks:** `loopCost`, `floorReward`; inspect segment/floor formulas in source.
+- **Extra hooks:** `loopCost`, `tickProgress`, `floorReward`; inspect segment/floor formulas in source.
 
 ### Large Dungeon — `Action.LargeDungeon`
 
@@ -572,7 +572,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Underworld — `Action.Underworld`
 
 - **Identity:** `normal` / `Action` · `townNum=2` · `varName=Underworld` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L3768)
-- **Cost:** mana `50000` · gold `500` · allowed `1` · extra cost callback
+- **Cost:** mana `50000` · goldCost() `500` · allowed `1` · extra cost callback
 - **Gates:** visible `getExploreProgress() > 25` · unlocked `getExploreProgress() >= 50` · canStart `resources.gold >= 500`
 - **Growth:** stat weights `Cha:0.5, Per:0.5`; skills `none`
 - **Effects:** resource:gold, story flag, zone unlock. **Story:** story checkpoints 1.
@@ -582,11 +582,11 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### AssassinZ3 — `Action.AssassinZ3`
 
 - **Identity:** `multipart` / `AssassinAction` · `townNum=3` · `varName=AssassinZ3` · `segments=5` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L770)
-- **Cost:** mana —
-- **Gates:** visible — · unlocked —
+- **Cost:** mana `50000` · allowed `1`
+- **Gates:** visible `getSkillLevel("Assassin") > 0` · unlocked `getSkillLevel("Assassin") > 0` · canStart `loopCounter === 0`
 - **Growth:** stat weights `Per:0.2, Int:0.1, Dex:0.3, Luck:0.2, Spd:0.2`; skills `none`
-- **Effects:** resource:heart. **Story:** None declared here.
-- **Extra hooks:** `loopCost`; inspect segment/floor formulas in source.
+- **Effects:** resource:reputation, resource:heart. **Story:** story checkpoints 1.
+- **Extra hooks:** `loopCost`, `tickProgress`; inspect segment/floor formulas in source.
 
 ### Check Walls — `Action.CheckWalls`
 
@@ -664,7 +664,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Imbue Body — `Action.ImbueBody`
 
 - **Identity:** `multipart` / `MultipartAction` · `townNum=3` · `varName=ImbueBody` · `segments=3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L4386)
-- **Cost:** mana `500000` · gold `getBuffLevel("Imbuement2") + 1` · allowed `1`
+- **Cost:** mana `500000` · goldCost() `getBuffLevel("Imbuement2") + 1` · allowed `1`
 - **Gates:** visible callback (see source) · unlocked `getBuffLevel("Imbuement") >= 1` · canStart `loopCounter === 0 && (getBuffLevel("Imbuement") > getBuffLevel("Imbuement2")) && tempCanStart`
 - **Growth:** stat weights `Dex:0.1, Str:0.1, Con:0.8`; skills `none`; grants `Imbuement2`
 - **Effects:** buff. **Story:** story checkpoints 1, 2, 3, 4, 5.
@@ -673,7 +673,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Imbue Mind — `Action.ImbueMind`
 
 - **Identity:** `multipart` / `MultipartAction` · `townNum=3` · `varName=ImbueMind` · `segments=3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L4321)
-- **Cost:** mana `500000` · gold `20 * (getBuffLevel("Imbuement") + 1)` · allowed `1`
+- **Cost:** mana `500000` · goldCost() `20 * (getBuffLevel("Imbuement") + 1)` · allowed `1`
 - **Gates:** visible `towns[3].getLevel("Illusions") >= 50` · unlocked `towns[3].getLevel("Illusions") >= 70 && getSkillLevel("Magic") >= 300` · canStart `loopCounter === 0 && checkSoulstoneSac(this.goldCost()) && getBuffLevel("Imbuement") < getBuffCap("Imbuement")`
 - **Growth:** stat weights `Spd:0.1, Per:0.1, Int:0.8`; skills `none`; grants `Imbuement`
 - **Effects:** buff, story flag. **Story:** story checkpoints 1, 2, 3, 4.
@@ -748,11 +748,11 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### AssassinZ4 — `Action.AssassinZ4`
 
 - **Identity:** `multipart` / `AssassinAction` · `townNum=4` · `varName=AssassinZ4` · `segments=5` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L773)
-- **Cost:** mana —
-- **Gates:** visible — · unlocked —
+- **Cost:** mana `50000` · allowed `1`
+- **Gates:** visible `getSkillLevel("Assassin") > 0` · unlocked `getSkillLevel("Assassin") > 0` · canStart `loopCounter === 0`
 - **Growth:** stat weights `Per:0.2, Int:0.1, Dex:0.3, Luck:0.2, Spd:0.2`; skills `none`
-- **Effects:** resource:heart. **Story:** None declared here.
-- **Extra hooks:** `loopCost`; inspect segment/floor formulas in source.
+- **Effects:** resource:reputation, resource:heart. **Story:** story checkpoints 1.
+- **Extra hooks:** `loopCost`, `tickProgress`; inspect segment/floor formulas in source.
 
 ### Build Housing — `Action.BuildHousing`
 
@@ -765,7 +765,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Buy Mana Z5 — `Action.BuyManaZ5`
 
 - **Identity:** `normal` / `Action` · `townNum=4` · `varName=BuyManaZ5` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L4789)
-- **Cost:** mana `100` · gold `Math.floor(50 * getSkillBonus("Mercantilism") * adjustGoldCostFromPrestige())`
+- **Cost:** mana `100` · goldCost() `Math.floor(50 * getSkillBonus("Mercantilism") * adjustGoldCostFromPrestige())`
 - **Gates:** visible `true` · unlocked `true` · canStart `!portalUsed`
 - **Growth:** stat weights `Cha:0.7, Int:0.2, Luck:0.1`; skills `none`
 - **Effects:** mana budget, story flag. **Story:** story checkpoints 1.
@@ -838,7 +838,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Great Feast — `Action.GreatFeast`
 
 - **Identity:** `multipart` / `MultipartAction` · `townNum=4` · `varName=GreatFeast` · `segments=3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5586)
-- **Cost:** mana `5000000` · gold `Math.ceil(5000 * (getBuffLevel("Feast") + 1) * getSkillBonus("Gluttony"))` · allowed `1`
+- **Cost:** mana `5000000` · goldCost() `Math.ceil(5000 * (getBuffLevel("Feast") + 1) * getSkillBonus("Gluttony"))` · allowed `1`
 - **Gates:** visible `towns[4].getLevel("Tour") >= 80` · unlocked `towns[4].getLevel("Tour") >= 100` · canStart `resources.reputation >= 100 && loopCounter === 0 && checkSoulstoneSac(this.goldCost()) && getBuffLevel("Feast") < getBuffCap("Feast")`
 - **Growth:** stat weights `Spd:0.1, Int:0.1, Soul:0.8`; skills `none`; grants `Feast`
 - **Effects:** buff, story flag. **Story:** story checkpoints 1, 2.
@@ -947,11 +947,11 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### AssassinZ5 — `Action.AssassinZ5`
 
 - **Identity:** `multipart` / `AssassinAction` · `townNum=5` · `varName=AssassinZ5` · `segments=5` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L776)
-- **Cost:** mana —
-- **Gates:** visible — · unlocked —
+- **Cost:** mana `50000` · allowed `1`
+- **Gates:** visible `getSkillLevel("Assassin") > 0` · unlocked `getSkillLevel("Assassin") > 0` · canStart `loopCounter === 0`
 - **Growth:** stat weights `Per:0.2, Int:0.1, Dex:0.3, Luck:0.2, Spd:0.2`; skills `none`
-- **Effects:** resource:heart. **Story:** None declared here.
-- **Extra hooks:** `loopCost`; inspect segment/floor formulas in source.
+- **Effects:** resource:reputation, resource:heart. **Story:** story checkpoints 1.
+- **Extra hooks:** `loopCost`, `tickProgress`; inspect segment/floor formulas in source.
 
 ### Dark Sacrifice — `Action.DarkSacrifice`
 
@@ -968,7 +968,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 - **Gates:** visible `towns[this.townNum].getLevel("Survey") >= 100` · unlocked `towns[this.townNum].getLevel("Survey") >= 100` · canStart `this.currentFloor() < trialFloors[this.trialNum]`
 - **Growth:** stat weights `Cha:0.25, Int:0.25, Luck:0.25, Soul:0.25`; skills `none`
 - **Effects:** resource:zombie, story flag. **Story:** story checkpoints 1, 2, 3. **Affected by:** `RaiseZombie`.
-- **Extra hooks:** `loopCost`, `floorReward`; inspect segment/floor formulas in source.
+- **Extra hooks:** `loopCost`, `tickProgress`, `floorReward`; inspect segment/floor formulas in source.
 
 ### Destroy Pylons — `Action.DestroyPylons`
 
@@ -997,7 +997,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Mana Well — `Action.ManaWell`
 
 - **Identity:** `limited` / `Action` · `townNum=5` · `varName=Wells` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5727)
-- **Cost:** mana `Math.ceil(2500 * getSkillBonus("Spatiomancy"))` · gold `Math.max(5000 - Math.floor(10 * effectiveTime), 0)`
+- **Cost:** mana `Math.ceil(2500 * getSkillBonus("Spatiomancy"))` · goldCost() `Math.max(5000 - Math.floor(10 * effectiveTime), 0)`
 - **Gates:** visible `true` · unlocked `towns[5].getLevel("Meander") >= 2` · canStart `true`
 - **Growth:** stat weights `Str:0.6, Per:0.3, Int:0.1`; skills `none`
 - **Effects:** mana budget, limited-item discovery, story flag. **Story:** story checkpoints 1, 2, 3, 4.
@@ -1056,11 +1056,11 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### AssassinZ6 — `Action.AssassinZ6`
 
 - **Identity:** `multipart` / `AssassinAction` · `townNum=6` · `varName=AssassinZ6` · `segments=5` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L779)
-- **Cost:** mana —
-- **Gates:** visible — · unlocked —
+- **Cost:** mana `50000` · allowed `1`
+- **Gates:** visible `getSkillLevel("Assassin") > 0` · unlocked `getSkillLevel("Assassin") > 0` · canStart `loopCounter === 0`
 - **Growth:** stat weights `Per:0.2, Int:0.1, Dex:0.3, Luck:0.2, Spd:0.2`; skills `none`
-- **Effects:** resource:heart. **Story:** None declared here.
-- **Extra hooks:** `loopCost`; inspect segment/floor formulas in source.
+- **Effects:** resource:reputation, resource:heart. **Story:** story checkpoints 1.
+- **Extra hooks:** `loopCost`, `tickProgress`; inspect segment/floor formulas in source.
 
 ### Escape — `Action.Escape`
 
@@ -1149,11 +1149,11 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### AssassinZ7 — `Action.AssassinZ7`
 
 - **Identity:** `multipart` / `AssassinAction` · `townNum=7` · `varName=AssassinZ7` · `segments=5` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L782)
-- **Cost:** mana —
-- **Gates:** visible — · unlocked —
+- **Cost:** mana `50000` · allowed `1`
+- **Gates:** visible `getSkillLevel("Assassin") > 0` · unlocked `getSkillLevel("Assassin") > 0` · canStart `loopCounter === 0`
 - **Growth:** stat weights `Per:0.2, Int:0.1, Dex:0.3, Luck:0.2, Spd:0.2`; skills `none`
-- **Effects:** resource:heart. **Story:** None declared here.
-- **Extra hooks:** `loopCost`; inspect segment/floor formulas in source.
+- **Effects:** resource:reputation, resource:heart. **Story:** story checkpoints 1.
+- **Extra hooks:** `loopCost`, `tickProgress`; inspect segment/floor formulas in source.
 
 ### Collect Interest — `Action.CollectInterest`
 
@@ -1166,7 +1166,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Excursion — `Action.Excursion`
 
 - **Identity:** `progress` / `Action` · `townNum=7` · `varName=Excursion` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6478)
-- **Cost:** mana `25000` · gold `(guild === "Thieves" || guild === "Explorer") ? 2 : 10`
+- **Cost:** mana `25000` · goldCost() `(guild === "Thieves" || guild === "Explorer") ? 2 : 10`
 - **Gates:** visible `true` · unlocked `true` · canStart `resources.gold >= this.goldCost()`
 - **Growth:** stat weights `Per:0.2, Con:0.2, Cha:0.2, Spd:0.3, Luck:0.1`; skills `none`
 - **Effects:** resource:gold, progress, story flag. **Story:** story checkpoints 1, 2, 3, 4, 5, 6, 7, 8. **Affected by:** `Buy Glasses`.
@@ -1190,7 +1190,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Insurance Fraud — `Action.InsuranceFraud`
 
 - **Identity:** `progress` / `Action` · `townNum=7` · `varName=InsuranceFraud` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6913)
-- **Cost:** mana `100000` · gold `Math.floor(200 * getSkillBonus("Thievery"))` · allowed `towns[7].totalInsurance`
+- **Cost:** mana `100000` · goldCost() `Math.floor(200 * getSkillBonus("Thievery"))` · allowed `towns[7].totalInsurance`
 - **Gates:** visible `towns[7].getLevel("RobWarehouse") >= 50` · unlocked `towns[7].getLevel("RobWarehouse") >= 100` · canStart `guild === "Thieves"`
 - **Growth:** stat weights `Dex:0.2, Spd:0.2, Int:0.3, Luck:0.3`; skills `Thievery:dynamic`
 - **Effects:** resource:gold, progress, skill XP. **Story:** story checkpoints 1, 2, 3, 4, 5, 6, 7. **Affected by:** `Thieves Guild`.
@@ -1214,7 +1214,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Pick Pockets — `Action.PickPockets`
 
 - **Identity:** `progress` / `Action` · `townNum=7` · `varName=PickPockets` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6804)
-- **Cost:** mana `20000` · gold `Math.floor(2 * getSkillBonus("Thievery"))` · allowed `towns[7].totalPockets`
+- **Cost:** mana `20000` · goldCost() `Math.floor(2 * getSkillBonus("Thievery"))` · allowed `towns[7].totalPockets`
 - **Gates:** visible `getSkillLevel("Thievery") > 0` · unlocked `getSkillLevel("Thievery") > 0` · canStart `guild === "Thieves"`
 - **Growth:** stat weights `Dex:0.4, Spd:0.4, Luck:0.2`; skills `Thievery:dynamic`
 - **Effects:** resource:gold, progress, skill XP. **Story:** story checkpoints 1, 2, 3, 4, 5, 6, 7. **Affected by:** `Thieves Guild`.
@@ -1222,7 +1222,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Purchase Key — `Action.PurchaseKey`
 
 - **Identity:** `normal` / `Action` · `townNum=7` · `varName=PurchaseKey` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7185)
-- **Cost:** mana `20000` · gold `1000000` · allowed `1` · extra cost callback
+- **Cost:** mana `20000` · goldCost() `1000000` · allowed `1` · extra cost callback
 - **Gates:** visible `true` · unlocked `true` · canStart `resources.gold >= 1000000 && !resources.key`
 - **Growth:** stat weights `Cha:0.8, Luck:0.1, Soul:0.1`; skills `none`
 - **Effects:** resource:gold, resource:key, story flag. **Story:** story checkpoints 1.
@@ -1230,7 +1230,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 ### Rob Warehouse — `Action.RobWarehouse`
 
 - **Identity:** `progress` / `Action` · `townNum=7` · `varName=RobWarehouse` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6858)
-- **Cost:** mana `50000` · gold `Math.floor(20 * getSkillBonus("Thievery"))` · allowed `towns[7].totalWarehouses`
+- **Cost:** mana `50000` · goldCost() `Math.floor(20 * getSkillBonus("Thievery"))` · allowed `towns[7].totalWarehouses`
 - **Gates:** visible `towns[7].getLevel("PickPockets") >= 25` · unlocked `towns[7].getLevel("PickPockets") >= 100` · canStart `guild === "Thieves"`
 - **Growth:** stat weights `Dex:0.4, Spd:0.2, Int:0.2, Luck:0.2`; skills `Thievery:dynamic`
 - **Effects:** resource:gold, progress, skill XP. **Story:** story checkpoints 1, 2, 3, 4, 5, 6, 7. **Affected by:** `Thieves Guild`.
@@ -1242,12 +1242,12 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 - **Gates:** visible `storyMax >= 12 && getBuffLevel("Imbuement3") >= 7` · unlocked `storyMax >= 12 && getBuffLevel("Imbuement3") >= 7` · canStart `this.currentFloor() < trialFloors[this.trialNum]`
 - **Growth:** stat weights `Dex:0.11, Str:0.11, Con:0.11, Spd:0.11, Per:0.11, Cha:0.11, Int:0.11, Luck:0.11, Soul:0.11`; skills `none`
 - **Effects:** story flag. **Story:** story checkpoints 1, 2, 3, 4, 5, 6. **Affected by:** `Team`.
-- **Extra hooks:** `loopCost`, `floorReward`; inspect segment/floor formulas in source.
+- **Extra hooks:** `loopCost`, `tickProgress`, `floorReward`; inspect segment/floor formulas in source.
 
 ### Seminar — `Action.Seminar`
 
 - **Identity:** `normal` / `Action` · `townNum=7` · `varName=Seminar` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7137)
-- **Cost:** mana `20000` · gold `1000` · extra cost callback
+- **Cost:** mana `20000` · goldCost() `1000` · extra cost callback
 - **Gates:** visible `towns[this.townNum].getLevel("Survey") >= 100` · unlocked `towns[this.townNum].getLevel("Survey") >= 100` · canStart `resources.gold >= 1000`
 - **Growth:** stat weights `Cha:0.8, Luck:0.1, Soul:0.1`; skills `Leadership:200`
 - **Effects:** resource:gold, skill XP, story flag. **Story:** story checkpoints 1, 2, 3, 4.
@@ -1286,7 +1286,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 - **Gates:** visible `towns[this.townNum].getLevel("BuildTower") >= 100` · unlocked `towns[this.townNum].getLevel("BuildTower") >= 100` · canStart `this.currentFloor() < trialFloors[this.trialNum] && resources.power > 0 && resources.power < 8`
 - **Growth:** stat weights `Dex:0.11, Str:0.11, Con:0.11, Spd:0.11, Per:0.11, Cha:0.11, Int:0.11, Luck:0.11, Soul:0.11`; skills `Combat:500`
 - **Effects:** resource:power, skill XP, story flag. **Story:** story checkpoints 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18.
-- **Extra hooks:** `loopCost`, `floorReward`, `segmentFinished`; inspect segment/floor formulas in source.
+- **Extra hooks:** `loopCost`, `tickProgress`, `floorReward`, `segmentFinished`; inspect segment/floor formulas in source.
 
 ### Gods Trial — `Action.GodsTrial`
 
@@ -1295,7 +1295,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 - **Gates:** visible `towns[this.townNum].getLevel("BuildTower") >= 100` · unlocked `towns[this.townNum].getLevel("BuildTower") >= 100` · canStart `this.currentFloor() < trialFloors[this.trialNum] && resources.power < 7`
 - **Growth:** stat weights `Dex:0.11, Str:0.11, Con:0.11, Spd:0.11, Per:0.11, Cha:0.11, Int:0.11, Luck:0.11, Soul:0.11`; skills `Combat:250, Pyromancy:50, Restoration:50`
 - **Effects:** resource:power, skill XP, story flag. **Story:** story checkpoints 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11. **Affected by:** `Team`.
-- **Extra hooks:** `loopCost`, `floorReward`; inspect segment/floor formulas in source.
+- **Extra hooks:** `loopCost`, `tickProgress`, `floorReward`; inspect segment/floor formulas in source.
 
 ### Imbue Soul — `Action.ImbueSoul`
 

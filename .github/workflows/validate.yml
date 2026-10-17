@@ -26,7 +26,7 @@ jobs:
         run: npm run test:model
       - name: Exercise queued action with model UI facade
         run: npm run test:action
-      - name: Emit source-grounded gameplay action reference
-        run: node scripts/generate-action-mechanics.mjs --emit
+      - name: Confirm generated gameplay reference matches runtime
+        run: npm run check:mechanics
       - name: Check XML well-formedness
         run: python3 scripts/check-xml.py

@@ -59,7 +59,7 @@ These are **priorities for gameplay research**, not a request to change balance 
 
 ## Specific progression observations
 
-- ```Buy Mana Z1```, `Buy Mana Z3` and `Buy Mana Z5` convert the currently held gold into additional mana and reset gold. Their `goldCost()` is a *conversion multiplier*, not gold paid. This is why effects cannot be inferred from helper names.
+- `Buy Mana Z1`, `Buy Mana Z3` and `Buy Mana Z5` convert the currently held gold into additional mana and reset gold. Their `goldCost()` is a *conversion multiplier*, not gold paid. This is why effects cannot be inferred from helper names.
 - `Invest` stores current gold in save-persistent `goldInvested` (capped at 999,999,999,999), and `Collect Interest` returns `floor(goldInvested * 0.001)` gold in subsequent runs. This creates a long-run economic loop.
 - `Raise Zombie` consumes blood, adds a zombie and records a persistent maximum; `Dead Trial` uses zombie strength and grants more zombies on floors. This couples current-loop combat resources and persistent Dark skill progression.
 - `Imbue Soul` requires 500 Imbuement and 500 Imbuement2 levels and resets existing soulstones/talent levels and those two buffs when a segment cycle completes. It grants Imbuement3, which increases training multipliers and can carry into prestige according to `prestige.js` rules.
