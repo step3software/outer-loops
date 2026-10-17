@@ -15,6 +15,7 @@
     "test:browser": "node scripts/test-browser-smoke.mjs",
     "test:rf01:model": "node scripts/test-rf01-model.mjs",
     "test:rf01:challenges": "node scripts/test-rf01-challenges.mjs",
-    "test:rf02:preflight": "node scripts/test-rf02-preflight.mjs"
+    "test:rf02:preflight": "node scripts/test-rf02-preflight.mjs",
+    "test:rf02:transaction": "node scripts/test-rf02-transaction.mjs"
   }
 }
