@@ -214,6 +214,52 @@ try {
   assert.equal(await client.evaluate('towns[0].expWander'),200);
   console.log('PASS RF01 Chrome save fixtures: current ILSV01, two synthetic legacy forms, aliases, challenge-compatible shape and recoverable test profile; known R01 recorded.');
 
+
+  // Actual, foreground and real Worker predictor should receive exactly the
+  // same synthetic start/queue. Test real .update(), not a duplicate formula.
+  const prediction=await client.evaluate("(async () => {"
+    +"try {"
+    +"if(!gameIsStopped) pauseGame();"
+    +"options.predictor=false;options.repeatLastAction=false;"
+    +"options.predictorSlowMode=false;options.predictorRepeatPrediction=false;"
+    +"const plan=[{name:'Wander',loops:1,disabled:false,loopsType:'actions'}];"
+    +"const initialProgress=towns[0].expWander,initialGold=resources.gold;"
+    +"const instance=Koviko.instance;"
+    +"const result=r=>({total:r.total,mana:r.state.resources.mana,"
+    +"speedXP:r.state.stats.Spd,valid:r.isValid});"
+    +"options.predictorBackgroundThread=false;"
+    +"const foreground=result(await instance.update(plan));"
+    +"options.predictorBackgroundThread=true;"
+    +"const background=result(await Promise.race([instance.update(plan),"
+    +"new Promise((_,reject)=>setTimeout(()=>reject(Error('worker predictor timed out')),12000))]));"
+    +"const unchanged=initialProgress===towns[0].expWander&&initialGold===resources.gold;"
+    +"instance.terminateWorker();options.predictorBackgroundThread=false;"
+    +"actions.clearActions();actions.addAction('Wander',1);restart();"
+    +"const beforeXP=stats.Spd.statLevelExp.totalExp;"
+    +"const spent=actions.tick(250);"
+    +"const actual={spent,speedXP:stats.Spd.statLevelExp.totalExp-beforeXP,"
+    +"progress:towns[0].expWander-initialProgress};"
+    +"const gods=instance.predictions['Gods Trial'].loop.effect.loop;"
+    +"const resource={godFloor:98,power:0};gods(resource);"
+    +"const power99=resource.power;gods(resource);"
+    +"return {ok:true,foreground,background,actual,unchanged,"
+    +"knownGodsTrial:{at99:power99,at100:resource.power}};"
+    +"}catch(e){return {ok:false,error:String(e),stack:String(e.stack)};}"
+    +"})()");
+  assert.equal(prediction.ok,true,JSON.stringify(prediction));
+  assert.equal(prediction.unchanged,true,'forecast must not mutate real world');
+  assert.equal(prediction.foreground.total,250);
+  assert.equal(prediction.background.total,250);
+  assert.equal(prediction.actual.spent,250);
+  assert.equal(prediction.actual.progress,200);
+  assert.equal(prediction.foreground.mana,prediction.background.mana);
+  assert.equal(prediction.foreground.speedXP,prediction.background.speedXP);
+  assert.ok(Math.abs(prediction.foreground.speedXP-prediction.actual.speedXP)<=1,
+    'foreground predictor should match actual stat XP within one point');
+  if (prediction.knownGodsTrial.at99===1)
+    console.warn('KNOWN R15: predictor grants Gods Trial power at floor 99; runtime grants at floor 100.');
+  console.log('PASS RF01 predictor: actual Wander vs foreground and Worker, field parity for mana/stat XP, read-only forecast; Gods Trial R15 characterized.');
+
   console.log('PASS Chrome: game boot, XML localization, 157 actions, Wander execution and save/reload.');
 } finally {
   client?.close();
