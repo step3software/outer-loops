@@ -26,6 +26,10 @@ jobs:
         run: npm run test:model
       - name: Exercise queued action with model UI facade
         run: npm run test:action
+      - name: RF01 deterministic action, zone, restart, trial and queue cases
+        run: npm run test:rf01:model
+      - name: RF01 original challenge rules characterization
+        run: npm run test:rf01:challenges
       - name: Confirm generated gameplay reference matches runtime
         run: npm run check:mechanics
       - name: Check XML well-formedness

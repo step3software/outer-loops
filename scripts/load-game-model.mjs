@@ -11,7 +11,7 @@ const gameScripts = [
     'driver.js', 'stats.js', 'actions.js', 'town.js', 'prestige.js', 'saving.js',
 ];
 
-export function loadGameModel({ withViewStubs = false } = {}) {
+export function loadGameModel({ withViewStubs = false, withChallenges = false } = {}) {
     // A worker has self but no window/document/DOM. This is intentionally
     // closer to predictor-worker.js than index.html. It tests core model only.
     const sandbox = {
@@ -32,6 +32,17 @@ export function loadGameModel({ withViewStubs = false } = {}) {
             adjustExpMult() {}
             updateNextActions() {}
             updateLockedHidden() {}
+            updateStats() {}
+            updateSkills() {}
+            updateBuffs() {}
+            updateTotals() {}
+            updatePrestigeValues() {}
+            updateSoulstones() {}
+            updateMultiPartActions() {}
+            updateStories() {}
+            changeStatView() {}
+            changeTheme() {}
+            initalize() {}
         };
         sandbox.ActionLog = class {
             addSkillLevel() {}
@@ -41,12 +52,16 @@ export function loadGameModel({ withViewStubs = false } = {}) {
             addGlobalStory() {}
         };
         sandbox.GoogleCloud = class {};
+        // Storage is test-local, never a player's browser origin.
         sandbox.localStorage = {getItem: () => null, setItem: () => {}, removeItem: () => {}};
+        sandbox.alert = () => {};
+        sandbox.confirm = () => true;
+
         sandbox.document = { title: 'Idle Loops', getElementById: () => null };
     }
     sandbox.self = sandbox;
     vm.createContext(sandbox);
-    for (const name of gameScripts) {
+    for (const name of [...gameScripts, ...(withChallenges ? ['challenges.js'] : [])]) {
         const code = readFileSync(join(root, name), 'utf8');
         vm.runInContext(code, sandbox, {filename: name, timeout: 10_000});
     }
