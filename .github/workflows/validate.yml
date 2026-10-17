@@ -1,0 +1,23 @@
+name: Static validation
+
+on:
+  pull_request:
+  push:
+    branches: ["dmchurch"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check source syntax, docs and catalog
+        run: npm run check
+      - name: Check XML well-formedness
+        run: python3 scripts/check-xml.py
