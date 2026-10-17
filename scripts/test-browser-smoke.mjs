@@ -154,6 +154,7 @@ try {
 
   // RF01: disposable synthetic saves, NOT historical player exports.
   // processSave is exercised on this random local port/browser profile only.
+  await client.evaluate("window.__rf02Alerts=[];window.alert=message=>window.__rf02Alerts.push(String(message));window.confirm=()=>true");
   const originalSave=await client.evaluate('save()');
   const fixtures=makeRf01Fixtures(JSON.parse(originalSave));
   async function importSynthetic(fixture) {
