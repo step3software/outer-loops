@@ -34,6 +34,9 @@ For XML well-formedness checks, also run `python scripts/check-xml.py`. These ch
 - [Development setup](docs/development/setup.md)
 - [Validation and smoke-testing](docs/development/validation.md)
 - [AI-assisted change workflow](docs/development/ai-workflow.md)
+- [Comprehensive technical/gameplay audit](docs/audit/README.md)
+- [All 157 executable actions: formulas and gates](docs/reference/action-mechanics.generated.md)
+- [Per-zone gameplay guides](docs/gameplay/zones/README.md)
 
 ## Layout
 

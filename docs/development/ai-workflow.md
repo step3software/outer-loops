@@ -4,7 +4,7 @@ The root [AGENTS.md](../../AGENTS.md) is the mandatory entry point. The branch t
 
 ## 1. Scope and investigate
 
-State the requested player-observable behavior and acceptance tests. Read the smallest set of relevant source files and system docs first. Map the chain from `Action` definitions through engine/state, UI, XML, persistence and worker simulation. When asked to change a behavior, distinguish existing code, proposed design and unknown assumptions. Identify compatibility and licensing implications when relevant.
+Read [audit findings](../audit/findings.md) and the [progression graph](../audit/progression.md) for known regressions. State the requested player-observable behavior and acceptance tests. Read the smallest set of relevant source files and system docs first. Map the chain from `Action` definitions through engine/state, UI, XML, persistence and worker simulation. When asked to change a behavior, distinguish existing code, proposed design and unknown assumptions. Identify compatibility and licensing implications when relevant.
 
 For a nontrivial change, write a short implementation plan in the PR or working notes: constraints, impacted files, save/schema risks, and tests. Ask only when a product decision is genuinely blocked; do not invent mechanics.
 

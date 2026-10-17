@@ -9,6 +9,8 @@
   },
   "scripts": {
     "check": "node scripts/check-repo.mjs",
-    "test:model": "node scripts/test-game-model.mjs"
+    "test:model": "node scripts/test-game-model.mjs",
+    "test:action": "node scripts/test-action-execution.mjs",
+    "check:mechanics": "node scripts/generate-action-mechanics.mjs --check"
   }
 }

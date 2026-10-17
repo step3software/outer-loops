@@ -18,8 +18,7 @@ const model = evaluate(`(() => Object.entries(Action)
     for(const name of ["manaCost", "goldCost", "canStart", "visible", "unlocked",
       "allowed", "cost", "finish", "storyReqs", "story", "loopCost",
       "tickProgress", "loopsFinished", "floorReward", "segmentFinished"]) {
-      if (typeof action[name] === "function" && 
-          (Object.hasOwn(action, name) || ["loopCost", "loopsFinished"].includes(name))) {
+      if (typeof action[name] === "function") {
         callbacks[name] = Function.prototype.toString.call(action[name]);
       }
     }
@@ -87,7 +86,7 @@ const lines = [
   inline('--check')+' to detect drift. Do not hand-edit this file.',
 '',
 'This inventory reads **actual Action instances**, including Survey/Ruins/Haul factories and inherited assassin types. It is not read from the experimental XML editor. '+
-'Costs and gates below are **source expressions**, not guaranteed prices/availability in every save. '+
+'Costs and gates below are **source expressions**, not guaranteed prices/availability in every save. Action `goldCost()` can represent rewards or payments, depending on the caller; never infer the direction from the name alone. '+
 'Callback effect labels identify only *direct textual calls* within the listed callbacks; other functions, indirect effects, and conditional branches must be reviewed in source.',
 '',
 'Action identity, '+inline('varName')+', town indexing, skills and stat weights are save/balance contracts. '+
@@ -114,7 +113,7 @@ for(let zone=0;zone<zones.length;zone++){
             ' · '+link);
         const c=a.callbacks;
         lines.push('- **Cost:** mana '+methodText(c.manaCost)+
-            (c.goldCost?' · gold '+methodText(c.goldCost):'')+
+            (c.goldCost?' · goldCost() '+methodText(c.goldCost):'')+
             (c.allowed?' · allowed '+methodText(c.allowed):'')+
             (c.cost?' · extra cost callback':''));
         lines.push('- **Gates:** visible '+methodText(c.visible)+

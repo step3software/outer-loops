@@ -17,6 +17,19 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [UI, events, themes and localization](ui-and-localization.md)
 - [Standalone XML content editor](content-editor.md)
 - [Action catalog](reference/action-catalog.md)
+- [Runtime action mechanics (all 157 actions)](reference/action-mechanics.generated.md)
+- [Gameplay zone guides](gameplay/zones/README.md)
+
+## In-depth technical and gameplay review
+
+- [Review methodology and summary](audit/README.md)
+- [Technical assessment](audit/technical-review.md)
+- [Gameplay assessment](audit/gameplay-review.md)
+- [Travel and unlock graph](audit/progression.md)
+- [Formula and economy reference](audit/balance-formulas.md)
+- [Persistent state and migration schema](audit/persistence-contract.md)
+- [Evidence-based findings](audit/findings.md)
+- [Coverage and unverified behavior](audit/coverage.md)
 
 ## Development guides
 

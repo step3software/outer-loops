@@ -1,6 +1,6 @@
 # Agent operating instructions
 
-These instructions apply to the entire repository. Read `docs/README.md` and the relevant system guide before making a change; nested `AGENTS.md` files add directory-specific requirements.
+These instructions apply to the entire repository. Read `docs/README.md`, the [source-grounded review](docs/audit/README.md), and the relevant system guide before making a change; nested `AGENTS.md` files add directory-specific requirements.
 
 ## Project identity
 
@@ -8,7 +8,7 @@ Outer Loops is an independently maintained fork of Idle Loops: `step3software/ou
 
 ## Mandatory orientation
 
-1. Read `README.md` for local launch and `docs/architecture.md` for script ordering and runtime ownership.
+1. Read `docs/audit/findings.md` for known hazards; read `README.md` for local launch and `docs/architecture.md` for script ordering and runtime ownership.
 2. Locate the smallest source-of-truth surface using `docs/reference/code-map.md`. Search the actual code rather than guessing from UI names.
 3. Read the applicable `docs/development/recipes.md`, `docs/state-and-saving.md`, and `docs/development/validation.md` before changing state, actions, saves, or UI.
 4. Inspect `git status` and the current branch; work on a feature branch. Never silently replace or rebase others' work.
@@ -30,7 +30,7 @@ Outer Loops is an independently maintained fork of Idle Loops: `step3software/ou
 1. Identify the requirement, affected subsystems, invariant and likely failure path.
 2. Make the smallest change with explicit tests. Keep gameplay changes separate from broad refactors and documentation-only PRs.
 3. Update the relevant documentation and `docs/reference/action-catalog.md` when action definitions change. Record major decisions as ADRs in `docs/decisions/`.
-4. Run `npm run check` (syntax, local file references and documentation integrity). When Python is available, also run `python scripts/check-xml.py`. These are static checks, **not** proof that gameplay works.
+4. Run `npm run check`, `npm run test:model`, `npm run test:action` and `npm run check:mechanics` (syntax, local file references and documentation integrity). When Python is available, also run `python scripts/check-xml.py`. These are static checks, **not** proof that gameplay works.
 5. Exercise relevant scenarios with `docs/development/validation.md`, including at least one save/reload and loop restart for state-affecting changes.
 6. Open a PR against `dmchurch`. Include scope, changed mechanics, compatibility, test evidence, and what was **not** tested. Do not merge without explicit authorization.
 

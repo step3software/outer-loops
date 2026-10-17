@@ -11,7 +11,7 @@ const gameScripts = [
     'driver.js', 'stats.js', 'actions.js', 'town.js', 'prestige.js', 'saving.js',
 ];
 
-export function loadGameModel() {
+export function loadGameModel({ withViewStubs = false } = {}) {
     // A worker has self but no window/document/DOM. This is intentionally
     // closer to predictor-worker.js than index.html. It tests core model only.
     const sandbox = {
@@ -23,6 +23,26 @@ export function loadGameModel() {
         clearInterval,
         performance,
     };
+    if (withViewStubs) {
+        // Minimal test-only UI facade: exercise action/queue state transitions,
+        // not DOM rendering. The game still runs the original core logic.
+        sandbox.View = class {
+            requestUpdate() {}
+            update() {}
+            adjustExpMult() {}
+            updateNextActions() {}
+            updateLockedHidden() {}
+        };
+        sandbox.ActionLog = class {
+            addSkillLevel() {}
+            addBuff() {}
+            addSoulstones() {}
+            addActionStory() {}
+            addGlobalStory() {}
+        };
+        sandbox.GoogleCloud = class {};
+        sandbox.document = { title: 'Idle Loops', getElementById: () => null };
+    }
     sandbox.self = sandbox;
     vm.createContext(sandbox);
     for (const name of gameScripts) {

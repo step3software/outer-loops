@@ -66,6 +66,8 @@ Navigation map for the repository's existing classic-script JavaScript. **Execut
 | `docs/` | Architecture, mechanics, persistence, workflows and review guidance |
 | `scripts/check-repo.mjs` | Syntax, docs/internal-link and entry-point consistency check |
 | `scripts/check-xml.py` | XML parsing smoke check |
+| `scripts/load-game-model.mjs`, `scripts/test-game-model.mjs`, `scripts/test-action-execution.mjs` | Worker-like game model and basic queue regression assertions |
+| `scripts/generate-action-mechanics.mjs` | Runtime-generated 157-action mechanics reference and drift check |
 | `.github/workflows/validate.yml` | PR/push static validation |
 | `package.json` | Type definitions and convenience check script; no application bundling |
 

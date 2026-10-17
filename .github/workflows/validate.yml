@@ -24,6 +24,8 @@ jobs:
         run: npm run check
       - name: Exercise runtime model in worker-like context
         run: npm run test:model
+      - name: Exercise queued action with model UI facade
+        run: npm run test:action
       - name: Emit source-grounded gameplay action reference
         run: node scripts/generate-action-mechanics.mjs --emit
       - name: Check XML well-formedness
