@@ -1431,6 +1431,11 @@ function doSave() {
 }
 
 function save() {
+    // A previous import may have failed mid-apply. The original bytes must
+    // remain protected until the recovery journal has been replayed.
+    if (window.localStorage.getItem(importPendingKey) !== null) {
+        throw new Error("Save is blocked until the interrupted import is recovered.");
+    }
     const toSave = doSave();
     const saveJson = JSON.stringify(toSave);
     storeSaveJson(saveJson);
@@ -1622,11 +1627,13 @@ function applyProtectedImport(prepared) {
             }
         }
         if (loadStarted && restored) {
+            saveName = previousSlot;
             // Do not continue playing in state partially changed by doLoad.
             // The journal has restored the previous saved bytes first.
             location.reload();
         }
         if (!restored) {
+            if (typeof stopGame === "function") stopGame();
             throw new Error("Save import failed and automatic recovery is pending. Reload to retry recovery; do not clear browser data.");
         }
         throw error;
@@ -1683,6 +1690,9 @@ function processSave(saveData) {
 
 let overquotaWarned = false;
 function storeSaveJson(saveJson) {
+    if (window.localStorage.getItem(importPendingKey) !== null) {
+        throw new Error("Cannot write a save while import recovery is pending.");
+    }
     try {
         window.localStorage[saveName] = saveJson;
     } catch (e) {
