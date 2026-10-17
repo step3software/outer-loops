@@ -16,9 +16,12 @@ The first milestone should feel like a new chapter and immediately change the ex
 - After the first completion, a **new timeline/replay is approximately 10× faster by default**, with substantial, interesting permanent upgrade choices *in addition* to the free baseline speed increase. Exact multiplication/stacking is still a technical design decision.
 - Alternate selves are ongoing **characters with agency and eventual gameplay roles**, not automatically one identical NPC per completion.
 - Build a meaningful **small hub and initial replay loop first**, leaving a path toward richer multi-self/timeline management later.
-- **Upgrade-tree design is being explored:** the current working recommendation is **Will / Echoes / Anchors** (active control / automation / persistent knowledge, treasury and infrastructure). **Will / Echoes / Memory / Dominion** is preserved as a serious four-tree alternative. The number, starter grants, exact node effects and economics are **not final approved rules**.
 - Real World is a strong **pixel-art art-direction anchor**. The wider game's eventual pixel-art treatment is a related but separate workstream.
 - Do not establish that the earlier game was "fake" or a simulation; keep what **Real World** means deliberately mysterious at first.
+
+### Working upgrade-tree recommendation — not yet approved
+
+The preferred **three-tree** model is **Will / Echoes / Anchors** (active control, automation and persistent knowledge/treasury/infrastructure). A **four-tree** model — **Will / Echoes / Memory / Dominion** — is deliberately preserved as a substantial economic/infrastructure alternative. Their final number, first grants, exact node effects, synergy prerequisites and economy are not yet approved. Review the [three-tree specification](upgrade-trees.md) and [Dominion alternative](dominion-alternative.md) together.
 
 ### Out of scope at this stage
 

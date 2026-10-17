@@ -73,7 +73,7 @@ Ability:
 
 **Not valid:** marking all towns/quests completed, retaining every skill, bypassing normal survey bootstrap or granting prior challenge rewards again.
 
-**Engineering constraints:** old `saving.js` dynamic ```exp<varName>``` / `townsUnlocked` / `storyFlags` keys, action identity, town progress initialization, eligibility recomputation, migration, predictor state and story presentation. A remembered milestone must not be applied twice on reload or re-award achievement currency.
+**Engineering constraints:** old `saving.js` dynamic `exp<varName>` / `townsUnlocked` / `storyFlags` keys, action identity, town progress initialization, eligibility recomputation, migration, predictor state and story presentation. A remembered milestone must not be applied twice on reload or re-award achievement currency.
 
 ### Dominion / Anchors Treasury — Timeless Treasury
 
