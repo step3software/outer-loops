@@ -41,6 +41,7 @@ export function loadGameModel({ withViewStubs = false } = {}) {
             addGlobalStory() {}
         };
         sandbox.GoogleCloud = class {};
+        sandbox.localStorage = {getItem: () => null, setItem: () => {}, removeItem: () => {}};
         sandbox.document = { title: 'Idle Loops', getElementById: () => null };
     }
     sandbox.self = sandbox;
