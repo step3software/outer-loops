@@ -193,26 +193,80 @@ try {
   assert.deepEqual(aliases.loadout,['Buy Mana Z3']);
   assert.equal(aliases.invested,4000);
 
-  // R01 is an explicitly known unsafe *baseline*: invalid decoded JSON is
-  // stored before parsing. Record corruption, never enforce it as desirable.
+  // RF02: the former R01 reproduction must now assert safety, not preserve a bug.
   const invalid=await client.evaluate("(() => {"
+    +"const messages=[];window.alert=message=>messages.push(String(message));"
     +"const prior=localStorage['idleLoops1'];"
+    +"const other=localStorage.getItem('idleLoopsChallenge');"
+    +"const backup=localStorage.getItem('idleLoopsImportBackupV1_normal');"
     +"const payload='ILSV01'+LZString.compressToBase64('{broken-json');"
-    +"let threw=false;"
-    +"try{processSave(payload);}catch(e){threw=true;}"
-    +"const changed=localStorage['idleLoops1']!==prior;"
-    +"localStorage['idleLoops1']=prior;"
-    +"return {threw,changed,recovered:localStorage['idleLoops1']===prior};"
+    +"const accepted=processSave(payload);"
+    +"const wrongShape=processSave('ILSV01'+LZString.compressToBase64('{\"stats\":[],\"buffs\":null}'));"
+    +"const malformed=processSave('ILSV01this-is-not-valid-compression');"
+    +"return {accepted,wrongShape,malformed,unchanged:localStorage['idleLoops1']===prior,"
+    +" challengeUnchanged:localStorage.getItem('idleLoopsChallenge')===other,"
+    +" backupUnchanged:localStorage.getItem('idleLoopsImportBackupV1_normal')===backup,"
+    +" journal:localStorage.getItem('idleLoopsImportPendingV1'),messageCount:messages.length};"
     +"})()");
-  assert.equal(invalid.threw,true,'invalid import should report a parse failure in baseline');
-  assert.equal(invalid.recovered,true);
-  if(invalid.changed)console.warn('KNOWN R01: invalid import overwrote the active slot before parsing (RF02 fix required).');
+  assert.equal(invalid.accepted,false);
+  assert.equal(invalid.wrongShape,false);
+  assert.equal(invalid.malformed,false);
+  assert.equal(invalid.unchanged,true,'RF02 must not overwrite the prior active save');
+  assert.equal(invalid.challengeUnchanged,true,'RF02 must not change challenge slot on rejection');
+  assert.equal(invalid.backupUnchanged,true,'RF02 must not overwrite an existing recovery copy');
+  assert.equal(invalid.journal,null,'rejected input does not start a transaction');
+  assert.ok(invalid.messageCount>=3);
+  console.log('PASS RF02 Chrome malformed JSON/compression/shape imports rejected without changing either save or recovery.');
+
+  const actualRecovery=await client.evaluate("(() => {"
+    +"const backup=JSON.parse(localStorage['idleLoopsImportBackupV1_normal']);"
+    +"const current=localStorage['idleLoops1'];"
+    +"window.confirm=()=>true;"
+    +"const restored=restorePreviousImport();"
+    +"return {restored,progress:towns[0].expWander,"
+    +" backedUp:backup.prior!==null,"
+    +" backupChanged:JSON.parse(localStorage['idleLoopsImportBackupV1_normal']).prior===current,"
+    +" journal:localStorage.getItem('idleLoopsImportPendingV1')};"
+    +"})()");
+  assert.equal(actualRecovery.restored,true,'prior import backup must be restorable');
+  assert.equal(actualRecovery.backedUp,true);
+  assert.equal(actualRecovery.backupChanged,true);
+  assert.equal(actualRecovery.journal,null);
+  console.log('PASS RF02 Chrome previous-save restore control and bidirectional backup rotation.');
+
+  // Failure injection at both quota-sensitive boundaries. A rejected import
+  // must have EXACT prior bytes and preserve both previous backup copies.
+  const quota=await client.evaluate("(() => {"
+    +"const tracked=['idleLoops1','idleLoopsChallenge','prestigeBackup',"
+    +"'idleLoopsImportBackupV1_normal','idleLoopsImportBackupV1_challenge'];"
+    +"const snapshot=()=>Object.fromEntries(tracked.map(k=>[k,localStorage.getItem(k)]));"
+    +"const candidate='ILSV01'+LZString.compressToBase64(JSON.stringify(doSave()));"
+    +"const orig=Storage.prototype.setItem;"
+    +"const cases=[];"
+    +"for(const target of ['idleLoopsImportPendingV1','idleLoops1']) {"
+    +" const before=snapshot();"
+    +" Storage.prototype.setItem=function(key,value){"
+    +"  if(key===target){throw new DOMException('synthetic quota','QuotaExceededError');}"
+    +"  return orig.call(this,key,value);};"
+    +" let result;try{result=processSave(candidate);}finally{Storage.prototype.setItem=orig;}"
+    +" cases.push({target,result,unchanged:JSON.stringify(snapshot())===JSON.stringify(before),"
+    +" journal:localStorage.getItem('idleLoopsImportPendingV1')});"
+    +"}"
+    +"return cases;"
+    +"})()");
+  assert.equal(quota.length,2);
+  for(const test of quota) {
+    assert.equal(test.result,false,JSON.stringify(test));
+    assert.equal(test.unchanged,true,'quota failure must preserve exact previous bytes: '+test.target);
+    assert.equal(test.journal,null,'quota failure must not leave unresolved journal: '+test.target);
+  }
+  console.log('PASS RF02 Chrome quota failure injection: journal/write failures preserve exact original bytes.');
   // Restore the original beginning-game fixture and verify reload still works.
   await client.evaluate("localStorage['idleLoops1']="+JSON.stringify(originalSave));
   await client.send('Page.reload',{ignoreCache:true});
   await waitForBoot();
   assert.equal(await client.evaluate('towns[0].expWander'),200);
-  console.log('PASS RF01 Chrome save fixtures: current ILSV01, two synthetic legacy forms, aliases, challenge-compatible shape and recoverable test profile; known R01 recorded.');
+  console.log('PASS RF01/RF02 Chrome save fixtures: current ILSV01, two synthetic legacy forms, aliases, safe validation and recovery.');
 
 
   // Actual, foreground and real Worker predictor should receive exactly the

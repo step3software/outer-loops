@@ -30,6 +30,8 @@ jobs:
         run: npm run test:rf01:model
       - name: RF01 original challenge rules characterization
         run: npm run test:rf01:challenges
+      - name: RF02 side-effect-free import preflight and compatibility cases
+        run: npm run test:rf02:preflight
       - name: Confirm generated gameplay reference matches runtime
         run: npm run check:mechanics
       - name: Check XML well-formedness

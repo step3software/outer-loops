@@ -7,7 +7,7 @@ import vm from 'node:vm';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const gameScripts = [
-    'data.js', 'localization.js', 'helpers.js', 'actionList.js',
+    'data.js', 'localization.js', 'helpers.js', 'save-import.js', 'actionList.js',
     'driver.js', 'stats.js', 'actions.js', 'town.js', 'prestige.js', 'saving.js',
 ];
 
