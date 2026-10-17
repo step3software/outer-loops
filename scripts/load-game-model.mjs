@@ -58,7 +58,8 @@ export function loadGameModel({ withViewStubs = false, withChallenges = false } 
         sandbox.confirm = () => true;
 
         sandbox.HTMLInputElement = class HTMLInputElement {};
-        sandbox.document = { title: 'Idle Loops', getElementById: () => null };
+        sandbox.$ = () => ({length:1,find:() => ({text:() => 'test-localized-label'})});
+        sandbox.document = { title: 'Idle Loops', getElementById: id => id === 'pausePlay' ? {textContent: ''} : null };
     }
     sandbox.self = sandbox;
     vm.createContext(sandbox);
