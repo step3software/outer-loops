@@ -2,6 +2,7 @@
 // Real-browser smoke test using Chrome DevTools Protocol (no npm dependencies).
 // Uses a fresh temporary profile; no production saves/accounts are accessed.
 import assert from 'node:assert/strict';
+import {makeRf01Fixtures} from './rf01-fixtures.mjs';
 import {spawn, spawnSync} from 'node:child_process';
 import {createServer} from 'node:http';
 import {existsSync, mkdtempSync, readFileSync, rmSync, statSync} from 'node:fs';
@@ -150,6 +151,69 @@ try {
   assert.equal(loaded.progress,200);
   assert.equal(loaded.queued,true);
   assert.equal(loaded.saved,true);
+
+  // RF01: disposable synthetic saves, NOT historical player exports.
+  // processSave is exercised on this random local port/browser profile only.
+  const originalSave=await client.evaluate('save()');
+  const fixtures=makeRf01Fixtures(JSON.parse(originalSave));
+  async function importSynthetic(fixture) {
+    const json=JSON.stringify(fixture.value);
+    return client.evaluate("(() => { const text="+JSON.stringify(json)
+      +"; try {processSave('ILSV01'+LZString.compressToBase64(text));"
+      +"return {loaded:true, progress:towns[0].expWander,"
+      +" names:actions.next.map(x=>x.name),"
+      +" loadout:loadouts[0].map(x=>x.name),"
+      +" unlocked:townsUnlocked.slice(),"
+      +" crafted:storyFlags.loopingPotionMade,"
+      +" invested:goldInvested, olderDungeon:dungeons[0][0].completed,"
+      +" saved:localStorage['idleLoops1']};"
+      +"} catch(e) {return {loaded:false,error:String(e),stack:e.stack};} })()");
+  }
+  const currentFixture=await importSynthetic(fixtures.current);
+  assert.equal(currentFixture.loaded,true,JSON.stringify(currentFixture));
+  assert.equal(currentFixture.progress,400);
+  assert.equal(currentFixture.names[0],'Wander');
+  assert.deepEqual(currentFixture.unlocked,[0,1]);
+  assert.equal(JSON.parse(currentFixture.saved).expWander,400);
+
+  const pre75=await importSynthetic(fixtures.pre75);
+  assert.equal(pre75.loaded,true,JSON.stringify(pre75));
+  assert.equal(pre75.progress,600);
+  assert.deepEqual(pre75.unlocked,[0,1,2,3]);
+  assert.deepEqual(pre75.names,['Train Dexterity','Buy Mana Z1']);
+  assert.deepEqual(pre75.loadout,['Train Dexterity']);
+  assert.equal(pre75.crafted,true);
+  assert.ok(pre75.olderDungeon>=0);
+
+  const aliases=await importSynthetic(fixtures.earlyAliases);
+  assert.equal(aliases.loaded,true,JSON.stringify(aliases));
+  assert.equal(aliases.progress,800);
+  assert.deepEqual(aliases.unlocked,[0,1,2]);
+  assert.deepEqual(aliases.names,['Buy Pickaxe','Buy Mana Z3']);
+  assert.deepEqual(aliases.loadout,['Buy Mana Z3']);
+  assert.equal(aliases.invested,4000);
+
+  // R01 is an explicitly known unsafe *baseline*: invalid decoded JSON is
+  // stored before parsing. Record corruption, never enforce it as desirable.
+  const invalid=await client.evaluate("(() => {"
+    +"const prior=localStorage['idleLoops1'];"
+    +"const payload='ILSV01'+LZString.compressToBase64('{broken-json');"
+    +"let threw=false;"
+    +"try{processSave(payload);}catch(e){threw=true;}"
+    +"const changed=localStorage['idleLoops1']!==prior;"
+    +"localStorage['idleLoops1']=prior;"
+    +"return {threw,changed,recovered:localStorage['idleLoops1']===prior};"
+    +"})()");
+  assert.equal(invalid.threw,true,'invalid import should report a parse failure in baseline');
+  assert.equal(invalid.recovered,true);
+  if(invalid.changed)console.warn('KNOWN R01: invalid import overwrote the active slot before parsing (RF02 fix required).');
+  // Restore the original beginning-game fixture and verify reload still works.
+  await client.evaluate("localStorage['idleLoops1']="+JSON.stringify(originalSave));
+  await client.send('Page.reload',{ignoreCache:true});
+  await waitForBoot();
+  assert.equal(await client.evaluate('towns[0].expWander'),200);
+  console.log('PASS RF01 Chrome save fixtures: current ILSV01, two synthetic legacy forms, aliases, challenge-compatible shape and recoverable test profile; known R01 recorded.');
+
   console.log('PASS Chrome: game boot, XML localization, 157 actions, Wander execution and save/reload.');
 } finally {
   client?.close();
