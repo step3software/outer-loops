@@ -8,7 +8,7 @@
 
 | Phase | Goal | Player-visible outcome | Readiness / acceptance |
 | --- | --- | --- | --- |
-| **RW00 — Contract and test preparation** | Resolve critical design choices, original ending characterization and veteran save safety | No player-visible behavior change | RF01 fixtures, RF02 safety plan, speed timekeeping baseline, first-self/legacy entitlements **and three-vs-four-tree decision** |
+| **RW00 — Contract and test preparation** | Resolve critical design choices, original ending characterization and veteran save safety | No player-visible behavior change | RF01 fixtures, RF02 safety plan, speed timekeeping baseline, first-self/legacy entitlements, **three-vs-four-tree decision and Valley/potion ending choice (RW-Q17–RW-Q21)** |
 | **RW01 — First nexus vertical slice (internal)** | Introduce post-Restore Time threshold, small scene and first self, persisted outer flags, explicit return/new-timeline flow | Two versions of the protagonist meet in Real World; **no forced reset** | First meeting once, save/reload, no Town#9, original ending and credits still accessible; keep hidden until replacement loop works |
 | **RW02 — First compelling outer replay (minimum releasable)** | Make single prestige home, retire standalone old menus, safe veteran migration, free ~10× replay and initial meaningful upgrades | A **new timeline feels unmistakably different** in speed and planning; no parallel prestige shop | One or more distinct upgrade decisions; idempotent completion; no double rewards; old save/challenge cases safe; speed/worker parity green |
 | **RW03 — Deepen upgrades and first useful self** | Add bounded automation, retained-knowledge abilities and functional first-self assignment | Player can delegate/automate a mastered task rather than only watch a faster clock | Explicit rule constraints, override/pause, deterministic reward; no hidden duplicate tasks or infinite grants |
@@ -17,6 +17,12 @@
 | **ART — Pixel-art workstream (parallel)** | Establish style bible from nexus; later apply to inner world | Cohesive, legible two-character nexus scene and expanded game presentation | Controlled asset scope, readable UI, responsive/reduced motion, asset rights documented |
 
 **RW00–RW02** form the first target development effort. RW01 may be demoed internally as a narrative prototype, but should **not** be shipped to ordinary players while the only rewards are inaccessible or dmchurch's full old prestige shop still sits alongside it.
+
+## Endgame design gate — unresolved
+
+The current RW01–RW02 flow below is based on **nine zones and the existing Valley `Action.RestoreTime`**, consistent with approved RW-D02. Separately, a [source-grounded design comparison](potion-and-endgame-options.md) proposes **A** keeping Valley, **B** shortening its tower/trial grind, or **C** removing it from active play and using a shorter **Commerceville potion/temporal research climax** before Real World. **C is recommended for exploration, not chosen.**
+
+RW00 must settle this before finalizing the portal trigger, first-restoration flags, ending narrative and tests. If option B/C is approved, revise this roadmap and RW-D02 **explicitly**, add migration coverage for saved zone-8/tower/trial progress, protect the Spatiomancy/Valhalla bypass branch, and verify optional Totem/Wunderkind remains useful. Avoid a simplistic "delete town 8" patch: the nine-zone survey average, `Ruins/Haul`, key, `SecretTrial` and old prestiges also depend on it.
 
 ## Proposed detailed first slice: RW01 + RW02
 

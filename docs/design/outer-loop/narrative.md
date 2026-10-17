@@ -10,6 +10,14 @@ The existing English global story 12 declares that time has been restored, and i
 
 **Interpretation for Outer Loops:** restoring time is a *true ending to the inner game*, but the newly created tapestry contains an outer boundary that can now be crossed. The "Real World" title can refer to the space beyond the stitched timelines without implying that the player's previous world was fictional, simulated, or meaningless.
 
+## Potential revised finale — potion as cause and key (not approved)
+
+The [Looping Potion/endgame analysis](potion-and-endgame-options.md) raises a different storyline: *the potion that began the loops becomes the thing the protagonist learns to understand in order to end them*. Current code **already** lets the player reproduce it at Mt. Olympus (after Valhalla access) and drink it at the Jungle Totem for Wunderkind; it is optional for the real ending.
+
+If the player eventually chooses a **Commerceville capstone instead of Valley**, the original "Restore Time" revelation might instead follow a controlled potion experiment, a time fracture, and a final act of weaving/repairing the timeline. This is an **alternate ending proposal**, not a canonical statement that potion use lets consciousness jump between timelines. The other-self reveal remains, but its dialogue may need revision to avoid insisting the player sat on the gods' throne when they never did.
+
+Important constraints: preserve the original courier accident; do not force every player through Valhalla just to learn Spatiomancy; keep Jungle Totem's optional training purpose viable; ensure a world-scale climax; retain the original authors' credits. Any alternate scene must update RW-D02 and the narrative/script together after explicit approval.
+
 ## Proposed first-entry sequence (short, deliberate)
 
 1. **Completion:** The original Restore Time climax resolves. Do not interrupt its final text or erase the original author's voice. Grant the persistent "first restoration completed" milestone once.

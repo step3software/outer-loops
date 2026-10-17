@@ -58,6 +58,20 @@ The three-tree recommendation and four-tree Dominion alternative introduce addit
 
 **These cases are designs, not passing tests.** The initial three-tree UI and its Dominion alternative have not been implemented or playtested. Design choice RW-Q13 must be settled before claiming the final tree layout.
 
+## Looping Potion and possible Valley removal (future testing only)
+
+The source-grounded [endgame alternatives](potion-and-endgame-options.md) define **PE01–PE12**, none yet implemented or run. They specifically require tests for the potion's optional pre-Valley acquisition, the Totem/Wunderkind effect, the **Valhalla Spatiomancy bottleneck for shadow-path players**, eight-versus-nine-zone survey behavior, old zone-8/story/stone/trial saves and final reward idempotency.
+
+| ID | Scenario | Required outcome if a new ending is explicitly approved |
+| --- | --- | --- |
+| **N26** | Mt. Olympus potion after Forest Alchemy / Valhalla Spatiomancy | Real visible/unlocked/canStart requirements understood; no erroneous claim potion was always accessible from zone 3 |
+| **N27** | Totem potion use, repeated crafting and global story 9/10 mismatch | No false potion achievement, duplicate item or unintended loss of optional Wunderkind utility |
+| **N28** | High-reputation Valhalla **and** low-reputation Startington routes | Both can reach the chosen finale without impossible or hidden potion prerequisites |
+| **N29** | Zone 8 retired/condensed with old-save, stone, trial and survey fixtures | Existing progress and entitlements safe; travel/worker/queue/story bootstrap consistent |
+| **N30** | Three endgame variants A/B/C with default and ~10× replay | Actual completion pacing, climactic satisfaction and repeatability assessed; no replacement potion grind |
+
+**RW-D02 currently assumes the original Valley Restore Time ending.** N26–N30 and PE01–PE12 are **proposed test cases for a possible revised ending**, not proof that Valley is removed or that any of these tests now pass.
+
 ## Pacing and "10× feels faster" research
 
 The replay target means at least one clearly measurable, comparable segment of the original game takes **roughly one-tenth as much real waiting time** (under the same underlying simulated progression state). This is not a requirement to finish the entire campaign in 1/10th the time when the player is making different choices and performing new upgrades.
@@ -79,13 +93,14 @@ Do not lock exact point costs, return rates, character limits, automation job ti
 
 ## Decision gates before implementation (recommended order)
 
-1. Select first self's story purpose and approval of the first encounter beats (RW-Q07).
-2. Approve explicit timeline completion, portal entry and return/new-timeline semantics (RW-Q05–Q06).
-3. Choose legacy prestige effect retention and veteran-credit/backup policy (RW-Q01–Q02).
-4. Define exactly how default ~10× stacks with timekeeping and old modifiers (RW-Q04).
-5. Choose the **three-tree Will/Echoes/Anchors recommendation or the four-tree Memory/Dominion alternative**, then approve the minimum impactful starters, cross-tree requirements, acquisition economy, mastery/caps and free starter policy (RW-Q09–Q10, RW-Q13–Q16).
-6. Determine old challenge reuse/retirement and safe challenge-active save transition (RW-Q03).
-7. Approve the initial pixel-art style/sprite scale and interaction scheme (RW-Q12).
+1. **Decide the original ending structure**: retain, shorten or retire playable Valley of Olympus; whether Looping Potion is a finale requirement and whether that revises RW-D02 (RW-Q17–RW-Q21).
+2. Select first self's story purpose and approval of the first encounter beats (RW-Q07).
+3. Approve explicit timeline completion, portal entry and return/new-timeline semantics (RW-Q05–Q06).
+4. Choose legacy prestige effect retention and veteran-credit/backup policy (RW-Q01–Q02).
+5. Define exactly how default ~10× stacks with timekeeping and old modifiers (RW-Q04).
+6. Choose the **three-tree Will/Echoes/Anchors recommendation or the four-tree Memory/Dominion alternative**, then approve the minimum impactful starters, cross-tree requirements, acquisition economy, mastery/caps and free starter policy (RW-Q09–Q10, RW-Q13–Q16).
+7. Determine old challenge reuse/retirement and safe challenge-active save transition (RW-Q03).
+8. Approve the initial pixel-art style/sprite scale and interaction scheme (RW-Q12).
 
 Once those are resolved, draft a dedicated **RW01/RW02 implementation handoff**, with tests and dependency evidence, before starting code.
 

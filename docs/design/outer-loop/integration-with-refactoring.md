@@ -4,6 +4,18 @@
 
 The Real World design is a product change, whereas RF01–RF06 are generally *behavior-preserving* refactors. Mixing the new metagame into those refactors would destroy the ability to isolate regressions. **Keep explicit boundaries and separate PRs**.
 
+## Proposed Valley/potion redesign and refactor dependencies
+
+The [potion/endgame option study](potion-and-endgame-options.md) evaluates eliminating or reducing the Valley's 1,000 stone contributions and divine trials and giving the reconstructed potion greater significance. This is **not approved gameplay scope**, and it may revise current approved RW-D02.
+
+- **RF01:** first characterize actual `LoopingPotion`/`Totem`/`Escape`/`RestoreTime`, the two reputation routes, nine-zone survey/Explorer Guild bootstrap and veteran zone-8/trial/save state.
+- **RF02:** make import/backups safe and decide explicit migration/archival rules **before** dropping any save keys, dynamic `varName` records, `SurveyZ8` or retired buffs/achievements.
+- **RF03:** guard potion boolean inventory, story predicates, effective-time gates and changed conditional eligibility (and later automated potion tasks) with pure predictable rules.
+- **RF04:** the older challenges' possible retirement remains a separate decision; do not conflate replacing a late-game **trial action** with retiring inherited challenge **modes**.
+- **RF05/RF06:** action registry/UI reorganization may simplify later changes but does not authorize deleting the old town. Review alternate travel, source order and old loading paths before moving or retiring actions.
+
+If the chosen ending bypasses Valhalla, ensure equivalent legal paths to any newly required potion research rather than silently forcing one reputation outcome. Keep the old game source audit as as-coded evidence and any new ending design in this proposal directory until implemented.
+
 ## Dependency and conflict register
 
 | Existing milestone | Relevance to Real World | Recommendation |

@@ -19,6 +19,14 @@ The first milestone should feel like a new chapter and immediately change the ex
 - Real World is a strong **pixel-art art-direction anchor**. The wider game's eventual pixel-art treatment is a related but separate workstream.
 - Do not establish that the earlier game was "fake" or a simulation; keep what **Real World** means deliberately mysterious at first.
 
+### New ending under consideration — not approved
+
+The existing [Looping Potion](potion-and-endgame-options.md) is crafted on **Mt. Olympus after learning Alchemy in Forest Path and Spatiomancy via Valhalla**, can be consumed at the **Jungle Totem** for Wunderkind progression, and **is not presently required** for Valley of Olympus or Restore Time. Its role in the game's origin story makes it a promising basis for a shorter ending.
+
+Three routes are documented for decision: **retain Valley unchanged**, **condense Valley into a short divine capstone**, or **retire playable Valley and end via a potion/temporal research climax after Jungle Path, preferably in Commerceville**. The latter is recommended for exploration, *not selected*. Making the potion mandatory would also affect the dark/reputation route that bypasses Valhalla. Removing Valley physically would affect saves, the nine-zone survey average, temporal stone actions, trials, achievements and credits.
+
+**Existing RW-D02 and the nine-zone as-coded baseline remain in force unless specifically revised.** See [ending alternatives and migration risks](potion-and-endgame-options.md) and [open questions RW-Q17–RW-Q21](decisions.md).
+
 ### Working upgrade-tree recommendation — not yet approved
 
 The preferred **three-tree** model is **Will / Echoes / Anchors** (active control, automation and persistent knowledge/treasury/infrastructure). A **four-tree** model — **Will / Echoes / Memory / Dominion** — is deliberately preserved as a substantial economic/infrastructure alternative. Their final number, first grants, exact node effects, synergy prerequisites and economy are not yet approved. Review the [three-tree specification](upgrade-trees.md) and [Dominion alternative](dominion-alternative.md) together.
@@ -66,6 +74,7 @@ The [release plan](roadmap.md) separates design decisions and testing prerequisi
 
 - [Decisions and open questions](decisions.md) — confirmed vs provisional vs unresolved
 - [Narrative and first meeting](narrative.md) — ending continuity, mystery and dialogue proposal
+- [**Looping Potion and Valley of Olympus alternatives**](potion-and-endgame-options.md) — verified potion progression, ending A/B/C, bypass risks, migration and test plan
 - [Outer loop and upgrade systems](systems.md) — 10× replay, meaningful permanent choices, automation and challenges
 - [**Three-tree working recommendation: Will / Echoes / Anchors**](upgrade-trees.md) — starter nodes, subpaths, tier progressions and cross-tree synergies
 - [**Four-tree alternative: Will / Echoes / Memory / Dominion**](dominion-alternative.md) — an independent economic/infrastructure tree and comparison

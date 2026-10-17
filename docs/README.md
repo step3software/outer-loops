@@ -36,6 +36,7 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [Real World / Timeloop Nexus design index and product north star](design/outer-loop/README.md)
 - [Agreed decisions, provisional choices and open questions](design/outer-loop/decisions.md)
 - [First encounter and narrative bridge](design/outer-loop/narrative.md)
+- [**Looping Potion, Totem and Valley of Olympus endgame alternatives**](design/outer-loop/potion-and-endgame-options.md) — current code, potential shorter ending, route freedom, migration and tests
 - [New timelines, ~10× replay, upgrades, automation and challenge variants](design/outer-loop/systems.md)
 - [**Will / Echoes / Anchors** — proposed three-tree upgrades](design/outer-loop/upgrade-trees.md)
 - [**Dominion** — fully documented four-tree alternative](design/outer-loop/dominion-alternative.md)
