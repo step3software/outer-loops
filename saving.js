@@ -1648,6 +1648,10 @@ function applyProtectedImport(prepared) {
  * failed decompression or an invalid nonempty payload can never clear a save.
  */
 function processSave(saveData) {
+    if (window.localStorage.getItem(importPendingKey) !== null) {
+        alert("Save recovery is pending. Reload this page and recover the previous save before importing or clearing anything.");
+        return false;
+    }
     if (saveData === "") {
         if (!confirm("Importing an empty save will delete BOTH normal and challenge progress. Export a backup first. Continue?")) {
             return false;
