@@ -66,6 +66,12 @@ export function loadGameModel({ withViewStubs = false, withChallenges = false } 
         const code = readFileSync(join(root, name), 'utf8');
         vm.runInContext(code, sandbox, {filename: name, timeout: 10_000});
     }
+    if (withViewStubs) {
+        // These two callbacks normally live in views/main.view.js. Preserve
+        // their state effects without loading any DOM/view implementation.
+        vm.runInContext(`function setStoryFlag(name) {storyFlags[name]=true;}
+            function unlockGlobalStory(num) {storyMax=Math.max(storyMax,num);}`, sandbox);
+    }
     vm.runInContext('loadDefaults()', sandbox, {timeout: 20_000});
     if (withViewStubs) {
         // A real browser load() initializes migration-era counters; preserve
