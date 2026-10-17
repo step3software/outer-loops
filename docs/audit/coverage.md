@@ -2,19 +2,19 @@
 
 ## What was and wasn't verified
 
-This review covers (1) a cross-file inventory and key control-flow inspection, (2) direct inspection of core formulas, boundaries and error paths, and (3) source-derived runtime metadata from **all 157 initialized actions**. It does **not** constitute a complete manual end-to-end playthrough, automated browser test, or exhaustive old-save migration check.
+This review covers (1) a cross-file inventory and key control-flow inspection, (2) direct inspection of core formulas, boundaries and error paths, and (3) source-derived runtime metadata from **all 157 initialized actions**. It does **not** constitute a complete manual end-to-end playthrough, comprehensive browser gameplay suite, or exhaustive old-save migration check.
 
 | Domain | Source examined | Automated checks | Still unverified |
 | --- | --- | --- | --- |
-| Boot/deployment | `index.html`, package, GitHub workflows | JS syntax, linked scripts | Browser first load, Pages release |
+| Boot/deployment | `index.html`, package, GitHub workflows | JS syntax, linked scripts, isolated Chrome boot | Actual deployed Pages release |
 | Actions / nine zones | `actionList.js`, `town.js`, `saving.js` | 157 runtime objects; generated reference; catalog parity | All player-facing gates and rewards in play |
-| Queue and timing | `driver.js`, `actions.js` | Syntax and isolated model startup | Full queue simulation, fractional mana, background timing |
+| Queue and timing | `driver.js`, `actions.js` | Isolated queue test and real-Chrome Wander execution | Full queue simulation, fractional mana, background timing |
 | Stats/combat/prestige | `stats.js`, `prestige.js` | XP and prestige defaults in worker-like model | Compound buffs, dungeon outcomes |
-| Save/migration | `saving.js`, `actionLog.js` | Code-path inspection | Valid/corrupt and historic save round-trips |
+| Save/migration | `saving.js`, `actionLog.js` | Code-path inspection and Chrome current-save/reload smoke | Valid/corrupt and historic save import/migrations |
 | Challenges | `challenges.js` | Mode code inspected | Challenge modes 1–3 in browser |
 | Predictor | `predictor.js`, `predictor-worker.js`, `data.js` | Worker-import-like model load | Real predictor parity/snapshot stress |
 | UI | `views/*`, `uicomponents.js`, CSS, HTML | JS syntax, script presence | Keyboard, responsiveness, themes, tooltip interactions |
-| Localization | `localization.js`, `lang/*/game.xml` | Five XML/RNG documents parse | Key-to-label completeness and full narrative |
+| Localization | `localization.js`, `lang/*/game.xml` | XML/RNG parse and English Chrome startup | Key-to-label completeness and full narrative |
 | Editor | `editor.html`, `editor.js`, `schema.js`, `data/*` | Syntax and XML parse | Live editor round-trip and schema semantics |
 | Cloud | `google.js` | Implementation inspected | OAuth and Drive save in dedicated test account |
 | Licensing | GitHub metadata and root listing | No explicit license found | Rights holder clearance |
@@ -24,7 +24,8 @@ This review covers (1) a cross-file inventory and key control-flow inspection, (
 - `npm run check`: JS syntax for first-party code, Markdown link existence, game/editor script paths, compact action-catalog ID parity.
 - `python3 scripts/check-xml.py`: well-formed XML/RNG parsing, not schema semantic validation.
 - `npm run test:model`: executes real first-party code in a Node VM modeled after worker initialization, verifies 157 actions, nine towns, stat/skill/buff registries, XP formula and prestige defaults.
-- `scripts/generate-action-mechanics.mjs`: introspects executable action instances to generate the extensive reference. `--check` will detect later drift.
+- `scripts/generate-action-mechanics.mjs`: introspects executable action instances to generate the extensive reference. `--check` detects later drift.
+- `npm run test:browser`: uses a disposable local Chrome profile and real `index.html` to verify English XML initialization, 157 actions, Wander queue execution, browser save serialization and persisted progress after a page reload.
 
 At the earlier foundation PR check, CI recorded **31 JS syntax checks, 36 Markdown files / 79 Markdown links, 48 local scripts, 157 catalog actions and five XML parses**. New PR runs have different file counts. Cite the current workflow log for latest results.
 

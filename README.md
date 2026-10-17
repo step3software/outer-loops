@@ -22,7 +22,7 @@ The game is a static browser application; no backend or JavaScript build step is
 npm run check
 ```
 
-For XML well-formedness checks, also run `python scripts/check-xml.py`. These checks do not replace browser gameplay testing.
+Run `npm run test:model`, `npm run test:action` and `npm run check:mechanics` for game-model regression and generated-doc parity. Run `npm run test:browser` with Chrome/Chromium installed for isolated game startup/action/save-reload smoke. For XML well-formedness run `python scripts/check-xml.py`. These are not a complete gameplay test suite.
 
 ## Development documentation
 

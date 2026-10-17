@@ -4,7 +4,7 @@
 
 **Baseline:** step3software/outer-loops, default branch `dmchurch`, commit `fe4a349efb799a56ab548018caca1a1a1aea0c8f`. This review builds on the AI-development documentation branch. Date: 2026-10-17.
 
-This is a **source-grounded technical and gameplay audit**, not a claim of full playthrough or mathematically proven game balance. Source was inspected through the repository and its current executable modules. The entire registry was instantiated in a worker-like Node VM so that all 157 actual action objects, including dynamically constructed factory actions, could be catalogued. Remaining observations are distinguished as code-confirmed, plausible risk or judgment requiring gameplay observation. Third-party minified libraries, every line of narrative XML and visual rendering were not exhaustively manually inspected.
+This is a **source-grounded technical and gameplay audit**, not a claim of full playthrough or mathematically proven game balance. Source was inspected through the repository and its current executable modules. The entire registry was instantiated in a worker-like Node VM so that all 157 actual action objects, including dynamically constructed factory actions, could be catalogued. A disposable Chrome integration smoke also verifies real page initialization, one action and a save/reload. Remaining observations are distinguished as code-confirmed, plausible risk or judgment requiring gameplay observation. Third-party minified libraries, every line of narrative XML and visual rendering were not exhaustively manually inspected.
 
 ## Review outputs
 

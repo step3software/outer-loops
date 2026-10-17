@@ -158,5 +158,9 @@ try {
     server.closeAllConnections?.();
     await new Promise(resolve=>server.close(resolve));
   }
-  rmSync(profile,{recursive:true,force:true});
+  // Chromium has child processes that may still flush cache after parent SIGKILL.
+  // Retrying cleanup is safe in this ephemeral dedicated profile.
+  await pause(300);
+  try {rmSync(profile,{recursive:true,force:true,maxRetries:15,retryDelay:100});}
+  catch(error) {console.warn('Chrome profile cleanup incomplete: '+error.message);}
 }

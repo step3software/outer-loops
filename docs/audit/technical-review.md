@@ -4,7 +4,7 @@
 
 The architecture is workable for incremental game changes with disciplined regression testing. It is **not** a modern module-based application: classic scripts share mutable state, their load order is significant, the predictor replays selected runtime modules inside a worker, and the save shape is hand-written. A broad refactor without a behavior harness would carry substantial regression risk.
 
-Review status: source inspection and worker-like model validation. Browser execution, real-save migration and performance profiling remain separate, unverified tasks. Consult the [coverage ledger](coverage.md).
+Review status: source inspection, worker-like model validation and a limited real-Chrome boot/action/save-reload smoke. Full gameplay execution, historical save migration and performance profiling remain unverified. Consult the [coverage ledger](coverage.md).
 
 ## Execution path
 

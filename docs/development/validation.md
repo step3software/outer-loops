@@ -13,9 +13,9 @@ python scripts/check-xml.py
 npm run test:browser
 ```
 
-`npm run check` verifies syntax for first-party `.js` / `.mjs` files (including validator scripts), relative Markdown file links, known entry-point assets and consistency of the documented `Action.*` inventory. The worker-like model test initializes real game code and checks action registry/formulas. The queued-action test executes an opening Wander in the real queue engine with a no-op UI facade. Generated mechanics must match all live action definitions. These do not replace browser testing. The Python script checks that the checked-in `.xml` and `.rng` files parse as XML. The PR workflow runs these checks automatically.
+`npm run check` verifies syntax for first-party `.js` / `.mjs` files (including validator scripts), relative Markdown file links, known entry-point assets and consistency of the documented `Action.*` inventory. The worker-like model test initializes real game code and checks action registry/formulas. The queued-action test executes an opening Wander in the real queue engine with a no-op UI facade. Generated mechanics must match all live action definitions. These do not replace browser testing. The Python script checks that the checked-in `.xml` and `.rng` files parse as XML. `npm run test:browser` starts a local HTTP server and disposable Chrome profile to boot the real game, execute Wander and verify the browser save survives reload; it requires installed Chrome/Chromium. The PR workflow runs these checks automatically.
 
-**No established automated browser gameplay tests or save migration fixtures existed at this baseline.** A green static check is not a gameplay test. Do not report otherwise.
+**The browser smoke covers only startup, one opening action and one current-save reload; no complete browser gameplay suite or historical save migration fixtures exist yet.** A green static check alone is not a gameplay test.
 
 ## Minimum interactive smoke suite
 

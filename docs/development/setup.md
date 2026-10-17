@@ -22,10 +22,14 @@ You can use VS Code's Live Server instead. The repository default branch is `dmc
 
 ```sh
 npm run check
+npm run test:model
+npm run test:action
+npm run check:mechanics
 python scripts/check-xml.py
+npm run test:browser
 ```
 
-`npm run check` uses Node's built-in facilities to check first-party JavaScript syntax, relative documentation links, the action catalog and HTML script paths; no `npm install` is required to run it. The separate Python check parses checked-in XML and Relax NG files for well-formedness. Neither actually starts the browser game.
+`npm run check` uses Node's built-in facilities to check first-party JavaScript syntax, relative documentation links, the action catalog and HTML script paths; no `npm install` is required to run it. The separate Python check parses checked-in XML and Relax NG files for well-formedness. The first static checks do not start the browser game; `npm run test:browser` requires an installed Chrome/Chromium browser and uses a disposable profile for a real startup/Wander/save-reload smoke.
 
 For editor type hints, `npm ci` installs the type-only developer dependencies. `jsconfig.json` / `types.d.ts` define existing JavaScript/JSDoc typing boundaries; there is no enforced TypeScript compile step today.
 
