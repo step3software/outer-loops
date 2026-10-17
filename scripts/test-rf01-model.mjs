@@ -80,9 +80,13 @@ const multipart=scenario(`(() => {
         if(!used)break;
     }
     return {spent,attempts,gold:resources.gold,progress:towns[0].Fight,
-        counter:towns[0].FightLoopCounter,total:towns[0].totalFight};
+        counter:towns[0].FightLoopCounter,total:towns[0].totalFight,
+        selfCombat:getSelfCombat(),canStart:Action.FightMonsters.canStart(),
+        canMakeProgress:Action.FightMonsters.canMakeProgress(0),
+        currentPos:actions.currentPos,current:actions.current.map(a=>a.name),
+        skill:getSkillLevel('Combat')};
 })()`);
-assert.ok(multipart.spent>0,'multipart spends mana');
+assert.ok(multipart.spent>0,'multipart spends mana '+JSON.stringify(multipart));
 assert.ok(multipart.gold>=20,'first Fight Monsters segment grants gold');
 
 const dungeon=scenario(`(() => {
