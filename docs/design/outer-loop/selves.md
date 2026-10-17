@@ -35,6 +35,14 @@ These are **design exemplars**, not commitments to introduce five NPCs, a class 
 - **Feedback:** player can see what a self prepared or discovered, and why an assignment succeeded or failed.
 - **Narrative continuity:** later conversations refer to prior nexus decisions and completed timelines.
 
+## Relation to the proposed Echoes progression tree
+
+The [Echoes branch](upgrade-trees.md) is the *player's automation and delegation capability*; **alternate selves are persistent characters in the wider nexus**, not a consumable resource that exists only if the player buys Echoes. A player who chooses Will or Anchors first **still meets the first other self** and can talk to them.
+
+A later Echoes node such as **First Apprentice** allows the player to give a familiar, bounded conditional objective to an eligible self; specialists may have different job options, costs and constraints. This is distinct from the already existing `Actions.next` queue and loadouts. The same selves can matter to Will, Memory or Treasury stories without acting as redundant passive bonus vendors.
+
+In the [four-tree Dominion alternative](dominion-alternative.md), an Echo may eventually operate a durable workshop or economic arrangement, but **owning Dominion assets must not automatically simulate an extra full timeline**. Cross-tree **Persistent Workshop** is proposed, not approved.
+
 ## Timeline identity and recruitment rules
 
 **Recommended:** many completed timeline **records**, relatively few **distinct recruited selves**. Distinctive outcomes/builds/challenge resolutions may create opportunities to meet a self; repeated identical clears should not spawn duplicate NPCs every time. A roster entry can be associated with an originating timeline, but recruitment criteria must be explicit and player-understandable.

@@ -29,7 +29,7 @@ The intended expansion is **from optimizing actions to optimizing timelines**. P
 
 ## Permanent upgrade philosophy
 
-The original dmchurch prestige menu offers mostly additive/exponential multipliers. We are **retiring that standalone shop**. New choices should be substantial **capabilities**. Raw speed/XP increases can exist, but they must complement the already free ~10× improvement rather than constitute the entire design.
+The original dmchurch prestige menu offers mostly additive/exponential multipliers. We are **retiring that standalone shop**. World gold and the economic **Treasury/Dominion** branch are distinct from the eventual *shared nexus advancement currency*; the latter's name, grant schedule and price curve are undecided. New choices should be substantial **capabilities**. Raw speed/XP increases can exist, but they must complement the already free ~10× improvement rather than constitute the entire design.
 
 An upgrade is compelling when it does at least one of these:
 
@@ -39,17 +39,25 @@ An upgrade is compelling when it does at least one of these:
 - **Enables new strategic constraints:** opt-in challenge timelines with unique rewards or alternate selves.
 - **Deepens the nexus:** recruit a specialist, open a facility or unlock new ways to coordinate timelines.
 
-### Example first-visit upgrade choices — proposals, not tuned or guaranteed
+### Permanent upgrade trees — working recommendation
 
-| Candidate | What feels different in timeline two | Risks / balance questions |
+A more coherent organization than **Active Gameplay / Automation / Currency** is **Will / Echoes / Anchors**. These represent **controlling the current loop**, **delegating mastered work**, and **preserving value or knowledge across reset boundaries**. Treasury/currency gameplay remains a substantial **Anchors** subpath alongside **Memory** and **Structures**, not a pile of passive economy bonuses. See the complete [three-tree proposal](upgrade-trees.md).
+
+| Tree | Proposed starting node | Player-visible capability |
 | --- | --- | --- |
-| **Remember the Route** | Reuse a previously successful action sequence or partial travel plan without reconstructing it manually | Preserve the player's agency to edit; avoid skipping conditions they haven't met |
-| **Keep the Map** | Carry a carefully bounded portion of survey/route **knowledge** to the next timeline | Decide whether this means discovery visibility, numeric progress or merely a hint; otherwise it may bypass an intended late-game loop |
-| **Preparatory Echo** | An alternate self can perform one narrow, already-mastered setup routine (such as acquiring certain starting supplies) | No full extra simulation, no infinite free resources; establish cost and eligibility |
-| **Stable Thread** | Retain one selected kind of long-term investment when explicitly resetting to a new timeline | Could trivialize some areas; define caps, exclusions and prerequisites |
-| **Clearer Forecast** | Gain a more informative planning/prediction capability for uncertain action chains | Must never make predictor forecast inaccurate or introduce hidden cheating |
+| **Will** | **Pivot** | Deliberately replan not-yet-executed work in the *current* loop, beyond already existing next-loop loadout editing |
+| **Echoes** | **First Apprentice** | Assign one previously mastered, legal, **conditional** task, not just a saved fixed queue |
+| **Anchors** | **Anchored Memory** | Select a single bounded previously earned mastery/discovery that legitimately survives a *full timeline* reset |
 
-**Recommended first playable slice:** offer a small set of **distinct, legible** choices from different play styles, with at least one genuinely useful planning/automation option. The first player should not confront a giant upgrade grid or dozens of marginal percentage bonuses. Prices, actual numerical effects and how many choices are initially affordable are open.
+**Important status:** the one-free-first-node choice, node costs, limits and precise mechanics are proposed, **not yet approved**. The free ~10× baseline acceleration is approved independently of any tree. The other starter branches should remain accessible later rather than acting as irreversible character classes.
+
+A serious [four-tree alternative](dominion-alternative.md) separates **Anchors** into **Memory** and **Dominion**, with Dominion controlling capped gold/reserves, economic agreements and persistent structures. Its possible starter is **Timeless Treasury**. The final tree count is still open; keep stable ability IDs independent of display grouping. See [implementation contracts](upgrade-tree-contracts.md) for safeguards.
+
+Older examples from the early concept (Remember the Route, Keep the Map, Preparatory Echo, Stable Thread, Clearer Forecast) are **concept candidates**, not independent mandatory starter upgrades. Their viable mechanics now map into Will, Echoes, or Anchors/Memory as appropriate. Avoid treating a saved route preset as equivalent to live-loop intervention, goal-based automation or actual retained world mastery.
+
+### Future combinations
+
+**Will + Echoes → Adaptive Intervention** (an Echo asks for a consequential live decision); **Echoes + Anchors → Persistent Workshop** (an alternate self prepares a bounded starting kit using durable facilities); **Anchors + Will → Fixed Point** (bounded checkpoint with exactly one real committed outcome). High-tier rewind/fork powers must never duplicate scarce resources, achievements or nexus currency. In the four-tree version, cross-tree connections adapt to Memory and Dominion separately.
 
 ## Automation progression — make mastery meaningful
 

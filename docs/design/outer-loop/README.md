@@ -16,6 +16,7 @@ The first milestone should feel like a new chapter and immediately change the ex
 - After the first completion, a **new timeline/replay is approximately 10× faster by default**, with substantial, interesting permanent upgrade choices *in addition* to the free baseline speed increase. Exact multiplication/stacking is still a technical design decision.
 - Alternate selves are ongoing **characters with agency and eventual gameplay roles**, not automatically one identical NPC per completion.
 - Build a meaningful **small hub and initial replay loop first**, leaving a path toward richer multi-self/timeline management later.
+- **Upgrade-tree design is being explored:** the current working recommendation is **Will / Echoes / Anchors** (active control / automation / persistent knowledge, treasury and infrastructure). **Will / Echoes / Memory / Dominion** is preserved as a serious four-tree alternative. The number, starter grants, exact node effects and economics are **not final approved rules**.
 - Real World is a strong **pixel-art art-direction anchor**. The wider game's eventual pixel-art treatment is a related but separate workstream.
 - Do not establish that the earlier game was "fake" or a simulation; keep what **Real World** means deliberately mysterious at first.
 
@@ -52,7 +53,7 @@ The minimum compelling vertical slice is **not just a decorative room**. It incl
 2. The player enters a small pixel-art-ready Real World scene and meets **one other self** with a short, characterful conversation.
 3. The player can inspect/leave the hub without being automatically forced into a reset.
 4. Beginning a **new** timeline triggers the **~10× baseline replay acceleration automatically**, with a clear UI indication.
-5. The player can make at least **one impactful upgrade choice** that changes how the second playthrough is planned, preferably introducing a useful *quality-of-play/automation* capability rather than a small statistical bonus.
+5. The player can make at least **one impactful upgrade choice** that changes how the second playthrough is planned; [proposed first options](upgrade-trees.md) are **Will / Pivot**, **Echoes / First Apprentice**, and **Anchors / Anchored Memory**. The alternative four-tree model also offers **Dominion / Timeless Treasury**. These choices and any free starting grant still need approval and balancing.
 6. The new state survives refresh, normal loop restart, nexus entry/exit and a new timeline, with an explicit migration path for older saves.
 7. Real World replaces the old player-facing Prestige/Challenges presentation when it launches. No parallel, confusing second prestige shop.
 
@@ -63,6 +64,9 @@ The [release plan](roadmap.md) separates design decisions and testing prerequisi
 - [Decisions and open questions](decisions.md) — confirmed vs provisional vs unresolved
 - [Narrative and first meeting](narrative.md) — ending continuity, mystery and dialogue proposal
 - [Outer loop and upgrade systems](systems.md) — 10× replay, meaningful permanent choices, automation and challenges
+- [**Three-tree working recommendation: Will / Echoes / Anchors**](upgrade-trees.md) — starter nodes, subpaths, tier progressions and cross-tree synergies
+- [**Four-tree alternative: Will / Echoes / Memory / Dominion**](dominion-alternative.md) — an independent economic/infrastructure tree and comparison
+- [Upgrade-tree mechanics contracts](upgrade-tree-contracts.md) — persistence, balance/exploit guardrails, deterministic execution and planned tests
 - [Alternate selves](selves.md) — character identity, roster model and future delegation
 - [Retiring legacy prestige/challenges](legacy-transition.md) — options, migration and compatibility
 - [Technical architecture and state boundaries](technical-architecture.md) — *not* town #9, save/predictor/rule considerations

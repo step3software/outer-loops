@@ -24,6 +24,14 @@ At the current `dmchurch` baseline:
 
 Under *all* strategies, the old **standalone Prestige Perks menu goes away**. Option C is the starting recommendation, **not an approved migration algorithm**.
 
+## Connection to the proposed new trees
+
+The [working three-tree design](upgrade-trees.md) has **Will** (intervention), **Echoes** (automation/selves) and **Anchors** (Memory/Treasury/Structures). The [four-tree alternative](dominion-alternative.md) instead promotes Memory and **Dominion** as separate main trees. This changes the *presentation and future purpose* of selected legacy benefits, **not** the requirement to preserve entitlement records.
+
+The old `PrestigeBartering` effect has an obvious conceptual destination in **Anchors/Treasury** or **Dominion**, while old `PrestigeSpatiomancy` and retained skill/discovery effects could inspire **Anchors/Memory** or **Memory**. `PrestigeChronomancy` could inspire active Will/temporal mechanics, but must not silently multiply the new free ~10× baseline. Other buffs may be transformed or scrapped; direct numerical carryover is **not** approved. A cosmetic move into a renamed tree does not count as a redesigned mechanic.
+
+To allow three→four taxonomy changes without losing veterans' entitlements, prefer stable **owned ability IDs** independent of the UI branch name. Read [upgrade contracts](upgrade-tree-contracts.md) for per-reset semantics, source currency and duplicate-award guards. None of this specifies the legacy point-to-new-ability conversion rate.
+
 ## Provisional effect-by-effect disposition
 
 | Existing upgrade | Possible nexus interpretation | Current recommendation / risk |

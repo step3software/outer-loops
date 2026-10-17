@@ -52,6 +52,12 @@ No additional NPC roster, nine-zone background set, full combat animation suite,
 
 A fully animated RPG exploration mode is **not required** to achieve the two-selves revelation. Time spent building a movement/collision engine before the prestige loop functions would be poorly sequenced.
 
+## Tree navigation inside the small nexus
+
+The [working three-tree recommendation](upgrade-trees.md) offers three clear, visually distinct paths: **Will** (deliberate intervention), **Echoes** (delegation), and **Anchors** (what survives time). **Treasury** is a prominent Anchors specialization, *not* a token-sized footnote. The [four-tree alternative](dominion-alternative.md) offers **Memory** and **Dominion** as peers. Do not commit the room layout, icon count or four independent structures until that decision is made.
+
+The first other self can introduce the paths in a **short conversation**, with three concise choice descriptions (or four if Dominion is adopted), without exposing a full web of future nodes on first arrival. Cross-tree synergy links might be illustrated by connected threads later. The UI should distinguish **automatic free ~10× replay speed** from any purchased tree effect and display what a first upgrade *does*, not just its name.
+
 ## Growth with progression
 
 As more distinct selves are discovered, the nexus can evolve: new workstations, branching rooms, more threads, an archive wall or small alcoves tied to mastered systems. **Expansion should follow actual capabilities**, not pad the hub with decoration. Multiple selves should remain individually recognizable, and important interactions shouldn't be buried in visual clutter.

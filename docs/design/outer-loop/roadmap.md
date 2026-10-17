@@ -8,7 +8,7 @@
 
 | Phase | Goal | Player-visible outcome | Readiness / acceptance |
 | --- | --- | --- | --- |
-| **RW00 — Contract and test preparation** | Resolve critical design choices, original ending characterization and veteran save safety | No player-visible behavior change | RF01 fixtures, RF02 safety plan, speed timekeeping baseline, decisions on first-self/legacy entitlements |
+| **RW00 — Contract and test preparation** | Resolve critical design choices, original ending characterization and veteran save safety | No player-visible behavior change | RF01 fixtures, RF02 safety plan, speed timekeeping baseline, first-self/legacy entitlements **and three-vs-four-tree decision** |
 | **RW01 — First nexus vertical slice (internal)** | Introduce post-Restore Time threshold, small scene and first self, persisted outer flags, explicit return/new-timeline flow | Two versions of the protagonist meet in Real World; **no forced reset** | First meeting once, save/reload, no Town#9, original ending and credits still accessible; keep hidden until replacement loop works |
 | **RW02 — First compelling outer replay (minimum releasable)** | Make single prestige home, retire standalone old menus, safe veteran migration, free ~10× replay and initial meaningful upgrades | A **new timeline feels unmistakably different** in speed and planning; no parallel prestige shop | One or more distinct upgrade decisions; idempotent completion; no double rewards; old save/challenge cases safe; speed/worker parity green |
 | **RW03 — Deepen upgrades and first useful self** | Add bounded automation, retained-knowledge abilities and functional first-self assignment | Player can delegate/automate a mastered task rather than only watch a faster clock | Explicit rule constraints, override/pause, deterministic reward; no hidden duplicate tasks or infinite grants |
@@ -32,7 +32,7 @@
 
 - Real World offers a deliberate "Start New Timeline" control with a summary of what resets, what remains, and a recoverable backup/undo route.
 - The first new timeline starts with **~10× automatic playback/execution speed**, shown clearly.
-- A small initial set of **powerful, differentiated** upgrade choices is available; include at least one meaningful quality-of-life/automation or retained-knowledge choice. Upgrades are not only stacked +5%/20% stat multipliers.
+- A small initial set of **powerful, differentiated** upgrade choices is available. Current [working three-tree concept](upgrade-trees.md): **Will / Pivot**, **Echoes / First Apprentice**, **Anchors / Anchored Memory**; [four-tree Dominion alternative](dominion-alternative.md) adds **Timeless Treasury** as a separate economic specialization. Exact starter grant and branch structure require approval. Upgrades are not only stacked +5%/20% stat multipliers.
 - The other self remains in the nexus and can later become a functional helper; at least one immediate planning interaction should connect the companion to the second run (final choice requires approval).
 - The old Prestige Perks and Challenges *menus* are no longer independent player-facing systems. If old challenge concepts are retained, they appear as future nexus-launched variants.
 - Relaunches and save reloads preserve the nexus and new timeline state; no doubled original 90-point legacy grant.
@@ -50,6 +50,8 @@
 - Hundreds of unique alternate selves per run.
 - True fully concurrent simulation of nine-zone games in multiple tabs/workers.
 - Dozens of old prestige buffs simply moved into a new-looking shop.
+- Four mandatory entire-tier ladders with no interesting branch choices, or an obligatory "gain more nexus currency" opener.
+- Unbounded temporal rewind, automatic unlimited gold→mana generation or many full browser-game engines for self-delegation.
 - Copying all three existing challenge modes verbatim for the sake of preserving them.
 - A complete RPG overworld traversal engine or large-scale pixel-art replacement before the nexus works.
 - Multiplayer, live services, monetization or backend storage (not currently requested).

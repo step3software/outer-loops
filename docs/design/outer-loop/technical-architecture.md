@@ -83,6 +83,14 @@ Existing `driver.js` has multiple mechanisms:
 
 **Recommendation:** track "free outer replay acceleration" as an **explicit, persisted outer permission/policy**, separate from `PrestigeChronomancy` and temporary offline boosts. Exactly how that policy affects driver math must be determined by fixture-backed tests; do not blindly set `gameSpeed=10` without checking clock, challenge and worker semantics. Do not increase XP per action or make 10× more spendable mana in the *same* logical inner loop.
 
+## Ability identity and branch presentation
+
+The [three-tree recommendation](upgrade-trees.md) is Will/Echoes/Anchors, with Memory/Treasury/Structures under Anchors. The [four-tree alternative](dominion-alternative.md) separates Memory and Dominion. **Persisting UI tree indices, not specific stable ability keys, would turn that choice into a risky save migration.** Proposed stable ID families: `will.*`, `echoes.*`, `memory.*`, `economy.*` and `structures.*`. These are examples, not a committed schema.
+
+Every effect needs an **explicit reset boundary**: Will charges usually belong to an inner loop, Echo goals may belong to a current loop or timeline but their *unlocks* persist, and Memory/Treasury/Structures can cross selected timeline boundaries in tightly specified ways. A bounded Treasury reserve is not ordinary `resources.gold` and must be debited exactly once when withdrawn.
+
+Early Will **Pivot** must modify the not-yet-executed **current** action schedule in a way the existing `Actions.next` editing cannot; new game logic cannot claim a feature that is already free. Echoes **First Apprentice** must have read-only eligibility and a deterministic goal/stop condition. Higher-tier rollback/fork synergies must never duplicate nexus advancements or achievement rewards; the predictor's existing snapshots are not automatically a safe transaction framework. See [upgrade-tree contracts](upgrade-tree-contracts.md).
+
 ## Predictor and automation contracts
 
 `predictor.js` and `predictor-worker.js` must read the same *immutable* outer upgrade selection and timeline rules as the live game. A prediction should not award currencies, spawn selves, consume a real upgrade purchase or archive a timeline. Snapshots/reversion must include relevant derived modifiers without writing to permanent state.

@@ -15,6 +15,12 @@
 | RW-D07 | Develop a cohesive **pixel-art graphic style**; the Real World is an appealing early showpiece | Art milestones can proceed separately from simulation/serialization code |
 | RW-D08 | Preserve the possibility that other selves came from alternate endings/choices | Leverage current Restore Time narrative rather than overwrite it with an unrelated explanation |
 
+## Working tree design direction (documented, not finalized)
+
+The **recommended** player-facing structure is **Will / Echoes / Anchors**. Will grants deliberate active control; Echoes grants conditional automation and delegation; Anchors retains bounded knowledge, **Treasury/economic value**, and infrastructure across chosen reset boundaries. There is **no** separate default Currency tree or second legacy prestige shop. Documented starting examples: **Pivot / First Apprentice / Anchored Memory**, in addition to the agreed free ~10× replay acceleration. Cross-tree synergies include **Adaptive Intervention**, **Persistent Workshop**, and **Fixed Point**. See [three-tree design](upgrade-trees.md).
+
+**Not ruled out:** a **four-tree architecture (Will / Echoes / Memory / Dominion)** that separates learned progress from economic ownership and infrastructure. Dominion is a serious independent tree, not a renamed minor currency multiplier. See [the complete alternative](dominion-alternative.md). The user requested **both** documented, and the choice of final tree count is still open. No upgraded node, starter grant, mastery gate, cap, synergy or refund policy is implemented or finalized.
+
 ## Recommended provisional choices (not yet approved)
 
 | ID | Recommendation | Rationale |
@@ -27,6 +33,9 @@
 | RW-P06 | Fold *some* legacy prestige effects into redesigned node/character/timeline upgrades; retire the old shop/point economics | Recaptures useful balance research without forcing old UX or runaway multiplicative stacking |
 | RW-P07 | Reimagine *selected* old challenge conditions as opt-in timeline variants with meaningful identity/rewards, not a mandatory campaign | Reuse themes while removing legacy challenge menu and monkey-patched rules |
 | RW-P08 | First version should show a small, atmospheric pixel-art hub with two recognizable but distinct sprites | Creates visual identity without art for 157 actions on day one |
+| RW-P09 | Use **Will / Echoes / Anchors** as the working three-tree model, keeping **Treasury** and **Structures** as significant Anchors paths | Three memorable ways to master time, without a bland Currency multipliers tree; [details](upgrade-trees.md) |
+| RW-P10 | Preserve **Will / Echoes / Memory / Dominion** as a complete four-tree alternative | Dominion could earn top-level status if intertimeline economy and infrastructure justify it; [comparison](dominion-alternative.md) |
+| RW-P11 | Give one first meaningful upgrade choice in the nexus, with no permanent class lock, and permit later cross-tree synergies | Different second-run playstyles; shared free ~10× speed remains universal; [contracts](upgrade-tree-contracts.md) |
 
 ## Unresolved questions — priority for further design
 
@@ -44,6 +53,10 @@
 | RW-Q10 | Which parts of the original campaign can automation bypass, and which retain player agency? | Gradually automate mastered repetition; don't automate first discovery or full game before mastery | Automation |
 | RW-Q11 | Does the name **Real World** literally mean outside a simulation, or outside time? | Keep ambiguous; no "your past game wasn't real" assertion at first meeting | Lore/art/marketing |
 | RW-Q12 | How much pixel art belongs in the initial slice? | Two character sprites, one small hub and portal/environment effects; expand original-world art separately | Art scope/performance |
+| RW-Q13 | Are there **three** primary trees (Will/Echoes/Anchors) or **four** (Will/Echoes/Memory/Dominion)? | Three currently recommended; four viable if economic progression supports its own deep set of capabilities, not just gold multipliers | Nexus upgrade architecture and onboarding |
+| RW-Q14 | Is the first upgrade **free**, one-of-three/four and eventually cross-purchasable; which abilities ship? | Pivot / First Apprentice / Anchored Memory; optional fourth starter Timeless Treasury; final charge/goal/retention semantics not set | First compelling second playthrough |
+| RW-Q15 | How are **Memory, Treasury and Structures** balanced across the reset scopes, priced and potentially split into Dominion without save loss? | Stable per-ability IDs, independent lifetime/caps, limited gold/mana transfer, anti-duplication; no numeric policy yet | Nexus economy, RF02 migration and future taxonomy |
+| RW-Q16 | How are rewinds, conditional Echo tasks and cross-tree synergies made safe/deterministic? | Read-only forecast, one committed fork, explicit budget/stop conditions, no double grants | Predictor, RF01/RF03 and later ability implementation |
 
 ## Change control and conflicts
 

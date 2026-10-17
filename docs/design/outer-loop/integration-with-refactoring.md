@@ -15,6 +15,12 @@ The Real World design is a product change, whereas RF01–RF06 are generally *be
 | [RF05 Action module organization](../../refactoring/RF05-action-module-organization.md) | Easier later development, but not a logical prerequisite for a separate nexus scene | Useful to reduce change conflicts; **not a hard nexus gate**. Do not append Real World as an ordinary town to avoid this dependency |
 | [RF06 View layer decomposition](../../refactoring/RF06-view-layer-decomposition.md) | Helps long-term UI work; Real World can be a separate scene rather than another gigantic responsibility inside `View` | Follow boundaries and avoid deep coupling; **not a hard nexus gate** if interfaces are tested and new UI stays clean |
 
+## Upgrade-tree implementation dependencies
+
+The current [three-tree recommendation](upgrade-trees.md), [Dominion four-tree alternative](dominion-alternative.md) and [mechanics contract](upgrade-tree-contracts.md) are **design only**. They sharpen the need for RF01/RF02 before any live-state checkpoint, new-timeline progress retention or Treasury balance. **Pivot** touches `Actions.current` and mid-run mutation; **First Apprentice** touches conditional planning, legal `canStart` and predictor behavior (RF03); **Anchored Memory** touches dynamic save fields and story/zone dependencies; **Timeless Treasury** touches `addResource`, `resources.gold`, `goldInvested` and merchant mana conversion. High-tier forks need an explicit anti-duplicate reward model.
+
+The three-vs-four *visual grouping* decision should not determine save field names; plan stable ability ownership IDs so a later Dominion promotion does not silently rewrite player progress. This does not amend or authorize RF01–RF06 implementation.
+
 ## Original gameplay and new feature ownership
 
 The planned RF codebase refactor should preserve the nine-zone source exactly as it exists. A separate Real World implementation PR can then **deliberately** alter the old prestige and challenge UX, with explicit migration and changed expectations in tests. RF04's "retain old modes exactly" can serve as a compatibility staging step, but it should not dictate final product design.

@@ -40,7 +40,23 @@ If the response to 5 or 6 is no, the first vertical slice is not ready merely be
 | N17 | Multiple completed records | Archive bounded, no loss of nexus/entitlements, no unlimited duplicate selves/rewards | Timeline archive/persistence |
 | N18 | Failed save/storage write during new-timeline transition | Original complete timeline and backup remain recoverable; no partially reset state | RF02 transaction boundary |
 
-Tests N01–N18 are **not yet implemented or run**. A passing `npm run test:browser` currently proves only a basic original game startup/Wander/save reload, **not** these tests.
+Tests N01–N25 are **not yet implemented or run**. A passing `npm run test:browser` currently proves only a basic original game startup/Wander/save reload, **not** these tests.
+
+## Upgrade-tree acceptance and comparison (future tests only)
+
+The three-tree recommendation and four-tree Dominion alternative introduce additional prospective cases. See the [detailed UT01–UT14 matrix](upgrade-tree-contracts.md) for fixtures and the relevant reset boundaries.
+
+| ID | Scenario | Required observation |
+| --- | --- | --- |
+| **N19** | First-upgrade choice after Restore Time | Distinct Will/Echoes/Anchors effects; first grant idempotent, not class-locked unless separately approved |
+| **N20** | Will Pivot vs existing loadout/queue editing | Changes **current** legal loop execution beyond old controls; no duplicate cost/reward or travel bypass |
+| **N21** | Echoes First Apprentice vs existing fixed action queue | Conditional known task stops at goal, impossible target or budget; does not generate resources free |
+| **N22** | Anchors Memory reset and world survey | One approved whitelisted milestone survives full timeline reset; other progress/stories/gates stay consistent |
+| **N23** | Treasury/Dominion capital persistence | Capped gold across explicitly stated resets, no gold/mana duplication or compounding exploit |
+| **N24** | Will+Echoes / Echoes+Anchors / Anchors+Will | Adaptive Intervention / Persistent Workshop / Fixed Point operate with no repeated grants or infinite delegate work |
+| **N25** | Three-tree UI vs four-tree Dominion alternative | Stable owned upgrade IDs, no lost purchases or new free credits; distinct Memory vs Dominion capabilities genuinely justify extra complexity |
+
+**These cases are designs, not passing tests.** The initial three-tree UI and its Dominion alternative have not been implemented or playtested. Design choice RW-Q13 must be settled before claiming the final tree layout.
 
 ## Pacing and "10× feels faster" research
 
@@ -67,7 +83,7 @@ Do not lock exact point costs, return rates, character limits, automation job ti
 2. Approve explicit timeline completion, portal entry and return/new-timeline semantics (RW-Q05–Q06).
 3. Choose legacy prestige effect retention and veteran-credit/backup policy (RW-Q01–Q02).
 4. Define exactly how default ~10× stacks with timekeeping and old modifiers (RW-Q04).
-5. Approve the minimum initial set of **impactful** upgrade mechanics and acquisition economy (RW-Q09–Q10).
+5. Choose the **three-tree Will/Echoes/Anchors recommendation or the four-tree Memory/Dominion alternative**, then approve the minimum impactful starters, cross-tree requirements, acquisition economy, mastery/caps and free starter policy (RW-Q09–Q10, RW-Q13–Q16).
 6. Determine old challenge reuse/retirement and safe challenge-active save transition (RW-Q03).
 7. Approve the initial pixel-art style/sprite scale and interaction scheme (RW-Q12).
 
