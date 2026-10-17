@@ -1,6 +1,6 @@
 # RF01 — Expand regression coverage
 
-- **Status:** Planned — approved scope; implementation not authorized
+- **Status:** **Implementation in review**, user-authorized. [PR #4](https://github.com/step3software/outer-loops/pull/4) is open and unmerged; see [RF01 evidence and coverage](rf01-evidence.md) for executed tests and remaining gaps.
 - **Priority:** First / foundational
 - **Hard dependencies:** Existing AI-development foundation and baseline tests; no earlier RF milestone
 - **Enables:** RF02–RF06, with mandatory targeted characterization tests for each
@@ -43,7 +43,7 @@ Changing action rewards/unlocks, save serialization format, resource APIs, chall
 
 ## Test plan and evidence
 
-**Existing commands to retain:** `npm run check`, `npm run test:model`, `npm run test:action`, `npm run check:mechanics`, `python scripts/check-xml.py`, `npm run test:browser`. New test commands and fixture paths are **to be chosen during implementation**, not asserted to exist.
+**Commands (RF01 implementation branch):** `npm run check`, `npm run test:model`, `npm run test:action`, **`npm run test:rf01:model`**, **`npm run test:rf01:challenges`**, `npm run check:mechanics`, `python3 scripts/check-xml.py`, `npm run test:browser`. Fixture builder: `scripts/rf01-fixtures.mjs`. The expanded real Chrome smoke contains legacy synthetic imports, original prestige and challenge state, and foreground/Worker prediction. For exactly what passes versus remains untested, see [executed evidence](rf01-evidence.md).
 
 **Required scenarios:** F01–F08, plus initial expectations for F09–F15 where they protect risky code. Include reputation 49/50/51, `Escape` before/after 60 effective seconds, blood/zombies/Dead Trial, limited item knowledge, capital/interest, a 100th Gods Trial reward, current/legacy save decode and three challenge modes. When a late-game fixture cannot be made deterministic, record the blocker rather than deleting the scenario.
 
@@ -51,4 +51,4 @@ Changing action rewards/unlocks, save serialization format, resource APIs, chall
 
 Testing can accidentally mutate browser storage, create brittle golden snapshots or mask non-determinism. Use isolated origins, explicit fixture cleanup, stable assertions and controlled time/randomness. Rollback is removal of added test infrastructure, with original game behavior untouched; do not delete or rewrite existing tests merely to satisfy a new harness.
 
-**Exit handoff:** RF02 may start only after save/import/migration fixtures (F08–F09 baseline) pass and failure cases can be reproduced. RF03/RF04 require relevant rule/challenge/predictor cases; RF05 needs exact action registration-order snapshots; RF06 needs real UI behavior smoke. Resolve any prerequisite gaps explicitly in the RF01 PR and [handoff](handoffs/RF01.md). Open a separate implementation PR to `dmchurch` when authorized; no automatic merge.
+**Exit handoff (RF01 in review):** The [RF01 evidence ledger](rf01-evidence.md) verifies synthetic current/legacy imports, actual invalid-JSON overwrite failure, original challenge slots/prestige reset, and one foreground/Worker predictor parity queue. Historical actual user-save fixtures, broad late-game simulation, full backtracking travel and all fractional/offline timing remain explicitly unverified. RF02 may start only after save/import/migration fixtures (F08–F09 baseline) pass and failure cases can be reproduced. RF03/RF04 require relevant rule/challenge/predictor cases; RF05 needs exact action registration-order snapshots; RF06 needs real UI behavior smoke. Resolve any prerequisite gaps explicitly in the RF01 PR and [handoff](handoffs/RF01.md). Open a separate implementation PR to `dmchurch` when authorized; no automatic merge.

@@ -2,6 +2,7 @@
 // Real-browser smoke test using Chrome DevTools Protocol (no npm dependencies).
 // Uses a fresh temporary profile; no production saves/accounts are accessed.
 import assert from 'node:assert/strict';
+import {makeRf01Fixtures} from './rf01-fixtures.mjs';
 import {spawn, spawnSync} from 'node:child_process';
 import {createServer} from 'node:http';
 import {existsSync, mkdtempSync, readFileSync, rmSync, statSync} from 'node:fs';
@@ -150,6 +151,177 @@ try {
   assert.equal(loaded.progress,200);
   assert.equal(loaded.queued,true);
   assert.equal(loaded.saved,true);
+
+  // RF01: disposable synthetic saves, NOT historical player exports.
+  // processSave is exercised on this random local port/browser profile only.
+  const originalSave=await client.evaluate('save()');
+  const fixtures=makeRf01Fixtures(JSON.parse(originalSave));
+  async function importSynthetic(fixture) {
+    const json=JSON.stringify(fixture.value);
+    return client.evaluate("(() => { const text="+JSON.stringify(json)
+      +"; try {processSave('ILSV01'+LZString.compressToBase64(text));"
+      +"return {loaded:true, progress:towns[0].expWander,"
+      +" names:actions.next.map(x=>x.name),"
+      +" loadout:loadouts[0].map(x=>x.name),"
+      +" unlocked:townsUnlocked.slice(),"
+      +" crafted:storyFlags.loopingPotionMade,"
+      +" invested:goldInvested, olderDungeon:dungeons[0][0].completed,"
+      +" saved:localStorage['idleLoops1']};"
+      +"} catch(e) {return {loaded:false,error:String(e),stack:e.stack};} })()");
+  }
+  const currentFixture=await importSynthetic(fixtures.current);
+  assert.equal(currentFixture.loaded,true,JSON.stringify(currentFixture));
+  assert.equal(currentFixture.progress,400);
+  assert.equal(currentFixture.names[0],'Wander');
+  assert.deepEqual(currentFixture.unlocked,[0,1]);
+  assert.equal(JSON.parse(currentFixture.saved).expWander,400);
+
+  const pre75=await importSynthetic(fixtures.pre75);
+  assert.equal(pre75.loaded,true,JSON.stringify(pre75));
+  assert.equal(pre75.progress,600);
+  assert.deepEqual(pre75.unlocked,[0,1,2,3]);
+  assert.deepEqual(pre75.names,['Train Dexterity','Buy Mana Z1']);
+  assert.deepEqual(pre75.loadout,['Train Dexterity']);
+  assert.equal(pre75.crafted,true);
+  assert.ok(pre75.olderDungeon>=0);
+
+  const aliases=await importSynthetic(fixtures.earlyAliases);
+  assert.equal(aliases.loaded,true,JSON.stringify(aliases));
+  assert.equal(aliases.progress,800);
+  assert.deepEqual(aliases.unlocked,[0,1,2]);
+  assert.deepEqual(aliases.names,['Buy Pickaxe','Buy Mana Z3']);
+  assert.deepEqual(aliases.loadout,['Buy Mana Z3']);
+  assert.equal(aliases.invested,4000);
+
+  // R01 is an explicitly known unsafe *baseline*: invalid decoded JSON is
+  // stored before parsing. Record corruption, never enforce it as desirable.
+  const invalid=await client.evaluate("(() => {"
+    +"const prior=localStorage['idleLoops1'];"
+    +"const payload='ILSV01'+LZString.compressToBase64('{broken-json');"
+    +"let threw=false;"
+    +"try{processSave(payload);}catch(e){threw=true;}"
+    +"const changed=localStorage['idleLoops1']!==prior;"
+    +"localStorage['idleLoops1']=prior;"
+    +"return {threw,changed,recovered:localStorage['idleLoops1']===prior};"
+    +"})()");
+  assert.equal(invalid.threw,true,'invalid import should report a parse failure in baseline');
+  assert.equal(invalid.recovered,true);
+  if(invalid.changed)console.warn('KNOWN R01: invalid import overwrote the active slot before parsing (RF02 fix required).');
+  // Restore the original beginning-game fixture and verify reload still works.
+  await client.evaluate("localStorage['idleLoops1']="+JSON.stringify(originalSave));
+  await client.send('Page.reload',{ignoreCache:true});
+  await waitForBoot();
+  assert.equal(await client.evaluate('towns[0].expWander'),200);
+  console.log('PASS RF01 Chrome save fixtures: current ILSV01, two synthetic legacy forms, aliases, challenge-compatible shape and recoverable test profile; known R01 recorded.');
+
+
+  // Actual, foreground and real Worker predictor should receive exactly the
+  // same synthetic start/queue. Test real .update(), not a duplicate formula.
+  const prediction=await client.evaluate("(async () => {"
+    +"try {"
+    +"if(!gameIsStopped) pauseGame();"
+    +"options.predictor=false;options.repeatLastAction=false;"
+    +"options.predictorSlowMode=false;options.predictorRepeatPrediction=false;"
+    +"const plan=[{name:'Wander',loops:1,disabled:false,loopsType:'actions'}];"
+    +"const initialProgress=towns[0].expWander,initialGold=resources.gold;"
+    +"const instance=Koviko.instance;"
+    +"const result=r=>({total:r.total,mana:r.state.resources.mana,"
+    +"speedXP:r.state.stats.Spd,valid:r.isValid});"
+    +"options.predictorBackgroundThread=false;"
+    +"const foreground=result(await instance.update(plan));"
+    +"options.predictorBackgroundThread=true;"
+    +"const background=result(await Promise.race([instance.update(plan),"
+    +"new Promise((_,reject)=>setTimeout(()=>reject(Error('worker predictor timed out')),12000))]));"
+    +"const unchanged=initialProgress===towns[0].expWander&&initialGold===resources.gold;"
+    +"instance.terminateWorker();options.predictorBackgroundThread=false;"
+    +"actions.clearActions();actions.addAction('Wander',1);restart();"
+    +"const beforeXP=stats.Spd.statLevelExp.totalExp;"
+    +"const spent=actions.tick(250);"
+    +"const actual={spent,speedXP:stats.Spd.statLevelExp.totalExp-beforeXP,"
+    +"progress:towns[0].expWander-initialProgress};"
+    +"const gods=instance.predictions['Gods Trial'].loop.effect.loop;"
+    +"const resource={godFloor:98,power:0};gods(resource);"
+    +"const power99=resource.power;gods(resource);"
+    +"return {ok:true,foreground,background,actual,unchanged,"
+    +"knownGodsTrial:{at99:power99,at100:resource.power}};"
+    +"}catch(e){return {ok:false,error:String(e),stack:String(e.stack)};}"
+    +"})()");
+  assert.equal(prediction.ok,true,JSON.stringify(prediction));
+  assert.equal(prediction.unchanged,true,'forecast must not mutate real world');
+  assert.equal(prediction.foreground.total,250);
+  assert.equal(prediction.background.total,250);
+  assert.equal(prediction.actual.spent,250);
+  assert.equal(prediction.actual.progress,200);
+  assert.equal(prediction.foreground.mana,prediction.background.mana);
+  assert.equal(prediction.foreground.speedXP,prediction.background.speedXP);
+  assert.ok(Math.abs(prediction.foreground.speedXP-prediction.actual.speedXP)<=1,
+    'foreground predictor should match actual stat XP within one point');
+  if (prediction.knownGodsTrial.at99===1)
+    console.warn('KNOWN R15: predictor grants Gods Trial power at floor 99; runtime grants at floor 100.');
+  console.log('PASS RF01 predictor: actual Wander vs foreground and Worker, field parity for mana/stat XP, read-only forecast; Gods Trial R15 characterized.');
+
+
+  // RF01: exercise the real challenge save-slot lifecycle and exit via reload.
+  // All confirmation dialogs are accepted on this disposable test origin.
+  for(const mode of [1,2,3]){
+    const prior=await client.evaluate('towns[0].expWander');
+    const entered=await client.evaluate("(() => {"
+      +"window.confirm=()=>true;beginChallenge("+mode+");"
+      +"const normal=JSON.parse(localStorage['idleLoops1']);"
+      +"const challenge=JSON.parse(localStorage['idleLoopsChallenge']);"
+      +"return {mode:challengeSave.challengeMode,inChallenge:challengeSave.inChallenge,"
+      +" persistedMode:challenge.challengeSave.challengeMode,"
+      +" normalProgress:normal.expWander,normalSlot:!!localStorage['idleLoops1'],"
+      +" challengeSlot:!!localStorage['idleLoopsChallenge'],"
+      +" speed:gameSpeed,timeLimit:timeNeeded};"
+      +"})()");
+    assert.equal(entered.mode,mode,JSON.stringify(entered));
+    assert.equal(entered.persistedMode,mode);
+    assert.equal(entered.inChallenge,true);
+    assert.equal(entered.normalProgress,prior,'normal slot must not be replaced');
+    assert.equal(entered.normalSlot,true);
+    assert.equal(entered.challengeSlot,true);
+    if(mode===1)assert.equal(entered.speed,2);
+    if(mode===3)assert.ok(entered.timeLimit>1000000);
+    // exitChallenge calls location.reload: execution context may disappear as
+    // a normal consequence of the real page navigation.
+    try {await client.evaluate('exitChallenge()');} catch {/* reload transition */}
+    await pause(500);
+    await waitForBoot();
+    const restored=await client.evaluate("(() => ({"
+      +"mode:challengeSave.challengeMode,progress:towns[0].expWander,"
+      +" normalMode:JSON.parse(localStorage['idleLoops1']).challengeSave.challengeMode,"
+      +" challengeStored:!!localStorage['idleLoopsChallenge']}))()");
+    assert.equal(restored.mode,0,JSON.stringify(restored));
+    assert.equal(restored.progress,prior);
+    assert.equal(restored.normalMode,0);
+    assert.equal(restored.challengeStored,true);
+  }
+  console.log('PASS RF01 Chrome challenge entry/exit: modes 1–3, isolated slots and normal-game restoration after reload.');
+
+  // RF01: original destructive prestige reset, only in the disposable profile.
+  const oldPrestige=await client.evaluate("(() => {"
+    +"window.confirm=()=>true;const originalProgress=towns[0].expWander;"
+    +"completedCurrentGame();"
+    +"const awarded=prestigeValues.prestigeCurrentPoints;"
+    +"prestigeUpgrade('PrestigeCombat');"
+    +"return {awarded,originalProgress,"
+    +" currentPoints:prestigeValues.prestigeCurrentPoints,"
+    +" completions:prestigeValues.prestigeTotalCompletions,"
+    +" ever:prestigeValues.completedAnyPrestige,"
+    +" combat:getBuffLevel('PrestigeCombat'),"
+    +" progress:towns[0].expWander,"
+    +" backup:!!localStorage['prestigeBackup']};"
+    +"})()");
+  assert.equal(oldPrestige.awarded,90);
+  assert.equal(oldPrestige.completions,1);
+  assert.equal(oldPrestige.ever,true);
+  assert.equal(oldPrestige.combat,1);
+  assert.equal(oldPrestige.currentPoints,60);
+  assert.equal(oldPrestige.progress,0);
+  assert.equal(oldPrestige.backup,true);
+  console.log('PASS RF01 Chrome inherited prestige reset: 90 points once, 30-point perk, 60 remaining, retained upgrade and backup.');
+
   console.log('PASS Chrome: game boot, XML localization, 157 actions, Wander execution and save/reload.');
 } finally {
   client?.close();
