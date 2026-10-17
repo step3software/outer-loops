@@ -6,6 +6,8 @@
 
 This is a **source-grounded technical and gameplay audit**, not a claim of full playthrough or mathematically proven game balance. Source was inspected through the repository and its current executable modules. The entire registry was instantiated in a worker-like Node VM so that all 157 actual action objects, including dynamically constructed factory actions, could be catalogued. A disposable Chrome integration smoke also verifies real page initialization, one action and a save/reload. Remaining observations are distinguished as code-confirmed, plausible risk or judgment requiring gameplay observation. Third-party minified libraries, every line of narrative XML and visual rendering were not exhaustively manually inspected.
 
+The source-grounded review informed the [approved six-milestone refactoring plan](../refactoring/README.md); that plan is documentation-only until implementation is separately authorized.
+
 ## Review outputs
 
 - [Technical assessment](technical-review.md) — architecture, lifecycle, subsystems, architecture debt and system-specific constraints

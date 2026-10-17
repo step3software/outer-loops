@@ -2,6 +2,8 @@
 
 The root [AGENTS.md](../../AGENTS.md) is the mandatory entry point. The branch target is `dmchurch`, not `main`. The current repo is a classic-script game: do not assume that a code agent can safely reorganize modules or generate a backend.
 
+For the approved **refactoring program RF01–RF06**, read [the milestone register](../refactoring/README.md), its [validation matrix](../refactoring/validation-matrix.md) and the matching [future implementation handoff](../refactoring/handoffs/README.md). These planning documents **do not authorize** implementation or merging; work begins only on a separate explicit request.
+
 ## 1. Scope and investigate
 
 Read [audit findings](../audit/findings.md) and the [progression graph](../audit/progression.md) for known regressions. State the requested player-observable behavior and acceptance tests. Read the smallest set of relevant source files and system docs first. Map the chain from `Action` definitions through engine/state, UI, XML, persistence and worker simulation. When asked to change a behavior, distinguish existing code, proposed design and unknown assumptions. Identify compatibility and licensing implications when relevant.

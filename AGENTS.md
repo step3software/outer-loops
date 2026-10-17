@@ -25,12 +25,16 @@ Outer Loops is an independently maintained fork of Idle Loops: `step3software/ou
 - English localization lives in `lang/en-EN/game.xml`. `lang/fr-FR/game.xml` exists but French is not enabled in `Localization.supportedLang`. Do not silently make translated content or functionality up.
 - Never use real player saves as test fixtures, commit exported saves, expose cloud auth tokens, or call a live Google account in tests. Use new browser profiles or explicitly backed-up test saves.
 
+## Refactoring scope guard
+
+The approved [RF01–RF06 planning register](docs/refactoring/README.md) is not permission to implement or merge any refactor. Use the matching milestone, readiness gates, cross-mode test matrix and future implementation handoff only when the user explicitly authorizes that milestone.
+
 ## Work sequence
 
 1. Identify the requirement, affected subsystems, invariant and likely failure path.
 2. Make the smallest change with explicit tests. Keep gameplay changes separate from broad refactors and documentation-only PRs.
 3. Update the relevant documentation and `docs/reference/action-catalog.md` when action definitions change. Record major decisions as ADRs in `docs/decisions/`.
-4. Run `npm run check`, `npm run test:model`, `npm run test:action` and `npm run check:mechanics` (syntax, local file references and documentation integrity). When Python is available, also run `python scripts/check-xml.py`. These are static checks, **not** proof that gameplay works.
+4. Run `npm run check`, `npm run test:model`, `npm run test:action` and `npm run check:mechanics` (static integrity plus limited runtime-model smoke checks). When Python is available, also run `python scripts/check-xml.py` and run `npm run test:browser` when Chromium is available. These are **not** a complete gameplay, save-migration or predictor-parity suite.
 5. Exercise relevant scenarios with `docs/development/validation.md`, including at least one save/reload and loop restart for state-affecting changes.
 6. Open a PR against `dmchurch`. Include scope, changed mechanics, compatibility, test evidence, and what was **not** tested. Do not merge without explicit authorization.
 
