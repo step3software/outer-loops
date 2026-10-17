@@ -71,6 +71,7 @@ export function loadGameModel({ withViewStubs = false, withChallenges = false } 
         // These two callbacks normally live in views/main.view.js. Preserve
         // their state effects without loading any DOM/view implementation.
         vm.runInContext(`function setStoryFlag(name) {storyFlags[name]=true;}
+            function increaseStoryVarTo(name,value) {storyVars[name]=Math.max(storyVars[name],value);}
             function unlockGlobalStory(num) {storyMax=Math.max(storyMax,num);}`, sandbox);
     }
     vm.runInContext('loadDefaults()', sandbox, {timeout: 20_000});

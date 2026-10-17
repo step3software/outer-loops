@@ -180,4 +180,79 @@ const economy=scenario(`(() => {
     return {invested,gold:resources.gold,flag:storyFlags.interestCollected};
 })()`);
 assert.deepEqual(economy,{invested:2000,gold:2,flag:true});
+
+const dungeonQueue=scenario(`(() => {
+    Math.random=()=>0;
+    options.repeatLastAction=false;
+    dungeons[0]=Array.from({length:6},()=>({ssChance:1,completed:0,lastStat:"NA"}));
+    skills.Combat.levelExp.setLevel(100000);
+    skills.Magic.levelExp.setLevel(1000);
+    actions.addAction("Small Dungeon",1);
+    actions.restart();
+    resources.reputation=2;
+    let attempts=0,spent=0;
+    while(!dungeons[0][0].completed && attempts++<300 && actions.currentPos===0){
+        const used=actions.tick(2000);spent+=used;if(!used)break;
+    }
+    return {spent,attempts,floor:dungeons[0][0].completed,
+        dungeonTotal:towns[0].totalSDungeon,
+        soulstones:statList.reduce((sum,name)=>sum+stats[name].soulstone,0)};
+})()`);
+assert.ok(dungeonQueue.spent>0,'real DungeonAction tick consumes mana '+JSON.stringify(dungeonQueue));
+assert.equal(dungeonQueue.floor,1,'queue must complete a dungeon floor '+JSON.stringify(dungeonQueue));
+assert.ok(dungeonQueue.soulstones>0,'seeded dungeon must award a soulstone');
+
+const undead=scenario(`(() => {
+    skills.Dark.levelExp.setLevel(1000);resources.blood=2;
+    Action.RaiseZombie.cost();Action.RaiseZombie.finish();
+    const before={blood:resources.blood,zombie:resources.zombie,
+        max:storyVars.maxZombiesRaised};
+    trials[4]=Array.from({length:25},()=>({completed:0}));
+    trials[4].highestFloor=0;
+    towns[5].DTrialLoopCounter=Action.DeadTrial.segments;
+    Action.DeadTrial.loopsFinished(Action.DeadTrial.segments);
+    return {before,after:{zombie:resources.zombie,
+        completed:trials[4][0].completed,highest:trials[4].highestFloor}};
+})()`);
+assert.deepEqual(undead.before,{blood:1,zombie:1,max:1});
+assert.deepEqual(undead.after,{zombie:2,completed:1,highest:0});
+
+const potion=scenario(`(() => {
+    resources.herbs=400;buffs.Imbuement2.amt=5;
+    Action.LoopingPotion.cost();Action.LoopingPotion.finish();
+    Action.LoopingPotion.story(true);
+    const brewed={herbs:resources.herbs,potion:resources.loopingPotion,
+        flag:storyFlags.loopingPotionMade};
+    Action.Totem.cost();Action.Totem.finish();
+    restartStats();
+    return {brewed,consumed:resources.loopingPotion,
+        wunderkind:getSkillLevel("Wunderkind"),
+        exp:skills.Wunderkind.exp,initialSpd:stats.Spd.statLevelExp.level};
+})()`);
+assert.deepEqual(potion.brewed,{herbs:0,potion:true,flag:true});
+assert.equal(potion.consumed,false);
+assert.equal(potion.exp,100);
+assert.equal(potion.wunderkind,1);
+assert.equal(potion.initialSpd,10);
+
+const modes=scenario(`(() => {
+    actions.addAction("Smash Pots",2,-1,false,"knownGood");
+    actions.addAction("Pick Locks",3,-1,false,"unchecked");
+    actions.restart();
+    const entries=actions.current.map(a=>[a.name,a.loops,a.loopsType]);
+    options.fractionalMana=true;
+    const fractions=[Mana.floor(.5),Mana.ceil(.5)];
+    return {entries,fractions};
+})()`);
+assert.deepEqual(modes.entries,[['Smash Pots',2,'knownGood'],['Pick Locks',3,'unchecked']]);
+assert.deepEqual(modes.fractions,[0.5,0.5]);
+
+const domless=loadGameModel().evaluate(`(() => {
+    try {getBuffCap("Imbuement");return "DOM-INDEPENDENT";}
+    catch(e){return String(e);}
+})()`);
+if(String(domless).includes('document'))
+    console.warn('KNOWN R04: DOM-less getBuffCap cannot evaluate without document; RF03 owns the pure-rule correction.');
+console.log('PASS RF01 extra: queued dungeon floor, undead trial, potion/Totem, typed limited loops and fractional mana controls.');
+
 console.log('PASS RF01 model: ordered registry, normal/progress/cost skip, limited known-good/unchecked, multipart, seeded dungeon, terminal Gods Trial, travel/Escape, restart, queue and interest.');
