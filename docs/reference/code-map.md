@@ -68,6 +68,7 @@ Navigation map for the repository's existing classic-script JavaScript. **Execut
 | `scripts/check-xml.py` | XML parsing smoke check |
 | `scripts/load-game-model.mjs`, `scripts/test-game-model.mjs`, `scripts/test-action-execution.mjs` | Worker-like game model and basic queue regression assertions |
 | `scripts/generate-action-mechanics.mjs` | Runtime-generated 157-action mechanics reference and drift check |
+| `scripts/test-browser-smoke.mjs` | Dependency-free local Chrome/CDP smoke for boot, queue, localStorage save and reload |
 | `.github/workflows/validate.yml` | PR/push static validation |
 | `package.json` | Type definitions and convenience check script; no application bundling |
 

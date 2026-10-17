@@ -30,3 +30,5 @@ jobs:
         run: npm run check:mechanics
       - name: Check XML well-formedness
         run: python3 scripts/check-xml.py
+      - name: Test boot, queued action, and reload in Chrome
+        run: npm run test:browser

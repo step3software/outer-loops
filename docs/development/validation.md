@@ -10,6 +10,7 @@ npm run test:model
 npm run test:action
 npm run check:mechanics
 python scripts/check-xml.py
+npm run test:browser
 ```
 
 `npm run check` verifies syntax for first-party `.js` / `.mjs` files (including validator scripts), relative Markdown file links, known entry-point assets and consistency of the documented `Action.*` inventory. The worker-like model test initializes real game code and checks action registry/formulas. The queued-action test executes an opening Wander in the real queue engine with a no-op UI facade. Generated mechanics must match all live action definitions. These do not replace browser testing. The Python script checks that the checked-in `.xml` and `.rng` files parse as XML. The PR workflow runs these checks automatically.
