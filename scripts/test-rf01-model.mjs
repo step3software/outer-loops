@@ -12,6 +12,8 @@ function scenario(source, {challenges=false}={}) {
 const order=scenario(`(() => Object.entries(Action).filter(([,a])=>a instanceof Action)
     .map(([id,a])=>[id,a.name,a.varName,a.townNum,a.type,a.segments??0]))()`);
 const fingerprint=createHash('sha256').update(JSON.stringify(order)).digest('hex');
+assert.equal(fingerprint,'e2033a91c69c508845eea537903a2355dc4a902db5b66f6b99be67ef99b3a7c9',
+    'RF01 original ordered action IDs/metadata may not change without reviewed migration');
 assert.equal(order.length,157);
 assert.equal(new Set(order.map(a=>a[0])).size,157);
 assert.equal(new Set(order.map(a=>a[2]+'@'+a[3])).size,157);

@@ -57,6 +57,7 @@ export function loadGameModel({ withViewStubs = false, withChallenges = false } 
         sandbox.alert = () => {};
         sandbox.confirm = () => true;
 
+        sandbox.HTMLInputElement = class HTMLInputElement {};
         sandbox.document = { title: 'Idle Loops', getElementById: () => null };
     }
     sandbox.self = sandbox;
