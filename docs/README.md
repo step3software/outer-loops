@@ -31,6 +31,23 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [Evidence-based findings](audit/findings.md)
 - [Coverage and unverified behavior](audit/coverage.md)
 
+## Future Outer Loop / Real World game design (not implemented)
+
+- [Real World / Timeloop Nexus design index and product north star](design/outer-loop/README.md)
+- [Agreed decisions, provisional choices and open questions](design/outer-loop/decisions.md)
+- [First encounter and narrative bridge](design/outer-loop/narrative.md)
+- [**Looping Potion, Totem and Valley of Olympus endgame alternatives**](design/outer-loop/potion-and-endgame-options.md) — current code, potential shorter ending, route freedom, migration and tests
+- [New timelines, ~10× replay, upgrades, automation and challenge variants](design/outer-loop/systems.md)
+- [**Will / Echoes / Anchors** — proposed three-tree upgrades](design/outer-loop/upgrade-trees.md)
+- [**Dominion** — fully documented four-tree alternative](design/outer-loop/dominion-alternative.md)
+- [Upgrade mechanics contracts and prospective tests](design/outer-loop/upgrade-tree-contracts.md)
+- [Alternate-self characters and later delegation](design/outer-loop/selves.md)
+- [Retirement of inherited prestige/challenges and veteran save migration](design/outer-loop/legacy-transition.md)
+- [Nexus technical boundaries and persistence design](design/outer-loop/technical-architecture.md)
+- [Pixel-art hub brief](design/outer-loop/visual-direction.md)
+- [Development roadmap](design/outer-loop/roadmap.md) and [future validation criteria](design/outer-loop/validation.md)
+- [Dependencies and RF04 scope conflict](design/outer-loop/integration-with-refactoring.md)
+
 ## Approved refactoring planning (implementation not started)
 
 - [RF01–RF06 register, sequencing, dependencies and shared constraints](refactoring/README.md)
