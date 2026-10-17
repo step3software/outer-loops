@@ -1,6 +1,6 @@
 # Cross-milestone regression and acceptance matrix
 
-This is a **future implementation test plan**, not a record that these cases already pass. For baseline executed tests and limitations see [audit coverage](../audit/coverage.md).
+This matrix defines **milestone-level required scenarios**, not an assertion that all are currently covered. RF01 has now implemented a representative subset in [PR #4](https://github.com/step3software/outer-loops/pull/4); the [RF01 evidence ledger](rf01-evidence.md) records which parts of F01–F15 actually passed, failed (e.g. original R01), or remain untested. RF02–RF06 cases remain future work. Also see [audit coverage](../audit/coverage.md).
 
 ## Existing baseline that every milestone inherits
 
@@ -10,6 +10,8 @@ From the current branch, when applicable:
 npm run check
 npm run test:model
 npm run test:action
+npm run test:rf01:model
+npm run test:rf01:challenges
 npm run check:mechanics
 python scripts/check-xml.py
 npm run test:browser

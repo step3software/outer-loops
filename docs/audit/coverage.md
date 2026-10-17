@@ -1,8 +1,12 @@
 # Audit coverage and test evidence
 
+## RF01 regression implementation — subsequent evidence
+
+This audit was written before the [RF01 implementation PR #4](https://github.com/step3software/outer-loops/pull/4). On that **unmerged** test branch, actual queued dungeon/multipart/trial actions, synthetic current/legacy imports, challenge modes 1–3, original prestige purchase/reset and one real foreground/Worker predictor Wander comparison are now exercised. See the [RF01 evidence ledger](../refactoring/rf01-evidence.md) for authoritative scenario results, CI commands and limitations. Existing as-coded audit findings R01/R04/R08/R15 are reproduced/characterized, **not repaired**. Baseline audit table and unverified list below are **historical to the initial audit**, not a statement that RF01 did not run.
+
 ## What was and wasn't verified
 
-This review covers (1) a cross-file inventory and key control-flow inspection, (2) direct inspection of core formulas, boundaries and error paths, and (3) source-derived runtime metadata from **all 157 initialized actions**. It does **not** constitute a complete manual end-to-end playthrough, comprehensive browser gameplay suite, or exhaustive old-save migration check.
+This original audit covers (1) a cross-file inventory and key control-flow inspection, (2) direct inspection of core formulas, boundaries and error paths, and (3) source-derived runtime metadata from **all 157 initialized actions**. It does **not** constitute a complete manual end-to-end playthrough, comprehensive browser gameplay suite, or exhaustive old-save migration check.
 
 | Domain | Source examined | Automated checks | Still unverified |
 | --- | --- | --- | --- |

@@ -1,6 +1,6 @@
 # Outer Loops refactoring program — RF01–RF06
 
-**Approval:** The six *milestone scopes and sequencing* are approved for documentation. **Implementation has not been authorized.** None of RF01–RF06 is implemented, complete, or approved for merge by virtue of this register. Do not open implementation branches, change game code, or execute migrations based solely on these plans.
+**Approval/status:** All six milestone scopes and sequencing were approved for planning. **RF01 regression-coverage implementation is separately authorized and now in review in [PR #4](https://github.com/step3software/outer-loops/pull/4); it is NOT merged.** RF02–RF06 remain **planned, unimplemented and not separately authorized**. These documents do not authorize starting other implementation branches, modifying unrelated gameplay or merging.
 
 **Repository:** `step3software/outer-loops` · production/default branch `dmchurch`. These plans depend on the AI-development foundation in [the technical/gameplay audit](../audit/README.md) and [root agent instructions](../../AGENTS.md). Existing tests and files cited here refer to that baseline; agents must verify the current default branch and source before starting any milestone.
 
@@ -16,6 +16,10 @@
 | [RF06](RF06-view-layer-decomposition.md) | View layer decomposition | RF03 clean rule boundary, RF05 stable script layout | Existing UI behavior, callbacks, queued updates, theme and accessibility characteristics retained | [RF06 handoff](handoffs/RF06.md) |
 
 The **recommended delivery order is RF01 → RF02 → RF03 → RF04 → RF05 → RF06**. Dependencies marked "hard" are evidence or compatibility gates. RF05's architectural move could technically follow RF01 before RF04, but doing so adds conflicts with active gameplay-rule refactors and is not recommended; explain and obtain a decision before reordering. See [decision log](decision-log.md).
+
+## RF01 implementation evidence
+
+[RF01 coverage and verification ledger](rf01-evidence.md) maps A1–A8 and F01–F15 to the tests added in [PR #4](https://github.com/step3software/outer-loops/pull/4), documents synthetic legacy saves and reproducible browser/worker execution, and records original R01/R04/R08/R15 hazards. RF01 is **in review**, not on the default branch until its PR is merged. The other five refactors are not approved to begin.
 
 ## Global invariants
 
@@ -50,7 +54,7 @@ The milestone plans are **not** stand-alone authorization to fix findings unrela
 
 ## Documents and status
 
-- [RF01: Regression coverage](RF01-regression-coverage.md)
+- [RF01: Regression coverage](RF01-regression-coverage.md) · [implementation evidence and coverage](rf01-evidence.md)
 - [RF02: Persistence safety](RF02-persistence-safety.md)
 - [RF03: Gameplay rules / resources](RF03-gameplay-rules-and-resources.md)
 - [RF04: Challenge rule isolation](RF04-challenge-rule-isolation.md)
@@ -60,4 +64,4 @@ The milestone plans are **not** stand-alone authorization to fix findings unrela
 - [Decision log and unresolved choices](decision-log.md)
 - [Reusable implementation handoffs](handoffs/README.md)
 
-**Status register as documented:** RF01 Planned · RF02 Planned · RF03 Planned · RF04 Planned · RF05 Planned · RF06 Planned. Change status only following separately authorized implementation and reviewed evidence.
+**Status register as documented:** **RF01 Implemented — PR #4 in review, unmerged** · RF02 Planned · RF03 Planned · RF04 Planned · RF05 Planned · RF06 Planned. Merge status and later authorization remain separate decisions.

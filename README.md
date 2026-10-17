@@ -22,7 +22,7 @@ The game is a static browser application; no backend or JavaScript build step is
 npm run check
 ```
 
-Run `npm run test:model`, `npm run test:action` and `npm run check:mechanics` for game-model regression and generated-doc parity. Run `npm run test:browser` with Chrome/Chromium installed for isolated game startup/action/save-reload smoke. For XML well-formedness run `python scripts/check-xml.py`. These are not a complete gameplay test suite.
+Run `npm run test:model`, `npm run test:action`, `npm run test:rf01:model`, `npm run test:rf01:challenges`, and `npm run check:mechanics` for regression characterization and generated-doc parity. Run `npm run test:browser` with Chrome/Chromium installed for isolated game startup/action/save-reload smoke. For XML well-formedness run `python scripts/check-xml.py`. These are not a complete gameplay test suite.
 
 ## Development documentation
 
@@ -34,7 +34,8 @@ Run `npm run test:model`, `npm run test:action` and `npm run check:mechanics` fo
 - [Development setup](docs/development/setup.md)
 - [Validation and smoke-testing](docs/development/validation.md)
 - [AI-assisted change workflow](docs/development/ai-workflow.md)
-- [Approved RF01–RF06 refactoring milestone plans and future implementation handoffs](docs/refactoring/README.md)
+- [RF01–RF06 refactoring program and milestone status](docs/refactoring/README.md)
+- [RF01 regression tests — coverage and observed original behavior](docs/refactoring/rf01-evidence.md)
 - [Comprehensive technical/gameplay audit](docs/audit/README.md)
 - [All 157 executable actions: formulas and gates](docs/reference/action-mechanics.generated.md)
 - [Per-zone gameplay guides](docs/gameplay/zones/README.md)
