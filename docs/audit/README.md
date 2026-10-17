@@ -8,6 +8,8 @@ This is a **source-grounded technical and gameplay audit**, not a claim of full 
 
 The source-grounded review informed the [approved six-milestone refactoring plan](../refactoring/README.md); that plan is documentation-only until implementation is separately authorized.
 
+The later [Real World design proposal](../design/outer-loop/README.md) builds on the verified Restore Time ending, but is **not part of this audited executable baseline**. The inherited prestige and challenge descriptions below remain accurate as-coded until a feature implementation is reviewed and merged.
+
 ## Review outputs
 
 - [Technical assessment](technical-review.md) — architecture, lifecycle, subsystems, architecture debt and system-specific constraints

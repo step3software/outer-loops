@@ -17,6 +17,10 @@
 
 The **recommended delivery order is RF01 → RF02 → RF03 → RF04 → RF05 → RF06**. Dependencies marked "hard" are evidence or compatibility gates. RF05's architectural move could technically follow RF01 before RF04, but doing so adds conflicts with active gameplay-rule refactors and is not recommended; explain and obtain a decision before reordering. See [decision log](decision-log.md).
 
+## Product-direction reconciliation — new Real World system
+
+The later [Real World outer-loop concept](../design/outer-loop/README.md) supersedes **the eventual product presentation** of the inherited standalone Prestige Perks and Challenges menus, but it does **not** change this refactoring program's approval status or retroactively rewrite RF acceptance tests. [Integration guidance](../design/outer-loop/integration-with-refactoring.md) identifies the **RF04 scope tension**: a refactor that preserves old challenge behavior may still be useful for compatibility, but final Real World may adapt or retire those modes. Obtain explicit revised implementation authorization before changing RF04's scope. RF01/RF02 remain critical to preserving veterans' saved data.
+
 ## Global invariants
 
 Every milestone implementation must:

@@ -25,6 +25,10 @@ Outer Loops is an independently maintained fork of Idle Loops: `step3software/ou
 - English localization lives in `lang/en-EN/game.xml`. `lang/fr-FR/game.xml` exists but French is not enabled in `Localization.supportedLang`. Do not silently make translated content or functionality up.
 - Never use real player saves as test fixtures, commit exported saves, expose cloud auth tokens, or call a live Google account in tests. Use new browser profiles or explicitly backed-up test saves.
 
+## Future Outer Loop design scope
+
+The [Real World / timeloop nexus design](docs/design/outer-loop/README.md) is approved **product direction**, not existing game behavior or an implementation authorization. Subsequent new timelines are intended to be ~10× faster by default; a single new nexus is to replace the old standalone prestige/challenge UX. Do **not** remove `prestige.js`, change `RestoreTime` or old saves, add a tenth ordinary `Town`, or choose currency/migration terms until a separate scoped implementation request and approved design decisions. Read [outer-loop design decisions](docs/design/outer-loop/decisions.md) and [legacy migration risks](docs/design/outer-loop/legacy-transition.md) before work on the ending or metagame.
+
 ## Refactoring scope guard
 
 The approved [RF01–RF06 planning register](docs/refactoring/README.md) is not permission to implement or merge any refactor. Use the matching milestone, readiness gates, cross-mode test matrix and future implementation handoff only when the user explicitly authorizes that milestone.
