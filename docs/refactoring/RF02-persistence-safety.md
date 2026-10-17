@@ -12,7 +12,7 @@ Make importing, migrating and writing game progress **validation-first, recovera
 
 ## Source ownership and planned design
 
-Inspect ```saving.js``` functions `processSave`, `save`, `load`, `doLoad`, `doSave`, `storeSaveJson`, `exportSave`/`exportSaveFile`, `importSave`/`importSaveFile`, `clearSave`, challenge transitions and option storage. Inspect ```prestige.js``` (`prestigeBackup`) and ```google.js``` for assumptions about the serialized payload. The structure below is a **separation of responsibilities**, not an already selected file layout:
+Inspect `saving.js` functions `processSave`, `save`, `load`, `doLoad`, `doSave`, `storeSaveJson`, `exportSave`/`exportSaveFile`, `importSave`/`importSaveFile`, `clearSave`, challenge transitions and option storage. Inspect `prestige.js` (`prestigeBackup`) and `google.js` for assumptions about the serialized payload. The structure below is a **separation of responsibilities**, not an already selected file layout:
 
 - **Decode/validate:** classify `ILSV01` versus accepted legacy encoding, enforce finite size/valid JSON/expected top-level types and field ranges, and produce actionable non-destructive errors. Never write storage as part of decoding.
 - **Pure migration:** transform a parsed value in memory to a known compatible in-memory save representation. Keep the old aliases (`Sell Gold`, `Buy Mana Challenge`, `Train Dex`, `maxTown`, `storyReqs`, `version75`, legacy options/challenges). Avoid mutating active game objects, queue or storage during this stage.

@@ -12,7 +12,7 @@ Make core gameplay eligibility and calculations evaluable from **explicit game s
 
 ### Observed coupling
 
-- `stats.js` `getBuffCap(buff)` currently reads `document.getElementById` and requires an `HTMLInputElement`, while ```Action.DarkRitual.canStart``` and related imbuement paths use it. `predictor-worker.js` has no DOM; [R04](../audit/findings.md) identifies possible parity failures.
+- `stats.js` `getBuffCap(buff)` currently reads `document.getElementById` and requires an `HTMLInputElement`, while `Action.DarkRitual.canStart` and related imbuement paths use it. `predictor-worker.js` has no DOM; [R04](../audit/findings.md) identifies possible parity failures.
 - `Action.Escape.canStart` in `actionList.js` sets `escapeStarted = true` while answering an eligibility query if `effectiveTime < 60`. Calling an eligibility predicate can therefore commit state even when the action never executes ([R08](../audit/findings.md)).
 - `driver.js` `addResource` increments finite numbers but assigns all other values directly, including intended booleans **and invalid NaN/Infinity** ([R02](../audit/findings.md)). `resourcesTemplate` in `saving.js` contains numeric and boolean keys.
 

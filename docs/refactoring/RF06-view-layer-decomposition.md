@@ -47,7 +47,7 @@ Player-facing visual redesign; replacement with Vue, React or Svelte; rewriting 
 
 ## Acceptance criteria
 
-- **A1:** All former public `View` methods and `view.requestUpdate` request types remain callable with equivalent arguments and timing. In particular ```initalize``` (legacy spelling), `updateNextActions`, `updateCurrentActionLoops`, `updateLockedHidden` and `updateMultiPart` remain compatible.
+- **A1:** All former public `View` methods and `view.requestUpdate` request types remain callable with equivalent arguments and timing. In particular `initalize` (legacy spelling), `updateNextActions`, `updateCurrentActionLoops`, `updateLockedHidden` and `updateMultiPart` remain compatible.
 - **A2:** For matched fixture states the page shows the same action and zone ordering, progress/stats/resources, tooltip/story copy, button state, navigation and overlay controls as before, in at least two viewport sizes and contrasting themes.
 - **A3:** Queue changes (add, repeat, disable, reorder, drag/drop), pause/resume, restart and save/reload update the DOM correctly; dynamic content is not duplicated or left stale.
 - **A4:** Keyboard focus, shortcuts, localized labels, challenge menus, prestige controls and predictor overlays remain functional. No regressions in core browser accessibility characteristics.

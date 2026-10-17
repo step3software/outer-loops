@@ -20,7 +20,7 @@ Replace challenge-specific **global function/Action method replacement** with ex
 | **2** | Replaces global `getSelfCombat` and `getTeamCombat` functions; combat depends on max(zombie/team) and combines zombie + team strength. | `challenges.js`, `stats.js` |
 | **3** | Replaces global `restart`; run duration is based on `4320000 - totals.effectiveTime * 50` and reset logic differs from normal mode. | `challenges.js`, `driver.js` |
 
-`saving.js` `load`/`doLoad` apply `loadChallenge` after restoring state; `beginChallenge`, `resumeChallenge` and `exitChallenge` coordinate separate `idleLoopsChallenge` and `idleLoops1` slots, with a reload on exit. `predictor-worker.js` imports ```challenges.js```? Check the current import list: it **does not**, so challenge compatibility must be examined deliberately rather than assumed.
+`saving.js` `load`/`doLoad` apply `loadChallenge` after restoring state; `beginChallenge`, `resumeChallenge` and `exitChallenge` coordinate separate `idleLoopsChallenge` and `idleLoops1` slots, with a reload on exit. The current `predictor-worker.js` import list does **not** include `challenges.js`. Challenge-state propagation and worker behavior must therefore be examined deliberately rather than assumed.
 
 ## Scope
 

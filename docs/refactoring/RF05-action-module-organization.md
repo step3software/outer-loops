@@ -41,7 +41,7 @@ This is a **suggested physical layout**, not a requirement to adopt new ES modul
 
 ## In scope
 
-1. Inventory and preserve **exact** ordered `Object.keys(Action)` and `totalActionList` values, every ```name```, ```varName```, `townNum`, `type`, constructor/factory, stats/skills, callbacks and original registration position.
+1. Inventory and preserve **exact** ordered `Object.keys(Action)` and `totalActionList` values, every `name`, `varName`, `townNum`, `type`, constructor/factory, stats/skills, callbacks and original registration position.
 2. Extract shared constructors, factories and helpers into well-defined classic-script files while retaining accessible globals or compatibility aliases as needed.
 3. Split only the **source organization** of zone actions into the nine files. Preserve the order of early shared action registrations and each zone's original relative actions; keep helper dependency order explicit.
 4. Update `index.html`, `predictor-worker.js` and `editor.html` loading/inclusion separately, with deterministic manifests and completeness tests; adapt existing Node model test harnesses.
@@ -58,7 +58,7 @@ Migrate actions into `data/actionList.xml`; change action APIs/identity; add new
 - **A2:** The full **ordered** registration list (not just sorted sets) is byte-for-byte/entry-for-entry equivalent to the pre-refactor baseline. `lateGameActions`, shared factory registrations and displayed action ordering match.
 - **A3:** Fresh game `index.html`, separate `editor.html` and `predictor-worker.js` load without unresolved globals and produce consistent action identities/outputs. Worker foreground/background parity tests are green.
 - **A4:** Representative action execution, routing and completion (normal/limited/multipart, dungeon/trial, both alternate routes, real opening queue) produces unchanged results with equivalent state and timing.
-- **A5:** Existing save and challenge fixtures load unchanged. Old queue/loadout entries keep working; ```towns[0..8]``` progress and all `SurveyZ0..8` state persist.
+- **A5:** Existing save and challenge fixtures load unchanged. Old queue/loadout entries keep working; `towns[0..8]` progress and all `SurveyZ0..8` state persist.
 - **A6:** The action catalog and generated mechanics remain current; their source links, scripts and docs are updated to the new file structure. Validator detects missing/duplicate script or action registration.
 - **A7:** No new runtime dependencies, no bundler, no changes to Pages behavior; full CI, XML and Chrome smoke pass.
 - **A8:** A narrow, reviewable migration log explains every moved symbol and its new owner; no unrelated logic or formatting churn obscures the diff.
