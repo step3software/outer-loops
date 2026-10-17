@@ -31,6 +31,13 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [Evidence-based findings](audit/findings.md)
 - [Coverage and unverified behavior](audit/coverage.md)
 
+## Approved refactoring planning (implementation not started)
+
+- [RF01–RF06 register, sequencing, dependencies and shared constraints](refactoring/README.md)
+- [Cross-milestone acceptance and validation matrix](refactoring/validation-matrix.md)
+- [Provisional decisions and design tradeoffs](refactoring/decision-log.md)
+- [Six ready-to-use future implementation handoffs](refactoring/handoffs/README.md)
+
 ## Development guides
 
 - [Local setup](development/setup.md)
