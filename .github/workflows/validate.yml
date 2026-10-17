@@ -1,0 +1,34 @@
+name: Static validation
+
+on:
+  pull_request:
+  push:
+    branches: ["dmchurch"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - name: Check source syntax, docs and catalog
+        run: npm run check
+      - name: Exercise runtime model in worker-like context
+        run: npm run test:model
+      - name: Exercise queued action with model UI facade
+        run: npm run test:action
+      - name: Confirm generated gameplay reference matches runtime
+        run: npm run check:mechanics
+      - name: Check XML well-formedness
+        run: python3 scripts/check-xml.py
+      - name: Test boot, queued action, and reload in Chrome
+        run: npm run test:browser
