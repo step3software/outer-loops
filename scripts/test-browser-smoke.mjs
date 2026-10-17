@@ -130,7 +130,7 @@ try {
   assert.equal(boot.lang,'en-EN');
   const executed=await client.evaluate("(() => {"
     +"if(!gameIsStopped) pauseGame();"
-    +"actions.clearActions();actions.addAction('Wander',1);actions.restart();"
+    +"actions.clearActions();actions.addAction('Wander',1);restart();view.update();"
     +"const spent=actions.tick(250);view.update();"
     +"const saved=JSON.parse(save());"
     +"return {spent,progress:towns[0].expWander,stored:saved.expWander,"
