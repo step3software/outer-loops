@@ -70,7 +70,10 @@ export function loadGameModel({ withViewStubs = false, withChallenges = false } 
     if (withViewStubs) {
         // A real browser load() initializes migration-era counters; preserve
         // that invariant in this isolated queue fixture without DOM loading.
-        vm.runInContext('stonesUsed = {1:0, 3:0, 5:0, 6:0}', sandbox);
+        vm.runInContext(`stonesUsed = {1:0, 3:0, 5:0, 6:0};
+          for (const t of towns) for (const a of t.totalActionList) {
+            if (a.type === 'multipart') t['total' + a.varName] ??= 0;
+          }`, sandbox);
     }
     return {sandbox, evaluate: (source) => vm.runInContext(source, sandbox, {timeout: 10_000})};
 }
