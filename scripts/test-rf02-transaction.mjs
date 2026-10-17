@@ -120,7 +120,7 @@ const savedSnapshot=interrupted.tx.snapshotBeforeImport();
 interrupted.storage.setItem(pending,JSON.stringify({version:1,before:savedSnapshot}));
 interrupted.storage.setItem('idleLoops1',JSON.stringify(candidate));
 assert.equal(interrupted.tx.restoreInterruptedImport(),true);
-assert.deepEqual(interrupted.state(),savedSnapshot);
+assert.deepEqual(interrupted.state(),JSON.parse(JSON.stringify(savedSnapshot)));
 assert.equal(interrupted.storage.getItem(pending),null);
 
 const challenge=fixture();
