@@ -1,6 +1,6 @@
 # Refactoring milestone implementation handoffs
 
-These prompts are **prepared for future implementation threads only**. Writing them does **not** authorize an AI agent to implement a milestone, touch gameplay files, or merge. A new explicit request is required for each milestone.
+These prompts are **implementation handoffs**, not blanket permission to edit source or merge. **RF01's handoff has already been executed and its PR merged**. **RF02 is now prepared for a separately authorized implementation**, with its [readiness brief](../rf02-readiness.md) and [test matrix](../rf02-test-matrix.md). Each future milestone requires its own explicit implementation request.
 
 ## How to use
 
@@ -8,8 +8,8 @@ After the prior milestone's acceptance gate is satisfied, provide the intended a
 
 | Milestone | Implementation prompt | Readiness prerequisite |
 | --- | --- | --- |
-| RF01 | [Regression coverage](RF01.md) | Current docs/test baseline available |
-| RF02 | [Persistence safety](RF02.md) | RF01 F08/F09 characterization and save fixtures |
+| RF01 | [Regression coverage — executed/merged](RF01.md) | **Completed in PR #4** |
+| RF02 | [Persistence safety — prepared](RF02.md) | **RF01 F08/F09 merged**; [readiness](../rf02-readiness.md) and [P01–P22 test plan](../rf02-test-matrix.md); implementation not authorized |
 | RF03 | [Gameplay rules/resources](RF03.md) | RF01 parity and RF02 storage contracts |
 | RF04 | [Challenge isolation](RF04.md) | RF01 challenge fixtures, RF02 save slots, RF03 rule boundary |
 | RF05 | [Action modules](RF05.md) | RF01 ordered registry tests; recommend RF02–RF04 landed |

@@ -1,6 +1,6 @@
 # Cross-milestone regression and acceptance matrix
 
-This matrix defines **milestone-level required scenarios**, not an assertion that all are currently covered. RF01 has now implemented a representative subset in [PR #4](https://github.com/step3software/outer-loops/pull/4); the [RF01 evidence ledger](rf01-evidence.md) records which parts of F01–F15 actually passed, failed (e.g. original R01), or remain untested. RF02–RF06 cases remain future work. Also see [audit coverage](../audit/coverage.md).
+This matrix defines **milestone-level required scenarios**, not an assertion that all are currently covered. RF01's representative suite was **merged** in [PR #4](https://github.com/step3software/outer-loops/pull/4); its [evidence ledger](rf01-evidence.md) records which parts of F01–F15 passed, failed (original R01), or remain untested. **RF02's detailed P01–P22 tests are planned, not implemented**, in [its matrix](rf02-test-matrix.md). RF03–RF06 cases remain future work. Also see [audit coverage](../audit/coverage.md).
 
 ## Existing baseline that every milestone inherits
 

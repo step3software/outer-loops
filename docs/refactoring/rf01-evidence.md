@@ -1,6 +1,6 @@
 # RF01 implementation evidence and coverage ledger
 
-**Status:** RF01 implementation **in review** — [PR #4](https://github.com/step3software/outer-loops/pull/4), branch `test/rf01-regression-coverage-20261017`. This document records the **executed characterization suite**, not a fully validated complete-game playthrough. The PR is stacked on the unmerged [RF01–RF06 planning branch](README.md) (PR #2), itself based on the audit PR #1. **Not merged.** No gameplay rules, graphics, saved-field schemas or balance values have been changed.
+**Status:** **Merged into `dmchurch`** via [PR #4](https://github.com/step3software/outer-loops/pull/4), after prerequisite PRs #1–#3. This document records **executed characterization evidence**, not a complete playthrough. RF01 did **not** change game rules, graphics, save schemas or balance. [RF02 implementation readiness](rf02-readiness.md) follows.
 
 **Canonical charter:** [RF01](RF01-regression-coverage.md). **Next prerequisite:** [RF02 save safety](RF02-persistence-safety.md). **Existing risks:** [audit findings](../audit/findings.md).
 
@@ -89,7 +89,7 @@ These issues have distinct owners; RF01 intentionally does **not** alter their p
 | **A7** CI + real Chrome | **Met** — both new model commands and expanded Chrome test run in GitHub Actions alongside original checks. |
 | **A8** Coverage and limitations | **Met by this ledger**, with explicit partial and untested scenarios. |
 
-RF01 is therefore **implemented as a substantial regression-coverage foundation and ready for review**, not merged and **not proof of comprehensive gameplay correctness**. The separate GitHub Issue required by the literal A6 criterion is blocked because Issues are disabled; tracking stays in the audit and PR until enabled. Later milestones must grow specific assertions as they refactor the affected systems.
+RF01 is therefore **merged as a substantial regression-coverage foundation**, but is **not proof of comprehensive gameplay correctness**. The separate GitHub Issue required by the literal A6 criterion is blocked because Issues are disabled; tracking stays in the audit and PR until enabled. Later milestones must grow specific assertions as they refactor the affected systems.
 
 ## CI evidence and rollback
 
@@ -105,4 +105,4 @@ All changed files are regression-test scripts, their npm/CI wiring and documenta
 - **RF05:** Keep the action fingerprint and regenerate source docs after any legitimate split. Do not consider sorted action sets sufficient.
 - **RF06:** Keep browser boot and challenge/menu/upgrade smoke. Build actual UI focus, theme, keyboard and resize characterization *before* moving views.
 
-**Next authorized action:** Review PR #4 and optionally merge when separately requested. **RF02–RF06 are not authorized by this PR.**
+**Next milestone:** [Prepare RF02](rf02-readiness.md) against the merged default-branch tests; [RF02 test matrix](rf02-test-matrix.md). Implementing RF02–RF06 still requires separate authorization.
