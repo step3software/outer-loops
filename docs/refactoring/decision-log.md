@@ -1,6 +1,6 @@
 # Refactoring decisions and open design questions
 
-**Status (2026-10-17):** The RF01–RF06 scopes and broad sequencing are approved; **RF01 implementation merged via PR #4**. **RF02 implementation is not yet authorized**, but [readiness](rf02-readiness.md) and [prospective P01–P22 tests](rf02-test-matrix.md) are prepared. **Not approved:** changing save formats, adding runtime dependencies, rewriting gameplay/UI or starting RF02–RF06 code merely because this planning document exists. Entries remain provisional choices unless explicitly accepted during the relevant authorized milestone.
+**Status (2026-10-17):** The RF01–RF06 scopes and broad sequencing are approved; **RF01 implementation merged via PR #4**. **RF02 implementation has subsequently been authorized and opened in [PR #6](https://github.com/step3software/outer-loops/pull/6)**, not yet merged or fully verified; see [implementation evidence](rf02-evidence.md) and [prospective matrix](rf02-test-matrix.md). **Not approved:** changing save formats, adding runtime dependencies, rewriting gameplay/UI or starting RF02–RF06 code merely because this planning document exists. Entries remain provisional choices unless explicitly accepted during the relevant authorized milestone.
 
 | Key | Milestone | Provisional choice | Decision needed before change? |
 | --- | --- | --- | --- |

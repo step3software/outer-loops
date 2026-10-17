@@ -7,3 +7,5 @@ Create a numbered Markdown file such as `0001-descriptive-decision.md` using [TE
 Each ADR should document alternatives, assumptions, tradeoffs, save/predictor compatibility, test evidence and the consequence of reversal. Once accepted, update relevant system guides; if superseded, link to the replacement. Do not retroactively claim that an undocumented historic architectural choice was formally approved.
 
 No project-authored ADR has been adopted at this baseline.
+
+- [ADR 001 — Recoverable save import (proposed, RF02 PR #6)](ADR-001-recoverable-save-import.md)

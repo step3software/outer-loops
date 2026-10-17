@@ -1,6 +1,6 @@
 # RF02 readiness — persistence safety implementation brief
 
-**State:** **Prepared for a separately authorized implementation**, not started. Based on `dmchurch` commit `3e74f16079d77fc5e5db947d7f97ad97cbff3cbc` (2026-10-17). [PRs #1–#4](https://github.com/step3software/outer-loops/pulls?q=is%3Apr+is%3Amerged) have been verified merged; the RF01 test foundation is present on the default branch. This briefing is documentation-only and does **not** change save behavior, authorize a code implementation, or merge anything.
+**State:** Preparation completed; candidate implementation now in [PR #6](https://github.com/step3software/outer-loops/pull/6), **unmerged**. Based on `dmchurch` commit `3e74f16079d77fc5e5db947d7f97ad97cbff3cbc` (2026-10-17). [PRs #1–#4](https://github.com/step3software/outer-loops/pulls?q=is%3Apr+is%3Amerged) have been verified merged; the RF01 test foundation is present on the default branch. This briefing is documentation-only and does **not** change save behavior, authorize a code implementation, or merge anything.
 
 **Canonical requirements:** [RF02 charter](RF02-persistence-safety.md) A1–A8. **Execute from:** [RF02 handoff](handoffs/RF02.md). **Fixtures and expected results:** [RF02 test/compatibility matrix](rf02-test-matrix.md). **Existing source contract:** [persistence audit](../audit/persistence-contract.md), [state guide](../state-and-saving.md), [RF01 evidence](rf01-evidence.md) and [finding R01](../audit/findings.md).
 

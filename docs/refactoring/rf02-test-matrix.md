@@ -1,6 +1,6 @@
 # RF02 — prospective safety and compatibility test matrix
 
-**Status:** Planned for RF02 implementation; **these are not tests already run**. The merged [RF01 evidence](rf01-evidence.md) covers a subset of positive compatibility cases and **reproduced R01**, but its existing browser test currently **expects/detects** an unsafe import. RF02 must turn that behavior into a **non-destructive rejection assertion** without suppressing or weakening valid-save coverage.
+**Status:** Acceptance matrix for RF02. A subset of automated checks has been added in **unmerged [PR #6](https://github.com/step3software/outer-loops/pull/6)**; see [RF02 evidence](rf02-evidence.md) for what was actually run versus still unverified in real Chrome/CI. The merged [RF01 evidence](rf01-evidence.md) covers a subset of positive compatibility cases and **reproduced R01**, but its existing browser test currently **expects/detects** an unsafe import. RF02 must turn that behavior into a **non-destructive rejection assertion** without suppressing or weakening valid-save coverage.
 
 Use disposable synthetic data only; never real player exports, OAuth credentials or a normal browser profile. Run exact-slot-byte assertions when rejecting input. Run semantic comparisons (not raw JSON equality) after successful imports. Canonical implementation criteria remain [RF02 A1–A8](RF02-persistence-safety.md).
 

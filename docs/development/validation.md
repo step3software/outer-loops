@@ -10,6 +10,8 @@ npm run test:model
 npm run test:action
 npm run test:rf01:model
 npm run test:rf01:challenges
+npm run test:rf02:preflight
+npm run test:rf02:transaction
 npm run check:mechanics
 python scripts/check-xml.py
 npm run test:browser
@@ -17,7 +19,7 @@ npm run test:browser
 
 `npm run check` verifies syntax for first-party `.js` / `.mjs` files (including validator scripts), relative Markdown file links, known entry-point assets and consistency of the documented `Action.*` inventory. The worker-like model test initializes real game code and checks action registry/formulas. The queued-action test executes an opening Wander in the real queue engine with a no-op UI facade. Generated mechanics must match all live action definitions. These do not replace browser testing. The Python script checks that the checked-in `.xml` and `.rng` files parse as XML. `npm run test:browser` starts a local HTTP server and disposable Chrome profile to boot the real game, execute Wander and verify the browser save survives reload; it requires installed Chrome/Chromium. The PR workflow runs these checks automatically.
 
-**Since the merged RF01 implementation (PR #4)** the browser smoke additionally tests synthesized current/legacy imports and aliases, a recoverable reproduction of invalid-import overwrite risk R01, actual foreground/Web Worker Wander prediction parity, all three original challenge slot transitions, and a synthetic original prestige reset. The [RF01 evidence ledger](../refactoring/rf01-evidence.md) describes exactly what was run. [RF02's readiness brief](../refactoring/rf02-readiness.md) and [P01–P22 test matrix](../refactoring/rf02-test-matrix.md) define the next **proposed** import/recovery tests; none of those RF02 fixes or tests are implemented by this preparation. **Authentic historical save fixtures, an end-to-end playthrough, broad predictor parity, offline/fractional-tick stress and UI/accessibility audits are not yet covered.** A green static check alone is not a gameplay test.
+**Since the merged RF01 implementation (PR #4)** the browser smoke additionally tests synthesized current/legacy imports and aliases, a recoverable reproduction of invalid-import overwrite risk R01, actual foreground/Web Worker Wander prediction parity, all three original challenge slot transitions, and a synthetic original prestige reset. The [RF01 evidence ledger](../refactoring/rf01-evidence.md) describes exactly what was run. [RF02's readiness brief](../refactoring/rf02-readiness.md) and [P01–P22 test matrix](../refactoring/rf02-test-matrix.md) define the next **proposed** import/recovery tests; [RF02 PR #6](https://github.com/step3software/outer-loops/pull/6) now adds pure preflight/transaction tests and expanded disposable Chrome checks, but remains **unmerged and pending full CI/browser verification**; see [RF02 evidence](../refactoring/rf02-evidence.md). **Authentic historical save fixtures, an end-to-end playthrough, broad predictor parity, offline/fractional-tick stress and UI/accessibility audits are not yet covered.** A green static check alone is not a gameplay test.
 
 ## Minimum interactive smoke suite
 

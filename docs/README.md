@@ -36,13 +36,15 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [RF01–RF06 milestone register and current status](refactoring/README.md)
 - [RF01 implemented regression coverage and remaining gaps](refactoring/rf01-evidence.md)
 - [RF02 persistence-safety charter](refactoring/RF02-persistence-safety.md)
+- [RF02 implementation evidence, limits and rollback (PR #6)](refactoring/rf02-evidence.md)
+- [Proposed ADR 001 — recoverable imports](decisions/ADR-001-recoverable-save-import.md)
 - [RF02 implementation readiness and source-based transaction proposal](refactoring/rf02-readiness.md)
 - [RF02 proposed save, import, quota and recovery tests](refactoring/rf02-test-matrix.md)
 - [Cross-milestone validation matrix](refactoring/validation-matrix.md)
 - [Decision log and unresolved implementation choices](refactoring/decision-log.md)
 - [Implementation handoffs, including RF02](refactoring/handoffs/README.md)
 
-**RF02–RF06 implementation remains unstarted** until separately authorized. Documentation alone never permits a code change or merge.
+**RF02 implementation is pending review/CI in PR #6; RF03–RF06 remain unstarted** until separately authorized. Documentation alone never permits a code change or merge.
 
 ## Future Outer Loop / Real World design (not implemented)
 

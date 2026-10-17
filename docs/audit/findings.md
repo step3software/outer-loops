@@ -4,13 +4,13 @@ These are **auditable findings**, not an assertion that every candidate is a rep
 
 ## Highest-priority findings
 
-### R01 — Save import persists before validating (high; confirmed control flow, user impact untested)
+### R01 — Save import persists before validating (high; reproduced by RF01; candidate RF02 fix unmerged)
 
 **Evidence:** `saving.js` `processSave(saveData)` decompresses or decodes data, calls `storeSaveJson(saveJson)` *before* invoking `load(null, saveJson)`. `load` parses nonempty JSON with `JSON.parse` and has no surrounding rollback in `processSave`.
 
 **Consequence:** if a nonempty decoded save is invalid JSON or incompatible, the existing local save can be overwritten before parsing fails. **RF01 reproduced this overwrite with nonempty invalid-JSON `ILSV01` data in an isolated Chrome profile** (see [RF01 evidence](../refactoring/rf01-evidence.md) F09), restoring the test slot afterward. This is a **data-loss risk** for users; no actual incident is asserted.
 
-**Acceptance for a future fix:** validate JSON and required structure before replacing any active save; keep the prior copy recoverable; demonstrate invalid, truncated, old-format and valid imports using a disposable profile. Preserve `ILSV01` and compatibility.
+**Candidate remediation:** [RF02 PR #6](https://github.com/step3software/outer-loops/pull/6) implements pure preflight, transaction journaling, and per-mode restore. It includes regression/fault-injection tests but **has not yet passed a new full Chrome CI run**. Default-branch R01 should not be marked fixed until the PR is verified and merged. See [RF02 evidence](../refactoring/rf02-evidence.md).
 
 ### R02 — Numeric resource setter accepts NaN/Infinity as assignment (medium; confirmed code path)
 

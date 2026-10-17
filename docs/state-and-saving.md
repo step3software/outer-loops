@@ -46,6 +46,10 @@ Do not write a save migration based solely on an example save. Preserve imports 
 
 Any new mutable root may need registration. A field omitted from both save serialization and snapshots can behave correctly during ordinary play but disappear on reload or produce incorrect predictions.
 
+## Candidate RF02 validation and restore contract (unmerged)
+
+[RF02 PR #6](https://github.com/step3software/outer-loops/pull/6) proposes pure, bounded `SaveImport.prepare` validation and alias normalization **before** any storage or world mutation, followed by a verified pending journal, active-slot application and per-mode backup. It preserves existing `ILSV01` and legacy Base64/LZW imports and avoids using `prestigeBackup` for normal imports. The Save menu provides **Restore Previous Imported-Over Save**. Interrupted operations trigger journal recovery before next `load()`. The normal and challenge save slots remain distinct; importing a normal save during an active challenge is rejected rather than silently overwriting its data. These changes are **not yet merged or full-browser-verified**; see [implementation evidence](refactoring/rf02-evidence.md) and [ADR 001](decisions/ADR-001-recoverable-save-import.md).
+
 ## Safe migration procedure
 
 1. Export and secure a throwaway test save before code changes.

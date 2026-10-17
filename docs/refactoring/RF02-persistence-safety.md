@@ -1,6 +1,6 @@
 # RF02 — Persistence safety
 
-- **Status:** **Ready for explicit implementation authorization**, on the merged RF01 foundation. Documentation and safety test planning only; **no RF02 code has been implemented**.
+- **Status:** **Implemented on unmerged [PR #6](https://github.com/step3software/outer-loops/pull/6)**, pending full CI/browser verification. See [implementation evidence](rf02-evidence.md) and [proposed ADR 001](../decisions/ADR-001-recoverable-save-import.md).
 - **Priority:** After RF01
 - **Hard dependencies:** RF01's current/legacy synthetic save, corrupt-import, challenge-slot and restart fixtures
 - **Enables:** Safe resource/state contracts in RF03 and challenge save transitions in RF04
@@ -14,6 +14,10 @@ Make importing, migrating and writing game progress **validation-first, recovera
 ## Prepared after RF01 merge
 
 The [merged RF01 regression suite](rf01-evidence.md) confirms the defective R01 write-before-validate ordering in a disposable browser, validates two reconstructed legacy save shapes, and covers challenge slot/prestige transitions. The [readiness brief](rf02-readiness.md) additionally identifies two critical effects: `load/doLoad` mutate in-memory state (and old challenge migration can **save and reload**), while `storeSaveJson` may **swallow a quota exception**. Merely adding `JSON.parse` before `storeSaveJson` will not fulfill the recovery requirements. See the [test matrix](rf02-test-matrix.md) for exact original-byte preservation and fault injection.
+
+## Implementation candidate and verification boundary
+
+PR #6 implements a pure `save-import.js` validator, a pre-load recovery journal, separate mode-specific backup keys, a Save-menu restore action, and preflight/transaction/Chrome test cases. It does **not** change the external `ILSV01` envelope or gameplay rules. This is an unmerged implementation; original default-branch R01 remains present until verified and merged. See [RF02 evidence](rf02-evidence.md) for checks that were/weren't executed.
 
 ## Source ownership and planned design
 

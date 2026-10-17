@@ -14,7 +14,11 @@ ILSV01 + LZString.compressToBase64(JSON)
 decompress → storeSaveJson → load/JSON.parse → resume
 ```
 
-The storage-before-validation import order is risk [R01](findings.md). Legacy encoded saves are also passed through `decode()`. Keep `ILSV01` and active slot keys compatible.
+The storage-before-validation order is the **original** risk [R01](findings.md), reproduced by merged RF01. **Candidate [RF02 PR #6](https://github.com/step3software/outer-loops/pull/6)** adds pure preflight and a rollback journal, retaining `ILSV01` and legacy `decode()` support. Until merged, the default branch remains unchanged. See [implementation evidence](../refactoring/rf02-evidence.md).
+
+## Proposed RF02 recovery keys (unmerged PR #6)
+
+New localStorage keys: `idleLoopsImportPendingV1` (exact-byte pending journal), `idleLoopsImportBackupV1_normal` and `idleLoopsImportBackupV1_challenge` (last pre-import saved copy per mode). These remain separate from `prestigeBackup` and do **not** enter exported JSON. The Save menu adds **Restore Previous Imported-Over Save** for the current mode. On startup, the journal is rolled back before `load` if an import was interrupted. See [ADR 001](../decisions/ADR-001-recoverable-save-import.md) and [RF02 evidence](../refactoring/rf02-evidence.md).
 
 ## Field inventory
 
