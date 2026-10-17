@@ -159,8 +159,8 @@ try {
   async function importSynthetic(fixture) {
     const json=JSON.stringify(fixture.value);
     return client.evaluate("(() => { const text="+JSON.stringify(json)
-      +"; try {processSave('ILSV01'+LZString.compressToBase64(text));"
-      +"return {loaded:true, progress:towns[0].expWander,"
+      +"; try {const applied=processSave('ILSV01'+LZString.compressToBase64(text));"
+      +"return {loaded:applied, progress:towns[0].expWander,"
       +" names:actions.next.map(x=>x.name),"
       +" loadout:loadouts[0].map(x=>x.name),"
       +" unlocked:townsUnlocked.slice(),"
@@ -175,6 +175,18 @@ try {
   assert.equal(currentFixture.names[0],'Wander');
   assert.deepEqual(currentFixture.unlocked,[0,1]);
   assert.equal(JSON.parse(currentFixture.saved).expWander,400);
+
+  const oldFormat=await client.evaluate("(() => {"
+    +"const saved=JSON.parse(save());"
+    +"saved.expWander=300;"
+    +"const applied=processSave(encode(JSON.stringify(saved)));"
+    +"return {applied,progress:towns[0].expWander,"
+    +" queue:actions.next.map(x=>x.name),backup:!!localStorage['idleLoopsImportBackupV1_normal']};"
+    +"})()");
+  assert.equal(oldFormat.applied,true,JSON.stringify(oldFormat));
+  assert.equal(oldFormat.progress,300);
+  assert.equal(oldFormat.backup,true);
+  console.log('PASS RF02 Chrome legacy Base64/LZW encoding accepted without changing the export envelope.');
 
   const pre75=await importSynthetic(fixtures.pre75);
   assert.equal(pre75.loaded,true,JSON.stringify(pre75));
@@ -261,6 +273,32 @@ try {
     assert.equal(test.journal,null,'quota failure must not leave unresolved journal: '+test.target);
   }
   console.log('PASS RF02 Chrome quota failure injection: journal/write failures preserve exact original bytes.');
+  // An imported old challenge save is installed in the separate challenge
+  // slot; the normal save keeps its original progress and gains only a
+  // resume-challenge marker. No overwritten normal progress or unexpected
+  // legacy doLoad save/reload during preflight.
+  const importedChallenge=await client.evaluate("(() => {"
+    +"const candidate=JSON.parse(save());candidate.challenge=2;"
+    +"delete candidate.challengeSave;candidate.expWander=100;"
+    +"const previousProgress=towns[0].expWander;"
+    +"const accepted=processSave('ILSV01'+LZString.compressToBase64(JSON.stringify(candidate)));"
+    +"return {accepted,mode:challengeSave.challengeMode,slot:saveName,"
+    +" challengeProgress:JSON.parse(localStorage['idleLoopsChallenge']).expWander,"
+    +" normalProgress:JSON.parse(localStorage['idleLoops1']).expWander,"
+    +" normalMarker:JSON.parse(localStorage['idleLoops1']).challengeSave.inChallenge,"
+    +" previousProgress};"
+    +"})()");
+  assert.equal(importedChallenge.accepted,true,JSON.stringify(importedChallenge));
+  assert.equal(importedChallenge.mode,2);
+  assert.equal(importedChallenge.challengeProgress,100);
+  assert.equal(importedChallenge.normalProgress,importedChallenge.previousProgress);
+  assert.equal(importedChallenge.normalMarker,true);
+  try {await client.evaluate('exitChallenge()');} catch {/* expected reload */}
+  await pause(400);
+  await waitForBoot();
+  assert.equal(await client.evaluate('challengeSave.challengeMode'),0);
+  console.log('PASS RF02 Chrome legacy inline challenge migration: separate slots, retained normal progress and safe exit.');
+
   // Restore the original beginning-game fixture and verify reload still works.
   await client.evaluate("localStorage['idleLoops1']="+JSON.stringify(originalSave));
   await client.send('Page.reload',{ignoreCache:true});
