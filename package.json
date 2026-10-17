@@ -8,6 +8,7 @@
     "@types/lz-string": "^1.5.0"
   },
   "scripts": {
-    "check": "node scripts/check-repo.mjs"
+    "check": "node scripts/check-repo.mjs",
+    "test:model": "node scripts/test-game-model.mjs"
   }
 }

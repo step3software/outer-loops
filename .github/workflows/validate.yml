@@ -22,5 +22,7 @@ jobs:
           package-manager-cache: false
       - name: Check source syntax, docs and catalog
         run: npm run check
+      - name: Exercise runtime model in worker-like context
+        run: npm run test:model
       - name: Check XML well-formedness
         run: python3 scripts/check-xml.py
