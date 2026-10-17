@@ -260,6 +260,68 @@ try {
     console.warn('KNOWN R15: predictor grants Gods Trial power at floor 99; runtime grants at floor 100.');
   console.log('PASS RF01 predictor: actual Wander vs foreground and Worker, field parity for mana/stat XP, read-only forecast; Gods Trial R15 characterized.');
 
+
+  // RF01: exercise the real challenge save-slot lifecycle and exit via reload.
+  // All confirmation dialogs are accepted on this disposable test origin.
+  for(const mode of [1,2,3]){
+    const prior=await client.evaluate('towns[0].expWander');
+    const entered=await client.evaluate("(() => {"
+      +"window.confirm=()=>true;beginChallenge("+mode+");"
+      +"const normal=JSON.parse(localStorage['idleLoops1']);"
+      +"const challenge=JSON.parse(localStorage['idleLoopsChallenge']);"
+      +"return {mode:challengeSave.challengeMode,inChallenge:challengeSave.inChallenge,"
+      +" persistedMode:challenge.challengeSave.challengeMode,"
+      +" normalProgress:normal.expWander,normalSlot:!!localStorage['idleLoops1'],"
+      +" challengeSlot:!!localStorage['idleLoopsChallenge'],"
+      +" speed:gameSpeed,timeLimit:timeNeeded};"
+      +"})()");
+    assert.equal(entered.mode,mode,JSON.stringify(entered));
+    assert.equal(entered.persistedMode,mode);
+    assert.equal(entered.inChallenge,true);
+    assert.equal(entered.normalProgress,prior,'normal slot must not be replaced');
+    assert.equal(entered.normalSlot,true);
+    assert.equal(entered.challengeSlot,true);
+    if(mode===1)assert.equal(entered.speed,2);
+    if(mode===3)assert.ok(entered.timeLimit>1000000);
+    // exitChallenge calls location.reload: execution context may disappear as
+    // a normal consequence of the real page navigation.
+    try {await client.evaluate('exitChallenge()');} catch {/* reload transition */}
+    await pause(500);
+    await waitForBoot();
+    const restored=await client.evaluate("(() => ({"
+      +"mode:challengeSave.challengeMode,progress:towns[0].expWander,"
+      +" normalMode:JSON.parse(localStorage['idleLoops1']).challengeSave.challengeMode,"
+      +" challengeStored:!!localStorage['idleLoopsChallenge']}))()");
+    assert.equal(restored.mode,0,JSON.stringify(restored));
+    assert.equal(restored.progress,prior);
+    assert.equal(restored.normalMode,0);
+    assert.equal(restored.challengeStored,true);
+  }
+  console.log('PASS RF01 Chrome challenge entry/exit: modes 1–3, isolated slots and normal-game restoration after reload.');
+
+  // RF01: original destructive prestige reset, only in the disposable profile.
+  const oldPrestige=await client.evaluate("(() => {"
+    +"window.confirm=()=>true;const originalProgress=towns[0].expWander;"
+    +"completedCurrentGame();"
+    +"const awarded=prestigeValues.prestigeCurrentPoints;"
+    +"prestigeUpgrade('PrestigeCombat');"
+    +"return {awarded,originalProgress,"
+    +" currentPoints:prestigeValues.prestigeCurrentPoints,"
+    +" completions:prestigeValues.prestigeTotalCompletions,"
+    +" ever:prestigeValues.completedAnyPrestige,"
+    +" combat:getBuffLevel('PrestigeCombat'),"
+    +" progress:towns[0].expWander,"
+    +" backup:!!localStorage['prestigeBackup']};"
+    +"})()");
+  assert.equal(oldPrestige.awarded,90);
+  assert.equal(oldPrestige.completions,1);
+  assert.equal(oldPrestige.ever,true);
+  assert.equal(oldPrestige.combat,1);
+  assert.equal(oldPrestige.currentPoints,60);
+  assert.equal(oldPrestige.progress,0);
+  assert.equal(oldPrestige.backup,true);
+  console.log('PASS RF01 Chrome inherited prestige reset: 90 points once, 30-point perk, 60 remaining, retained upgrade and backup.');
+
   console.log('PASS Chrome: game boot, XML localization, 157 actions, Wander execution and save/reload.');
 } finally {
   client?.close();
