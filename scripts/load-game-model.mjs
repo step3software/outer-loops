@@ -51,5 +51,10 @@ export function loadGameModel({ withViewStubs = false } = {}) {
         vm.runInContext(code, sandbox, {filename: name, timeout: 10_000});
     }
     vm.runInContext('loadDefaults()', sandbox, {timeout: 20_000});
+    if (withViewStubs) {
+        // A real browser load() initializes migration-era counters; preserve
+        // that invariant in this isolated queue fixture without DOM loading.
+        vm.runInContext('stonesUsed = {1:0, 3:0, 5:0, 6:0}', sandbox);
+    }
     return {sandbox, evaluate: (source) => vm.runInContext(source, sandbox, {timeout: 10_000})};
 }
