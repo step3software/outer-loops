@@ -37,7 +37,7 @@ Every milestone implementation must:
 
 ## Validation policy
 
-See the [cross-milestone validation matrix](validation-matrix.md) for exact scenarios and [existing validation guidance](../development/validation.md) for baseline commands. The current baseline exposes `npm run check`, `npm run test:model`, `npm run test:action`, `npm run check:mechanics`, `python scripts/check-xml.py`, and `npm run test:browser`. These existing checks are a starting point; they are **not sufficient** on their own to accept any of these refactors.
+See the [cross-milestone validation matrix](validation-matrix.md) for exact scenarios and [existing validation guidance](../development/validation.md) for baseline commands. The merged baseline exposes `npm run check`, `npm run test:model`, `npm run test:action`, **`npm run test:rf01:model`**, **`npm run test:rf01:challenges`**, `npm run check:mechanics`, `python3 scripts/check-xml.py`, and `npm run test:browser`. These existing checks are a starting point; they are **not sufficient** on their own to accept any of these refactors.
 
 - **Behavior-preserving milestone:** compare a known initial state and identical operations *before and after* the change. Assert precise outputs/counters, not merely absence of thrown errors.
 - **Intentional safety correction:** first record the failing old behavior, then assert the desired safe behavior while retaining previously valid results.
