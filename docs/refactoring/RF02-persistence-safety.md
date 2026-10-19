@@ -1,14 +1,19 @@
 # RF02 — Persistence safety
 
-- **Status:** Planned — approved scope; implementation not authorized
+- **Status:** **Ready for explicit implementation authorization**, on the merged RF01 foundation. Documentation and safety test planning only; **no RF02 code has been implemented**.
 - **Priority:** After RF01
 - **Hard dependencies:** RF01's current/legacy synthetic save, corrupt-import, challenge-slot and restart fixtures
 - **Enables:** Safe resource/state contracts in RF03 and challenge save transitions in RF04
 - **Primary implementation handoff:** [RF02](handoffs/RF02.md)
+- **Verified preparation:** [source-anchored readiness and proposed transaction approach](rf02-readiness.md) · [P01–P22 prospective test matrix](rf02-test-matrix.md). These supplement—not replace—A1–A8.
 
 ## Objective
 
 Make importing, migrating and writing game progress **validation-first, recoverable and testable** while retaining the established save/export contract. Currently `saving.js` `processSave` may call `storeSaveJson` **before** `load` parses an imported JSON payload (audit [R01](../audit/findings.md)). RF02 must remove that irreversible ordering risk without rewriting game rules or making existing saves unusable.
+
+## Prepared after RF01 merge
+
+The [merged RF01 regression suite](rf01-evidence.md) confirms the defective R01 write-before-validate ordering in a disposable browser, validates two reconstructed legacy save shapes, and covers challenge slot/prestige transitions. The [readiness brief](rf02-readiness.md) additionally identifies two critical effects: `load/doLoad` mutate in-memory state (and old challenge migration can **save and reload**), while `storeSaveJson` may **swallow a quota exception**. Merely adding `JSON.parse` before `storeSaveJson` will not fulfill the recovery requirements. See the [test matrix](rf02-test-matrix.md) for exact original-byte preservation and fault injection.
 
 ## Source ownership and planned design
 

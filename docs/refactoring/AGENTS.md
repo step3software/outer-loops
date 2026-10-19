@@ -2,7 +2,7 @@
 
 Inherits [repository AGENTS.md](../../AGENTS.md) and [documentation AGENTS.md](../AGENTS.md).
 
-- The RF01–RF06 charters are **approved planning scopes only**. The existence of a milestone or its handoff prompt does not authorize implementation, modifying runtime files, opening an implementation PR, or merging.
+- The RF01–RF06 charters are **approved planning scopes only**. **RF01 was separately authorized and merged in PR #4**; **RF02 is prepared for a separate implementation request but has no gameplay/persistence implementation yet**. Existing handoff prompts or readiness docs never authorize modifying runtime files, opening a code implementation PR, or merging.
 - Keep one canonical milestone specification in each `RFxx-*.md`. `handoffs/RFxx.md` contains a concise, self-contained execution prompt referencing it; don't copy whole technical specifications into prompts.
 - Use the technical/gameplay [audit](../audit/README.md), [findings](../audit/findings.md), [coverage](../audit/coverage.md), [code map](../reference/code-map.md) and verified source to ground changes.
 - Declare scope, excluded changes, hard versus recommended dependencies, source touchpoints, compatibility invariants, observable acceptance criteria, fixture/test coverage, risks, rollback, and a link to the next implementation handoff.

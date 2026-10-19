@@ -31,35 +31,35 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [Evidence-based findings](audit/findings.md)
 - [Coverage and unverified behavior](audit/coverage.md)
 
-## Refactoring program (RF01 implementation PR in review)
+## Refactoring program — RF01 merged, RF02 prepared
 
-- [RF01 implemented regression characterization, CI evidence and remaining gaps](refactoring/rf01-evidence.md)
+- [RF01–RF06 milestone register and current status](refactoring/README.md)
+- [RF01 implemented regression coverage and remaining gaps](refactoring/rf01-evidence.md)
+- [RF02 persistence-safety charter](refactoring/RF02-persistence-safety.md)
+- [RF02 implementation readiness and source-based transaction proposal](refactoring/rf02-readiness.md)
+- [RF02 proposed save, import, quota and recovery tests](refactoring/rf02-test-matrix.md)
+- [Cross-milestone validation matrix](refactoring/validation-matrix.md)
+- [Decision log and unresolved implementation choices](refactoring/decision-log.md)
+- [Implementation handoffs, including RF02](refactoring/handoffs/README.md)
 
-## Approved RF02–RF06 planning (implementation not started)
-- [Upgrade mechanics contracts and prospective tests](design/outer-loop/upgrade-tree-contracts.md)
-- [Alternate-self characters and later delegation](design/outer-loop/selves.md)
-- [Retirement of inherited prestige/challenges and veteran save migration](design/outer-loop/legacy-transition.md)
-- [Nexus technical boundaries and persistence design](design/outer-loop/technical-architecture.md)
-- [Pixel-art hub brief](design/outer-loop/visual-direction.md)
-- [Development roadmap](design/outer-loop/roadmap.md) and [future validation criteria](design/outer-loop/validation.md)
-- [Dependencies and RF04 scope conflict](design/outer-loop/integration-with-refactoring.md)
+**RF02–RF06 implementation remains unstarted** until separately authorized. Documentation alone never permits a code change or merge.
 
-## Future Outer Loop / Real World game design (not implemented)
+## Future Outer Loop / Real World design (not implemented)
 
-- [Real World / Timeloop Nexus design index and product north star](design/outer-loop/README.md)
-- [Agreed decisions, provisional choices and open questions](design/outer-loop/decisions.md)
-- [First encounter and narrative bridge](design/outer-loop/narrative.md)
-- [**Looping Potion, Totem and Valley of Olympus endgame alternatives**](design/outer-loop/potion-and-endgame-options.md) — current code, potential shorter ending, route freedom, migration and tests
-- [New timelines, ~10× replay, upgrades, automation and challenge variants](design/outer-loop/systems.md)
-- [**Will / Echoes / Anchors** — proposed three-tree upgrades](design/outer-loop/upgrade-trees.md)
-- [**Dominion** — fully documented four-tree alternative](design/outer-loop/dominion-alternative.md)
-
-## Approved refactoring planning (implementation not started)
-
-- [RF01–RF06 register, sequencing, dependencies and shared constraints](refactoring/README.md)
-- [Cross-milestone acceptance and validation matrix](refactoring/validation-matrix.md)
-- [Provisional decisions and design tradeoffs](refactoring/decision-log.md)
-- [Six ready-to-use future implementation handoffs](refactoring/handoffs/README.md)
+- [Real World / Timeloop Nexus design index](design/outer-loop/README.md)
+- [Approved direction and unresolved product decisions](design/outer-loop/decisions.md)
+- [Narrative and first alternate self](design/outer-loop/narrative.md)
+- [Looping Potion / Valley of Olympus alternative endings](design/outer-loop/potion-and-endgame-options.md)
+- [New timelines, ~10× replay and upgrades](design/outer-loop/systems.md)
+- [Will / Echoes / Anchors three-tree working model](design/outer-loop/upgrade-trees.md)
+- [Dominion four-tree alternative](design/outer-loop/dominion-alternative.md)
+- [Upgrade mechanics and future tests](design/outer-loop/upgrade-tree-contracts.md)
+- [Alternate selves and delegation](design/outer-loop/selves.md)
+- [Legacy prestige/challenge retirement and veteran saves](design/outer-loop/legacy-transition.md)
+- [Nexus technical architecture](design/outer-loop/technical-architecture.md)
+- [Pixel-art and UI direction](design/outer-loop/visual-direction.md)
+- [Development roadmap](design/outer-loop/roadmap.md) · [future validation](design/outer-loop/validation.md)
+- [RF coordination and product scope conflicts](design/outer-loop/integration-with-refactoring.md)
 
 ## Development guides
 
