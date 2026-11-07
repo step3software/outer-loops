@@ -36,6 +36,14 @@ IDs/approval history. Do not infer scheduler admission or installed host adoptio
 from manifest validity. No gameplay, save or worker behavior is verified by these
 documentation checks.
 
+## RW00 campaign balance test work package (partial)
+
+`npm run test:balance` exercises test-only deterministic VM clocks and RNG, UI-equivalent queue admission, typed/hashed gameplay UI settings, synthetic Judgement/Escape/search/cap boundaries, short original-driver execution and fail-closed report validation. The automated suite is source-backed but not proof of a real earned campaign.
+
+`npm run test:balance:browser -- --phase calibration --output .balance-results/calibration.json` requires Chrome/Chromium and a disposable local profile. It checks the real browser's queue admission, input defaults, limited-resource search/caps and a short driver schedule against the model facade. Missing or failing Chrome must be treated as a failure, not a skip. This new browser command is not yet part of the ordinary CI validation path.
+
+**Unverified:** full earned R01/R02 C00–C14 progression, long-route clock accuracy and sampling, five paired strategy comparisons, wider late-game browser parity and successful official campaign baselines. Tests use synthetic boundary fixtures where labeled; no real saves or gameplay balances are changed. The [RW00 plan](../design/outer-loop/balance-tests-implementation-plan.md) contains the complete planned acceptance criteria.
+
 ## Minimum interactive smoke suite
 
 Use a *disposable* profile or exported test save. For each row, record browser, result and any errors; mark steps **not run** rather than guessing.
