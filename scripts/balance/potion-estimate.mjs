@@ -6,19 +6,22 @@ import {resolve} from 'node:path';
 export const POTION_ESTIMATE_SCHEMA='rw00-direct-potion-estimate/v2';
 export const POTION_INJECTION_SCHEMA='rw00-synthetic-direct-potion-checkpoint/v2';
 
-function configure(model,{statLevel=0,collegeSegment=0,townLevels={},skillLevels={},buffLevels={}}={}){
+export function configure(model,{statLevel=0,collegeSegment=0,thievesSegment=0,
+    townLevels={},skillLevels={},buffLevels={},resourceValues={},guildName=''}={}){
   model.evaluate(`(() => {
     for(const stat of Object.values(stats))stat.statLevelExp.setLevel(${statLevel});
-    curWizCollegeSegment=${collegeSegment};resources.wizardCollege=true;
+    curWizCollegeSegment=${collegeSegment};curThievesGuildSegment=${thievesSegment};
+    resources.wizardCollege=true;guild=${JSON.stringify(guildName)};
     for(const [key,value] of Object.entries(${JSON.stringify(townLevels)})){
       const [town,varName]=key.split(':');towns[Number(town)]['exp'+varName]=towns[Number(town)].expFromLevel(value);
     }
     for(const [name,level] of Object.entries(${JSON.stringify(skillLevels)}))skills[name].levelExp.setLevel(level);
     for(const [name,level] of Object.entries(${JSON.stringify(buffLevels)}))buffs[name].amt=level;
+    Object.assign(resources,${JSON.stringify(resourceValues)});
   })()`);
 }
 
-function actionTiming(model,name,profile={}){
+export function actionTiming(model,name,profile={}){
   configure(model,profile);
   return model.evaluate(`(() => {const action=towns.flatMap(t=>t.totalActionList).find(a=>a.name===${JSON.stringify(name)});
     if(!action)throw new Error('Unknown estimate action');setAdjustedTicks(action);
@@ -29,7 +32,7 @@ function actionTiming(model,name,profile={}){
       collegeSegment:${profile.collegeSegment??0},collegeBonus:getWizCollegeRank().bonus};})()`);
 }
 
-function skillComponent(model,{id,action,skill,from=0,to,profile}){
+export function skillComponent(model,{id,action,skill,from=0,to,profile}){
   const timing=actionTiming(model,action,profile);
   const xp=model.evaluate(`({required:LevelExp.totalExpForLevel(${to})-LevelExp.totalExpForLevel(${from}),
     perAction:(()=>{const action=towns.flatMap(t=>t.totalActionList).find(a=>a.name===${JSON.stringify(action)});
@@ -39,31 +42,34 @@ function skillComponent(model,{id,action,skill,from=0,to,profile}){
     adjustedTicksTotal:count*timing.adjustedTicks};
 }
 
-function progressComponent(model,{id,action,town,varName,from=0,to,profile}){
+export function progressComponent(model,{id,action,town,varName,from=0,to,profile}){
   configure(model,profile);
   const gain=model.evaluate(`(() => {const town=towns[${town}],action=towns.flatMap(t=>t.totalActionList)
-    .find(a=>a.name===${JSON.stringify(action)});town['exp'+${JSON.stringify(varName)}]=town.expFromLevel(${from});
-    const before=town['exp'+${JSON.stringify(varName)}];action.finish();
-    return {required:town.expFromLevel(${to})-town.expFromLevel(${from}),
-      perAction:town['exp'+${JSON.stringify(varName)}]-before};})()`);
+    .find(a=>a.name===${JSON.stringify(action)}),varName=${JSON.stringify(varName)},key='exp'+varName;
+    function expForLevel(level){if(level===0)return 0;let low=0,high=1;
+      while((town[key]=high,town.getLevel(varName))<level)high*=2;
+      while(low+1<high){const mid=Math.floor((low+high)/2);town[key]=mid;
+        if(town.getLevel(varName)>=level)high=mid;else low=mid;}return high;}
+    const fromExp=expForLevel(${from}),toExp=expForLevel(${to});town[key]=fromExp;
+    const before=town[key];action.finish();return {required:toExp-fromExp,perAction:town[key]-before};})()`);
   if(!(gain.perAction>0))throw new Error('Nonpositive progress gain for '+action);
   const timing=actionTiming(model,action,profile),count=Math.ceil(gain.required/gain.perAction);
   return {id,kind:'progress',action,goal:varName+' '+from+'→'+to,count,xp:gain,...timing,
     adjustedTicksTotal:count*timing.adjustedTicks};
 }
 
-function fixedComponent(model,{id,action,count=1,profile,kind='fixed',goal}){
+export function fixedComponent(model,{id,action,count=1,profile,kind='fixed',goal}){
   const timing=actionTiming(model,action,profile);
   return {id,kind,action,goal:goal??count+' completion'+(count===1?'':'s'),count,...timing,
     adjustedTicksTotal:count*timing.adjustedTicks};
 }
 
-function multipartComponent(model,{id,action,loops=1,profile,goal}){
+export function multipartComponent(model,{id,action,loops=1,fromLoop=0,profile,goal}){
   configure(model,profile);
   const goalLabel=goal??loops+' completion'+(loops===1?'':'s');
   return model.evaluate(`(() => {const action=towns.flatMap(t=>t.totalActionList)
     .find(a=>a.name===${JSON.stringify(action)});setAdjustedTicks(action);
-    let loopCounter=0,totalCompletions=0,adjustedTicksTotal=0;const segments=[];
+    let loopCounter=${fromLoop}*action.segments,totalCompletions=${fromLoop},adjustedTicksTotal=0;const segments=[];
     for(let loop=0;loop<${loops};loop++){
       for(let segment=0;segment<action.segments;segment++){
         const stat=stats[action.loopStats[(loopCounter+segment)%action.loopStats.length]],
@@ -84,7 +90,7 @@ function multipartComponent(model,{id,action,loops=1,profile,goal}){
       collegeBonus:getWizCollegeRank().bonus,adjustedTicksTotal};})()`);
 }
 
-function section(id,label,components,baseManaPerSecond){
+export function section(id,label,components,baseManaPerSecond){
   const adjustedTicks=components.reduce((sum,item)=>sum+item.adjustedTicksTotal,0);
   const realSeconds=adjustedTicks/baseManaPerSecond;
   return {id,label,components,adjustedTicks,realSeconds,realHours:realSeconds/3600,realDays:realSeconds/86400};
