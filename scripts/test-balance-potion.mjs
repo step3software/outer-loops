@@ -78,6 +78,14 @@ assert.equal(scheduler.select({...observation,singleActionName:'Wander'},60000).
   'a repeated single verified action retains its tested fast batch');
 assert.equal(scheduler.select({...observation,actionName:'Looping Potion'},60000).reason,
   'uncalibrated_action');
+const earlyStop=new BalanceEngine({mode:'accelerated',calibration:acceleration,
+  policyBoundaries:true,maxHostMs:5000});
+assert.equal(earlyStop.edit({op:'add',name:'Wander',loops:1}).status,'admitted');
+earlyStop.start();
+const terminalObservation=earlyStop.burstPolicyLoops(64,{stopOnActions:['Wander']});
+assert.ok(terminalObservation.loops<64,'terminal event stops before the requested 64-loop burst');
+assert.ok(earlyStop.events.some(event=>event.type==='action_completed'&&event.action==='Wander'));
+
 
 const browserCases=['locked-buy-mana','opening-wander','visible-locked-mana',
   'unlocked-buy-mana','first-travel','excess-travel','real-search-false',
