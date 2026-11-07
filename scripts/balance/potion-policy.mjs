@@ -1,12 +1,12 @@
 import {fingerprint} from './ui-inputs.mjs';
 
-export const POTION_POLICY_VERSION = 'rw00-r01-potion/v2';
+export const POTION_POLICY_VERSION = 'rw00-r01-potion/v3';
 export const POTION_ENDPOINTS = Object.freeze(['potion-craft','potion-totem']);
 export const POTION_SECTIONS = Object.freeze([
   'fresh_campaign','opening_mana_economy','forest_entry','forest_alchemy_and_herbs',
   'merchanton_entry','merchanton_preparation','mt_olympus_entry','judgement',
   'valhalla_training','spatiomancy_requirement_met','potion_requirements_complete',
-  'looping_potion_crafted','jungle_entry','jungle_totem_unlocked','portal_opened',
+  'looping_potion_crafted','jungle_entry','jungle_totem_unlocked',
   'looping_potion_used_at_totem'
 ]);
 
@@ -74,24 +74,25 @@ function mountainWork(state) {
 }
 
 function valhallaWork(state) {
-  const donationUnchecked=Math.max(0,state.limited.totalDonations-state.limited.checkedDonations);
-  const donations=donationUnchecked?[q('Accept Donations',donationUnchecked,'unchecked')]:
-    state.limited.goodDonations?[q('Accept Donations',state.limited.goodDonations,'knownGood')]:[];
   return [q('Face Judgement',1),...(state.levels.tour<60?[q('Guided Tour',500)]:[]),
-    ...(state.levels.canvassed<100?[q('Canvass',300)]:[]),q('Tidy Up',20,'maxEffort'),
-    q('Donate',100),...donations,q('Gift Artifact',10),
-    q('Sell Artifact',500),q('Wizard College',1,'maxEffort'),q('Restoration',5000),
-    q('Spatiomancy',50),q('Fall From Grace',1)];
+    q('Gift Artifact',10),q('Sell Artifact',10),q('Wizard College',1,'maxEffort'),
+    ...(state.skills.Spatiomancy<1?[q('Spatiomancy',1)]:[]),q('Fall From Grace',1)];
 }
 
-function startingtonWork(state, finishEndpoint=null) {
+function startingtonWork(state) {
   const wellUnchecked=Math.max(0,state.limited.totalWells-state.limited.checkedWells);
   const wells=wellUnchecked?[q('Mana Well',wellUnchecked,'unchecked')]:
     state.limited.goodWells?[q('Mana Well',state.limited.goodWells,'knownGood')]:[];
   return [...(state.levels.meander<100?[q('Meander',800)]:[]),...wells,q('Purchase Supplies',1),
-    q('Journey Forth',1),q('Explore Jungle',500),
-    ...(finishEndpoint?[q('Open Portal',1),q('Looping Potion',1),
-      ...(finishEndpoint==='potion-totem'?[q('Totem',1)]:[])]:[])];
+    q('Journey Forth',1),...(state.levels.jungle<50?[q('Explore Jungle',500)]:[])];
+}
+
+function directPotionCarry(endpoint) {
+  return [q('Long Quest',27,'knownGood'),q('Heal The Sick',8,'maxEffort'),
+    q('Buy Supplies',1),q('Start Journey',1),q('Gather Herbs',400,'knownGood'),
+    q('Continue On',1),q('Start Trek',1),q('Looping Potion',1),q('Face Judgement',1),
+    q('Fall From Grace',1),q('Purchase Supplies',1),q('Journey Forth',1),
+    ...(endpoint==='potion-totem'?[q('Totem',1)]:[])];
 }
 
 export function readPotionPolicyState(engine) {
@@ -173,11 +174,10 @@ export function choosePotionPolicy(state, endpoint='potion-totem') {
   if(state.wunderkind>=1){phase='complete';reason='observed first successful Totem reward';recipe=[];}
   else if(state.loopingPotion){phase='carry_potion';reason='potion crafted; consume it at the unlocked Totem';
     recipe=[q('Totem',1)];}
-  else if(state.skills.Spatiomancy>=1&&state.skills.Restoration>=1000&&
-      state.skills.Alchemy>=200&&state.levels.meander>=100&&state.levels.jungle>=75){
-    phase='craft_and_totem';reason='portal, craft, and Totem prerequisites persistently earned';
-    recipe=[...routeToOlympus(state),...mountainWork(state),...valhallaWork(state),
-      ...startingtonWork(state,endpoint)];
+  else if(state.skills.Spatiomancy>=1&&state.skills.Pyromancy>=200&&
+      state.skills.Alchemy>=200&&state.levels.meander>=100&&state.levels.jungle>=50){
+    phase='craft_and_totem';reason='direct craft, carry, and Totem prerequisites persistently earned';
+    recipe=directPotionCarry(endpoint);
   }else if(state.townsUnlocked.includes(5)){
     phase='startington';reason='Startington earned; progress Meander and Jungle route';
     recipe=[...routeToOlympus(state),...mountainWork(state),...valhallaWork(state),...startingtonWork(state)];

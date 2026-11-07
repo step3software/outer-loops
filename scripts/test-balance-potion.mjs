@@ -36,16 +36,19 @@ assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4,5]})).phase,'sta
 assert.equal(choosePotionPolicy(state({loopingPotion:true})).phase,'carry_potion');
 assert.equal(choosePotionPolicy(state({loopingPotion:false,wunderkind:1})).phase,'complete');
 const craft=choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4,5,6],
-  levels:{...state().levels,meander:100,jungle:75},
-  skills:{...state().skills,Alchemy:200,Spatiomancy:1,Restoration:1000}}));
+  levels:{...state().levels,meander:100,jungle:50},
+  skills:{...state().skills,Alchemy:200,Spatiomancy:1,Pyromancy:200}}));
 assert.equal(craft.phase,'craft_and_totem');
-assert.ok(craft.queue.findIndex(item=>item.name==='Open Portal')<
+assert.equal(craft.queue.some(item=>item.name==='Open Portal'),false);
+assert.ok(craft.queue.findIndex(item=>item.name==='Start Journey')<
   craft.queue.findIndex(item=>item.name==='Looping Potion'));
 assert.ok(craft.queue.findIndex(item=>item.name==='Looping Potion')<
+  craft.queue.findIndex(item=>item.name==='Face Judgement'));
+assert.ok(craft.queue.findIndex(item=>item.name==='Face Judgement')<
   craft.queue.findIndex(item=>item.name==='Totem'));
 const craftOnly=choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4,5,6],
-  levels:{...state().levels,meander:100,jungle:75},
-  skills:{...state().skills,Alchemy:200,Spatiomancy:1,Restoration:1000}}),'potion-craft');
+  levels:{...state().levels,meander:100,jungle:50},
+  skills:{...state().skills,Alchemy:200,Spatiomancy:1,Pyromancy:200}}),'potion-craft');
 assert.equal(craftOnly.queue.some(item=>item.name==='Totem'),false);
 assert.throws(()=>choosePotionPolicy(state(),'wrong-endpoint'),/Unknown potion endpoint/);
 
@@ -77,24 +80,32 @@ assert.ok(estimate.balance.minToMedian>=.35&&estimate.balance.maxToMedian<=1.5);
 assert.ok(Math.abs(estimate.sections.reduce((sum,section)=>sum+section.realSeconds,0)-
   estimate.realSeconds)<1e-6);
 const calculated=estimate.sections.flatMap(section=>section.components);
-const restoration=calculated.filter(component=>component.action==='Restoration');
-assert.equal(restoration.length,3);
-assert.ok(restoration.every(component=>component.collegeBonus>1&&
-  component.manaCost<component.unreducedManaCost),'Wizard College reduction must come from game code');
+assert.equal(calculated.some(component=>['Restoration','Survey','Open Portal'].includes(component.action)),false,
+  'direct route must exclude optional portal requirements');
+const requiredActions=['Wander','Explore Forest','Learn Alchemy','Explore City','Climb Mountain',
+  'Pyromancy','Heal The Sick','Face Judgement','Wizard College','Spatiomancy','Meander',
+  'Explore Jungle','Looping Potion','Fall From Grace','Journey Forth','Totem'];
+for(const action of requiredActions)assert.ok(calculated.some(component=>component.action===action),
+  'missing direct-route action '+action);
+const spatiomancy=calculated.find(component=>component.action==='Spatiomancy');
+assert.ok(spatiomancy.collegeBonus>1&&spatiomancy.manaCost<spatiomancy.unreducedManaCost,
+  'Wizard College reduction must come from game code');
 assert.ok(calculated.filter(component=>component.adjustedTicks!==undefined).every(component=>
   component.adjustedTicks<=component.manaCost),'representative stats must reduce production action ticks');
-assert.ok(calculated.filter(component=>component.kind==='survey').every(component=>component.count>0));
+assert.ok(calculated.filter(component=>component.kind==='multipart').every(component=>
+  component.count>0&&component.segments.every(segment=>segment.ticks>0)));
 for(const endpoint of ['potion-craft','potion-totem']){
   const injected=runInjectedPotionEndpoint({root,endpoint});
   assert.equal(injected.terminal,true);
-  assert.equal(injected.state.portalOpened,true);
+  assert.equal(injected.state.portalOpened,false);
   const names=injected.events.map(event=>event.action);
-  assert.deepEqual(names,endpoint==='potion-craft'?['Open Portal','Looping Potion']:
-    ['Open Portal','Looping Potion','Totem']);
+  const prefix=['Start Journey','Continue On','Start Trek','Looping Potion'];
+  assert.deepEqual(names,endpoint==='potion-craft'?prefix:
+    [...prefix,'Face Judgement','Fall From Grace','Purchase Supplies','Journey Forth','Totem']);
   if(endpoint==='potion-craft')assert.equal(injected.state.loopingPotion,true);
   else{
     assert.equal(injected.state.loopingPotion,false);
     assert.equal(injected.state.wunderkind,1);
   }
 }
-console.log('PASS potion policy, calculated requirements, injected portal/craft/Totem endpoints, and evidence guards.');
+console.log('PASS direct potion policy, calculated route sections, injected craft/Totem endpoints, and evidence guards.');
