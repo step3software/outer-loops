@@ -98,6 +98,15 @@ The **recommended** player-facing structure is **Will / Echoes / Anchors**. Will
 | RW-Q31 | What defines timeline **completion and entitlement settlement** when potion entry precedes optional Valley/Restore Time? | Separate first arrival, Valley ending, timeline close and first-rerun grants; no duplicated prestige payouts | RW02 and veteran migration |
 | RW-Q32 | When do **parties** become available, and what is a party versus a passive NPC roster? | Social discovery first; functional party formation/management in RW05 | Later UI and gameplay |
 
+| RW-Q33 | Which god encounter and phases form the first incremental boss; is it optional or required for the **Valley** ending? | Begin with one characterized encounter and do not make it a prerequisite for potion entry | RW08 scope and original Valley progression |
+| RW-Q34 | Which progression thresholds produce distinctive, optimizable boss solutions? | Multiple viable stats/skills/resource/action-queue strategies; deterministic, not reflex-based | RW08 rules and balancing |
+| RW-Q35 | How do boss progress, difficulty tiers and rewards persist or scale between timelines? | Versioned per-timeline state, bounded escalation, once-only rewards and measured pacing | RW08 saves/outputs, RW00 |
+| RW-Q36 | Should customized timeline potions or wagers modify bosses? | Possible later interface to RW06/RW07 when separately implemented; boss works without them | RW08 integration contracts |
+
+## RW08 proposal — incremental timeline bosses (2026-11-07)
+
+The owner proposed Valley of Olympus's existing **fights against the gods** as a place for timeline boss encounters, with an explicit correction: bosses in this **incremental game must have incremental solutions**. [RW08](RW08.md) records the proposed progression/stat/resource/action-queue boss design. No party formation, manual combat or new Real World entry requirement is part of this milestone. Boss identity, scaling and rewards remain open; the separately proposed [RW06 Timeline Potions / RW07 Wagers](https://github.com/step3software/outer-loops/pull/9) can later integrate without becoming prerequisites.
+
 ## Change control and conflicts
 
 The [potion/endgame research](potion-and-endgame-options.md) is historical evidence. **Drinking the Looping Potion to enter Real World is now approved product direction; dropping Valley is not.** The potion is *not* required to complete Valley or the existing `RestoreTime`. RW-D02's previous portal requirement was explicitly superseded; current code remains unchanged. Both reputation paths and old saves need future tests.

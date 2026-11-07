@@ -15,6 +15,7 @@
 | **RW04 — Divergent timeline challenges** | Add selected thematic variant rules and unique rewards/selves | Choosing a challenge meaningfully changes strategy and expands the nexus | Optional variants, separate activation context, safe challenge transition; old separate menu absent |
 | **RW05 — Parties and multi-self management** | Grow distinct selves into small selectable parties and coordinated timeline activities | Parties become a meaningful later stage of progress, not a starting roster dump | Bounded roles, resource/performance limits, safe save and recovery |
 | **RW06–RW07 — Keys and Wagers (separate proposals)** | [Draft PR #9](https://github.com/step3software/outer-loops/pull/9) documents later key-modified runs and will/will-not wagers; not adopted into this branch | Discover them gradually after the first rerun | Keep review/implementation independent of early village mechanics |
+| **[RW08 — Incremental Timeline Bosses](RW08.md)** | Reuse Valley's god fights as a foundation for deterministic, scaling incremental bosses across timelines | Solve through improving stats, resources and legal action queues; no real-time combat or parties | Characterized old trial behavior, bounded pacing, safe persistence and predictor parity |
 | **ART — Pixel-art workstream (parallel)** | Establish style bible from nexus; later apply to inner world | Cohesive, legible two-character nexus scene and expanded game presentation | Controlled asset scope, readable UI, responsive/reduced motion, asset rights documented |
 
 **RW00–RW02** form the first target development effort. RW01 may be demoed internally as a narrative prototype, but should **not** be shipped to ordinary players without its first empowered rerun and safe state transitions.
@@ -54,6 +55,10 @@ Both high-reputation Valhalla and shadow/Startington routes must have fair acces
 **Safety:** Both novice and veteran saves, including legacy purchases and challenge-active saves, have a reviewed, recoverable migration path.  
 **Technical:** Browser + predictor tests cover exact idempotent rewards, relevant time-based gates, normal/new timeline reset and storage.  
 **Visual:** Alternate Beginnersville looks familiar-but-different, several selves are visible, the guide-self and replay action are clear, and no full RPG movement engine is required.
+
+## RW08 — proposed later Valley boss encounters
+
+[RW08](RW08.md) develops **incremental boss** challenges from Valley's existing Gods Trial and Challenge Gods. The player optimizes progression and queues to meet phased divine requirements. The system must not require party mechanics or gate potion entry; optional future [RW06 timeline potions and RW07 wagers](https://github.com/step3software/outer-loops/pull/9) may modify boss conditions. Exact boss and balance rules are unapproved.
 
 ## Deferred deliberately
 

@@ -84,7 +84,8 @@ The [roadmap](roadmap.md) separates the arrival, initial replay and future syste
 - [RW00 campaign balance tests — implementation plan](balance-tests-implementation-plan.md) · [structured draft](balance-tests.plan.json)
 - [Calculated original-campaign timing baseline](calculated-timing-baseline.md) — generated 29-day potion breakdown and full C08–C14 timing findings
 - [Roadmap and acceptance gates](roadmap.md) — potion village → empowered rerun → later party play
-- [RW06 Timeline Keys and RW07 Timeline Wagers proposals (draft PR #9)](https://github.com/step3software/outer-loops/pull/9) — proposed future mechanics, not adopted into this source branch
+- [RW06 Timeline Potions and RW07 Wagers proposals (draft PR #9)](https://github.com/step3software/outer-loops/pull/9) — proposed future mechanics, not adopted into this source branch
+- [RW08 — Incremental Timeline Bosses](RW08.md) — proposed gods-as-bosses milestone, solved with incremental progression and action queues; no party system
 - [Playtest/validation questions](validation.md) — future scenarios, key pacing risks and decisions
 - [Integration with RF01–RF06](integration-with-refactoring.md) — refactor dependencies and conflicts
 
