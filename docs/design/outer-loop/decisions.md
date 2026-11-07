@@ -37,6 +37,7 @@ Evidence: owner replies in this Codex chat (America/New_York), retained here as 
 | RW-D02 | Potion consumption enters alternate Beginnersville; not gated by Restore Time | Explicit reversal of the earlier post-Restore Time portal gateway, not of faster-Valley pacing. |
 | RW-D03 | Several selves already occupy the alternate village; one notices and speaks to the newcomer | First encounter before the later party/automation tutorial. |
 | RW-D05 | First rerun includes skill points, a major temporary boost and free permanent ~10× replay throughput | Point amount, temporary effect/duration and stacking remain open. |
+| RW-Q20 | Resolved as inapplicable: Valley is retained | No replacement for tower, gods, temporal stones or `ImbueSoul` is required for the Real World gateway. |
 | RW00-BALANCE-SCOPE | Write section-duration balance tests and rebalance the campaign together | No Valley-only tuning effort; first measure all sections. |
 | RW00-PACING-TARGETS | Measure the current campaign first, then choose total and section budgets from the results | No first-completion duration or section budget selected yet. |
 
