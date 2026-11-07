@@ -155,10 +155,16 @@ function completedReportFixture(endpoint){
   result.failure=null;
   result.resources.loopingPotion=endpoint==='potion-craft';
   result.skills.Wunderkind=endpoint==='potion-totem'?1:0;
-  result.checkpoints.push({id:terminal,kind:'completed'});
   result.prefix.semanticEvents=['Start Journey','Continue On','Start Trek','Looping Potion',
     ...(endpoint==='potion-totem'?['Totem']:[])].map((action,index)=>
-      ({type:'action_completed',action,seconds:index}));
+      ({type:'action_completed',action,sequence:index,loop:0,seconds:index}));
+  const checkpointFor=(id,action)=>{
+    const event=result.prefix.semanticEvents.find(item=>item.action===action);
+    return {id,kind:'completed',gameplaySeconds:event.seconds,
+      origin:{type:'action_completed',action,sequence:event.sequence,loop:event.loop}};
+  };
+  result.checkpoints.push(checkpointFor('looping_potion_crafted','Looping Potion'));
+  if(endpoint==='potion-totem')result.checkpoints.push(checkpointFor(terminal,'Totem'));
   return result;
 }
 for(const endpoint of ['potion-craft','potion-totem']){
@@ -171,9 +177,19 @@ for(const endpoint of ['potion-craft','potion-totem']){
   [misordered.prefix.semanticEvents[0],misordered.prefix.semanticEvents[1]]=
     [misordered.prefix.semanticEvents[1],misordered.prefix.semanticEvents[0]];
   assert.throws(()=>assertPotionReport(misordered),/direct potion travel/);
+  const missingCraft=structuredClone(complete);
+  missingCraft.checkpoints=missingCraft.checkpoints.filter(item=>item.id!=='looping_potion_crafted');
+  assert.throws(()=>assertPotionReport(missingCraft),/checkpoint/);
+  const forgedCraft=structuredClone(complete);
+  forgedCraft.checkpoints.find(item=>item.id==='looping_potion_crafted').origin.sequence=9999;
+  assert.throws(()=>assertPotionReport(forgedCraft),/action-backed checkpoint/);
   if(endpoint==='potion-totem'){
     const unconsumed=structuredClone(complete);unconsumed.resources.loopingPotion=true;
     assert.throws(()=>assertPotionReport(unconsumed),/consumption/);
+    const crossLoop=structuredClone(complete);
+    crossLoop.prefix.semanticEvents.find(item=>item.action==='Totem').loop=1;
+    crossLoop.checkpoints.find(item=>item.id==='looping_potion_used_at_totem').origin.loop=1;
+    assert.throws(()=>assertPotionReport(crossLoop),/same-loop/);
   }
 }
 const estimate=createPotionRequirementEstimate({root});
@@ -204,6 +220,11 @@ for(const endpoint of ['potion-craft','potion-totem']){
   assert.equal(injected.terminal,true);
   assert.equal(injected.state.portalOpened,false);
   const names=injected.events.map(event=>event.action);
+  assert.ok(injected.events.every(event=>Number.isFinite(event.seconds)&&
+    Number.isFinite(event.effectiveSeconds)&&event.seconds<=event.effectiveSeconds),
+    'action events must use finite gameplay and effective clocks');
+  assert.ok(Math.abs(injected.events.at(-1).seconds-injected.simulatedGameplaySeconds)<0.021,
+    'a 5000× action timestamp must reconcile with production wall-clock accounting');
   const prefix=['Start Journey','Continue On','Start Trek','Looping Potion'];
   assert.deepEqual(names,endpoint==='potion-craft'?prefix:
     [...prefix,'Face Judgement','Fall From Grace','Purchase Supplies','Journey Forth','Totem']);
@@ -213,4 +234,15 @@ for(const endpoint of ['potion-craft','potion-totem']){
     assert.equal(injected.state.wunderkind,1);
   }
 }
-console.log('PASS direct potion policy, calculated route sections, injected craft/Totem endpoints, and evidence guards.');
+const repeats=new BalanceEngine({seed:42,mode:'reference',policyBoundaries:true,
+  eventActions:['Wander'],maxHostMs:30000});
+assert.equal(repeats.edit({op:'add',name:'Wander',loops:2}).status,'admitted');
+repeats.start();repeats.burstPolicyLoops(2);
+const repeatedActions=repeats.events.filter(event=>event.type==='action_completed');
+assert.deepEqual(repeatedActions.map(event=>event.action),Array(4).fill('Wander'));
+assert.deepEqual(repeatedActions.map(event=>event.loop),[0,0,1,1],
+  'each repeated completion must be recorded within and across loops');
+assert.ok(repeatedActions.every((event,index)=>
+  index===0||event.seconds>=repeatedActions[index-1].seconds));
+
+console.log('PASS direct potion policy, repeated events, calculated sections and synthetic checkpoints.');
