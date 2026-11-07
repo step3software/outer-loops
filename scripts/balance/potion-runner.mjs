@@ -3,6 +3,8 @@ import {readFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {performance} from 'node:perf_hooks';
 import {BalanceEngine} from './engine.mjs';
+import {GAME_MODEL_SCRIPTS} from '../load-game-model.mjs';
+import {assertCalibration} from './report.mjs';
 import {createCalibrationManifest} from './calibration.mjs';
 import {SCHEDULER_VERSION} from './fast-scheduler.mjs';
 import {fingerprint,readUiProfile} from './ui-inputs.mjs';
@@ -16,7 +18,7 @@ export const POTION_PREFIX_SCHEMA = 'rw00-earned-prefix/v1';
 export const POTION_CHECKPOINT_VERSION = 'rw00-potion-checkpoints/v1';
 const POTION_EVENT_ACTIONS=Object.freeze(['Buy Mana Z1','Start Journey','Continue On','Start Trek',
   'Face Judgement','Wizard College','Spatiomancy','Fall From Grace','Journey Forth',
-  'Open Portal','Looping Potion','Totem']);
+  'Looping Potion','Totem']);
 
 function requireValue(condition,message){if(!condition)throw new Error('Invalid potion evidence: '+message);}
 
@@ -49,25 +51,38 @@ export function assertPotionReport(report){
     requireValue(report.checkpoints.some(event=>event.id===terminal&&event.kind==='completed'),
       'terminal checkpoint');
     const exact=report.prefix.semanticEvents.filter(event=>event.type==='action_completed');
-    const portal=exact.findIndex(event=>event.action==='Open Portal');
-    const potion=exact.findIndex(event=>event.action==='Looping Potion');
-    const totem=exact.findIndex(event=>event.action==='Totem');
-    requireValue(portal>=0&&potion>portal,'portal-before-potion exact action order');
-    if(report.endpointRequested==='potion-totem'){
-      requireValue(totem>potion&&!report.resources.loopingPotion&&report.skills.Wunderkind>=1,
-        'potion-before-Totem exact action order and consumption');
+    const first=action=>exact.findIndex(event=>event.action===action);
+    const direct=['Start Journey','Continue On','Start Trek','Looping Potion'];
+    requireValue(direct.every((action,index)=>first(action)>=0&&
+      (index===0||first(action)>first(direct[index-1])),
+      'direct potion travel and craft action order');
+    requireValue(first('Open Portal')<0,'direct route unexpectedly used Open Portal');
+    if(report.endpointRequested==='potion-craft'){
+      requireValue(report.resources.loopingPotion===true,'crafted potion not retained');
+    }else{
+      requireValue(first('Totem')>first('Looping Potion')&&
+        !report.resources.loopingPotion&&report.skills.Wunderkind>=1,
+        'potion-before-Totem action order and consumption');
     }
   }else requireValue(report.failure||report.missingMilestones.length>0,'incomplete diagnosis');
   return true;
 }
 
+// These bytes determine both the browser calibration identity and calculated
+// campaign provenance. Include every loaded gameplay script and all harness,
+// policy, benchmark and report implementations that can change interpretation.
 export const POTION_SOURCE_FILES = Object.freeze([
-  'actionList.js','actions.js','driver.js','town.js','stats.js','saving.js','helpers.js',
-  'scripts/load-game-model.mjs','scripts/balance/admission.mjs','scripts/balance/ui-inputs.mjs',
-  'scripts/balance/engine.mjs','scripts/balance/clock.mjs','scripts/balance/fast-scheduler.mjs',
+  ...GAME_MODEL_SCRIPTS,
+  'scripts/load-game-model.mjs','scripts/balance/admission.mjs',
+  'scripts/balance/ui-inputs.mjs','scripts/balance/engine.mjs',
+  'scripts/balance/clock.mjs','scripts/balance/fast-scheduler.mjs',
   'scripts/balance/calibration.mjs','scripts/balance/events.mjs',
+  'scripts/balance/profiler.mjs','scripts/balance/report.mjs',
+  'scripts/balance/supervisor.mjs','scripts/balance/measurement-worker.mjs',
   'scripts/balance/potion-policy.mjs','scripts/balance/potion-runner.mjs',
-  'scripts/balance/potion-estimate.mjs'
+  'scripts/balance/potion-estimate.mjs','scripts/balance/campaign-estimate.mjs',
+  'scripts/measure-balance.mjs','scripts/generate-balance-timing-report.mjs',
+  'scripts/test-balance-browser.mjs','scripts/test-balance-equivalence.mjs'
 ]);
 
 export function potionSourceIdentity(root) {
@@ -80,12 +95,25 @@ export function potionSourceIdentity(root) {
   return {identity:hash.digest('hex'),files};
 }
 
+// Only actions with an explicit reference/accelerated equivalence fixture may
+// receive larger batches. The real-browser calibration additionally covers
+// Wander. Every other campaign action must use 20 ms precision stepping.
+export const POTION_VERIFIED_BATCH_ACTIONS = Object.freeze({
+  Wander:{status:'passed',maxBatchMs:10000,scenario:'opening-and-loop-exhaustion'},
+  'Train Strength':{status:'passed',maxBatchMs:10000,scenario:'normal-training'},
+  'Smash Pots':{status:'passed',maxBatchMs:100,scenario:'limited-resource'}
+});
 export function createPotionAcceleration(sourceHash) {
   return createCalibrationManifest({sourceHash,schedulerVersion:SCHEDULER_VERSION,
     scenarios:['real-browser-driver','model-boundary-equivalence'],
-    actions:Object.fromEntries(POTION_POLICY_ACTIONS.map(name=>[name,
-      {status:'passed',maxBatchMs:60000,scenario:'model-boundary-equivalence'}]))});
+    actions:POTION_VERIFIED_BATCH_ACTIONS});
 }
+
+const REQUIRED_BROWSER_SCENARIOS=Object.freeze([
+  'locked-buy-mana','opening-wander','visible-locked-mana','unlocked-buy-mana',
+  'first-travel','excess-travel','real-search-false','real-search-true',
+  'real-cap-update','real-driver-opening','accelerated-driver-opening'
+]);
 
 const MILESTONES=Object.freeze([
   ['fresh_campaign',s=>s.totals.time===0&&s.totals.loops===0],
@@ -100,9 +128,8 @@ const MILESTONES=Object.freeze([
   ['spatiomancy_requirement_met',s=>s.skills.Spatiomancy>=1],
   ['jungle_entry',s=>s.townsUnlocked.includes(6)],
   ['jungle_totem_unlocked',s=>s.levels.jungle>=50],
-  ['portal_opened',s=>!!s.storyFlags.portalOpened],
-  ['potion_requirements_complete',s=>s.skills.Spatiomancy>=1&&s.skills.Restoration>=1000&&
-    s.skills.Alchemy>=200&&s.levels.jungle>=75&&!!s.storyFlags.portalOpened],
+  ['potion_requirements_complete',s=>s.skills.Spatiomancy>=1&&s.skills.Pyromancy>=200&&
+    s.skills.Alchemy>=200&&s.levels.meander>=100&&s.levels.jungle>=50],
   ['looping_potion_crafted',s=>s.loopingPotion],
   ['looping_potion_used_at_totem',s=>s.wunderkind>=1&&!s.loopingPotion]
 ]);
@@ -135,17 +162,27 @@ export function runPotionCampaign({root,seed=42,endpoint='potion-totem',mode='ac
   maxHostSeconds=35,calibrationReport=null,onTransition=null}={}){
   const source=potionSourceIdentity(root);
   const acceleration=createPotionAcceleration(source.identity);
+  let browserCalibrationHash=null;
   if(mode==='accelerated'){
-    if(!calibrationReport||calibrationReport.status!=='passed')throw new Error('Missing browser calibration');
-    for(const [key,value] of Object.entries({sourceHash:source.identity,
-      schedulerVersion:SCHEDULER_VERSION,admissionVersion:ADMISSION_VERSION,
-      accelerationCalibrationIdentity:acceleration.identity})){
-      if(calibrationReport[key]!==value)throw new Error('Stale browser calibration: '+key);
+    if(!calibrationReport)throw new Error('Missing browser calibration');
+    try {
+      browserCalibrationHash=assertCalibration(calibrationReport,{
+        phase:'calibration',sourceHash:source.identity,clockVersion:CLOCK_VERSION,
+        schedulerVersion:SCHEDULER_VERSION,admissionVersion:ADMISSION_VERSION,
+        accelerationCalibrationIdentity:acceleration.identity,clockQuantumMs:20
+      });
+    }catch(error){throw new Error('Stale or invalid browser calibration: '+error.message);}
+    const observed=new Set(calibrationReport.scenarios.map(item=>item.id));
+    for(const scenario of REQUIRED_BROWSER_SCENARIOS){
+      if(!observed.has(scenario))throw new Error('Missing required browser calibration scenario: '+scenario);
     }
   }
   const engine=new BalanceEngine({seed,mode,calibration:mode==='reference'?undefined:acceleration,
     maxBatchMs:60000,profiler:true,maxHostMs:maxHostSeconds*1000,
     maxSimulatedSeconds:3650*86400,policyBoundaries:true,eventActions:POTION_EVENT_ACTIONS});
+  if(mode==='accelerated'&&calibrationReport.uiConfigurationHash!==engine.uiInitial.configurationHash){
+    throw new Error('Stale browser calibration: uiConfigurationHash');
+  }
   const startedAt=performance.now(),milestones=new Map(),attempts=new Map(),sectionTotals=new Map(),
     transitions=[],semanticEvents=[];
   let state=readPotionPolicyState(engine),decision=choosePotionPolicy(state,endpoint),lastAction=null,
@@ -221,7 +258,8 @@ export function runPotionCampaign({root,seed=42,endpoint='potion-totem',mode='ac
   const report={schema:POTION_REPORT_SCHEMA,status,endpointRequested:endpoint,
     endpointReached:status==='complete'?endpoint:null,route:'R01',seed,source,
     identities:{policy:POTION_POLICY_IDENTITY,scheduler:SCHEDULER_VERSION,
-      calibration:acceleration.identity,admission:ADMISSION_VERSION,ui:ui.effectiveConfigurationHash,
+      calibration:acceleration.identity,browserCalibration:browserCalibrationHash,
+     admission:ADMISSION_VERSION,ui:ui.effectiveConfigurationHash,
       rng:engine.model.rngSnapshot()?.algorithm,clock:CLOCK_VERSION,replay:fingerprint(transitions)},
     sections,totalGameplaySeconds:finalObs.time,totalEffectiveSeconds:finalObs.effectiveSeconds,
     hostSeconds,loopCount:finalObs.loops,completedActionCount:finalObs.completedActions,
