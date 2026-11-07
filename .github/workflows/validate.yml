@@ -30,6 +30,9 @@ jobs:
         run: npm run test:rf01:model
       - name: RF01 original challenge rules characterization
         run: npm run test:rf01:challenges
+      - name: RW00 deterministic balance contracts
+        timeout-minutes: 2
+        run: npm run test:balance
       - name: Confirm generated gameplay reference matches runtime
         run: npm run check:mechanics
       - name: Check XML well-formedness
