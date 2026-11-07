@@ -17,7 +17,7 @@ function detail(model, name) {
   const source = '(() => { const a=towns.flatMap(t=>t.totalActionList).find(a=>a.name===' +
     JSON.stringify(name) + '); if(!a) return null; return {name:a.name,town:a.townNum,' +
     'townAccessible:a.townNum===0||townsUnlocked.includes(a.townNum),' +
-    'visible:!!a.visible(),unlocked:!!a.unlocked(),' +
+    'visible:!!a.visible(),unlocked:!!a.unlocked(),type:a.type,' +
     'allowed:a.allowed?a.allowed():null,' +
     'count:getNumOnList(a.name),travel:getPossibleTravel(a.name).length>0}; })()';
   return json(model, source);
@@ -46,10 +46,16 @@ function guardAdd(model, edit, priorCount = 0, existing = null) {
   }
   const action = detail(model, edit.name);
   if (!action) return {reason: 'unknown_action'};
+  if (['knownGood','unchecked'].includes(edit.loopsType) && action.type !== 'limited') {
+    return {reason: 'invalid_loop_type', details: action};
+  }
+  if (edit.loopsType === 'maxEffort' && action.type !== 'multipart') {
+    return {reason: 'invalid_loop_type', details: action};
+  }
   if (!action.townAccessible) return {reason: 'locked_town', details: action};
   if (!action.visible) return {reason: 'invisible_action', details: action};
   if (!action.unlocked) return {reason: 'locked_action', details: action};
-  if (action.travel && edit.loops !== 1) return {reason: 'travel_count', details: action};
+  if (action.travel && (edit.loops !== 1 || (edit.loopsType && edit.loopsType !== 'actions'))) return {reason: 'travel_count', details: action};
   if (action.allowed !== null &&
       (!Number.isFinite(action.allowed) || priorCount + edit.loops > action.allowed)) {
     return {reason: 'allowed_limit', details: action};
@@ -105,7 +111,9 @@ export function admitQueueEdit(model, edit, {source = 'test-policy', policyVersi
   if (result?.reason) return reject(result.reason, edit, before, result.details);
 
   // Only after all checks are complete may the real queue mutators be reached.
-  const update = (sourceCode) => model.evaluate(sourceCode);
+  const update = sourceCode => model.evaluate(sourceCode);
+  const lastAddedIndex = () => model.evaluate(
+    'actions.findIndexOfActionWithId(actions.getMaxActionId())');
   if (op === 'add') {
     const originalAmount = json(model, 'actions.addAmount');
     try {
@@ -113,6 +121,10 @@ export function admitQueueEdit(model, edit, {source = 'test-policy', policyVersi
       // The actual UI entry path handles travel insertion and closest zone span.
       update('addActionToList(' + JSON.stringify(edit.name) + ',' + result.details.town +
         ',' + (result.details.travel ? 'true':'false') + ',-1)');
+      if (edit.loopsType && edit.loopsType !== 'actions') {
+        update('actions.updateAction(' + lastAddedIndex() +
+          ',{loopsType:' + JSON.stringify(edit.loopsType) + '})');
+      }
     } finally {
       update('actions.addAmount=' + originalAmount);
     }
@@ -129,7 +141,12 @@ export function admitQueueEdit(model, edit, {source = 'test-policy', policyVersi
         update('actions.addAmount=' + item.loops);
         update('addActionToList(' + JSON.stringify(item.name) + ',' + d.town +
           ',' + (d.travel?'true':'false') + ',-1)');
-        if (item.disabled) update('actions.updateAction(actions.next.length-1,{disabled:true})');
+        const index = lastAddedIndex();
+        if (item.loopsType && item.loopsType !== 'actions') {
+          update('actions.updateAction(' + index + ',{loopsType:' +
+            JSON.stringify(item.loopsType) + '})');
+        }
+        if (item.disabled) update('actions.updateAction(' + index + ',{disabled:true})');
       } finally { update('actions.addAmount=' + originalAmount); }
     }
   }
