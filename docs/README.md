@@ -49,9 +49,9 @@ Entry point for developers and coding agents. The code is authoritative; these d
 
 - [Real World / Timeloop Nexus design index](design/outer-loop/README.md)
 - [Approved direction and unresolved product decisions](design/outer-loop/decisions.md)
-- [Narrative and first alternate self](design/outer-loop/narrative.md)
-- [Looping Potion / Valley of Olympus alternative endings](design/outer-loop/potion-and-endgame-options.md)
-- [New timelines, ~10× replay and upgrades](design/outer-loop/systems.md)
+- [Potion arrival, alternate Beginnersville and first self](design/outer-loop/narrative.md)
+- [Looping Potion gateway, retained Valley and historical alternatives](design/outer-loop/potion-and-endgame-options.md)
+- [First empowered rerun: skill points, temporary boost, ~10× replay and later upgrades](design/outer-loop/systems.md)
 - [Will / Echoes / Anchors three-tree working model](design/outer-loop/upgrade-trees.md)
 - [Dominion four-tree alternative](design/outer-loop/dominion-alternative.md)
 - [Upgrade mechanics and future tests](design/outer-loop/upgrade-tree-contracts.md)
@@ -59,7 +59,10 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [Legacy prestige/challenge retirement and veteran saves](design/outer-loop/legacy-transition.md)
 - [Nexus technical architecture](design/outer-loop/technical-architecture.md)
 - [Pixel-art and UI direction](design/outer-loop/visual-direction.md)
-- [Development roadmap](design/outer-loop/roadmap.md) · [future validation](design/outer-loop/validation.md)
+- [RW00–RW05 potion-first development roadmap](design/outer-loop/roadmap.md) · [future validation](design/outer-loop/validation.md)
+- [RW00 campaign pacing test implementation plan (draft in PR #10)](design/outer-loop/balance-tests-implementation-plan.md)
+- [RW06 Timeline Potions / RW07 Timeline Wagers (separate draft PR #9)](https://github.com/step3software/outer-loops/pull/9)
+- [RW08 Incremental Timeline Bosses (proposed)](design/outer-loop/RW08.md)
 - [RF coordination and product scope conflicts](design/outer-loop/integration-with-refactoring.md)
 
 ## Development guides

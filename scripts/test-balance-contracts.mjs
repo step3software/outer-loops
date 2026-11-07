@@ -1,0 +1,325 @@
+#!/usr/bin/env node
+// RW00 deterministic contracts. Synthetic gate fixtures are NOT earned routes.
+import assert from 'node:assert/strict';
+import {loadGameModel} from './load-game-model.mjs';
+import {BalanceEngine} from './balance/engine.mjs';
+import {admitQueueEdit,queueSnapshot} from './balance/admission.mjs';
+import {createDefaultUiProfile,installUiProfile,readUiProfile,changeUiInput,
+  assertMatchingUiProfiles,fingerprint} from './balance/ui-inputs.mjs';
+import {assertCalibration,assertCompleteReport,assertComparableBaseline,
+  createIncompleteReport,CHECKPOINTS,REPORT_SCHEMA,CALIBRATION_SCHEMA} from './balance/report.mjs';
+
+const unpack = (model, expr) => JSON.parse(JSON.stringify(model.evaluate(expr)));
+const fresh = () => loadGameModel({withViewStubs:true,rngSeed:42});
+
+function invariant(model) {
+  return {
+    queue:queueSnapshot(model),
+    game:unpack(model,'({resources,timer,timeCounter,effectiveTime,gameTicksLeft,' +
+      'storyFlags,storyVars,totals,escapeStarted,curTown})'),
+    random:model.rngSnapshot()
+  };
+}
+
+// The low-level API accepts a player-inaccessible edit; policy admission must not.
+{
+  const model=fresh();
+  let before=invariant(model);
+  for (const change of [
+    {op:'add',name:'Buy Mana Z1',loops:1},
+    {op:'add',name:'Imaginary Action',loops:1},
+    {op:'add',name:'Wander',loops:0},
+    {op:'add',name:'Wander',loops:Infinity},
+    {op:'add',name:'Wander',loops:1.5},
+    {op:'add',name:'Wander',loops:'4'},
+    {op:'replace',queue:[{name:'Wander',loops:1}]}
+  ]) {
+    const result=admitQueueEdit(model,change);
+    assert.equal(result.status,'invalid_route',JSON.stringify(change));
+    assert.deepEqual(invariant(model),before,'rejection has zero gameplay/queue/RNG side effects');
+  }
+  // Wander level 3 makes buying mana visible, but not yet unlocked at level 20.
+  model.evaluate('towns[0].expWander=towns[0].expFromLevel(3)');
+  before=invariant(model);
+  assert.equal(admitQueueEdit(model,{op:'add',name:'Buy Mana Z1',loops:1}).reason,'locked_action');
+  assert.deepEqual(invariant(model),before);
+  // Start Journey is visibly listed at skill sum 15, unlocked at 35.
+  model.evaluate('skills.Combat.levelExp.setLevel(20);resources.supplies=true');
+  before=invariant(model);
+  assert.equal(admitQueueEdit(model,{op:'add',name:'Start Journey',loops:1}).reason,'locked_action');
+  assert.deepEqual(invariant(model),before);
+  const adversarial=fresh();
+  adversarial.evaluate('actions.addAction("Buy Mana Z1",1)');
+  assert.equal(queueSnapshot(adversarial).length,1,'ungated low-level method is demonstrably permissive');
+  console.log('PASS RW00 queue negatives: locked/invisible, unknown, invalid count, unsupported edit, no state/RNG mutation.');
+}
+
+{
+  const model=fresh();
+  const good=admitQueueEdit(model,{op:'add',name:'Wander',loops:1});
+  assert.equal(good.status,'admitted',JSON.stringify(good));
+  assert.equal(queueSnapshot(model)[0].name,'Wander');
+  assert.notEqual(good.beforeQueueHash,good.afterQueueHash);
+  assert.equal(admitQueueEdit(model,{op:'setCount',index:0,loops:3}).status,'admitted');
+  assert.equal(queueSnapshot(model)[0].loops,3);
+  assert.equal(admitQueueEdit(model,{op:'setEnabled',index:0,enabled:false}).status,'admitted');
+  assert.equal(queueSnapshot(model)[0].disabled,true);
+  assert.equal(admitQueueEdit(model,{op:'setEnabled',index:0,enabled:true}).status,'admitted');
+  assert.equal(queueSnapshot(model)[0].disabled,false);
+  assert.equal(admitQueueEdit(model,{op:'replay',queue:[{name:'Wander',loops:2}]}).status,'admitted');
+  model.evaluate('restart()');
+  assert.equal(unpack(model,'actions.current.map(a=>a.name)')[0],'Wander');
+  assert.equal(queueSnapshot(model)[0].loops,2,'queued replay persists after real restart');
+
+  const limited=fresh();
+  assert.equal(admitQueueEdit(limited,{op:'add',name:'Smash Pots',loops:2,
+    loopsType:'knownGood'}).status,'admitted');
+  assert.equal(queueSnapshot(limited)[0].loopsType,'knownGood',
+    'admitted limited action preserves its actual queue execution mode');
+  const prior=invariant(limited);
+  assert.equal(admitQueueEdit(limited,{op:'add',name:'Wander',loops:1,
+    loopsType:'unchecked'}).status,'invalid_route');
+  assert.deepEqual(invariant(limited),prior);
+  const retained=queueSnapshot(limited);
+  assert.equal(admitQueueEdit(limited,{op:'replay',queue:retained}).status,'admitted');
+  assert.deepEqual(queueSnapshot(limited),retained,'legal replay preserves loop type');
+
+  // A travel entry is limited to one instance, even with otherwise earned gates.
+  const travel=fresh();
+  travel.evaluate('skills.Combat.levelExp.setLevel(35);resources.supplies=true');
+  assert.equal(admitQueueEdit(travel,{op:'add',name:'Start Journey',loops:1}).status,'admitted');
+  const before=invariant(travel);
+  assert.equal(admitQueueEdit(travel,{op:'add',name:'Start Journey',loops:1}).status,'invalid_route');
+  assert.deepEqual(invariant(travel),before);
+  console.log('PASS RW00 admission positives: add/count/enable/replay, actual restart, excess travel rejection.');
+}
+
+// source-backed fresh controls and genuine VM HTMLInputElements
+{
+  const model=fresh();
+  const profile=createDefaultUiProfile(model);
+  assert.equal(profile.inputs.searchTogglerPots.checked,false);
+  assert.equal(profile.inputs.buffRitualCap.value,'666');
+  const initial=installUiProfile(model,profile);
+  assert.equal(unpack(model,'getBuffCap("Ritual")'),666);
+  const event=changeUiInput(model,'searchTogglerPots',true);
+  const checked=readUiProfile(model);
+  assert.notEqual(initial.stateHash,checked.stateHash);
+  assert.notEqual(initial.effectiveConfigurationHash,checked.effectiveConfigurationHash,
+    'A checkbox edit changes effective configuration identity');
+  assert.equal(checked.changes.length,1);
+  assert.equal(event.beforeHash,initial.stateHash);
+  changeUiInput(model,'buffRitualCap','5');
+  assert.equal(unpack(model,'getBuffCap("Ritual")'),5);
+  assert.equal(unpack(model,'buffCaps.Ritual'),5);
+  assert.notEqual(readUiProfile(model).stateHash,checked.stateHash);
+  assert.notEqual(readUiProfile(model).effectiveConfigurationHash,
+    checked.effectiveConfigurationHash, 'Changing a cap changes configuration identity');
+
+  const second=fresh();
+  installUiProfile(second,createDefaultUiProfile(second));
+  assert.throws(()=>assertMatchingUiProfiles(readUiProfile(model),readUiProfile(second)));
+  const original=model.balanceUI.elements.get('buffRitualCap');
+  original.value='not-a-number';
+  assert.throws(()=>readUiProfile(model),/Invalid cap/);
+  original.value='5';
+  original.type='text';
+  assert.throws(()=>readUiProfile(model),/wrong-type/);
+  original.type='number';
+  model.evaluate('buffCaps.Ritual=6');
+  assert.throws(()=>readUiProfile(model),/mismatch/);
+  model.evaluate('buffCaps.Ritual=5');
+  const search=model.balanceUI.elements.get('searchTogglerPots');
+  model.balanceUI.elements.delete('searchTogglerPots');
+  assert.throws(()=>readUiProfile(model),/Missing or wrong-type/);
+  model.balanceUI.elements.set('searchTogglerPots',search);
+  assert.throws(()=>installUiProfile(fresh(),{...profile,inputs:{}}),/missing or unknown/i);
+  console.log('PASS RW00 strict UI: defaults, cap synchronization, setting hashes and missing/wrong/invalid controls.');
+}
+
+// The real Dark Ritual eligibility predicate must obey typed cap boundaries.
+// Synthetic earned resources/reputation are used only in this isolated fixture.
+{
+  const model=fresh();
+  installUiProfile(model,createDefaultUiProfile(model));
+  model.evaluate('resources.reputation=-10;stats.Str.soulstone=100000;buffs.Ritual.amt=5');
+  const before=unpack(model,'({stones:stats.Str.soulstone,buff:buffs.Ritual.amt})');
+  const identities=[];
+  for(const [cap,allowed] of [[4,false],[5,false],[6,true]]) {
+    changeUiInput(model,'buffRitualCap',String(cap));
+    const state=unpack(model,'({allowed:Action.DarkRitual.canStart(),cap:getBuffCap("Ritual"),modelCap:buffCaps.Ritual})');
+    assert.equal(state.allowed,allowed,'actual Dark Ritual cap boundary '+cap);
+    assert.equal(state.cap,cap);
+    assert.equal(state.modelCap,cap);
+    identities.push(readUiProfile(model).effectiveConfigurationHash);
+    assert.deepEqual(unpack(model,'({stones:stats.Str.soulstone,buff:buffs.Ritual.amt})'),before,
+      'eligibility observation never spends soulstones or grants a buff');
+  }
+  assert.equal(new Set(identities).size,3,'each cap has distinct effective configuration');
+  const identity=readUiProfile(model).effectiveConfigurationHash;
+  for(const invalid of ['','Infinity','-1','667','1.5','not a cap']) {
+    assert.throws(()=>changeUiInput(model,'buffRitualCap',invalid));
+    assert.equal(readUiProfile(model).effectiveConfigurationHash,identity,
+      'rejected setting change must not mutate config identity');
+  }
+  console.log('PASS RW00 actual Dark Ritual cap below/at/above eligibility and failed edit isolation.');
+}
+
+// Synthetic limited-resource fixture: a missing checkbox is NOT the same as unchecked.
+function potCase(checked, withProfile) {
+  const model=fresh();
+  if(withProfile) {
+    installUiProfile(model,createDefaultUiProfile(model));
+    if(checked) changeUiInput(model,'searchTogglerPots',true);
+  }
+  return unpack(model,'(() => {const t=towns[0];t.totalPots=20;t.checkedPots=9;' +
+    't.goodPots=1;t.goodTempPots=1;Action.SmashPots.finish();' +
+    'return {checked:t.checkedPots,good:t.goodPots,temp:t.goodTempPots,loot:t.lootFromPots};})()');
+}
+{
+  const missing=potCase(false,false);
+  const unchecked=potCase(false,true);
+  const checked=potCase(true,true);
+  assert.equal(missing.checked,9);
+  assert.equal(checked.checked,9);
+  assert.equal(unchecked.checked,10);
+  assert.equal(unchecked.good,2);
+  assert.equal(checked.temp,0);
+  assert.equal(missing.temp,0);
+  console.log('PASS RW00 real limited-action reward path: missing/unchecked/checked are distinguished.');
+}
+
+{
+  const a=new BalanceEngine({seed:42});
+  const b=new BalanceEngine({seed:42});
+  const c=new BalanceEngine({seed:1});
+  assert.deepEqual(a.model.rngSnapshot(),b.model.rngSnapshot());
+  assert.notDeepEqual(a.model.rngSnapshot(),c.model.rngSnapshot());
+  a.model.evaluate('resources.gold=22');
+  assert.equal(unpack(b.model,'resources.gold'),0,'fresh VMs isolate resources');
+  assert.equal(a.edit({op:'add',name:'Wander',loops:1}).status,'admitted');
+  assert.equal(b.edit({op:'add',name:'Wander',loops:1}).status,'admitted');
+  a.start();b.start();
+  const aRun=a.runSteps(260),bRun=b.runSteps(260);
+  assert.deepEqual(aRun.last,bRun.last,'same seed, route, inputs and virtual clock reproduce state');
+  assert.ok(aRun.last.progress>=200,'actual queued Wander completes');
+  assert.ok(aRun.last.time>4.5,'real driver charged first action waiting time');
+  assert.ok(aRun.last.loops>=1,'real driver advanced a loop boundary');
+  assert.equal(aRun.last.offlineMs,0,'no lag or offline bonus is silently applied');
+  assert.ok(Math.abs(aRun.last.time -
+    aRun.last.closedLoopSeconds-aRun.last.activeLoopSeconds)<1e-7);
+  assert.ok(aRun.last.effectiveSeconds>=aRun.last.time-1e-8);
+  assert.equal(a.diagnostics().status,'incomplete','opening fixture is not a full-route baseline');
+  assert.throws(()=>new BalanceEngine({seed:0}),/nonzero/);
+  assert.throws(()=>new BalanceEngine({quantumMs:0}),/Uncalibrated/);
+  const capped=new BalanceEngine({seed:20261106,maxSimulatedSeconds:0.02});
+  assert.equal(capped.edit({op:'add',name:'Wander',loops:1}).status,'admitted');
+  capped.start();capped.step();
+  assert.throws(()=>capped.step(),error=>error.code==='budget_exceeded',
+    'hard technical budget is a typed failure');
+  const rng=capped.model.rngSnapshot();
+  assert.equal(rng.algorithm,'xorshift32/v1');
+  assert.equal(rng.seed,20261106);
+  assert.ok(Number.isSafeInteger(rng.calls) && rng.calls>=0);
+  console.log('PASS RW00 clock: real driver ticks, seeded RNG, loop accounting, budget failures, no offline credit.');
+}
+
+// Synthetic reporter fixture tests corruption sensitivity, not actual C14 completion.
+function calibration() {
+  return {schema:CALIBRATION_SCHEMA,status:'passed',browserVersion:'Chrome fixture only',
+    sourceHash:'a'.repeat(64),admissionVersion:'a/v1',schedulerVersion:'s/v1',
+    clockVersion:'clock/v1',accelerationCalibrationIdentity:'c'.repeat(64),
+    uiConfigurationHash:'ui-default',scenarios:[{status:'passed',browser:true,model:true}]};
+}
+function report(cal=calibration()) {
+  return {schema:REPORT_SCHEMA,status:'complete',route:'R01',scenario:'baseline',
+    sourceHash:cal.sourceHash,policyHash:'policy',optionsHash:'options',
+    uiConfigurationHash:cal.uiConfigurationHash,uiChangePolicy:'recorded-ui-events/v1',
+    admissionVersion:cal.admissionVersion,checkpointVersion:'c/v1',
+    schedulerVersion:cal.schedulerVersion,schedulerCalibrationIdentity:cal.accelerationCalibrationIdentity,
+    calibrationHash:fingerprint(cal),
+    seeds:[{seed:42,status:'complete',totalSeconds:14,effectiveSeconds:14,
+      loopCount:1,hostSeconds:0.1,uiStateHash:'ui-state',
+      rng:{algorithm:'xorshift32/v1',seed:42,state:42,calls:0},
+      performance:{hostSeconds:0.1,outerSchedulingCalls:1,internalActionTicks:14,
+        simulatedSecondsPerHostSecond:140,precisionFallbacks:0,peakHeapBytes:1024,
+        batchCounts:{medium:1}},
+      uiChangeHistoryHash:'ui-history',effectiveUiConfigurationHash:'ui-effective',
+      checkpoints:CHECKPOINTS.map((id,i)=>({id,status:'complete',seconds:i,
+        ...(id==='C14'?{successfulRestoreTime:true}:{})})),
+      attribution:{intervals:[{id:'all',seconds:14}],locations:[{id:'all',seconds:14}]}}]};
+}
+{
+  const cal=calibration(),baseline=report(cal);
+  assert.ok(assertCalibration(cal,{sourceHash:cal.sourceHash}));
+  assert.equal(assertCompleteReport(baseline,cal),true);
+  const corrupt=fn=>{const r=structuredClone(baseline);fn(r);assert.throws(()=>assertCompleteReport(r,cal));};
+  corrupt(r=>{r.sourceHash='';});
+  corrupt(r=>{r.seeds[0].status='stalled';});
+  corrupt(r=>{r.seeds[0].checkpoints.pop();});
+  corrupt(r=>{r.seeds[0].checkpoints[12].seconds=NaN;});
+  corrupt(r=>{r.seeds[0].attribution.intervals[0].seconds=28;});
+  corrupt(r=>{r.seeds[0].performance.hostSeconds=0.2;});
+  corrupt(r=>{r.seeds[0].checkpoints[14].successfulRestoreTime=false;});
+  corrupt(r=>{r.uiConfigurationHash='changed';});
+  corrupt(r=>{r.calibrationHash='stale';});
+  corrupt(r=>{r.seeds[0].uiChangeHistoryHash='';});
+  corrupt(r=>{r.seeds[0].effectiveUiConfigurationHash='';});
+  const candidate=structuredClone(baseline);
+  candidate.sourceHash='b'.repeat(64);
+  assertComparableBaseline(baseline,candidate);
+  candidate.uiConfigurationHash='different';
+  assert.throws(()=>assertComparableBaseline(baseline,candidate),/Incomparable/);
+  candidate.uiConfigurationHash=baseline.uiConfigurationHash;
+  candidate.seeds[0].uiChangeHistoryHash='changed-history';
+  assert.throws(()=>assertComparableBaseline(baseline,candidate),/Incomparable/);
+  candidate.seeds[0].uiChangeHistoryHash=baseline.seeds[0].uiChangeHistoryHash;
+  candidate.seeds[0].effectiveUiConfigurationHash='changed-cap-or-checkbox';
+  assert.throws(()=>assertComparableBaseline(baseline,candidate),/Incomparable/);
+  assert.throws(()=>assertCalibration({...cal,status:'failed'}),/not passed/);
+  const incomplete=createIncompleteReport({route:'R01',reason:'budget_exceeded',lastCheckpoint:'C03'});
+  assert.equal(incomplete.certifiedBaseline,false);
+  assert.throws(()=>assertCompleteReport(incomplete,cal),/Incomplete/);
+  console.log('PASS RW00 report: calibration gate, false completion, accounting and incompatible runs rejected.');
+}
+// Late-game synthetic boundary fixtures characterize rules without advancing a route.
+{
+  for (const reputation of [-51,-50,-49,49,50,51]) {
+    const model=fresh();
+    const result=unpack(model,'(() => {resources.reputation='+reputation+
+      ';curTown=3;const predicted=getTravelNum("Face Judgement");' +
+      'Action.FaceJudgement.finish();return {predicted,town:curTown,' +
+      'accepted:storyFlags.acceptedIntoValhalla,shadow:storyFlags.castIntoShadowRealm,' +
+      'ignored:storyFlags.ignoredByGods};})()');
+    const expected=reputation>=50?4:reputation<=-50?5:3;
+    assert.equal(result.town,expected,'real Judgement finishing at '+reputation);
+    assert.equal(result.predicted,reputation>=51?1:2,'planner at '+reputation);
+    assert.equal(!!result.accepted,reputation>=50);
+    assert.equal(!!result.shadow,reputation<=-50);
+    assert.equal(!!result.ignored,reputation>-50&&reputation<50);
+    if(reputation===50)assert.notEqual(result.town,3+result.predicted,
+      'known planner/finish discrepancy at exactly 50 must remain visible');
+  }
+  for (const [time,eligible] of [[59.99,true],[60,false],[60.01,false]]) {
+    const model=fresh();
+    const state=unpack(model,'(() => {effectiveTime='+time+
+      ';escapeStarted=false;const ok=Action.Escape.canStart();' +
+      'return {ok,sticky:escapeStarted};})()');
+    assert.equal(state.ok,eligible);
+    assert.equal(state.sticky,eligible);
+  }
+  const model=fresh();
+  const sticky=unpack(model,'(() => {effectiveTime=59.99;escapeStarted=false;' +
+    'const first=Action.Escape.canStart();effectiveTime=60;' +
+    'return {first,next:Action.Escape.canStart(),sticky:escapeStarted};})()');
+  assert.deepEqual(sticky,{first:true,next:true,sticky:true});
+  model.evaluate('escapeStarted=false;townsUnlocked.push(6);' +
+    'towns[6].expExploreJungle=towns[6].expFromLevel(100)');
+  const admitted=admitQueueEdit(model,{op:'add',name:'Escape',loops:1});
+  assert.equal(admitted.status,'admitted','earned-predicate synthetic unlock should admit edit');
+  assert.equal(unpack(model,'escapeStarted'),false,
+    'policy observer may never call mutating Escape.canStart');
+  console.log('PASS RW00 Judgement -51/-50/-49/49/50/51 and Escape 59.99/60/sticky synthetic boundaries.');
+}
+
+console.log('PASS RW00 contract suite (synthetic fixtures explicitly excluded from earned campaign evidence).');

@@ -4,39 +4,33 @@
 
 ## Visual premise
 
-The current game is primarily an abstract, information-dense sequence of queues, menus, resources and stat bars. Real World is an opportunity for a striking contrast: **an inhabitable, quiet pixel-art place outside time**, where the player sees their first alternate self face to face. This anchors the eventual pixel-art makeover without requiring an enormous asset sprint before the nexus concept works.
+The current game is primarily an abstract, information-dense sequence of queues, menus, resources and stat bars. The first potion drink brings the player to a **pixel-art version of Beginnersville that is recognizably familiar but different**, inhabited by **several alternate selves**. One notices the newcomer and approaches. The village can grow with deeper systems without first replacing all original-world artwork.
 
 **Art mood:** intimate, mysterious, slightly uncanny, warm enough to invite return visits. Avoid "generic multiverse sci-fi", shiny AI-generated fantasy sludge, or an overwhelming character hub filled with buttons.
 
-## Initial single-screen scene (concept)
+## Initial alternate Beginnersville scene (concept)
 
 ```text
-+----------------------------------------------------------------+
-|                    threads / still sky                         |
-|                                                                |
-|      doorway to your      TWO SELVES              loom /       |
-|      completed timeline  Player   Other You        tapestry    |
-|           [portal]         @       @                [threads]   |
-|                                                                |
-|     return to world       talk/interact        outer abilities |
-|                                                                |
-|            --- quiet floor, sparse scenery ---                  |
-|                 Start a New Timeline                            |
-+----------------------------------------------------------------+
+Familiar village skyline / strange light
+   houses    square     stall / gathering place
+      other self     player    another self
+                        ^
+                     guide-self approaches
+   inspect village      speak      start a new timeline (later)
 ```
 
-This is a **layout sketch**, not a committed screen ratio or final game UI. Early interaction may be point-and-click with accessible keyboard focus rather than a complex character movement controller. "Navigable room" is an experiential goal; arrow-key movement is not automatically required.
+This is a **composition sketch**, not a request to build a new RPG engine, committed camera layout or final asset set. The scene may use simple focusable hotspots or limited movement and should remain understandable as a **single screen** with optional detail views.
 
-### Minimum art scope for an initial playable hub
+### Minimum first-arrival visual scope
 
-- One compact environment/background depicting an unusual, timeless threshold.
-- **Two recognizable versions of the same protagonist**. Distinct clothing/pose and subtle animations, but clear shared face/silhouette.
-- A visual **portal/doorway** corresponding to the *new* post-Restore Time threshold, distinct from the existing Jungle Path `OpenPortal` action.
-- A restrained **threads/loom/tapestry** focal object tying the scene to the original story.
-- A small, consistent interaction/upgrade/navigation treatment, including a readable 10× replay indicator.
-- Minimal ambient motion (e.g. threads drifting, soft character idle), with options for reduced motion.
+- A compact **Beginnersville-inspired** environment with recognizable landmarks and subtle differences marking Real World as a separate place, not normal `Town(0)`.
+- A distinctive player sprite and **one recognizable guide-self** with an approach/greeting beat.
+- **Several visible alternate selves** (a few restrained idle/background silhouettes or sprite variations are sufficient for the first slice). They should feel like inhabitants, not immediately usable party members.
+- A clear **potion-arrival transition**, not a compulsory post-`Restore Time` portal or the existing Jungle `OpenPortal`.
+- Small optional interactions and legible dialogue before revealing first-rerun point allocation, temporary boost and explicit start action.
+- Readable, separate indicators for **permanent free ~10× acceleration** and the first-rerun **temporary boost** once those mechanics are specified.
 
-No additional NPC roster, nine-zone background set, full combat animation suite, detailed walk cycle, asset atlas or cinematic cutscene is required for the first playable validation.
+Do not block first playable validation on unique portraits for every alternate self, a nine-zone art overhaul, pathfinding/collision, combat animations or full party controls.
 
 ## Pixel-art style considerations to resolve
 
@@ -56,11 +50,11 @@ A fully animated RPG exploration mode is **not required** to achieve the two-sel
 
 The [working three-tree recommendation](upgrade-trees.md) offers three clear, visually distinct paths: **Will** (deliberate intervention), **Echoes** (delegation), and **Anchors** (what survives time). **Treasury** is a prominent Anchors specialization, *not* a token-sized footnote. The [four-tree alternative](dominion-alternative.md) offers **Memory** and **Dominion** as peers. Do not commit the room layout, icon count or four independent structures until that decision is made.
 
-The first other self can introduce the paths in a **short conversation**, with three concise choice descriptions (or four if Dominion is adopted), without exposing a full web of future nodes on first arrival. Cross-tree synergy links might be illustrated by connected threads later. The UI should distinguish **automatic free ~10× replay speed** from any purchased tree effect and display what a first upgrade *does*, not just its name.
+The first guide-self should **recognize the newcomer and invite exploration**, not immediately narrate every tree. Introduce the available first-rerun points/temporary boost when relevant, and reveal three or four upgrade-tree choices only when the player reaches that progression decision. Cross-tree synergy links might be illustrated by connected threads later. The UI should distinguish **automatic free ~10× replay speed** from any purchased tree effect and display what a first upgrade *does*, not just its name.
 
 ## Growth with progression
 
-As more distinct selves are discovered, the nexus can evolve: new workstations, branching rooms, more threads, an archive wall or small alcoves tied to mastered systems. **Expansion should follow actual capabilities**, not pad the hub with decoration. Multiple selves should remain individually recognizable, and important interactions shouldn't be buried in visual clutter.
+As more distinct selves become meaningful, the alternate village can evolve: new conversations, workstations, gathering areas, party planning locations and memories tied to mastered systems. **Expansion should follow actual capabilities**, not pad the hub with decoration. Multiple selves should remain individually recognizable, and important interactions shouldn't be buried in visual clutter.
 
 The room can also convey the distinction between **one active timeline** and **archived completed ones**, perhaps with one bright strand and several dimmer strands. These are narrative/UI metaphors, not committed save structures.
 
@@ -77,6 +71,6 @@ Treat all currently displayed game graphics/assets as existing works with their 
 
 ## First-visit user experience criteria
 
-Players should immediately recognize that the other person is *also the protagonist*. The scene should visibly differ from the original game, feel coherent at desktop and narrow viewports, and support keyboard access. Conversations and upgrades should be legible without needing to infer meaning from tiny pixel details. The protagonist can leave, return, and revisit the other self. No mandatory wall of menus or automatic timeline reset upon arrival.
+Players should quickly recognize **several other versions of the protagonist**, see **one notice and address them**, and recognize the surrounding village as a changed Beginnersville. The scene should remain coherent on desktop and narrow viewports, and support keyboard access. Conversations and upgrades should be legible without needing to infer meaning from tiny pixel details. The protagonist can leave, return, and revisit the other self. No mandatory wall of menus or automatic timeline reset upon arrival.
 
 The exact mockup and art source files require a later, explicit artwork/design request.

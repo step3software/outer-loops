@@ -3,3 +3,6 @@
 node_modules/
 types/
 lang/en-EN/game_v2.xml
+
+# Disposable RW00 calibration and measurements
+.balance-results/

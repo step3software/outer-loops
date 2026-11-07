@@ -9,7 +9,7 @@ Outer Loops has three reset scopes. Upgrade behavior must name the one it change
 | Boundary | Trigger | Examples of current life cycle | What trees may eventually change |
 | --- | --- | --- | --- |
 | **Ordinary inner loop** | `restart()` or equivalent run boundary | Temporary gold/mana, active queued actions, run timer; some experience/town progress retained | Pivot charge replenishment, ordinary-loop Treasury, Echo goal schedule |
-| **New timeline / outer prestige** | Explicit "Start New Timeline" after Real World unlock | Reset a chosen set of once-per-timeline skills, town progress, trials/story and inner-world economy | Memory selections, owned permanents, nexus-owned resources, selected Economic/Structures entitlements |
+| **New timeline / outer prestige** | Explicit "Start New Timeline" after valid potion entry and village exploration | Reset chosen timeline progress, including optional Valley history only under an accepted reset policy | First-rerun skill-point grant, temporary boost application, Memory selections and durable owned capabilities |
 | **Nexus persistent state** | Never automatically on a loop/timeline reset | First meeting/unlock, ability ownership, archived timelines, roster and accepted grants | Should only be changed by explicit purchases/achievements or a separately safeguarded hard reset |
 
 In the current **as-coded** game, dmchurch prestige resets progress and preserves specific buffs; that is **not** an already implemented version of this new contract. See [legacy transition](legacy-transition.md), [state and saving](../../state-and-saving.md) and [RF02](../../refactoring/RF02-persistence-safety.md).
@@ -19,6 +19,10 @@ In the current **as-coded** game, dmchurch prestige resets progress and preserve
 A proposed ability should be specifiable with stable ID; displayed tree and name; unlock prerequisites; earned/purchased/granted source; persisted owner; action during an inner loop; action during new timeline reset; whether an alternate self is required; refund/rollback policy; repeatability/cap; and evidence that it does something existing abilities *cannot already do*.
 
 Do not hard-code ownership to the UI tree number. Categorization may change from **Anchors/Treasury** to **Dominion** without changing an owned perk.
+
+## First-rerun grants are distinct from purchaseable abilities
+
+The **initial skill points** and **substantial temporary boost** are approved first-rerun outcomes but not yet an existing game currency, a `Prestige...` purchase or a permanent tree node. Before implementation, decide point types and spend targets; the boost's start, magnitude, duration, expiration, stacking and reset boundaries; and a durable **one-time first-rerun grant receipt**. It must be possible to inspect the reward, avoid duplicate payout after import/reload and explain the expiration to the player. Permanent free ~10× throughput is a separate eligibility policy. Source and worker/predictor parity are required for any effect that changes gameplay numbers.
 
 ## 2. Conceptual definition of ability records
 
@@ -125,7 +129,7 @@ The proposed trees are **branches, not level ladders**. A meaningful early abili
 
 | Test ID | Test | Expected proof |
 | --- | --- | --- |
-| UT01 | Three-tree first choice on a newly restored synthetic save | Exactly one free starting ability if approved, all alternatives still available later, no duplicate grant on revisit |
+| UT01 | Three-tree first choice on a synthetic potion-entered, first-rerun save | Exactly one free starting ability if approved, all alternatives still available later, no duplicate grant on revisit |
 | UT02 | Four-tree taxonomy on the **same** owned-ability records | Memory/Treasury ownership and effect unchanged; only displayed grouping differs |
 | UT03 | ~10× replay with any/all first-node choices | Baseline automatic speed does not come from a node, action costs/gates still correct |
 | UT04 | Pivot use while paused, resumed, after failed action and after restart | Current loop changes once; past costs/rewards are unchanged; charge expires/resets correctly |

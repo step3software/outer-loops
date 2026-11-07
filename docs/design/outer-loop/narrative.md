@@ -1,72 +1,55 @@
-# Narrative — from Restore Time to Real World
+# Narrative — potion arrival in alternate Beginnersville
 
-**Status:** Existing canon verified; new scenes and dialogue **proposed**. The alternate-self premise and meeting on first entry are approved direction. Exact dialogue, other self's identity, portal appearance and metaphysics are not yet approved.
+**Status:** Potion-first entry, retained faster Valley, several visible alternate selves, one newcomer-recognition conversation and a first empowered rerun are **approved product direction** (2026-11-06). Actual dialogue, lore, UI details, skill-point mechanics and temporary-boost rules are **proposed**. No Real World gameplay has been implemented.
 
-## Existing canon to preserve
+## Existing canon, independent of the new route
 
-The protagonist starts as a **courier** whose broken delivery releases a liquid that traps them in repeated days (`lang/en-EN/game.xml`, global story 0). After crossing the nine zones, rebuilding the tower and taking the gods' power, they can execute `Action.RestoreTime` in Valley of Olympus. In the existing action story, restoring the timeline means weaving **broken strands of time into separate complete lives**, including versions who stayed in Beginnersville, befriended the Forest Witch, or became a master crafter in Merchanton.
+The protagonist starts as a **courier** whose broken delivery releases the mysterious liquid that traps them in repeating days (English global story 0 in `lang/en-EN/game.xml`). The same substance can be recreated as the **Looping Potion** on Mt. Olympus. Its **current** game use is at Jungle Totem for Wunderkind experience, not travel to another reality.
 
-The existing English global story 12 declares that time has been restored, and includes the original fan-mod ending/credits. `Open Portal` in Jungle Path is a different existing inter-realm shortcut and should remain separate.
+`Action.RestoreTime` is the existing independent climax in Valley of Olympus: its story describes weaving broken strands into distinct lives, including a Witch's friend and a crafter. Preserve that narrative, the original authors' credits and the selected **faster Valley** direction. **The player does not need to complete Restore Time before entering Real World.** This lore can inform later relationships but should never silently gate the potion entry.
 
-**Interpretation for Outer Loops:** restoring time is a *true ending to the inner game*, but the newly created tapestry contains an outer boundary that can now be crossed. The "Real World" title can refer to the space beyond the stitched timelines without implying that the player's previous world was fictional, simulated, or meaningless.
+## First arrival — approved story beats
 
-## Potential revised finale — potion as cause and key (not approved)
+1. **Recreate the Looping Potion.** The player earns genuine potion access through a legal progression path. Existing Valhalla Spatiomancy and the bypassing shadow path require separate future access design.
+2. **Choose to drink it.** This deliberate reality transition is a distinct use from the existing Totem/Wunderkind action, ordinary inner-loop restart and Jungle `OpenPortal`. Crafting alone does not transport the player.
+3. **Arrive in another Beginnersville.** Familiar geography and landmarks look a little wrong; the village contains **several alternate versions of the protagonist**. It is a separate outer scene, never a replacement for ordinary town 0.
+4. **Be noticed.** One self recognizes the newcomer and initiates a brief conversation. Others are present as inhabitants, not immediate selectable party units.
+5. **Explore.** The player can inspect a small number of approachable locations or interactions before committing to a new timeline. No massive tutorial tree or automatic loss of their current original-world run.
+6. **Choose a first rerun.** The player receives **initial skill points** and a **major temporary boost**, plus the free permanent **~10× replay acceleration** and an early pathway to lasting upgrades. Exact economy, boost, timing, expiry and UI remain to be designed.
+7. **Return and discover more.** Replays gradually expose advanced skills, automation, more selves, key-configured timelines, wagers and **party-based play**, as those systems become useful.
 
-The [Looping Potion/endgame analysis](potion-and-endgame-options.md) raises a different storyline: *the potion that began the loops becomes the thing the protagonist learns to understand in order to end them*. Current code **already** lets the player reproduce it at Mt. Olympus (after Valhalla access) and drink it at the Jungle Totem for Wunderkind; it is optional for the real ending.
+## First recognition conversation — draft dialogue only
 
-If the player eventually chooses a **Commerceville capstone instead of Valley**, the original "Restore Time" revelation might instead follow a controlled potion experiment, a time fracture, and a final act of weaving/repairing the timeline. This is an **alternate ending proposal**, not a canonical statement that potion use lets consciousness jump between timelines. The other-self reveal remains, but its dialogue may need revision to avoid insisting the player sat on the gods' throne when they never did.
+*The potion tastes familiar. For a moment you expect the usual reset. Instead, the village appears around you: the same road, the same square, but the people are wrong. Every face you turn toward looks strangely like your own.*
 
-Important constraints: preserve the original courier accident; do not force every player through Valhalla just to learn Spatiomancy; keep Jungle Totem's optional training purpose viable; ensure a world-scale climax; retain the original authors' credits. Any alternate scene must update RW-D02 and the narrative/script together after explicit approval.
+*One of them notices you standing still. They leave a conversation and approach.*
 
-## Proposed first-entry sequence (short, deliberate)
+**Other You:** “Oh. You're new.”
 
-1. **Completion:** The original Restore Time climax resolves. Do not interrupt its final text or erase the original author's voice. Grant the persistent "first restoration completed" milestone once.
-2. **New threshold:** A new seam/doorway/portal is noticed after time is restored. It is *not* the jungle `OpenPortal` action and cannot be used to skip the game's original ending.
-3. **Quiet transition:** A short fade or minimal pixel-art animation separates the familiar world from a small still space. No flood of upgrade notifications.
-4. **Recognition:** One figure is waiting. Their silhouette, face or habitual gesture is unmistakably the protagonist, but their clothing and demeanor are different. The player understands *another self* before receiving a lore lecture.
-5. **First dialogue:** The self acknowledges the player's achievement and hints that their restored time has consequences beyond a single life. They know enough to give orientation but not necessarily the cosmology.
-6. **Agency:** The player can inspect Real World, the portal, a couple of clear upgrade possibilities and the option to begin another timeline. The game does **not** automatically wipe the just-completed playthrough.
-7. **First new timeline:** The player explicitly chooses to go back into a new timeline. A visible "accelerated timeline — ~10× baseline" cue and one meaningful chosen permanent capability immediately make replay feel different.
+**You:** “This is Beginnersville.”
 
-Do not make the NPC a faceless currency merchant, claim all selves have existed forever, or reveal the final cosmological answer in the opening conversation.
+**Other You:** “Yes. And also not quite.”
 
-## First conversation — exploratory copy, not final script
+**You:** “Why do you look like me?”
 
-*The portal closes behind you. The room is still. For the first time in longer than you can remember, nothing is resetting.*
+**Other You:** “You really are new.”
 
-*Someone is sitting by a dim light, studying a frayed strand stretched between their fingers. They look up. They have your face.*
+*Behind them, two more familiar strangers pass one another as though this is entirely ordinary.*
 
-**Other You:** "There you are."
+**Other You:** “Go have a look around. When you're ready, I'll show you how to go back. The good news is, you won't have to start with nothing.”
 
-**You:** "Who are you?"
+The first guide's name, knowledge, motives and the true nature of Real World are deliberately unresolved. Nothing should imply the earlier world was fake or that all visible selves completed Valley.
 
-**Other You:** "That depends on which life you're asking about."
+## Agency and replay rewards
 
-**You:** "I restored time."
+Potion arrival, the first greeting, a later voluntary **Start New Timeline** and the first skill-point/boost entitlement are **separate once-only transitions**. Drinking again, refreshing, leaving or replaying dialogue must not duplicate benefits. Preserve the current original-world timeline until the player knowingly commits to resetting it; it may include unfinished Valley progression.
 
-**Other You:** "You restored *a* way for it to flow. Look."
+The initial **skill points** are a requested first-rerun reward, **not automatically legacy prestige points** or a preexisting core-game skill-point ledger. A **large temporary boost** is a second distinct reward with an explicitly bounded expiration once approved; it is not a hidden extra ×10 speed multiplier. Give the player enough explanatory UI to understand what was received without a long tutorial.
 
-*Beyond the doorway, innumerable delicate threads are moving—some tangled, some running freely, all leading somewhere.*
+The first guide can later become a useful companion, but party recruitment and delegation belong to later progression. The village should first feel *inhabited*; richer systems, including [RW06/RW07 proposals](https://github.com/step3software/outer-loops/pull/9), should emerge gradually.
 
-**Other You:** "You can go back. It won't be the first time you've started over. But this time, you don't have to start with nothing."
+## Story and technical boundaries
 
-This draft deliberately avoids establishing whether the other self existed before the restoration, whether they personally completed a timeline, or whether they can control all timelines. Those are potential story arcs.
+Do not rewrite `RestoreTime`, its credits, existing story indexing or old save records in this documentation task. The potion-to-Real-World event has no current source implementation; exact consumption and location are future decisions. Preserve the existing Totem and both high/low-reputation route options, and avoid relying on `storyMax` to prove a real potion was crafted.
 
-## Narrative rules
-
-- **Keep first contact intimate:** two people in a quiet scene. Additional selves enter later for meaningful reasons.
-- **Respect the original ending:** treat Restore Time as a real accomplishment. Retain original credits accessible from a dedicated credits/history panel, even if story 12's final "Thanks for playing" presentation is adjusted.
-- **Let the player infer:** the original game's action stories already include alternate lives; early dialogue can allude to them without explaining everything.
-- **Build uncertainty, not contradiction:** an alternate self can know different things without asserting that the player's history did not happen.
-- **Use decisions as characterization:** future selves should embody different resolutions to old-game branches (Witch/Alchemy, crafting, dark magic, guilds, Explorer/Assassin choices) while avoiding an immediate branching rewrite of the first campaign.
-- **Avoid trapping the player:** a first-visit conversation may be skippable/revisitable; the nexus must not lock an unfinished save behind a narrative popup.
-
-## First-visit state and repeated visits
-
-The opening reveal and initial conversation should fire **once** per outer progression, but the self remains accessible for follow-up conversation. First timeline completion, portal unlocked, first nexus arrival, dialogue seen, and new timeline started are **different flags**. Completion should not trigger a second 90-point grant or grant repeated rewards merely by replaying a scene.
-
-A returning player should see altered dialogue and a functional hub state, not replay the dramatic first meeting on every visit. Alternative selves acquired later can react to one another and reference archived timeline outcomes.
-
-## Unknowns requiring story approval
-
-See [decisions](decisions.md) RW-Q05, RW-Q07 and RW-Q11: the identity/knowledge of the first self, exact entry timing, whether the player can return to their completed timeline, and the cosmology remain open. No narrative copy is final until approved and reviewed against localization and the actual original text.
+See the [decision ledger](decisions.md), [potion source analysis](potion-and-endgame-options.md), [timeline architecture](technical-architecture.md), [first-visit art brief](visual-direction.md) and [future verification](validation.md).

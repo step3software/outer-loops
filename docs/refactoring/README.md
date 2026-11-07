@@ -23,7 +23,7 @@ The **recommended delivery order is RF01 → RF02 → RF03 → RF04 → RF05 →
 
 ## Product-direction reconciliation — new Real World system
 
-The later [Real World outer-loop concept](../design/outer-loop/README.md) supersedes **the eventual product presentation** of the inherited standalone Prestige Perks and Challenges menus, but it does **not** change this refactoring program's approval status or retroactively rewrite RF acceptance tests. [Integration guidance](../design/outer-loop/integration-with-refactoring.md) identifies the **RF04 scope tension**: a refactor that preserves old challenge behavior may still be useful for compatibility, but final Real World may adapt or retire those modes. Obtain explicit revised implementation authorization before changing RF04's scope. RF01/RF02 remain critical to preserving veterans' saved data.
+The later [Real World outer-loop concept](../design/outer-loop/README.md) supersedes **the eventual product presentation** of the inherited standalone Prestige Perks and Challenges menus. Its clarified **Looping Potion → alternate Beginnersville** gateway is distinct from `RestoreTime`; **Valley remains** as a separate, eventually shorter capstone. This direction does **not** change RF01–RF06 approval status or retroactively rewrite RF acceptance tests. [Integration guidance](../design/outer-loop/integration-with-refactoring.md) identifies the **RF04 scope tension**: a refactor that preserves old challenge behavior may still be useful for compatibility, but final Real World may adapt or retire those modes. Obtain explicit revised implementation authorization before changing RF04's scope. RF01/RF02 remain critical to preserving veterans' saved data.
 
 ## Global invariants
 
