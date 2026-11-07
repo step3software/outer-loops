@@ -1,5 +1,5 @@
 import {BalanceEngine} from './engine.mjs';
-import {createPotionAcceleration,potionSourceIdentity} from './potion-runner.mjs';
+import {potionSourceIdentity} from './potion-runner.mjs';
 import {loadGameModel} from '../load-game-model.mjs';
 import {resolve} from 'node:path';
 
@@ -195,8 +195,11 @@ export function createPotionRequirementEstimate({root=resolve(import.meta.dirnam
 export function runInjectedPotionEndpoint({root,endpoint='potion-totem',seed=42}={}){
   if(!['potion-craft','potion-totem'].includes(endpoint))throw new RangeError('Unknown potion endpoint');
   const source=potionSourceIdentity(root);
-  const engine=new BalanceEngine({seed,mode:'accelerated',
-    calibration:createPotionAcceleration(source.identity),maxHostMs:5000,maxSimulatedSeconds:86400,
+  // This is an injected contract fixture, not a calibrated campaign benchmark.
+  // A high synthetic gameSpeed drives unchanged action costs/rewards in reference
+  // 20 ms steps without asserting unverified 60-second fast batching.
+  const engine=new BalanceEngine({seed,mode:'reference',
+    maxHostMs:5000,maxSimulatedSeconds:86400,
     policyBoundaries:true,eventActions:['Start Journey','Continue On','Start Trek','Looping Potion',
       'Face Judgement','Fall From Grace','Purchase Supplies','Journey Forth','Totem']});
   engine.evaluate(`(() => {
@@ -222,7 +225,7 @@ export function runInjectedPotionEndpoint({root,endpoint='potion-totem',seed=42}
   if(admission.status!=='admitted')throw new Error('Synthetic checkpoint admission failed: '+JSON.stringify(admission));
   engine.start();
   engine.evaluate('curTown=0;resources.herbs=400;resources.reputation=50;resources.gold=500;' +
-    'resources.supplies=true;timeNeeded=1000000');
+    'resources.supplies=true;timeNeeded=1000000;gameSpeed=5000');
   let terminal=false;
   for(let step=0;step<1000&&!terminal;step++){
     engine.step({full:false});
@@ -233,7 +236,8 @@ export function runInjectedPotionEndpoint({root,endpoint='potion-totem',seed=42}
     wunderkind:getSkillLevel('Wunderkind'),portalOpened:!!storyFlags.portalOpened,
     herbs:resources.herbs})`);
   const exact=engine.events.filter(event=>event.type==='action_completed');
-  return {schema:POTION_INJECTION_SCHEMA,kind:'synthetic_injected_checkpoint',endpoint,
+  return {schema:POTION_INJECTION_SCHEMA,kind:'synthetic_injected_checkpoint',
+    syntheticGameSpeed:5000,endpoint,
     sourceRevision:source.identity,terminal,state,events:exact,
     simulatedGameplaySeconds:engine.lightweightObservation().time,
     diagnostics:{clock:engine.clock.snapshot(),model:engine.evaluate(`({explore:getExploreProgress(),restoration:getSkillLevel('Restoration'),
