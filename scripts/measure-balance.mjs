@@ -1,11 +1,13 @@
 #!/usr/bin/env node
-import {mkdirSync,readFileSync,writeFileSync} from 'node:fs';
+import {existsSync,mkdirSync,writeFileSync} from 'node:fs';
 import {dirname,isAbsolute,join,relative,resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {performance} from 'node:perf_hooks';
-import {runPotionCampaign} from './balance/potion-runner.mjs';
+import {runSupervised} from './balance/supervisor.mjs';
 
 const ROOT=resolve(import.meta.dirname,'..');
 const RESULTS=join(ROOT,'.balance-results');
+const WORKER=fileURLToPath(new URL('./balance/measurement-worker.mjs',import.meta.url));
 const SEEDS=Object.freeze([1,42,20261106]);
 
 function argumentsOf(argv){
@@ -44,31 +46,33 @@ if(endpoints.some(endpoint=>!['potion-craft','potion-totem'].includes(endpoint))
 const seeds=options.allSeeds?SEEDS:[options.seed];
 if(seeds.some(seed=>!Number.isSafeInteger(seed)||seed<1||seed>0xffffffff))throw new Error('Invalid seed');
 if(options.allSeeds&&options.seed!==42)throw new Error('Use either --all-seeds or --seed');
-let calibration=null;
-if(options.mode==='accelerated'){
-  if(!options.calibration)throw new Error('Accelerated measurements require --calibration');
-  calibration=JSON.parse(readFileSync(resolve(ROOT,options.calibration),'utf8'));
+if(options.mode==='accelerated'&&(!options.calibration||!existsSync(resolve(ROOT,options.calibration)))){
+  throw new Error('Accelerated measurements require an existing --calibration file');
 }
+
 const started=performance.now(),runs=[];
+async function supervisedRun(endpoint,seed){
+  const remaining=options.maxHostSeconds-(performance.now()-started)/1000;
+  if(remaining<=0)return {status:'incomplete',endpoint,seed,
+    failure:{code:'batch_budget_exceeded',message:'Complete batch host ceiling reached'}};
+  const maxHostSeconds=Math.min(35,remaining);
+  const supervised=await runSupervised({modulePath:WORKER,
+    args:[JSON.stringify({endpoint,seed,mode:options.mode,maxHostSeconds,
+      calibrationPath:options.calibration??null})],
+    maxHostMs:Math.max(1,Math.floor(maxHostSeconds*1000))});
+  if(supervised.status!=='complete'||!supervised.result){
+    return {status:'incomplete',endpoint,seed,
+      lastDiagnostic:supervised.lastDiagnostic,
+      failure:{code:supervised.status,message:'Campaign worker did not complete under its independent host/memory ceiling'}};
+  }
+  return {...supervised.result,supervision:{status:supervised.status,
+    hostMs:supervised.hostMs,lastDiagnostic:supervised.lastDiagnostic}};
+}
 for(const endpoint of endpoints){
-  for(const seed of seeds){
-    const remaining=options.maxHostSeconds-(performance.now()-started)/1000;
-    if(remaining<=0){runs.push({status:'incomplete',endpoint,seed,
-      failure:{code:'batch_budget_exceeded',message:'Complete batch host ceiling reached'}});continue;}
-    runs.push(runPotionCampaign({root:ROOT,endpoint,seed,mode:options.mode,
-      maxHostSeconds:Math.min(35,remaining),calibrationReport:calibration}));
-  }
+  for(const seed of seeds)runs.push(await supervisedRun(endpoint,seed));
 }
-if(options.allSeeds){
-  const repeat=runs.find(run=>run.seed===42&&run.endpoint===endpoints[0]);
-  if(repeat){
-    const remaining=options.maxHostSeconds-(performance.now()-started)/1000;
-    runs.push(remaining>0?runPotionCampaign({root:ROOT,endpoint:endpoints[0],seed:42,
-      mode:options.mode,maxHostSeconds:Math.min(35,remaining),calibrationReport:calibration}):
-      {status:'incomplete',endpoint:endpoints[0],seed:42,repeat:true,
-        failure:{code:'batch_budget_exceeded',message:'No budget for seed-42 repeat'}});
-  }
-}
+if(options.allSeeds)runs.push({...await supervisedRun(endpoints[0],42),repeat:true});
+
 const report={schema:'rw00-potion-measurement-batch/v1',status:runs.every(run=>run.status==='complete')?
   'complete':'incomplete',route:'R01',mode:options.mode,hostSeconds:(performance.now()-started)/1000,
   maxHostSeconds:options.maxHostSeconds,endpoints,seeds,runs};
