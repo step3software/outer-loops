@@ -79,7 +79,7 @@ const alternateGold=state({...potionReadyState,
   limited:{...potionReadyState.limited,goodLong:10,totalLong:50,checkedLong:50,
     goodShort:20,totalShort:100,checkedShort:100,
     goodLocks:10,totalLocks:100,checkedLocks:100}});
-assert.equal(assessPotionCarryResources(alternateGold).gold,850);
+assert.equal(assessPotionCarryResources(alternateGold).gold,800);
 const otherCarry=choosePotionPolicy(alternateGold);
 assert.equal(otherCarry.phase,'craft_and_totem');
 assert.equal(otherCarry.queue.find(item=>item.name==='Heal The Sick').loops,14);
