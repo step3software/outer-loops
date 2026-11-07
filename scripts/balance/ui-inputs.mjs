@@ -136,10 +136,16 @@ export function readUiProfile(model) {
       actual[id] = {type: 'number', value: element.value, parsedCap: parsed, modelCap: modelCaps[name]};
     }
   }
+  const changes = copy(ui.changes);
+  const configurationHash = fingerprint(ui.profile);
+  const stateHash = fingerprint(actual);
+  const changeHistoryHash = fingerprint(changes);
   return {
-    schema: UI_SCHEMA, configurationHash: fingerprint(ui.profile),
-    stateHash: fingerprint(actual), inputs: actual,
-    changes: copy(ui.changes)
+    schema: UI_SCHEMA, configurationHash, stateHash, changeHistoryHash,
+    effectiveConfigurationHash: fingerprint({
+      configurationHash, stateHash, changeHistoryHash, changePolicy: ui.profile.changePolicy
+    }),
+    inputs: actual, changes
   };
 }
 
@@ -166,6 +172,8 @@ export function changeUiInput(model, id, nextValue) {
 
 export function assertMatchingUiProfiles(a, b) {
   if (a.configurationHash !== b.configurationHash || a.stateHash !== b.stateHash ||
+      a.effectiveConfigurationHash !== b.effectiveConfigurationHash ||
+      a.changeHistoryHash !== b.changeHistoryHash ||
       fingerprint(a.changes) !== fingerprint(b.changes)) {
     throw new BalanceConfigurationError('UI configuration/changes differ between runs');
   }
