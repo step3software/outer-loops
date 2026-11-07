@@ -52,6 +52,17 @@ export function assertPotionReport(report){
       'terminal checkpoint');
     const exact=report.prefix.semanticEvents.filter(event=>event.type==='action_completed');
     const first=action=>exact.findIndex(event=>event.action===action);
+    const witness=(id,action)=>{
+      const checkpoint=report.checkpoints.find(item=>item.id===id&&item.kind==='completed');
+      const origin=checkpoint?.origin;
+      const observed=exact.find(event=>event.sequence===origin?.sequence&&
+        event.action===action&&event.loop===origin?.loop);
+      requireValue(!!observed&&origin?.type==='action_completed'&&
+        Math.abs(checkpoint.gameplaySeconds-observed.seconds)<1e-6,
+        'missing action-backed checkpoint: '+id);
+      return observed;
+    };
+    witness('looping_potion_crafted','Looping Potion');
     const direct=['Start Journey','Continue On','Start Trek','Looping Potion'];
     requireValue(direct.every((action,index)=>first(action)>=0&&
       (index===0||first(action)>first(direct[index-1]))),
@@ -60,9 +71,12 @@ export function assertPotionReport(report){
     if(report.endpointRequested==='potion-craft'){
       requireValue(report.resources.loopingPotion===true,'crafted potion not retained');
     }else{
+      const consumed=witness('looping_potion_used_at_totem','Totem');
       requireValue(first('Totem')>first('Looping Potion')&&
+        exact.some(event=>event.action==='Looping Potion'&&
+          event.loop===consumed.loop&&event.seconds<=consumed.seconds)&&
         !report.resources.loopingPotion&&report.skills.Wunderkind>=1,
-        'potion-before-Totem action order and consumption');
+        'same-loop craft-before-Totem order and consumption');
     }
   }else requireValue(report.failure||report.missingMilestones.length>0,'incomplete diagnosis');
   return true;
@@ -191,19 +205,37 @@ export function runPotionCampaign({root,seed=42,endpoint='potion-totem',mode='ac
   }
   const startedAt=performance.now(),milestones=new Map(),attempts=new Map(),sectionTotals=new Map(),
     transitions=[],semanticEvents=[];
+  let processedActionEvents=0;
   let state=readPotionPolicyState(engine),decision=choosePotionPolicy(state,endpoint),lastAction=null,
     lastProgressDigest=null,unchangedLoops=0,lastObs=engine.lightweightObservation();
-  const mark=(name,kind,s,obs)=>{
+  const mark=(name,kind,s,obs,sourceEvent=null)=>{
     const key=name+':'+kind;if(milestones.has(key))return;
-    const value={id:name,kind,gameplaySeconds:obs.time,effectiveSeconds:obs.effectiveSeconds,
-      loopCount:obs.loops,earnedState:{townsUnlocked:s.townsUnlocked,levels:s.levels,
+    const value={id:name,kind,
+      gameplaySeconds:sourceEvent?.seconds??obs.time,
+      effectiveSeconds:sourceEvent?.effectiveSeconds??obs.effectiveSeconds,
+      loopCount:sourceEvent?.loop??obs.loops,
+      ...(sourceEvent?{origin:{type:'action_completed',action:sourceEvent.action,
+        sequence:sourceEvent.sequence,loop:sourceEvent.loop}}:{}),
+      earnedState:{townsUnlocked:s.townsUnlocked,levels:s.levels,
         skills:{Alchemy:s.skills.Alchemy,Restoration:s.skills.Restoration,Spatiomancy:s.skills.Spatiomancy,
           Pyromancy:s.skills.Pyromancy,Wunderkind:s.wunderkind},
-        herbs:s.resources.herbs,loopingPotion:s.loopingPotion}};
+        herbs:s.resources.herbs,loopingPotion:sourceEvent?.action==='Looping Potion'?true:s.loopingPotion}};
     milestones.set(key,value);semanticEvents.push({...value,type:'milestone_'+kind});
   };
   const observe=(s,obs)=>{
-    for(const [name,predicate] of MILESTONES)if(predicate(s)){mark(name,'unlocked',s,obs);mark(name,'completed',s,obs);}
+    // Transient potion state can disappear before a policy burst returns.
+    // Derive the terminal milestones from exact production action completions.
+    for(const event of engine.events.slice(processedActionEvents)){
+      if(event.type!=='action_completed')continue;
+      const id=event.action==='Looping Potion'?'looping_potion_crafted':
+        event.action==='Totem'&&s.wunderkind>=1?'looping_potion_used_at_totem':null;
+      if(id){mark(id,'unlocked',s,obs,event);mark(id,'completed',s,obs,event);}
+    }
+    processedActionEvents=engine.events.length;
+    for(const [name,predicate] of MILESTONES){
+      if(name==='looping_potion_crafted'||name==='looping_potion_used_at_totem')continue;
+      if(predicate(s)){mark(name,'unlocked',s,obs);mark(name,'completed',s,obs);}
+    }
     if(obs.actionName&&obs.actionName!==lastAction){
       attempts.set(obs.actionName,{action:obs.actionName,gameplaySeconds:obs.time,
         effectiveSeconds:obs.effectiveSeconds,loopCount:obs.loops});

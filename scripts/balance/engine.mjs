@@ -54,16 +54,16 @@ export class BalanceEngine {
     this.model.evaluate('globalThis.__balanceCounters={actionTicks:0,uiUpdates:0};' +
       'globalThis.__balanceActionEvents=[];globalThis.__balanceEventFilter=' +
       (Array.isArray(eventActions)?'new Set('+JSON.stringify(eventActions)+')':'null') + ';' +
-      'globalThis.__balanceEventSeen=new Set();' +
       'const __balanceActionTick=actions.tick;actions.tick=function(...args){' +
       '__balanceCounters.actionTicks++;const before=totals.actions;' +
+      'const speed=getSpeedMult(),speedAtTick=gameSpeed,bonusAtTick=bonusSpeed;' +
       'const spent=__balanceActionTick.apply(this,args);if(totals.actions>before&&' +
-      '(!__balanceEventFilter||(__balanceEventFilter.has(this.currentAction?.name)&&' +
-      '!__balanceEventSeen.has(this.currentAction?.name)))){' +
-      '__balanceEventSeen.add(this.currentAction?.name);const speed=getSpeedMult();' +
-      'const delta=spent/speed/baseManaPerSecond;__balanceActionEvents.push({' +
-      'type:"action_completed",action:this.currentAction?.name??null,' +
-      'seconds:totals.time+timeCounter+delta,effectiveSeconds:totals.effectiveTime+effectiveTime+delta});}' +
+      '(!__balanceEventFilter||__balanceEventFilter.has(this.currentAction?.name))){' +
+      'const wall=spent/speed/bonusAtTick/speedAtTick/baseManaPerSecond;' +
+      'const effective=spent/speed/baseManaPerSecond;__balanceActionEvents.push({' +
+      'type:"action_completed",action:this.currentAction?.name??null,loop:totals.loops,' +
+      'seconds:totals.time+timeCounter+wall,' +
+      'effectiveSeconds:totals.effectiveTime+effectiveTime+effective});}' +
       'return spent};' +
       'const __balanceViewUpdate=view.update;view.update=function(...args){' +
       '__balanceCounters.uiUpdates++;return __balanceViewUpdate.apply(this,args)};');
