@@ -3,7 +3,7 @@
 > **Generated reference.** Run `npm run write:balance:timing` after changing game balance or calculation assumptions. `npm run check:balance:timing` fails when this report drifts. Do not hand-edit calculated values.
 
 **Status:** source-backed planning calculation, not an earned campaign simulation or an approved pacing target.  
-**Source identity:** `7e175eed2277ba95378b71954c00c12d78679f693b6b6fc75246ed8bd5112cfe`  
+**Source identity:** `fcf757cd3e5896b43088e343456ced99e8987fd1b1277f794ac8791b995569c3`  
 **Calculation schema:** `rw00-calculated-campaign-estimate/v1`
 
 ## Result summary
