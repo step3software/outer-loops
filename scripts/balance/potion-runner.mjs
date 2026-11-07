@@ -54,7 +54,7 @@ export function assertPotionReport(report){
     const first=action=>exact.findIndex(event=>event.action===action);
     const direct=['Start Journey','Continue On','Start Trek','Looping Potion'];
     requireValue(direct.every((action,index)=>first(action)>=0&&
-      (index===0||first(action)>first(direct[index-1])),
+      (index===0||first(action)>first(direct[index-1]))),
       'direct potion travel and craft action order');
     requireValue(first('Open Portal')<0,'direct route unexpectedly used Open Portal');
     if(report.endpointRequested==='potion-craft'){
