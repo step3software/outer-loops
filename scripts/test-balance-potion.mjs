@@ -37,7 +37,7 @@ assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2]})).phase,'merchanto
 assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2,3]})).phase,'olympus');
 assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4]})).phase,'valhalla');
 assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4,5]})).phase,'startington');
-assert.equal(choosePotionPolicy(state({loopingPotion:true})).phase,'carry_potion');
+assert.equal(choosePotionPolicy(state({loopingPotion:true})).phase,'recraft_potion_and_totem');
 assert.equal(choosePotionPolicy(state({loopingPotion:false,wunderkind:1})).phase,'complete');
 const potionReadyState=state({townsUnlocked:[0,1,2,3,4,5,6],
   levels:{...state().levels,meander:100,jungle:50},
