@@ -24,7 +24,7 @@ function read(model, expression) {
 export class BalanceEngine {
   constructor({seed = 42, quantumMs = 20, uiProfile, mode = 'reference', calibration,
     maxBatchMs = 10000, profiler = false, maxHostMs = 30*60*1000,
-    maxSimulatedSeconds = 180*86400, policyBoundaries = false} = {}) {
+    maxSimulatedSeconds = 180*86400, policyBoundaries = false, eventActions = null} = {}) {
     if (!Number.isFinite(quantumMs) || quantumMs <= 0 || quantumMs > 20) {
       throw new RangeError('Uncalibrated quantum: use 0 < quantumMs <= 20');
     }
@@ -44,6 +44,7 @@ export class BalanceEngine {
     this.maxHostMs = maxHostMs;
     this.maxSimulatedSeconds = maxSimulatedSeconds;
     this.policyBoundaries = policyBoundaries;
+    this.filteredEvents = Array.isArray(eventActions);
     this.startHostMs = hostPerformance.now();
     this.uiInitial = installUiProfile(this.model, uiProfile ?? createDefaultUiProfile(this.model));
     this.edits = [];
@@ -51,10 +52,15 @@ export class BalanceEngine {
     this.steps = 0;
     this.events = [];
     this.model.evaluate('globalThis.__balanceCounters={actionTicks:0,uiUpdates:0};' +
-      'globalThis.__balanceActionEvents=[];' +
+      'globalThis.__balanceActionEvents=[];globalThis.__balanceEventFilter=' +
+      (Array.isArray(eventActions)?'new Set('+JSON.stringify(eventActions)+')':'null') + ';' +
+      'globalThis.__balanceEventSeen=new Set();' +
       'const __balanceActionTick=actions.tick;actions.tick=function(...args){' +
       '__balanceCounters.actionTicks++;const before=totals.actions;const speed=getSpeedMult();' +
-      'const spent=__balanceActionTick.apply(this,args);if(totals.actions>before){' +
+      'const spent=__balanceActionTick.apply(this,args);if(totals.actions>before&&' +
+      '(!__balanceEventFilter||(__balanceEventFilter.has(this.currentAction?.name)&&' +
+      '!__balanceEventSeen.has(this.currentAction?.name)))){' +
+      '__balanceEventSeen.add(this.currentAction?.name);' +
       'const delta=spent/speed/baseManaPerSecond;__balanceActionEvents.push({' +
       'type:"action_completed",action:this.currentAction?.name??null,' +
       'seconds:totals.time+timeCounter+delta,effectiveSeconds:totals.effectiveTime+effectiveTime+delta});}' +
@@ -105,6 +111,36 @@ export class BalanceEngine {
     }
     this.model.evaluate('pauseGame(false)');
     return this.snapshot();
+  }
+
+  burstPolicyLoops(count = 16) {
+    if (!this.policyBoundaries || !this.started || !Number.isSafeInteger(count) || count < 1) {
+      throw new BalanceRuntimeError('invalid_route','Policy burst requires a started boundary engine');
+    }
+    const before=this.lightweightObservation();
+    if (before.stopped) throw new BalanceRuntimeError('stalled','Resume before a policy burst',before);
+    if (hostPerformance.now()-this.startHostMs>=this.maxHostMs) {
+      throw new BalanceRuntimeError('budget_exceeded','Declared measurement ceiling reached',before);
+    }
+    const operation=()=>read(this.model,'(() => {' +
+      'const target=totals.loops+'+count+';let chunks=0;' +
+      'while(totals.loops<target&&chunks<100000){' +
+      'if(gameIsStopped)pauseGame(false);gameTicksLeft+=60000;' +
+      'executeGameTicks(performance.now()+60000);chunks++;}' +
+      'return {chunks,target,reached:totals.loops};})()');
+    const result=this.profiler?this.profiler.time('gameEngine',operation):operation();
+    if(result.chunks>=100000)throw new BalanceRuntimeError('stalled','Policy burst guard exceeded');
+    this.clock.advance(result.chunks*60000);
+    this.steps++;
+    const after=this.lightweightObservation();
+    const exactActionEvents=read(this.model,'__balanceActionEvents.slice('+before.actionEventCount+')');
+    const events=collectEvents(before,after,exactActionEvents,!this.filteredEvents,true);
+    const firstSequence=this.events.length;
+    this.events.push(...events.map((event,index)=>({...event,sequence:firstSequence+index})));
+    this.profiler?.count('outerSchedulingCalls');
+    this.profiler?.count('internalActionTicks',after.internalActionTicks-before.internalActionTicks);
+    this.profiler?.count('uiUpdates',after.uiUpdates-before.uiUpdates);
+    return after;
   }
 
   snapshot() {
@@ -223,7 +259,7 @@ export class BalanceEngine {
     }
     try {
       const exactActionEvents=read(this.model,'__balanceActionEvents.slice('+before.actionEventCount+')');
-      const events = collectEvents(before,after,exactActionEvents);
+      const events = collectEvents(before,after,exactActionEvents,!this.filteredEvents);
       const firstSequence=this.events.length;
       this.events.push(...events.map((event,index)=>({...event,sequence:firstSequence+index})));
     } catch (error) {

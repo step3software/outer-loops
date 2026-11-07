@@ -61,6 +61,34 @@ compareScenario({id:'fractional-mana',targetMs:20000,
   queue:[{op:'add',name:'Wander',loops:1000}],
   configure:engine=>engine.model.evaluate('options.fractionalMana=true;actions.adjustTicksNeeded()')});
 
+function persistentBoundaryState(engine) {
+  return JSON.parse(JSON.stringify(engine.evaluate(`({
+    resources,totals,progress:towns[0].expWander,
+    stats:Object.fromEntries(Object.entries(stats).filter(([,v])=>v.levelExp).map(([k,v])=>
+      [k,[v.levelExp.totalExp,v.talentLevelExp.totalExp]]))
+  })`)));
+}
+const boundaryReference=new BalanceEngine({seed:42,mode:'accelerated',calibration,
+  policyBoundaries:true,maxHostMs:120000});
+const boundaryBurst=new BalanceEngine({seed:42,mode:'accelerated',calibration,
+  policyBoundaries:true,maxHostMs:120000});
+for(const engine of [boundaryReference,boundaryBurst]){
+  assert.equal(engine.edit({op:'add',name:'Wander',loops:1},
+    {source:'policy-burst-equivalence',policyVersion:'fixture/v1'}).status,'admitted');
+  engine.start();
+}
+while(boundaryReference.snapshot().loops<64){
+  boundaryReference.step({full:false});
+  if(boundaryReference.snapshot().stopped&&boundaryReference.snapshot().loops<64){
+    boundaryReference.resumePolicyLoop();
+  }
+}
+boundaryBurst.burstPolicyLoops(64);
+assert.deepEqual(persistentBoundaryState(boundaryBurst),persistentBoundaryState(boundaryReference));
+assert.deepEqual(boundaryBurst.model.rngSnapshot(),boundaryReference.model.rngSnapshot());
+assert.equal(boundaryBurst.snapshot().stopped,true);
+console.log('PASS policy-burst equivalence: 64 production restart boundaries in one outer call.');
+
 assert.throws(()=>new BalanceEngine({mode:'accelerated'}),/calibration manifest/);
 assert.throws(()=>new BalanceEngine({mode:'accelerated',calibration:{...calibration,identity:'stale'}}),
   /Stale calibration/);
