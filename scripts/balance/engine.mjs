@@ -169,7 +169,8 @@ export class BalanceEngine {
       'queuePosition:actions.currentPos,currentQueueCount:actions.current.length,' +
       'stopped:gameIsStopped,ticksLeftMs:gameTicksLeft,offlineMs:totalOfflineMs,lagSpeed,' +
       'bonusSpeed,gameSpeed,shouldRestart,curTown,actionName:action?.name??null,' +
-      'actionType:action?.type??null,actionTicks,actionLoopsLeft:action?.loopsLeft??0,' +
+      'actionType:action?.type??null,singleActionName:actions.current.length===1?actions.current[0].name:null,' +
+       'actionTicks,actionLoopsLeft:action?.loopsLeft??0,' +
       'boundaryTicks,boundaryKind,boundaryWallMs:ticksPerMs>0?boundaryTicks/ticksPerMs:0,' +
       'loopBoundaryWallMs:ticksPerMs>0?loopTicks/ticksPerMs:0,' +
       'internalActionTicks:__balanceCounters.actionTicks,uiUpdates:__balanceCounters.uiUpdates,' +
