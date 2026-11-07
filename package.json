@@ -8,7 +8,8 @@
     "@types/lz-string": "^1.5.0"
   },
   "scripts": {
-    "check": "node scripts/check-repo.mjs",
+    "check": "node scripts/check-repo.mjs && node scripts/generate-balance-timing-report.mjs --check",
+    "check:balance:timing": "node scripts/generate-balance-timing-report.mjs --check",
     "test:model": "node scripts/test-game-model.mjs",
     "test:action": "node scripts/test-action-execution.mjs",
     "test:balance": "node scripts/test-balance-contracts.mjs && node scripts/test-balance-equivalence.mjs && node scripts/test-balance-supervisor.mjs && node scripts/test-balance-potion.mjs && node scripts/test-balance-campaign-estimate.mjs",
@@ -19,6 +20,7 @@
     "test:balance:campaign": "node scripts/test-balance-campaign-estimate.mjs",
     "test:balance:potion": "node scripts/test-balance-potion.mjs",
     "test:balance:supervisor": "node scripts/test-balance-supervisor.mjs",
+    "write:balance:timing": "node scripts/generate-balance-timing-report.mjs --write",
     "measure:balance": "node scripts/measure-balance.mjs",
     "profile:balance": "node scripts/test-balance-performance.mjs",
     "check:mechanics": "node scripts/generate-action-mechanics.mjs --check",
