@@ -1,14 +1,22 @@
-# Looping Potion and Valley of Olympus — ending redesign options
+# Looping Potion, independent Valley and historical alternatives
 
-**Status (2026-10-17): Design investigation and alternatives — NOT an approved decision to remove Valley of Olympus, change potion requirements, or rewrite the ending.** No gameplay or save changes have been made. This is an input to future Real World product decisions; see the [decision ledger](decisions.md) (RW-Q17–RW-Q21).
+**Status (2026-11-06):** The **approved product direction** is to deliberately **drink the recreated Looping Potion** to arrive in a Real World version of Beginnersville with other selves, while **retaining Valley of Olympus** as an independent, eventually faster capstone. No new game feature has been implemented. The A/B/C endgame study below is **historical evidence**, not current implementation guidance.
 
-## Executive assessment
+## Selected direction — one potion, two distinct world concepts
 
-**The potion is an excellent candidate for a stronger narrative bridge to Real World, and the full Valley of Olympus endgame may be a poor recurring gate for the new outer loop.** But deleting Valley outright would erase a hard-earned climax and break interconnected gameplay. The best next design experiment is a **short, narratively satisfying capstone involving the potion after Jungle Path / in Commerceville**, while comparing it against a **condensed Valley** alternative. Do not choose a final structure without a pacing and progression review.
+- **Real World gateway:** A new intentional potion-drinking interaction returns the player to an **altered starter village**. One alternate self notices the newcomer; short exploration precedes the first empowered rerun. `RestoreTime` is not an entry prerequisite.
+- **Independent Valley:** Keep zone 8, gods, tower, trials, restoration story and credits. The owner selected a shorter Valley during a **campaign-wide rebalance**, with unchanged-campaign measurements first; see the [RW00 pacing test plan](balance-tests-implementation-plan.md). Do not physically delete a town.
+- **First rerun:** Initial allocatable skill points, a substantial temporary boost and permanent ~10× replay speed are separate player benefits. Their quantitative rules remain open.
+- **Totem:** The current `Action.Totem` consumes a potion for Wunderkind XP; it remains a separate legitimate use. The new reality entry must avoid double consumption and must not silently abolish this training route.
+- **Route access:** The existing visible/unlocked requirements rely on Spatiomancy, normally through high-reputation Valhalla. A shadow/Startington player must also have a legal attainable route to the required potion; no access solution has been approved.
+- **Safety:** Current `resources.loopingPotion` is a boolean per-loop item; `storyFlags.loopingPotionMade` and `storyMax` can diverge. Use genuine possession/earned-knowledge evidence for the future gateway, never a story index alone. Entry, rewind, explicit timeline reset and repeat rewards need distinct receipts.
+- **Legacy:** The existing `RestoreTime` grants 90 legacy prestige points once per old cycle. That is neither the new potion-entry currency nor the initial rerun point grant by default. Veteran saves and unfinished Valley progression must survive migration.
 
-The existing canon offers both possible foundations: the original delivery potion caused the looping predicament, and the existing `Restore Time` story describes creating distinct alternate lives. A new ending could connect those mysteries **without claiming that the original world was fake** or prematurely defining how timeline travel works.
+**Superseded:** The earlier recommendation to replace Valley with a Commerceville potion finale, and the old `Restore Time → portal` gateway, are **not** the selected product direction. The existing code's nine-zone behavior remains the baseline until separately authorized work.
 
-**Compatibility with prior direction:** RW-D02 currently approves a nexus reached after the *existing* `Restore Time` climax. The "remove Valley / replace the final ritual" approach would **revise that earlier direction**, not merely implement it. Until explicitly adopted, preserve the current ending and nine-zone progression as authoritative; all paths below are prospective.
+## Earlier research (retained for source evidence)
+
+The following sections document how the game presently works and the A/B/C alternatives previously studied. They are not instructions to remove Valley or to require its ending for Real World.
 
 ## 1. As-coded potion: accessible before Valley
 
@@ -58,7 +66,7 @@ Valley (zone index 8) contains **six actions**, but is the final convergence of 
 
 The Valley also supports the original narrative: reaching the gods, reconstructing the tower and weaving time back into an array of alternate lives. Removing its grind is attractive, but **the sense of accomplishment and cross-world culmination must survive**.
 
-## 3. Three ending structures to compare
+## 3. Historical ending structures (superseded entry assumptions)
 
 | Option | Endgame structure | Strength | Principal risk |
 | --- | --- | --- | --- |
@@ -68,7 +76,7 @@ The Valley also supports the original narrative: reaching the gods, reconstructi
 
 Option C is a **design hypothesis**, not an approved deletion. A more radical **Jungle Totem → Real World** transition is also imaginable but currently less compelling: it would skip much of **Commerceville** (economy, thieves, Explorer Guild, survey bootstrap, late discoveries). Do not remove those systems accidentally just because the potion is used in Jungle Path.
 
-### Recommended capstone sketch if C is selected later
+### Historical Commerceville sketch for the unselected option C
 
 **Narrative hypothesis, not a requirement:** The potion is not *just* something that repeats a day; understanding it offers a way to perceive/repair the **fraying boundaries between possible lives**. This is compatible with, but does not prove, the original timeline-weaving story.
 
@@ -102,7 +110,7 @@ Keep the Totem **useful** regardless of where the final capstone goes. The curre
 
 See [technical architecture](technical-architecture.md), [legacy transition](legacy-transition.md), [RF coordination](integration-with-refactoring.md) and [source-grounded current endgame](../../audit/progression.md).
 
-## 5. Acceptance questions and research before approving removal
+## 5. Historical removal-study questions — no longer the active decision
 
 1. **Completion pacing:** Measure real progression time for the original first completion and the likely duration of full Valley stone/trial repetition in later ~10× timelines. Is the bottleneck *meaningful play* or mostly solved repetition?
 2. **Climax:** Can a potion/research finale make Restore Time feel as earned as defeating the gods? What original-world systems must the player demonstrate mastery of?
@@ -116,7 +124,7 @@ See [technical architecture](technical-architecture.md), [legacy transition](leg
 
 ### Proposed testing matrix — *not yet executed*
 
-| Test ID | Synthetic scenario | Expected when option C is eventually approved |
+| Test ID | Synthetic scenario | Historical expected outcome if C had been selected (not the current target) |
 | --- | --- | --- |
 | PE01 | Alchemy progression in Forest; Spatiomancy in Valhalla; potion on Mt. Olympus | Exact visibility, unlock, resource costs and crafting story flags characterized first |
 | PE02 | Repeat potion crafting while already carrying one | Confirm existing boolean/cost behavior; fix only if separately approved |
@@ -133,8 +141,10 @@ See [technical architecture](technical-architecture.md), [legacy transition](leg
 
 None of PE01–PE12 has been implemented as a test as part of this documentation.
 
-## Recommended next design decision
+## Current implementation questions and verification
 
-First choose **A (unchanged Valley), B (short Valley), or C (Commerceville capstone)**. I lean **C** for the intended shorter, more replayable outer loop, *provided* the replacement finale is strong and both reputation routes remain viable; **B** is the lower-risk fallback that retains the original mythic climax. Then decide whether **crafting the Looping Potion** is mandatory for first completion, whether its knowledge can substitute later, and whether Totem remains an independent optional application.
+**RW-D02 now selects the potion as the independent Real World gateway; RW-D09 keeps a shorter Valley.** Do not ask again whether the Valley should be removed or recommend C as the default. Decide the exact new drinking action, route-fair potion access, Totem compatibility, current-world return semantics, first-rerun grants and safe veteran migration.
 
-**Nothing in this proposal constitutes approval to change the current game or the existing approved RW-D02 narrative bridge.** A later implementation request must explicitly update [decisions](decisions.md), reconcile [roadmap](roadmap.md) and state migration, and add tests before changing `actionList.js` or removing zone-8 behavior.
+The earlier **PE01–PE12** table is preserved with its original IDs as *historical prospective tests*; C-specific removal/zone-count checks are not current requirements. The [current validation plan](validation.md) owns the actual future tests for potion entry, high/low-reputation access, independent Valley, temporary first-rerun boost, saves and idempotent rewards.
+
+No authorizing source change, gameplay execution, code/test implementation or new Save migration has been performed by this document.
