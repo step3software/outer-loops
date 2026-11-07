@@ -130,7 +130,8 @@ export class BalanceEngine {
         elapsedMs:this.clock.elapsedMs, steps:this.steps},
       admission: {version:ADMISSION_VERSION, edits:this.edits},
       uiInput: {initial:this.uiInitial.configurationHash,current:ui.stateHash,
-        changes:ui.changes}, state,
+        effective:ui.effectiveConfigurationHash,changeHistory:ui.changeHistoryHash,
+        changePolicy:'recorded-ui-events/v1',changes:ui.changes}, state,
       hostExecutionSeconds:(hostPerformance.now()-this.startHostMs)/1000,
       limits:{maxHostMs:this.maxHostMs,maxSimulatedSeconds:this.maxSimulatedSeconds},
       coverage:'Model-only diagnostic; not a C14 campaign measurement or browser calibration'
