@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
+import {seededMath} from './balance/clock.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const gameScripts = [
@@ -11,7 +12,7 @@ const gameScripts = [
     'driver.js', 'stats.js', 'actions.js', 'town.js', 'prestige.js', 'saving.js',
 ];
 
-export function loadGameModel({ withViewStubs = false, withChallenges = false } = {}) {
+export function loadGameModel({ withViewStubs = false, withChallenges = false, rngSeed, clock } = {}) {
     // A worker has self but no window/document/DOM. This is intentionally
     // closer to predictor-worker.js than index.html. It tests core model only.
     const sandbox = {
@@ -23,6 +24,13 @@ export function loadGameModel({ withViewStubs = false, withChallenges = false } 
         clearInterval,
         performance,
     };
+    // Optional per-VM test dependencies are not installed into the host process.
+    const random = rngSeed === undefined ? null : seededMath(rngSeed);
+    if (random) sandbox.Math = random.math;
+    if (clock) {
+        sandbox.Date = clock.Date;
+        sandbox.performance = clock.performance;
+    }
     if (withViewStubs) {
         // Minimal test-only UI facade: exercise action/queue state transitions,
         // not DOM rendering. The game still runs the original core logic.
@@ -83,5 +91,6 @@ export function loadGameModel({ withViewStubs = false, withChallenges = false } 
             if (a.type === 'multipart') t['total' + a.varName] ??= 0;
           }`, sandbox);
     }
-    return {sandbox, evaluate: (source) => vm.runInContext(source, sandbox, {timeout: 10_000})};
+    return {sandbox, evaluate: (source) => vm.runInContext(source, sandbox, {timeout: 10_000}),
+        rngSnapshot: () => random?.snapshot() ?? null};
 }
