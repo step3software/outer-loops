@@ -82,6 +82,7 @@ The [roadmap](roadmap.md) separates the arrival, initial replay and future syste
 - [Technical architecture and state boundaries](technical-architecture.md) — *not* town #9, save/predictor/rule considerations
 - [Pixel-art and hub experience](visual-direction.md) — future art direction, no assets generated
 - [RW00 campaign balance tests — implementation plan](balance-tests-implementation-plan.md) · [structured draft](balance-tests.plan.json)
+- [Calculated original-campaign timing baseline](calculated-timing-baseline.md) — generated 29-day potion breakdown and full C08–C14 timing findings
 - [Roadmap and acceptance gates](roadmap.md) — potion village → empowered rerun → later party play
 - [RW06 Timeline Keys and RW07 Timeline Wagers proposals (draft PR #9)](https://github.com/step3software/outer-loops/pull/9) — proposed future mechanics, not adopted into this source branch
 - [Playtest/validation questions](validation.md) — future scenarios, key pacing risks and decisions

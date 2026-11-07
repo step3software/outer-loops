@@ -1,6 +1,6 @@
 # RW00 campaign balance tests — implementation plan
 
-**Status:** Draft implementation plan for the campaign-pacing test work package within RW00. No tests have been implemented or benchmark durations measured by this document. This is not acceptance of the complete RW00 milestone, an approved preparation, or permission to implement or rebalance.
+**Status:** Test foundation, calibrated policy bursts, and an incomplete earned R01 potion policy are in progress on a stacked implementation branch. The policy has reached the Forest Alchemy/herb boundary from fresh defaults, but no complete potion craft, Totem use, or benchmark duration has passed. This is not acceptance of the complete RW00 milestone or permission to rebalance.
 
 **Owner request:** Codex chat, 2026-11-06 (America/New_York): “Write an implementation plan for those tests”.
 
@@ -211,7 +211,25 @@ No new owner answer is needed to draft or refine this baseline test design. Afte
 
 Navigation is roadmap → this implementation plan → structured companion and exact source owners. The decision ledger remains the owner-answer record; no new status ledger or accepted lifecycle receipt is created. The plan repairs the stale “C recommended, no ending selected” summaries in the design index and roadmap while preserving the historical alternatives study. Source audit findings remain as-coded evidence. Coverage here is substantive for the loader, driver/queue timing, action gates, route guides and related contracts, selective for browser/predictor internals, and not an exhaustive gameplay/security audit.
 
-**Next stage:** Review and accept this bounded plan, then prepare the exact file operations and tests against a refreshed, owner-selected main source. Subsequent implementation needs its own grant. Preserve branch writer protection and human merge/release gates. Rebalance all sections together only after measurement and owner budgets.
+**Prior planning handoff:** The original documentation revision required separate implementation authorization. That authorization was later supplied by the owner for the accelerated benchmark request recorded below. Branch writer protection and human merge/release gates remain unchanged. Rebalance all sections together only after measurement and owner budgets.
+
+## Accelerated implementation evidence — 2026-11-07
+
+The owner separately requested implementation against `feature/rw00-balance-tests`, observed at `9c199862596ea6b5099f02599df8a29512169c4e`. The stacked implementation branch adds only test harness, tests, commands, CI configuration and owning documentation; production gameplay files remain unchanged.
+
+Implemented and locally verified in this slice:
+
+- reference, accelerated and diagnostic engine modes;
+- versioned, fail-closed per-action acceleration eligibility;
+- boundary-limited 20 ms-quantized adaptive batches and precision fallback;
+- lightweight batch observation, semantic event guards and full semantic state comparison;
+- aggregate profiling and a bounded performance gate;
+- browser calibration coverage for reference and accelerated opening execution plus deliberate mismatch controls;
+- an independent worker watchdog for absolute time and memory ceilings.
+
+The current-main shared standards observation was Orcha `b8bf6bf07073823d108fd356c48916ea0cafd615`. Applicable document SHA-256 values were: intent routing `fc05fdc681d2ae86eedcffad3edf7d8b81ddcfddfd9b7f60ff9bcedb8e096431`, implementation procedure `a3d812815622f4c14780ae69c3bffa739dce9bdc753bf4ee2b7443e5b309548d`, development workflow `b304fc38cca8931196ab032b3c4aa014c4dee0bc2c89ca0f0988486702ea1818`, and PR development coordination `8be2fd08b5ee8e89408a18918ab86c6c565025b4be71c77fc0420d0fc07cc7fd`.
+
+Full R01/R02 policy execution, C00–C14 earned checkpoint evidence, earned-prefix replay and the five strategy comparisons remain outstanding. Until those pass with matching browser calibration, report validation must reject any claimed complete baseline.
 
 ## Review corrections in this revision
 

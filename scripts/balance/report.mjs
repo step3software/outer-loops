@@ -1,7 +1,7 @@
 // Fail-closed calibration and baseline validation; reports are evidence, not targets.
 import {fingerprint} from './ui-inputs.mjs';
-export const REPORT_SCHEMA = 'rw00-campaign-balance/v1';
-export const CALIBRATION_SCHEMA = 'rw00-browser-calibration/v1';
+export const REPORT_SCHEMA = 'rw00-campaign-balance/v2';
+export const CALIBRATION_SCHEMA = 'rw00-browser-calibration/v2';
 export const CHECKPOINTS = Object.freeze(Array.from({length:15},(_,i)=>'C'+String(i).padStart(2,'0')));
 const COMPARABLE = [
   'route','scenario','policyHash','admissionVersion','checkpointVersion',
@@ -31,6 +31,11 @@ export function assertCalibration(report, expected) {
     'Calibration lacks real browser identity');
   ensure(typeof report.sourceHash === 'string' && report.sourceHash.length === 64,
     'Calibration lacks source fingerprint');
+  ensure(typeof report.clockVersion === 'string' && report.clockVersion.length > 0,
+    'Calibration lacks clock identity');
+  ensure(typeof report.accelerationCalibrationIdentity === 'string' &&
+    report.accelerationCalibrationIdentity.length === 64,
+    'Calibration lacks acceleration identity');
   ensure(Array.isArray(report.scenarios) && report.scenarios.length >= 1 &&
     report.scenarios.every(x=>x.status === 'passed' && x.browser && x.model),
     'Missing real-browser scenario proof');
@@ -59,6 +64,8 @@ export function assertCompleteReport(report, calibration) {
     schedulerVersion:report.schedulerVersion
   });
   ensure(report.calibrationHash === calHash, 'Calibration fingerprint mismatch');
+  ensure(report.schedulerCalibrationIdentity === calibration.accelerationCalibrationIdentity,
+    'Scheduler calibration identity mismatch');
   ensure(Array.isArray(report.seeds) && report.seeds.length >= 1, 'No seed evidence');
   ensure(new Set(report.seeds.map(s=>s.seed)).size === report.seeds.length,'Duplicate seed');
   for (const run of report.seeds) {
@@ -69,6 +76,20 @@ export function assertCompleteReport(report, calibration) {
     ensure(finiteNonnegative(run.effectiveSeconds), 'Invalid effective seconds');
     ensure(finiteNonnegative(run.loopCount), 'Invalid loop count');
     ensure(finiteNonnegative(run.hostSeconds), 'Invalid host seconds');
+    ensure(run.rng?.algorithm === 'xorshift32/v1' && run.rng.seed === run.seed &&
+      Number.isSafeInteger(run.rng.state) && Number.isSafeInteger(run.rng.calls) && run.rng.calls >= 0,
+      'Invalid RNG evidence');
+    const performance=run.performance;
+    ensure(performance && finiteNonnegative(performance.hostSeconds) &&
+      performance.hostSeconds === run.hostSeconds,
+      'Missing or ambiguous host performance duration');
+    for(const field of ['outerSchedulingCalls','internalActionTicks','precisionFallbacks','peakHeapBytes']) {
+      ensure(Number.isSafeInteger(performance[field]) && performance[field] >= 0,
+        'Invalid performance field: '+field);
+    }
+    ensure(finiteNonnegative(performance.simulatedSecondsPerHostSecond) &&
+      performance.batchCounts && typeof performance.batchCounts === 'object',
+      'Missing scheduler performance evidence');
     for (const name of ['uiStateHash','uiChangeHistoryHash','effectiveUiConfigurationHash']) {
       ensure(typeof run[name] === 'string' && run[name].length > 0,
         'Missing run UI identity: ' + name);
@@ -111,6 +132,12 @@ export function assertCompleteReport(report, calibration) {
       'Checkpoint exceeds campaign duration');
   }
   return true;
+}
+
+export function createIncompleteReport({route=null,reason,lastCheckpoint=null,pendingGoal=null,
+  diagnostics=null} = {}) {
+  return {schema:REPORT_SCHEMA,status:'incomplete',route,reason,lastCheckpoint,pendingGoal,
+    diagnostics,certifiedBaseline:false};
 }
 
 export function assertComparableBaseline(a,b) {

@@ -1,6 +1,6 @@
 // Deterministic, per-VM test dependencies. Never patch host globals.
 export const PRNG_VERSION = 'xorshift32/v1';
-export const CLOCK_VERSION = 'virtual-wall-20ms/v1';
+export const CLOCK_VERSION = 'virtual-wall-batched/v2';
 
 export function seededMath(seed) {
   if (!Number.isSafeInteger(seed) || seed <= 0 || seed > 0xffffffff) {
