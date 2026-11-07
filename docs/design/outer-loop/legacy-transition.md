@@ -56,13 +56,19 @@ The source is authoritative for exact as-coded numeric effects. This table is *p
 
 There are two viable outcomes: selected variants are **rebuilt as nexus-launched challenges with actual rewards/identities**, or discarded. In either case, **remove the old standalone menu** in the new experience. Do not rely on runtime function monkey-patching as the foundation for new challenge timelines. [RF04](integration-with-refactoring.md) will need scope review if the old modes are to be retired rather than mechanically preserved.
 
+## Potion-first access and inherited Valley achievement
+
+**Revised product direction:** `RestoreTime` remains the original Valley of Olympus story and awards the existing 90 old prestige points under current code. It is **not the new Real World gateway**. The player enters through an intentional **Looping Potion drinking** action and may have unfinished Valley progress when they first visit the alternate Beginnersville. Migration must preserve such progress, old completion records, prestige purchases and challenge saves.
+
+An existing veteran's `RestoreTime` completion must not silently stand in for new potion acquisition, an initial skill-point grant or a first-rerun temporary-boost entitlement. Decide fair veteran access/credit explicitly rather than double-paying or trapping historical saves. The new skill points/temporary boost are **not** assumed to use the old 90-point system.
+
 ## Veteran save and achievement migration — mandatory scenarios
 
 | Starting save | Requirement, independently of chosen conversion strategy |
 | --- | --- |
-| First-ever player, no restoration | Original nine-zone story and first completion remain available; no free premature Real World unlock |
-| Existing player just completed `RestoreTime` | Nexus unlock recognized once; no duplicate 90-point old reward and no double first-meeting |
-| Existing player with `prestigeTotalCompletions`, `completedAnyPrestige` and bought `Prestige...` buffs | Eligibility for Real World restored; original entitlements/history preserved in migration record and mapped explicitly to the new model |
+| Fresh player, no legitimate potion | Ordinary nine-zone game and Valley remain available; Real World locked pending actual potion entry |
+| Existing player just completed `RestoreTime` | Original Valley achievement and 90-point record preserved; Real World entry determined by potion route/migration policy, not an automatic portal |
+| Existing player with `prestigeTotalCompletions`, `completedAnyPrestige` and bought `Prestige...` buffs | Preserve original history/entitlements, but do not assume these prove the new potion gateway or pay first-rerun points/boost twice |
 | Existing player with unspent `prestigeCurrentPoints` | Balance not silently discarded or spent at an invented exchange rate; preserve/refund based on approved policy |
 | Existing player with old `Imbuement3` carryover | Training/loop power remains coherent and explicit; do not incidentally revert important progress |
 | Existing normal `idleLoops1` + `idleLoopsChallenge` save | Both slots recoverable, no overwriting one with the other; old challenge progress preserved or deliberately archived |
@@ -72,11 +78,13 @@ There are two viable outcomes: selected variants are **rebuilt as nexus-launched
 
 **No automatic point conversion rate is selected.** Never assume "90 existing prestige points = 90 new nexus tokens" is correct. Save the old values intact through a recoverable compatibility bridge until a conversion decision is made. Never penalize a veteran with a silent loss just because a buff is not kept in the newly designed tree.
 
+**Additional required cohort:** a player carrying the genuine Looping Potion with **unfinished Valley/Restore Time** must be able to enter/leave the new village without losing world progress; after explicitly starting a new timeline, both initial skill points and temporary boost apply once and obey separate lifetime contracts.
+
 ## Technical transition shape (proposal)
 
 1. **Characterize** current completion, old purchase/refund, challenge entry/exit and saved-data behavior using RF01 synthetic fixtures.
 2. **Define** what new permanent abilities exist and only then select a conversion/entitlement policy. Record an explicit one-way migration schema and rollback/recovery plan (RF02).
-3. **Separate** nexus meta state from active timeline state, with a legacy block that can be inspected/recovered. The old game loader should not discard unknown outer metadata.
+3. **Separate** potion-entry, village-first-visit, first-rerun point/boost receipts and active timeline state, with a recoverable legacy block. The old game loader should not discard unknown outer metadata.
 4. **Adapt** required formulas to new, explicit upgrade rules and provide safe compatibility adapters for old saves; remove old menu UI only when new nexus purchase/transition UX is functional.
 5. **Remove** old challenge entry UI when a safe old-challenge exit/archive path exists; add nexus-launched variants only when individually designed and tested.
 6. **Test** fresh, pre-completion, newly completed, veteran purchased, unspent, challenge-active and invalid imports in Chrome and predictor modes before releasing.

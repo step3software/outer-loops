@@ -5,27 +5,34 @@
 ## The systemic loop
 
 ```text
-Play the original inner loops to reach Restore Time
-  → cross the Real World threshold
-  → meet/consult an alternate self, inspect outcomes
-  → acquire/select permanent capabilities
-  → choose and explicitly start a NEW TIMELINE
-  → begin with ~10× baseline replay throughput + purchased/earned powers
-  → discover new optimizations, achievements and eventually self variants
-  → return to Real World and make another strategic choice
+Earn access to the Looping Potion in the original world (Valhalla or shadow route)
+  → deliberately drink it: arrive in the changed Beginnersville of Real World
+  → see multiple alternate selves; one notices you are new and welcomes you
+  → explore briefly without automatically resetting the original timeline
+  → explicitly start a NEW TIMELINE
+  → allocate initial skill points; receive a large bounded temporary boost
+  → enjoy free ~10× replay acceleration and lasting capabilities
+  → discover deeper upgrades and other selves progressively
+  → later unlock variant runs, keys, wagers and parties
 ```
 
-The intended expansion is **from optimizing actions to optimizing timelines**. Permanent changes should make the game require *new types of decisions*, not just the same actions with smaller timers.
+The separate **Valley of Olympus** and `RestoreTime` ending remain important original-game content, with a future faster capstone after campaign-wide pacing analysis. **They do not gate potion entry.** Replay should evolve from action-queue optimization into meaningful decisions about entire timelines, not just smaller waiting times.
 
 ## Unlocked automatically: approximately 10× replay acceleration
 
-**Approved experience:** Beginning with the first new timeline after the original Restore Time completion, the inner game runs **approximately 10× faster by default**, **without buying anything**. The player also receives meaningful permanent upgrade choices.
+**Approved experience:** Beginning with the first explicit new timeline after **potion entry**, the inner game runs **approximately 10× faster by default**, **without buying anything**. A separately bounded temporary boost and initial skill points make that first rerun exciting; enduring capability choices emerge alongside or afterward.
 
 **Operational definition for design/testing:** For a fixed initial progression state, equivalent valid action queue and no simulation bottleneck, the same sequence should take about one-tenth the **player's wall-clock waiting time** compared with the first campaign. The upgrade should **not** inherently grant 10× XP per completed action, extra gold, free mana-budget, additional item discoveries, or changed quest requirements. It makes actions resolve faster in real time, not richer in game-time rewards.
 
 **Important unresolved implementation detail:** `driver.js` currently uses `gameSpeed`, `getSpeedMult`, `bonusSpeed` and `effectiveTime` differently. We must define where the new baseline factor sits so that `Escape`'s "effectiveTime < 60" constraint, challenge pacing, time budgets, offline bonus accounting, predictor snapshots and high-speed frame limits behave coherently. "Set `gameSpeed = 10`" is *not* automatically an adequate specification; see [technical design](technical-architecture.md) and RW-Q04.
 
 **Onboarding:** The player should see why the second timeline feels different (e.g. a small "Accelerated timeline ×10" indicator). It should be permanent and automatic on eligible new timelines, without spending points. It need not apply retroactively to an existing unfinished timeline solely because the player opened a menu.
+
+## First-rerun point grant and temporary surge (not numerically designed)
+
+**Approved product outcome:** The first rerun grants allocatable **skill points** and a **substantial temporary boost**, beyond free permanent ~10× replay throughput. Point type, amount, ability targets, persistence, boost mechanics and expiration are **open**; do not assume direct equivalence to old prestige points or infer a hidden per-action XP multiplier. The bonus should be noticeable, clearly described to the player, limited in duration, and verified against speed and resource interactions.
+
+**Recommended progression pacing:** Explain these immediate benefits at first rerun, then introduce permanent trees and deeper companion abilities in context. A player should not need to browse every late-game tree, key, wager or party control during the first guide conversation. See [roadmap](roadmap.md) and [upgrade-tree contracts](upgrade-tree-contracts.md).
 
 ## Permanent upgrade philosophy
 
@@ -90,12 +97,12 @@ Recommended principles: outcomes rather than idle waits, meaningful first reward
 ## Design failure modes
 
 - **Pure multiplier treadmill:** 10× faster but no new decisions.
-- **Empty first hub:** beautiful room with no meaningful replay effect.
+- **Empty or lonely first village:** no recognizable altered Beginnersville, other selves or meaningful empowered rerun.
 - **Over-automation:** second run becomes a passive checklist.
 - **Too many selves:** hundreds of redundant NPCs after repeated restores.
 - **Second prestige shop:** inherited menu and nexus both sell permanent improvements.
 - **Balance explosion:** 10× baseline combined accidentally with the old Chronomancy prestige multiplier, bonus seconds and new XP effects.
 - **Unrewarding challenges:** players repeat punishing modes for nothing distinct.
-- **Destructive transition:** first crossing or buying an upgrade silently resets valuable progress.
+- **Destructive transition:** drinking the potion or entering the new village silently resets valuable original-world/Valley progress.
 
 Each must be an explicit playtest or acceptance case rather than an implementation surprise.

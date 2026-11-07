@@ -6,14 +6,14 @@
 
 After playing a substantial original campaign, the player should be able to answer **yes** to:
 
-1. "Restore Time still felt like a real accomplishment."
-2. "I immediately recognized the other character as another me."
-3. "The new area felt different from an ordinary ninth region."
-4. "I was not forced to throw away my finished timeline just by entering."
-5. "On my next timeline, play was about **ten times faster by itself**."
-6. "At least one permanent choice changed what I **planned or automated**, not merely how long I waited."
+1. "Drinking the Looping Potion deliberately brought me to a changed Beginnersville, independent of finishing Valley."
+2. "I saw several alternate selves, and one noticed I was new and talked to me."
+3. "The new village was familiar but strange, and I could explore before choosing a rerun."
+4. "Potion entry did not destroy my unfinished or completed original-world timeline, including Valley progress."
+5. "My first rerun granted visible **skill points** and a **big temporary boost** beyond permanently free **~10× speed**."
+6. "I could still make a meaningful permanent choice that changed what I **planned or automated**, not merely how long I waited."
 7. "There is one clearly understandable permanent progression system—not both the legacy Prestige Perks menu and a new shop."
-8. "There are reasons to try another timeline, but I still make consequential decisions."
+8. "New systems appeared gradually, with a reason to replay now and an eventual path to parties."
 
 If the response to 5 or 6 is no, the first vertical slice is not ready merely because the pixel art looks good.
 
@@ -21,26 +21,26 @@ If the response to 5 or 6 is no, the first vertical slice is not ready merely be
 
 | ID | Scenario | Required result / invariant | Related source/risk |
 | --- | --- | --- | --- |
-| N01 | Fresh save, no Restore Time | Real World unavailable; original nine-zone play and ending progression unchanged | `actionList.js`, `town.js` |
-| N02 | First `RestoreTime` completion | Original story/credits accessible; nexus unlock recorded once; no double legacy/new reward | `Action.RestoreTime`, `prestige.js` |
-| N03 | Complete / refresh / complete again | No second first-visit, duplicated self, duplicate reward or reset; idempotency survives refresh | `saving.js` |
-| N04 | Enter and leave Real World without new timeline | Previously completed timeline and progress remain available (subject to approved RW-Q06 policy) | Outer/timeline save lifetime |
-| N05 | Explicit start of new timeline | Timeline-only state resets as specified; owned upgrades, first-visit flags and archived summary remain | RF02, `restart`, old prestige |
+| N01 | Fresh save with no legitimate potion access | Real World unavailable; original world, nine zones and Valley progression unchanged | `Action.LoopingPotion`, `saving.js` |
+| N02 | First valid deliberate **potion drink** for Real World | Enter separate alternate Beginnersville, record first arrival once; no `RestoreTime` prerequisite or legacy reward | New entry boundary, `Action.LoopingPotion` |
+| N03 | First entry, refresh and repeat drink/entry | No duplicate village/guide introduction, reward or forced reset; first-entry receipt idempotent | `saving.js` |
+| N04 | Enter/leave Real World with **unfinished Valley** | Original progress stays intact and recoverable; return/inspection obeys approved policy | Outer/timeline save lifetime |
+| N05 | Explicit Start New Timeline | Timeline-only state resets; outer village/selves/entitlements remain; skill-point/boost grants once | RF02, new timeline transaction |
 | N06 | Equivalent queue before/after replay acceleration | Around 10× wall-clock throughput where not CPU limited; same logical action costs, stat XP per action, progress and mana budget | `driver.js` `gameSpeed` / `getSpeedMult` |
 | N07 | Time-sensitive gates and speed | `Escape` behavior at 59.9/60.0/60.1 effective sec preserved; no paradox introduced by raw throughput boost | `Action.Escape.canStart`, RF03 |
 | N08 | Bonus seconds, Chronomancy and possible retained upgrades | Explicit stacking; no negative/refunded bonus pools, NaN, runaway tick lag or accidental double multipliers | `executeGameTicks`, `totalOfflineMs` |
 | N09 | Predictor live vs worker on accelerated queue | Same relevant state on same action boundaries; neither prediction purchases upgrades nor archives timelines | `data.js`, `predictor-worker.js` |
-| N10 | Starter permanent capability | Changes actual plan/action sequence; deterministic, understandable and not a hidden +% without visible strategic effect | Proposed upgrade API |
-| N11 | Existing veteran with bought prestige buffs and unspent points | No silent loss of earned entitlement; one reviewed migration/credit policy; no dual metagame | `prestigeValues` / `buffs`, RF02 |
+| N10 | First-rerun grants plus durable choice | Skill points allocated legally, large boost applied and expired at the documented boundary, lasting ability changes actual play | Proposed first-grant and upgrade API |
+| N11 | Veteran with completed `RestoreTime` but no new potion use | Original 90-point entitlement/history preserved; no unearned first-village entry or duplicate first-rerun grants without approved migration | `prestige.js`, RF02 |
 | N12 | Existing pre-completion or old `ILSV01` save | Valid import still loads; Real World locked appropriately; old aliases and optional fields have safe defaults | `saving.js` migrations |
 | N13 | Existing challenge-active save and normal slot | Both slots safe and recoverable; no surprise reset, double completion or trapped old challenge state | `challenges.js`, `idleLoopsChallenge` |
 | N14 | Old Prestige and Challenges menus | Not independently usable in released Real World experience; any adapted bonuses/variants appear through new unified UX only | `views/menu.view.js` |
-| N15 | First meeting on desktop and mobile-size screen | Other self visually recognizable, text readable, keyboard focus/escape/revisit supported | Pixel-art hub/UI |
-| N16 | Repeat Real World visits | Updated/revisitable dialogue, no cloned NPCs, clear return/new-timeline actions | Dialogue/outer flags |
-| N17 | Multiple completed records | Archive bounded, no loss of nexus/entitlements, no unlimited duplicate selves/rewards | Timeline archive/persistence |
+| N15 | First village on desktop/narrow viewport | Several alternate selves visible, one recognizes newcomer, readable/revisitable dialogue and keyboard focus | Pixel-art scene/UI |
+| N16 | Repeat potion arrival, visits and dialogue | Correct once-only greeting, ordinary later dialogue, no cloned selves or repeat first-rerun grant | Outer flags |
+| N17 | Several timeline records and future selves | Bounded archive and roster, safe outer state, no duplicate party recruits or rewards | Timeline archive/selves |
 | N18 | Failed save/storage write during new-timeline transition | Original complete timeline and backup remain recoverable; no partially reset state | RF02 transaction boundary |
 
-Tests N01–N25 are **not yet implemented or run**. A passing `npm run test:browser` currently proves only a basic original game startup/Wander/save reload, **not** these tests.
+Tests N01–N38 are **not yet implemented or run**. A passing `npm run test:browser` currently proves only a basic original game startup/Wander/save reload, **not** these tests.
 
 ## Upgrade-tree acceptance and comparison (future tests only)
 
@@ -48,7 +48,7 @@ The three-tree recommendation and four-tree Dominion alternative introduce addit
 
 | ID | Scenario | Required observation |
 | --- | --- | --- |
-| **N19** | First-upgrade choice after Restore Time | Distinct Will/Echoes/Anchors effects; first grant idempotent, not class-locked unless separately approved |
+| **N19** | First lasting-upgrade choice after potion entry and new-timeline commitment | Distinct Will/Echoes/Anchors effects; first grant idempotent, not class-locked unless separately approved |
 | **N20** | Will Pivot vs existing loadout/queue editing | Changes **current** legal loop execution beyond old controls; no duplicate cost/reward or travel bypass |
 | **N21** | Echoes First Apprentice vs existing fixed action queue | Conditional known task stops at goal, impossible target or budget; does not generate resources free |
 | **N22** | Anchors Memory reset and world survey | One approved whitelisted milestone survives full timeline reset; other progress/stories/gates stay consistent |
@@ -58,19 +58,32 @@ The three-tree recommendation and four-tree Dominion alternative introduce addit
 
 **These cases are designs, not passing tests.** The initial three-tree UI and its Dominion alternative have not been implemented or playtested. Design choice RW-Q13 must be settled before claiming the final tree layout.
 
-## Looping Potion and possible Valley removal (future testing only)
+## Looping Potion entry and retained Valley (future tests only)
 
-The source-grounded [endgame alternatives](potion-and-endgame-options.md) define **PE01–PE12**, none yet implemented or run. They specifically require tests for the potion's optional pre-Valley acquisition, the Totem/Wunderkind effect, the **Valhalla Spatiomancy bottleneck for shadow-path players**, eight-versus-nine-zone survey behavior, old zone-8/story/stone/trial saves and final reward idempotency.
+The [source-grounded potion/Valley study](potion-and-endgame-options.md) retains **PE01–PE12** as historical prospective cases, including prior **unselected** Valley-removal scenarios. They are not implemented and not active removal requirements. The selected direction keeps Valley playable and makes **drinking the potion** the independent Real World gateway. Both reputation paths, genuine potion inventory versus misleading story order, existing Totem/Wunderkind consumption and veteran Valley saves remain important.
 
-| ID | Scenario | Required outcome if a new ending is explicitly approved |
+| ID | Scenario | Required outcome for selected direction |
 | --- | --- | --- |
-| **N26** | Mt. Olympus potion after Forest Alchemy / Valhalla Spatiomancy | Real visible/unlocked/canStart requirements understood; no erroneous claim potion was always accessible from zone 3 |
-| **N27** | Totem potion use, repeated crafting and global story 9/10 mismatch | No false potion achievement, duplicate item or unintended loss of optional Wunderkind utility |
-| **N28** | High-reputation Valhalla **and** low-reputation Startington routes | Both can reach the chosen finale without impossible or hidden potion prerequisites |
-| **N29** | Zone 8 retired/condensed with old-save, stone, trial and survey fixtures | Existing progress and entitlements safe; travel/worker/queue/story bootstrap consistent |
-| **N30** | Three endgame variants A/B/C with default and ~10× replay | Actual completion pacing, climactic satisfaction and repeatability assessed; no replacement potion grind |
+| **N26** | Potion craft and deliberate drink entry | Verify actual craft/possession evidence, document the separate entry use and do not require `RestoreTime` |
+| **N27** | Totem consumption versus Real World consumption | Wunderkind training remains viable; no double consume or false potion achievement via `storyMax` |
+| **N28** | Valhalla and low-reputation Startington paths | Both can legally reach Real World via potion without a hidden inaccessible Spatiomancy gate |
+| **N29** | Retained Valley/partial tower/old trial saves | No zone deletion; shortened capstone later preserves legacy progress and valid restore story |
+| **N30** | Current/shorter Valley and potion entry on normal/~10× reruns | Valley no longer gates Real World and remains worthwhile; pacing and extra boost do not create time inconsistencies |
 
-**RW-D02 currently assumes the original Valley Restore Time ending.** N26–N30 and PE01–PE12 are **proposed test cases for a possible revised ending**, not proof that Valley is removed or that any of these tests now pass.
+### Additional potion-first and first-rerun scenarios (planned, not implemented)
+
+| ID | Scenario | Required outcome |
+| --- | --- | --- |
+| **N31** | First voluntary new timeline after potion arrival | An initial allocatable skill-point grant is delivered once, with clear targets, caps and persistence |
+| **N32** | Major temporary first-rerun boost | Strong visible effect starts/ends at specified boundaries; no accidental permanent stacking with free ~10× speed |
+| **N33** | Alternate Beginnersville first impression | Several selves visible; one recognizes the newcomer; exploration and replay control are accessible without a full party UI |
+| **N34** | Restore Time completed before or after first potion entry | Valley story, credits and old prestige remain independent; neither order duplicates rewards |
+| **N35** | Mid-visit reload, failed storage, repeated potion drinking | Original timeline remains recoverable; guide/first-rerun entitlements do not repeat |
+| **N36** | Deeper systems disclosure and later parties | First village avoids full tree/key/wager tutorial; future party unlocks do not spawn uncontrolled workers |
+| **N37** | Predictor with skill grant, temp boost start/expiry and normal ticks | Live engine and worker agree on costs, derived stats, expiry and no duplicate grants |
+| **N38** | No potion but legacy Restore Time clear | Real World remains subject to an explicit approved veteran-entry migration, not an accidental automatic `RestoreTime` portal |
+
+**N01–N38 and PE01–PE12 are plans, not passing tests**. The exact initial points, temporary boost, gateway action and veteran migration policy remain open and may require criteria refinement after owner choices.
 
 ## Pacing and "10× feels faster" research
 
@@ -93,14 +106,14 @@ Do not lock exact point costs, return rates, character limits, automation job ti
 
 ## Decision gates before implementation (recommended order)
 
-1. **Decide the original ending structure**: retain, shorten or retire playable Valley of Olympus; whether Looping Potion is a finale requirement and whether that revises RW-D02 (RW-Q17–RW-Q21).
-2. Select first self's story purpose and approval of the first encounter beats (RW-Q07).
-3. Approve explicit timeline completion, portal entry and return/new-timeline semantics (RW-Q05–Q06).
+1. **Preserve the selected ending distinction:** Valley remains but is shorter after campaign-wide pacing tests; `RestoreTime` is independent. Specify the actual potion-drinking gateway and verify both reputation routes (RW-D02/RW-D09, RW-Q18–Q19).
+2. Select the guide-self's story role and final dialogue among several visible alternate villagers (RW-Q07/RW-Q30).
+3. Approve separate potion entry, return to unfinished original timeline, Valley completion and explicit new-timeline semantics (RW-Q05–Q06/RW-Q31).
 4. Choose legacy prestige effect retention and veteran-credit/backup policy (RW-Q01–Q02).
-5. Define exactly how default ~10× stacks with timekeeping and old modifiers (RW-Q04).
+5. Define permanent ~10× throughput and **separate first-rerun skill-point/temporary boost** semantics and expiry (RW-Q04/RW-Q28–Q29).
 6. Choose the **three-tree Will/Echoes/Anchors recommendation or the four-tree Memory/Dominion alternative**, then approve the minimum impactful starters, cross-tree requirements, acquisition economy, mastery/caps and free starter policy (RW-Q09–Q10, RW-Q13–Q16).
 7. Determine old challenge reuse/retirement and safe challenge-active save transition (RW-Q03).
-8. Approve the initial pixel-art style/sprite scale and interaction scheme (RW-Q12).
+8. Approve the alternate Beginnersville pixel-art scale, visible ambient selves, guide approach and exploration interaction (RW-Q12/RW-Q30).
 
 Once those are resolved, draft a dedicated **RW01/RW02 implementation handoff**, with tests and dependency evidence, before starting code.
 
