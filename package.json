@@ -12,6 +12,7 @@
     "test:model": "node scripts/test-game-model.mjs",
     "test:action": "node scripts/test-action-execution.mjs",
     "test:balance": "node scripts/test-balance-contracts.mjs",
+    "test:balance:browser": "node scripts/test-balance-browser.mjs",
     "check:mechanics": "node scripts/generate-action-mechanics.mjs --check",
     "test:browser": "node scripts/test-browser-smoke.mjs",
     "test:rf01:model": "node scripts/test-rf01-model.mjs",
