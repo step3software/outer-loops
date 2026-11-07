@@ -18,7 +18,7 @@ export const POTION_PREFIX_SCHEMA = 'rw00-earned-prefix/v1';
 export const POTION_CHECKPOINT_VERSION = 'rw00-potion-checkpoints/v1';
 const POTION_EVENT_ACTIONS=Object.freeze(['Buy Mana Z1','Start Journey','Continue On','Start Trek',
   'Face Judgement','Wizard College','Spatiomancy','Fall From Grace','Journey Forth',
-  'Looping Potion','Totem']);
+  'Open Portal','Looping Potion','Totem']);
 
 function requireValue(condition,message){if(!condition)throw new Error('Invalid potion evidence: '+message);}
 
