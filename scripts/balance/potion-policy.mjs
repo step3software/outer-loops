@@ -38,10 +38,20 @@ function openingEconomy() {
     q('Fight Monsters',30,'maxEffort'),q('Small Dungeon',10,'maxEffort')];
 }
 
-function forestTravel() {
-  return [q('Smash Pots',50,'knownGood'),q('Pick Locks',10,'knownGood'),
-    q('Short Quest',20,'knownGood'),q('Buy Mana Z1',1),
-    q('Long Quest',80,'knownGood'),q('Heal The Sick',20,'maxEffort')];
+function knownGood(name,count) {
+  return count>0?[q(name,count,'knownGood')]:[];
+}
+
+function forestTravel(state) {
+  // A new loop begins in Beginnersville; earn supplies and travel at each stage.
+  const good=state.limited;
+  return [...knownGood('Smash Pots',good.goodPots),
+    ...knownGood('Pick Locks',good.goodLocks),
+    ...knownGood('Short Quest',good.goodShort),
+    ...knownGood('Long Quest',good.goodLong),
+    ...(good.goodLong>0?[q('Heal The Sick',Math.min(8,good.goodLong),'maxEffort'),
+      q('Haggle',Math.min(15,good.goodLong))]:[]),
+    q('Buy Supplies',1),q('Start Journey',1)];
 }
 
 function forestWork() {
@@ -54,9 +64,12 @@ function forestWork() {
 function routeToOlympus(state) {
   const gambleUnchecked=Math.max(0,state.limited.totalGamble-state.limited.checkedGamble);
   const gamble=gambleUnchecked?[q('Gamble',gambleUnchecked,'unchecked')]:
-    state.limited.goodGamble?[q('Gamble',state.limited.goodGamble,'knownGood')]:[];
-  return [...forestTravel(),q('Wild Mana',200,'knownGood'),
-    ...(state.levels.city<90?[q('Explore City',100)]:[]),...gamble,q('Buy Pickaxe',1)];
+    knownGood('Gamble',state.limited.goodGamble);
+  return [...forestTravel(state),...knownGood('Wild Mana',state.limited.goodWild),
+    ...(state.levels.flowers<100?[q('Follow Flowers',300)]:[]),
+    q('Continue On',1),
+    ...(state.levels.city<90?[q('Explore City',100)]:[]),...gamble,
+    q('Buy Pickaxe',1),q('Start Trek',1)];
 }
 
 function mountainWork(state) {
@@ -85,6 +98,18 @@ function startingtonWork(state) {
     state.limited.goodWells?[q('Mana Well',state.limited.goodWells,'knownGood')]:[];
   return [...(state.levels.meander<100?[q('Meander',800)]:[]),...wells,q('Purchase Supplies',1),
     q('Journey Forth',1),...(state.levels.jungle<50?[q('Explore Jungle',500)]:[])];
+}
+
+export function assessPotionCarryResources(state) {
+  // Limited-action discovery yields one repeatable result per 5 Long Quests
+  // and per 10 Gather Herbs. Do not assume unknown slots are guaranteed.
+  const required={longQuests:27,herbs:400};
+  const knownGood={longQuests:state.limited.goodLong,herbs:state.limited.goodHerbs};
+  const possible={longQuests:Math.floor(state.limited.totalLong/5),
+    herbs:Math.floor(state.limited.totalHerbs/10)};
+  const shortages=Object.keys(required).filter(key=>knownGood[key]<required[key]);
+  const impossible=shortages.filter(key=>possible[key]<required[key]);
+  return {required,knownGood,possible,shortages,impossible};
 }
 
 function directPotionCarry(endpoint) {
@@ -172,12 +197,32 @@ export function choosePotionPolicy(state, endpoint='potion-totem') {
   if(!POTION_ENDPOINTS.includes(endpoint))throw new RangeError('Unknown potion endpoint');
   let phase,reason,recipe;
   if(state.wunderkind>=1){phase='complete';reason='observed first successful Totem reward';recipe=[];}
-  else if(state.loopingPotion){phase='carry_potion';reason='potion crafted; consume it at the unlocked Totem';
-    recipe=[q('Totem',1)];}
+  else if(state.loopingPotion){
+    // Resuming a paused loop resets temporary resources. Totem alone is never
+    // a valid recovery queue: recreate the potion and traverse all towns.
+    phase=endpoint==='potion-craft'?'complete':'recraft_potion_and_totem';
+    reason='Temporary potion cannot survive a restarted loop; repeat full craft and travel';
+    recipe=endpoint==='potion-craft'?[]:directPotionCarry(endpoint);
+  }
   else if(state.skills.Spatiomancy>=1&&state.skills.Pyromancy>=200&&
       state.skills.Alchemy>=200&&state.levels.meander>=100&&state.levels.jungle>=50){
-    phase='craft_and_totem';reason='direct craft, carry, and Totem prerequisites persistently earned';
-    recipe=directPotionCarry(endpoint);
+    const resources=assessPotionCarryResources(state);
+    if(resources.impossible.length){
+      phase='blocked_resource_capacity';
+      reason='Direct potion carry lacks obtainable limited resources: '+JSON.stringify(resources);
+      recipe=[];
+    }else if(resources.shortages.length){
+      phase='discover_potion_resources';
+      reason='Earn known-good resource locations before the carry: '+JSON.stringify(resources);
+      recipe=[...(resources.shortages.includes('longQuests')?
+        [q('Long Quest',state.limited.totalLong-state.limited.checkedLong,'unchecked')]:[]),
+        ...forestTravel(state),
+        ...(resources.shortages.includes('herbs')?
+          [q('Gather Herbs',state.limited.totalHerbs-state.limited.checkedHerbs,'unchecked')]:[])];
+    }else{
+      phase='craft_and_totem';reason='direct craft, carry, and Totem prerequisites persistently earned';
+      recipe=directPotionCarry(endpoint);
+    }
   }else if(state.townsUnlocked.includes(5)){
     phase='startington';reason='Startington earned; progress Meander and Jungle route';
     recipe=[...routeToOlympus(state),...mountainWork(state),...valhallaWork(state),...startingtonWork(state)];

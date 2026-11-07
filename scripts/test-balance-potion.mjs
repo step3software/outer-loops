@@ -8,7 +8,7 @@ import {CLOCK_VERSION} from './balance/clock.mjs';
 import {CALIBRATION_SCHEMA} from './balance/report.mjs';
 import {FastScheduler} from './balance/fast-scheduler.mjs';
 import {SCHEDULER_VERSION} from './balance/fast-scheduler.mjs';
-import {POTION_POLICY_ACTIONS,choosePotionPolicy} from './balance/potion-policy.mjs';
+import {POTION_POLICY_ACTIONS,assessPotionCarryResources,choosePotionPolicy} from './balance/potion-policy.mjs';
 import {assertPotionPrefix,assertPotionReport,createPotionAcceleration,potionSourceIdentity,
   POTION_SOURCE_FILES,runPotionCampaign} from './balance/potion-runner.mjs';
 import {createPotionRequirementEstimate,runInjectedPotionEndpoint} from './balance/potion-estimate.mjs';
@@ -39,9 +39,12 @@ assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4]})).phase,'valha
 assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4,5]})).phase,'startington');
 assert.equal(choosePotionPolicy(state({loopingPotion:true})).phase,'carry_potion');
 assert.equal(choosePotionPolicy(state({loopingPotion:false,wunderkind:1})).phase,'complete');
-const craft=choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4,5,6],
+const potionReadyState=state({townsUnlocked:[0,1,2,3,4,5,6],
   levels:{...state().levels,meander:100,jungle:50},
-  skills:{...state().skills,Alchemy:200,Spatiomancy:1,Pyromancy:200}}));
+  skills:{...state().skills,Alchemy:200,Spatiomancy:1,Pyromancy:200},
+  limited:{...state().limited,goodHerbs:400,totalHerbs:4000,checkedHerbs:4000,
+    goodLong:27,totalLong:135,checkedLong:135}});
+const craft=choosePotionPolicy(potionReadyState);
 assert.equal(craft.phase,'craft_and_totem');
 assert.equal(craft.queue.some(item=>item.name==='Open Portal'),false);
 assert.ok(craft.queue.findIndex(item=>item.name==='Start Journey')<
@@ -50,10 +53,30 @@ assert.ok(craft.queue.findIndex(item=>item.name==='Looping Potion')<
   craft.queue.findIndex(item=>item.name==='Face Judgement'));
 assert.ok(craft.queue.findIndex(item=>item.name==='Face Judgement')<
   craft.queue.findIndex(item=>item.name==='Totem'));
-const craftOnly=choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4,5,6],
-  levels:{...state().levels,meander:100,jungle:50},
-  skills:{...state().skills,Alchemy:200,Spatiomancy:1,Pyromancy:200}}),'potion-craft');
+const craftOnly=choosePotionPolicy(potionReadyState,'potion-craft');
 assert.equal(craftOnly.queue.some(item=>item.name==='Totem'),false);
+const blocked=state({...potionReadyState,
+  limited:{...potionReadyState.limited,goodHerbs:70,totalHerbs:700,checkedHerbs:700,
+    goodLong:6,totalLong:30,checkedLong:30}});
+assert.deepEqual(assessPotionCarryResources(blocked).impossible,['longQuests','herbs']);
+assert.equal(choosePotionPolicy(blocked).phase,'blocked_resource_capacity');
+assert.deepEqual(choosePotionPolicy(blocked).queue,[]);
+const discovering=state({...potionReadyState,
+  limited:{...potionReadyState.limited,goodHerbs:20,checkedHerbs:200,
+    goodLong:5,checkedLong:25}});
+assert.equal(choosePotionPolicy(discovering).phase,'discover_potion_resources');
+assert.ok(choosePotionPolicy(discovering).queue.some(item=>
+  item.name==='Gather Herbs'&&item.loopsType==='unchecked'));
+const recraft=choosePotionPolicy(state({loopingPotion:true}),'potion-totem');
+assert.equal(recraft.phase,'recraft_potion_and_totem');
+assert.equal(['Start Journey','Continue On','Start Trek','Looping Potion','Totem'].every(name=>
+  recraft.queue.some(item=>item.name===name)),true);
+const olympus=choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4]})).queue;
+const at=name=>olympus.findIndex(item=>item.name===name);
+assert.ok(at('Buy Supplies')>=0&&at('Start Journey')>at('Buy Supplies')&&
+  at('Continue On')>at('Start Journey')&&at('Start Trek')>at('Continue On')&&
+  at('Face Judgement')>at('Start Trek'),
+  'an Olympus policy must traverse every intermediate town from a new loop');
 assert.throws(()=>choosePotionPolicy(state(),'wrong-endpoint'),/Unknown potion endpoint/);
 
 const policySource=readFileSync(resolve(root,'scripts/balance/potion-policy.mjs'),'utf8');
