@@ -7,10 +7,10 @@ import vm from 'node:vm';
 import {seededMath} from './balance/clock.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const gameScripts = [
+export const GAME_MODEL_SCRIPTS = Object.freeze([
     'data.js', 'localization.js', 'helpers.js', 'actionList.js',
     'driver.js', 'stats.js', 'actions.js', 'town.js', 'prestige.js', 'saving.js',
-];
+]);
 
 export function loadGameModel({ withViewStubs = false, withChallenges = false, rngSeed, clock } = {}) {
     // A worker has self but no window/document/DOM. This is intentionally
@@ -72,7 +72,7 @@ export function loadGameModel({ withViewStubs = false, withChallenges = false, r
     }
     sandbox.self = sandbox;
     vm.createContext(sandbox);
-    for (const name of [...gameScripts, ...(withChallenges ? ['challenges.js'] : [])]) {
+    for (const name of [...GAME_MODEL_SCRIPTS, ...(withChallenges ? ['challenges.js'] : [])]) {
         const code = readFileSync(join(root, name), 'utf8');
         vm.runInContext(code, sandbox, {filename: name, timeout: 10_000});
     }
