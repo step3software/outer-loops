@@ -71,6 +71,19 @@ function invariant(model) {
   assert.equal(unpack(model,'actions.current.map(a=>a.name)')[0],'Wander');
   assert.equal(queueSnapshot(model)[0].loops,2,'queued replay persists after real restart');
 
+  const limited=fresh();
+  assert.equal(admitQueueEdit(limited,{op:'add',name:'Smash Pots',loops:2,
+    loopsType:'knownGood'}).status,'admitted');
+  assert.equal(queueSnapshot(limited)[0].loopsType,'knownGood',
+    'admitted limited action preserves its actual queue execution mode');
+  const prior=invariant(limited);
+  assert.equal(admitQueueEdit(limited,{op:'add',name:'Wander',loops:1,
+    loopsType:'unchecked'}).status,'invalid_route');
+  assert.deepEqual(invariant(limited),prior);
+  const retained=queueSnapshot(limited);
+  assert.equal(admitQueueEdit(limited,{op:'replay',queue:retained}).status,'admitted');
+  assert.deepEqual(queueSnapshot(limited),retained,'legal replay preserves loop type');
+
   // A travel entry is limited to one instance, even with otherwise earned gates.
   const travel=fresh();
   travel.evaluate('skills.Combat.levelExp.setLevel(35);resources.supplies=true');
