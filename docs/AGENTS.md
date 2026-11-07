@@ -1,6 +1,6 @@
 # Documentation agent instructions
 
-Inherits [repository AGENTS.md](../AGENTS.md).
+Inherits [repository AGENTS.md](../AGENTS.md), including [.orcha/repository.json](../.orcha/repository.json) and the current-main Orcha instruction chain. Use the [local adapter](development/ai-workflow.md) and current shared documentation procedure; local prompts are supplements, not alternate workflows.
 
 - Verify behavior in current executable source before writing documentation; use relative Markdown links for internal references.
 - Distinguish **observed**, **planned**, **proposed**, and **unverified** behavior. Do not invent tests, licenses, deployment statuses, game mechanics or save guarantees.

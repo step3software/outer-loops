@@ -7,7 +7,8 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [AGENTS.md](../AGENTS.md) — project-wide rules, gates, and review expectations
 - [Architecture](architecture.md) — classic-script load sequence, tick engine and state ownership
 - [Code map](reference/code-map.md) — where to inspect and change code
-- [AI development workflow](development/ai-workflow.md) — branch, implementation, validation and PR protocol
+- [Orcha adapter](development/ai-workflow.md) — current shared procedure routing, local branch/check rules, legacy authority and host handoff
+- [Repository manifest](../.orcha/repository.json) — `dmchurch` source, standards from Orcha `main`, local contracts; no automation activation
 
 ## System guides
 
@@ -79,6 +80,16 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [Feature / bug-fix thread prompt](workflow/feature-or-bug-fix.md)
 - [Documentation maintenance prompt](workflow/docs-maintenance.md)
 - [PR review prompt](workflow/pr-review.md)
+
+## Process and automation authority
+
+Use the [Orcha adapter](development/ai-workflow.md) to select and actually load
+current shared instructions before the relevant system guide. Shared standards
+come from published Orcha `main`; game scope and compatibility stay in this
+repository. The [RF register](refactoring/README.md) retains source delivery
+history, while existing Orcha workflow records own orchestration approvals in
+legacy mode. Documentation, a manifest and passing checks do not accept stages,
+resume scheduling or activate services.
 
 ## Source-of-truth policy
 

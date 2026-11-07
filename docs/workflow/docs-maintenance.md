@@ -1,13 +1,29 @@
-# Agent thread prompt: documentation maintenance
+# Local supplement: documentation maintenance
 
-> Repository: `https://github.com/step3software/outer-loops`
->
-> Read root and `docs/AGENTS.md`. Audit `docs/README.md`, source code and current docs against the scope [topic or whole repository]. Work on a docs branch from `dmchurch` and open a PR; do not merge.
->
-> Ground all factual statements in actual code, commit metadata or test evidence. Treat `actionList.js` as the executable source of truth, `data/actionList.xml` as experimental editor content, and `lang/en-EN/game.xml` as localization. Repair wrong links, command drift, omitted failure modes and contradictory persistence claims. Update the action catalog whenever actions change. Clearly label proposed or unverified behavior.
->
-> Do not modify gameplay or CI as an incidental cleanup. Run `npm run check` and `python scripts/check-xml.py` when available. Report coverage and any material unresolved facts in the PR; do not imply that a doc review proves runtime functionality.
+Load current Orcha [documentation consolidation](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/documentation-consolidation.md)
+through the [adapter](../development/ai-workflow.md), then [root instructions](../../AGENTS.md)
+and [documentation rules](../AGENTS.md). Apply the requested documentation
+improvements on one protected docs branch and deliver one draft PR against
+`dmchurch`; do not merge. A request for findings only remains read-only.
 
-## Coverage checklist
+## Local scope and proof
 
-Agent rules and branch target; architecture/entry points; gameplay/actions/zones; save migration; challenges/prestige; predictor/worker; UI/localization; editor; setup; validation; testing gaps; provenance/rights; ADRs; workflow prompts; relative links.
+Ground statements in executable source, exact commit metadata or observed tests.
+`actionList.js` owns executable actions; `data/actionList.xml` belongs to the
+experimental editor; `lang/en-EN/game.xml` owns English localization. Preserve
+accepted mechanics, canonical milestone files/IDs, decisions, dependencies and
+prior evidence. Keep proposed designs and future tests visibly separate from
+implemented behavior and observed verification.
+
+Use [the handbook](../README.md) to select the affected contract instead of
+rereading all history. Repair canonical owners and precise links; avoid another
+shared workflow, progress ledger or broad status checklist. Report substantive,
+selective and unreviewed coverage honestly. Inspect relevant outstanding PRs and
+their real bases before recovering missing documentation.
+
+Run `npm run check` and XML validation when Python is available. For manifest or
+instruction-chain changes, also use [Orcha validation](../development/ai-workflow.md#local-implementation-and-verification)
+and retain the observed standards revision/document hashes. Do not change game
+code, deployment workflows, host policy, lifecycle approvals or service state as
+incidental documentation cleanup. A passing check does not establish live host
+adoption, save compatibility or gameplay correctness.

@@ -1,0 +1,31 @@
+{
+  "schema": "orcha.repository/v1",
+  "repository": {
+    "id": 779319581,
+    "full_name": "step3software/outer-loops"
+  },
+  "canonical_source": {
+    "branch": "dmchurch"
+  },
+  "standards": {
+    "repository": "Wisteria-Psychological-Services/project-management-orchestration",
+    "branch": "main",
+    "catalog_path": "standards/catalog.json"
+  },
+  "milestones": {
+    "root": "docs/refactoring"
+  },
+  "local_contracts": [
+    "AGENTS.md",
+    "docs/README.md",
+    "docs/development/ai-workflow.md",
+    "docs/architecture.md",
+    "docs/state-and-saving.md",
+    "docs/development/validation.md",
+    "docs/refactoring/README.md",
+    "docs/design/outer-loop/decisions.md"
+  ],
+  "applicability": {},
+  "exceptions": [],
+  "authority_mode": "legacy"
+}
