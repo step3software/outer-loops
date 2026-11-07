@@ -69,8 +69,10 @@ export function assertCompleteReport(report, calibration) {
     ensure(finiteNonnegative(run.effectiveSeconds), 'Invalid effective seconds');
     ensure(finiteNonnegative(run.loopCount), 'Invalid loop count');
     ensure(finiteNonnegative(run.hostSeconds), 'Invalid host seconds');
-    ensure(typeof run.uiStateHash === 'string' && !!run.uiStateHash,
-      'Missing UI state identity');
+    for (const name of ['uiStateHash','uiChangeHistoryHash','effectiveUiConfigurationHash']) {
+      ensure(typeof run[name] === 'string' && run[name].length > 0,
+        'Missing run UI identity: ' + name);
+    }
     ensure(Array.isArray(run.checkpoints), 'Missing checkpoint events');
     let lastTime = 0;
     const firstHits = new Map();
@@ -117,8 +119,17 @@ export function assertComparableBaseline(a,b) {
       'Incomparable configuration: ' + key);
   }
   ensure(a.calibrationHash && b.calibrationHash, 'Missing calibration evidence');
-  ensure(JSON.stringify(a.seeds.map(s=>s.seed))===JSON.stringify(b.seeds.map(s=>s.seed)),
+  ensure(Array.isArray(a?.seeds) && Array.isArray(b?.seeds) &&
+    JSON.stringify(a.seeds.map(s=>s.seed))===JSON.stringify(b.seeds.map(s=>s.seed)),
     'Incomparable seed selection');
+  for (let index=0; index<a.seeds.length; index++) {
+    for (const field of ['uiStateHash','uiChangeHistoryHash','effectiveUiConfigurationHash']) {
+      ensure(typeof a.seeds[index][field] === 'string' &&
+        a.seeds[index][field].length > 0 &&
+        a.seeds[index][field] === b.seeds[index]?.[field],
+        'Incomparable per-seed UI configuration: ' + field);
+    }
+  }
   // Different source hashes are intentionally allowed for a baseline/candidate.
   return true;
 }
