@@ -117,30 +117,21 @@ export class BalanceEngine {
     if (!this.policyBoundaries || !this.started || !Number.isSafeInteger(count) || count < 1) {
       throw new BalanceRuntimeError('invalid_route','Policy burst requires a started boundary engine');
     }
-    const before=this.lightweightObservation();
-    if (before.stopped) throw new BalanceRuntimeError('stalled','Resume before a policy burst',before);
-    if (hostPerformance.now()-this.startHostMs>=this.maxHostMs) {
-      throw new BalanceRuntimeError('budget_exceeded','Declared measurement ceiling reached',before);
+    let observation = this.lightweightObservation();
+    if (observation.stopped) {
+      throw new BalanceRuntimeError('stalled','Resume before a policy burst',observation);
     }
-    const operation=()=>read(this.model,'(() => {' +
-      'const target=totals.loops+'+count+';let chunks=0;' +
-      'while(totals.loops<target&&chunks<100000){' +
-      'if(gameIsStopped)pauseGame(false);gameTicksLeft+=60000;' +
-      'executeGameTicks(performance.now()+60000);chunks++;}' +
-      'return {chunks,target,reached:totals.loops};})()');
-    const result=this.profiler?this.profiler.time('gameEngine',operation):operation();
-    if(result.chunks>=100000)throw new BalanceRuntimeError('stalled','Policy burst guard exceeded');
-    this.clock.advance(result.chunks*60000);
-    this.steps++;
-    const after=this.lightweightObservation();
-    const exactActionEvents=read(this.model,'__balanceActionEvents.slice('+before.actionEventCount+')');
-    const events=collectEvents(before,after,exactActionEvents,!this.filteredEvents,true);
-    const firstSequence=this.events.length;
-    this.events.push(...events.map((event,index)=>({...event,sequence:firstSequence+index})));
-    this.profiler?.count('outerSchedulingCalls');
-    this.profiler?.count('internalActionTicks',after.internalActionTicks-before.internalActionTicks);
-    this.profiler?.count('uiUpdates',after.uiUpdates-before.uiUpdates);
-    return after;
+    const target = observation.loops + count;
+    // Reuse the same calibrated/precision scheduler as step(): a 60-second
+    // unrestricted executeGameTicks call is NOT an action-level calibration.
+    // In particular, an action change must cause a fresh eligibility check.
+    while (observation.loops < target) {
+      if (observation.stopped) {
+        this.resumePolicyLoop();
+      }
+      observation = this.step({full:false});
+    }
+    return observation;
   }
 
   snapshot() {
