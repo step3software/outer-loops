@@ -207,4 +207,44 @@ function report(cal=calibration()) {
   assert.throws(()=>assertCalibration({...cal,status:'failed'}),/not passed/);
   console.log('PASS RW00 report: calibration gate, false completion, accounting and incompatible runs rejected.');
 }
+// Late-game synthetic boundary fixtures characterize rules without advancing a route.
+{
+  for (const reputation of [-51,-50,-49,49,50,51]) {
+    const model=fresh();
+    const result=unpack(model,'(() => {resources.reputation='+reputation+
+      ';curTown=3;const predicted=getTravelNum("Face Judgement");' +
+      'Action.FaceJudgement.finish();return {predicted,town:curTown,' +
+      'accepted:storyFlags.acceptedIntoValhalla,shadow:storyFlags.castIntoShadowRealm,' +
+      'ignored:storyFlags.ignoredByGods};})()');
+    const expected=reputation>=50?4:reputation<=-50?5:3;
+    assert.equal(result.town,expected,'real Judgement finishing at '+reputation);
+    assert.equal(result.predicted,reputation>=51?1:2,'planner at '+reputation);
+    assert.equal(!!result.accepted,reputation>=50);
+    assert.equal(!!result.shadow,reputation<=-50);
+    assert.equal(!!result.ignored,reputation>-50&&reputation<50);
+    if(reputation===50)assert.notEqual(result.town,3+result.predicted,
+      'known planner/finish discrepancy at exactly 50 must remain visible');
+  }
+  for (const [time,eligible] of [[59.99,true],[60,false],[60.01,false]]) {
+    const model=fresh();
+    const state=unpack(model,'(() => {effectiveTime='+time+
+      ';escapeStarted=false;const ok=Action.Escape.canStart();' +
+      'return {ok,sticky:escapeStarted};})()');
+    assert.equal(state.ok,eligible);
+    assert.equal(state.sticky,eligible);
+  }
+  const model=fresh();
+  const sticky=unpack(model,'(() => {effectiveTime=59.99;escapeStarted=false;' +
+    'const first=Action.Escape.canStart();effectiveTime=60;' +
+    'return {first,next:Action.Escape.canStart(),sticky:escapeStarted};})()');
+  assert.deepEqual(sticky,{first:true,next:true,sticky:true});
+  model.evaluate('escapeStarted=false;townsUnlocked.push(6);' +
+    'towns[6].expExploreJungle=towns[6].expFromLevel(100)');
+  const admitted=admitQueueEdit(model,{op:'add',name:'Escape',loops:1});
+  assert.equal(admitted.status,'admitted','earned-predicate synthetic unlock should admit edit');
+  assert.equal(unpack(model,'escapeStarted'),false,
+    'policy observer may never call mutating Escape.canStart');
+  console.log('PASS RW00 Judgement -51/-50/-49/49/50/51 and Escape 59.99/60/sticky synthetic boundaries.');
+}
+
 console.log('PASS RW00 contract suite (synthetic fixtures explicitly excluded from earned campaign evidence).');
