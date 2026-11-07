@@ -24,7 +24,7 @@ function read(model, expression) {
 export class BalanceEngine {
   constructor({seed = 42, quantumMs = 20, uiProfile, mode = 'reference', calibration,
     maxBatchMs = 10000, profiler = false, maxHostMs = 30*60*1000,
-    maxSimulatedSeconds = 180*86400} = {}) {
+    maxSimulatedSeconds = 180*86400, policyBoundaries = false} = {}) {
     if (!Number.isFinite(quantumMs) || quantumMs <= 0 || quantumMs > 20) {
       throw new RangeError('Uncalibrated quantum: use 0 < quantumMs <= 20');
     }
@@ -43,6 +43,7 @@ export class BalanceEngine {
       new BalanceProfiler({budgetMs:maxHostMs}) : profiler || null;
     this.maxHostMs = maxHostMs;
     this.maxSimulatedSeconds = maxSimulatedSeconds;
+    this.policyBoundaries = policyBoundaries;
     this.startHostMs = hostPerformance.now();
     this.uiInitial = installUiProfile(this.model, uiProfile ?? createDefaultUiProfile(this.model));
     this.edits = [];
@@ -50,11 +51,18 @@ export class BalanceEngine {
     this.steps = 0;
     this.events = [];
     this.model.evaluate('globalThis.__balanceCounters={actionTicks:0,uiUpdates:0};' +
+      'globalThis.__balanceActionEvents=[];' +
       'const __balanceActionTick=actions.tick;actions.tick=function(...args){' +
-      '__balanceCounters.actionTicks++;return __balanceActionTick.apply(this,args)};' +
+      '__balanceCounters.actionTicks++;const before=totals.actions;const speed=getSpeedMult();' +
+      'const spent=__balanceActionTick.apply(this,args);if(totals.actions>before){' +
+      'const delta=spent/speed/baseManaPerSecond;__balanceActionEvents.push({' +
+      'type:"action_completed",action:this.currentAction?.name??null,' +
+      'seconds:totals.time+timeCounter+delta,effectiveSeconds:totals.effectiveTime+effectiveTime+delta});}' +
+      'return spent};' +
       'const __balanceViewUpdate=view.update;view.update=function(...args){' +
       '__balanceCounters.uiUpdates++;return __balanceViewUpdate.apply(this,args)};');
-    this.model.evaluate('options.predictor=false;options.pauseBeforeRestart=false;' +
+    this.model.evaluate('options.predictor=false;options.pauseBeforeRestart=' +
+      (policyBoundaries ? 'true' : 'false') + ';' +
       'options.pauseOnFailedLoop=false;options.pauseOnComplete=false;' +
       'options.repeatLastAction=false;options.keepCurrentList=false;' +
       'options.fractionalMana=false;options.speedIncreaseBackground=2;');
@@ -90,10 +98,20 @@ export class BalanceEngine {
     return this.snapshot();
   }
 
+  resumePolicyLoop() {
+    if (!this.policyBoundaries || !this.started || !read(this.model, 'gameIsStopped')) {
+      throw new BalanceRuntimeError('invalid_route','Policy resume requires a paused loop boundary',
+        this.snapshot());
+    }
+    this.model.evaluate('pauseGame(false)');
+    return this.snapshot();
+  }
+
   snapshot() {
     const operation = () => JSON.parse(JSON.stringify(this.evaluate('(() => ({' +
-      'time:totals.time+timeCounter,effectiveSeconds:totals.effectiveTime+effectiveTime,' +
-      'closedLoopSeconds:totals.time,activeLoopSeconds:timeCounter,' +
+      'time:totals.time+((gameIsStopped&&(shouldRestart||timer>=timeNeeded))?0:timeCounter),' +
+      'effectiveSeconds:totals.effectiveTime+((gameIsStopped&&(shouldRestart||timer>=timeNeeded))?0:effectiveTime),' +
+      'closedLoopSeconds:totals.time,activeLoopSeconds:(gameIsStopped&&(shouldRestart||timer>=timeNeeded))?0:timeCounter,' +
       'loops:totals.loops,manaSpent:timer,completedActions:totals.actions,' +
       'progress:towns[0].expWander,queuePosition:actions.currentPos,' +
       'currentQueueCount:actions.current.length,stopped:gameIsStopped,' +
@@ -116,15 +134,19 @@ export class BalanceEngine {
       'if(boundaryTicks===actionTicks)boundaryKind="action";' +
       'else if(boundaryTicks===talentTicks)boundaryKind="talent";' +
       'else if(boundaryTicks===loopTicks)boundaryKind="loop";' +
-      'return {time:totals.time+timeCounter,effectiveSeconds:totals.effectiveTime+effectiveTime,' +
-      'closedLoopSeconds:totals.time,activeLoopSeconds:timeCounter,loops:totals.loops,' +
+      'const folded=gameIsStopped&&(shouldRestart||timer>=timeNeeded);' +
+      'return {time:totals.time+(folded?0:timeCounter),' +
+      'effectiveSeconds:totals.effectiveTime+(folded?0:effectiveTime),' +
+      'closedLoopSeconds:totals.time,activeLoopSeconds:folded?0:timeCounter,loops:totals.loops,' +
       'manaSpent:timer,completedActions:totals.actions,progress:towns[0].expWander,' +
       'queuePosition:actions.currentPos,currentQueueCount:actions.current.length,' +
       'stopped:gameIsStopped,ticksLeftMs:gameTicksLeft,offlineMs:totalOfflineMs,lagSpeed,' +
       'bonusSpeed,gameSpeed,shouldRestart,curTown,actionName:action?.name??null,' +
       'actionType:action?.type??null,actionTicks,actionLoopsLeft:action?.loopsLeft??0,' +
       'boundaryTicks,boundaryKind,boundaryWallMs:ticksPerMs>0?boundaryTicks/ticksPerMs:0,' +
-      'internalActionTicks:__balanceCounters.actionTicks,uiUpdates:__balanceCounters.uiUpdates};' +
+      'loopBoundaryWallMs:ticksPerMs>0?loopTicks/ticksPerMs:0,' +
+      'internalActionTicks:__balanceCounters.actionTicks,uiUpdates:__balanceCounters.uiUpdates,' +
+      'actionEventCount:__balanceActionEvents.length};' +
       '})()')));
     return this.profiler ? this.profiler.time('lightweightObservation', operation) : operation();
   }
@@ -200,7 +222,8 @@ export class BalanceEngine {
       throw new BalanceRuntimeError('error','Loop accounting did not reconcile',after);
     }
     try {
-      const events = collectEvents(before,after);
+      const exactActionEvents=read(this.model,'__balanceActionEvents.slice('+before.actionEventCount+')');
+      const events = collectEvents(before,after,exactActionEvents);
       const firstSequence=this.events.length;
       this.events.push(...events.map((event,index)=>({...event,sequence:firstSequence+index})));
     } catch (error) {
