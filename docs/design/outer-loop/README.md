@@ -18,6 +18,7 @@ The first milestone should feel like a new chapter and immediately change the ex
 - Build a meaningful **small hub and initial replay loop first**, leaving a path toward richer multi-self/timeline management later.
 - Real World is a strong **pixel-art art-direction anchor**. The wider game's eventual pixel-art treatment is a related but separate workstream.
 - Do not establish that the earlier game was "fake" or a simulation; keep what **Real World** means deliberately mysterious at first.
+- **Timeline Potions (RW06)** are the owner-confirmed identity of the previously proposed timeline keys: the original Looping Potion was an example of time-altering alchemy; learning its secret lets the player brew customized potions that give the next run its attributes. Detailed recipes and economy remain proposed.
 
 ### New ending under consideration — not approved
 
@@ -84,7 +85,7 @@ The [release plan](roadmap.md) separates design decisions and testing prerequisi
 - [Technical architecture and state boundaries](technical-architecture.md) — *not* town #9, save/predictor/rule considerations
 - [Pixel-art and hub experience](visual-direction.md) — future art direction, no assets generated
 - [Roadmap and acceptance gates](roadmap.md) — thin slice → deeper timeline management
-- [RW06 — Timeline Keys](RW06.md) — proposed key-configured runs with previewed rules and rewards
+- [RW06 — Timeline Potions](RW06.md) — owner-confirmed potion theme for customized-run attributes; detailed mechanics proposed
 - [RW07 — Timeline Wagers](RW07.md) — proposed in-game stakes on will / will-not next-run conditions
 - [Playtest/validation questions](validation.md) — future scenarios, key pacing risks and decisions
 - [Integration with RF01–RF06](integration-with-refactoring.md) — refactor dependencies and conflicts
