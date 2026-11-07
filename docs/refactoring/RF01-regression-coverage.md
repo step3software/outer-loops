@@ -1,6 +1,6 @@
 # RF01 — Expand regression coverage
 
-- **Status:** **Merged into `dmchurch`** via [PR #4](https://github.com/step3software/outer-loops/pull/4). The [RF01 evidence ledger](rf01-evidence.md) records executed tests and remaining coverage gaps. This charter remains the historical scope, not a request to implement it again.
+**Status:** **Merged into `dmchurch`** via [PR #4](https://github.com/step3software/outer-loops/pull/4). The [RF01 evidence ledger](rf01-evidence.md) records executed tests and remaining coverage gaps. This charter remains the historical scope, not a request to implement it again.
 - **Priority:** First / foundational
 - **Hard dependencies:** Existing AI-development foundation and baseline tests; no earlier RF milestone
 - **Enables:** RF02–RF06, with mandatory targeted characterization tests for each

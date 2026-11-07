@@ -1,6 +1,6 @@
 # RF03 — Pure gameplay rules and typed resources
 
-- **Status:** Planned — approved scope; implementation not authorized
+**Status:** Planned — approved scope; implementation not authorized
 - **Priority:** After RF02
 - **Hard dependencies:** RF01's action/worker/predicate characterization and RF02's persistence contracts
 - **Enables:** RF04 stable challenge rules; RF06 UI-only rendering boundary

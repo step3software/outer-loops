@@ -1,6 +1,6 @@
 # RF06 — Decompose the view layer
 
-- **Status:** Planned — approved scope; implementation not authorized
+**Status:** Planned — approved scope; implementation not authorized
 - **Priority:** Last, after stable domain and action boundaries
 - **Hard dependencies:** RF03 DOM-independent rule ownership and RF05 stable scripts/action registration; recommend RF04 stable challenge policy
 - **Enables:** Smaller UI work, focused browser regression checks and future accessibility/performance improvements
