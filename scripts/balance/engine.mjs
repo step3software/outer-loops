@@ -113,10 +113,13 @@ export class BalanceEngine {
     return this.snapshot();
   }
 
-  burstPolicyLoops(count = 16) {
-    if (!this.policyBoundaries || !this.started || !Number.isSafeInteger(count) || count < 1) {
+  burstPolicyLoops(count = 16, {stopOnActions = []} = {}) {
+    if (!this.policyBoundaries || !this.started || !Number.isSafeInteger(count) || count < 1 ||
+        !Array.isArray(stopOnActions) || stopOnActions.some(name=>typeof name!=='string')) {
       throw new BalanceRuntimeError('invalid_route','Policy burst requires a started boundary engine');
     }
+    const terminalActions = new Set(stopOnActions);
+    let observedEventCount = this.events.length;
     let observation = this.lightweightObservation();
     if (observation.stopped) {
       throw new BalanceRuntimeError('stalled','Resume before a policy burst',observation);
