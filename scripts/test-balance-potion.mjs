@@ -36,8 +36,8 @@ assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1]})).phase,'forest');
 assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2]})).phase,'merchanton');
 assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2,3]})).phase,'olympus');
 assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4]})).phase,'valhalla');
-assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4,5]})).phase,'startington');
-assert.equal(choosePotionPolicy(state({loopingPotion:true})).phase,'recraft_potion_and_totem');
+assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4,5],
+  buffs:{Imbuement:1}})).phase,'startington');
 assert.equal(choosePotionPolicy(state({loopingPotion:false,wunderkind:1})).phase,'complete');
 const potionReadyState=state({townsUnlocked:[0,1,2,3,4,5,6],
   levels:{...state().levels,meander:100,jungle:50},
@@ -58,19 +58,54 @@ assert.equal(craftOnly.queue.some(item=>item.name==='Totem'),false);
 const blocked=state({...potionReadyState,
   limited:{...potionReadyState.limited,goodHerbs:70,totalHerbs:700,checkedHerbs:700,
     goodLong:6,totalLong:30,checkedLong:30}});
-assert.deepEqual(assessPotionCarryResources(blocked).impossible,['longQuests','herbs']);
-assert.equal(choosePotionPolicy(blocked).phase,'blocked_resource_capacity');
-assert.deepEqual(choosePotionPolicy(blocked).queue,[]);
+const constrained=assessPotionCarryResources(blocked);
+assert.deepEqual(constrained.capacityShortages,['herbs','gold']);
+assert.equal(choosePotionPolicy(blocked).phase,'resource_capacity_growth');
+assert.ok(choosePotionPolicy(blocked).queue.length>0,
+  'an improvable capacity shortage must produce progression work, never a permanent block');
 const discovering=state({...potionReadyState,
   limited:{...potionReadyState.limited,goodHerbs:20,checkedHerbs:200,
     goodLong:5,checkedLong:25}});
 assert.equal(choosePotionPolicy(discovering).phase,'discover_potion_resources');
 assert.ok(choosePotionPolicy(discovering).queue.some(item=>
   item.name==='Gather Herbs'&&item.loopsType==='unchecked'));
-const recraft=choosePotionPolicy(state({loopingPotion:true}),'potion-totem');
+const recraft=choosePotionPolicy(state({...potionReadyState,loopingPotion:true}),'potion-totem');
 assert.equal(recraft.phase,'recraft_potion_and_totem');
 assert.equal(['Start Journey','Continue On','Start Trek','Looping Potion','Totem'].every(name=>
   recraft.queue.some(item=>item.name===name)),true);
+// Source-backed synthetic state: maxed conventional exploration and only ten
+// repeatable Long Quests can still pay for the final carry through other gold.
+const alternateGold=state({...potionReadyState,
+  limited:{...potionReadyState.limited,goodLong:10,totalLong:50,checkedLong:50,
+    goodShort:20,totalShort:100,checkedShort:100,
+    goodLocks:10,totalLocks:100,checkedLocks:100}});
+assert.equal(assessPotionCarryResources(alternateGold).gold,850);
+const otherCarry=choosePotionPolicy(alternateGold);
+assert.equal(otherCarry.phase,'craft_and_totem');
+assert.equal(otherCarry.queue.find(item=>item.name==='Heal The Sick').loops,14);
+assert.ok(otherCarry.queue.some(item=>item.name==='Pick Locks'));
+assert.ok(otherCarry.queue.some(item=>item.name==='Short Quest'));
+
+const herbGrowth=state({...potionReadyState,
+  levels:{...potionReadyState.levels,wander:100,met:100,secrets:100,
+    forest:100,shortcut:100,flowers:100},
+  limited:{...potionReadyState.limited,goodHerbs:200,totalHerbs:2000,checkedHerbs:2000}});
+assert.equal(choosePotionPolicy(herbGrowth).phase,'resource_capacity_growth');
+assert.ok(choosePotionPolicy(herbGrowth).queue.some(item=>item.name==='Spatiomancy'),
+  'continued source-backed Spatiomancy training increases herb-search capacity');
+const unimbued=state({townsUnlocked:[0,1,2,3,4,5],
+  levels:{...state().levels,illusions:70},
+  skills:{...state().skills,Magic:300},buffs:{Imbuement:0},totalSoulstones:20});
+const imbuePolicy=choosePotionPolicy(unimbued);
+assert.equal(imbuePolicy.phase,'imbuement_preparation');
+assert.ok(imbuePolicy.queue.some(item=>item.name==='Imbue Mind'));
+assert.equal(imbuePolicy.queue.some(item=>item.name==='Meander'),false,
+  'a zero-buff Meander action must never be used as earned progression');
+const preparatory=choosePotionPolicy(state({...unimbued,levels:{...unimbued.levels,illusions:10}}));
+assert.equal(preparatory.phase,'imbuement_preparation');
+assert.ok(preparatory.queue.some(item=>item.name==='Check Walls'),
+  'earn Illusions unlock before queueing Imbue Mind');
+
 const repReady=state({...potionReadyState,townsUnlocked:[0,1,2,3,4],
   skills:{...potionReadyState.skills,Spatiomancy:0}});
 const judgementPlan=choosePotionPolicy(repReady).queue;
