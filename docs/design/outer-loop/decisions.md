@@ -1,13 +1,13 @@
 # Real World — decisions and questions
 
-**Purpose:** Keep confirmed product direction separate from recommendations and issues that need genuine design/playtest decisions. Last updated: 2026-10-17.
+**Purpose:** Keep confirmed product direction separate from recommendations and issues that need genuine design/playtest decisions. Last updated: 2026-11-06.
 
 ## Approved product direction (do not reopen casually)
 
 | ID | Decision | Consequence |
 | --- | --- | --- |
 | RW-D01 | Add **Real World**, a location outside the existing game, as the true outer prestige/timeloop nexus | Do not append a normal ninth-index/10th town; separate lifetime and UI |
-| RW-D02 | Arrive after original `Restore Time` ending, **through a new portal/threshold** | Preserve existing `Open Portal` (jungle → forest) gameplay and original climax |
+| RW-D02 | Arrive after the Valley Restore Time climax through a new portal/threshold; retain Valley as a shorter capstone in the later campaign-wide rebalance (RW-Q17, 2026-11-06) | Preserve the original climax and Jungle Open Portal; establish the unchanged baseline before choosing new costs or thresholds |
 | RW-D03 | On first arrival meet **one other version of the protagonist** | Character-driven opening, not simply a passive upgrade shop |
 | RW-D04 | Old standalone **Prestige Perks** and **Challenges** systems **must not remain separately** in the released new experience | Reuse selected capabilities/concepts *or* discard them; do not run two competing metagames |
 | RW-D05 | A fresh timeline after the first completion is **roughly 10× faster by default**, **plus substantial permanent upgrade choices** | Replay acceleration is intrinsic; it is not an upgrade purchase or "prestige perk" to grind |
@@ -15,11 +15,25 @@
 | RW-D07 | Develop a cohesive **pixel-art graphic style**; the Real World is an appealing early showpiece | Art milestones can proceed separately from simulation/serialization code |
 | RW-D08 | Preserve the possibility that other selves came from alternate endings/choices | Leverage current Restore Time narrative rather than overwrite it with an unrelated explanation |
 
-## Endgame reconsideration — under discussion, no new approval
+## Selected ending direction — 2026-11-06
 
-The [potion and Valley alternatives](potion-and-endgame-options.md) document an **as-coded** fact: Looping Potion can be made before Valley of Olympus (after Valhalla-derived Spatiomancy), consumed at Jungle Totem for Wunderkind, and **does not gate Restore Time**.
+The owner selected **B: retain Valley as a shorter capstone**, with pacing tests and a coordinated rebalance across **all campaign sections**. Measure the unchanged campaign first; choose total and section budgets from the results. This amends RW-D02's future pacing scope while keeping the Valley/Restore Time climax and separate nexus threshold.
 
-The recently explored possibility of **retiring Valley as a playable region** and giving the potion a central role in a short finale is a **proposal**, not an instruction to remove zone 8. If selected, it changes the location/requirements of the ending and must **explicitly revise RW-D02**, which currently assumes the existing Restore Time climax. Until that decision, keep RW-D02, original nine-zone mechanics, and source-grounded audits as coded. The alternatives are: **A unchanged Valley**, **B condensed Valley**, **C commerce-city potion/temporal capstone** (recommended for exploration). "Potion required" also threatens access for the low-reputation route unless an equivalent dark-path solution is provided.
+Retiring playable Valley for a Commerceville potion finale is not the selected direction. The [alternatives study](potion-and-endgame-options.md) remains historical design evidence; its earlier C recommendation does not override this decision. Potion requirements, exact capstone costs, legacy migration and related mechanics remain undecided. Existing runtime behavior remains the baseline until separately authorized changes.
+
+## Owner decisions on 2026-11-06
+
+Evidence: owner replies in this Codex chat (America/New_York), retained here as bounded decision provenance. These answers do not accept a plan or authorize test/game implementation.
+
+| ID | Owner answer | Alternatives and scope |
+| --- | --- | --- |
+| RW-Q17 | B: keep Valley as a shorter capstone | A unchanged Valley and C Commerceville replacement were not selected. No new numeric gate or deletion approved. |
+| RW00-BALANCE-SCOPE | Write section-duration balance tests and rebalance the campaign together | No Valley-only tuning effort; first measure all sections. |
+| RW00-PACING-TARGETS | Measure the current campaign first, then choose total and section budgets from the results | No first-completion duration or section budget selected yet. |
+
+Exact first response: “2. We need to write "balance" tests basically tests for how long each section takes and rebalance, we'll do that all at once not just the valley”. The follow-up selected “Measure the current campaign first, then choose total and section time budgets from the results (Recommended).”
+
+The owner subsequently requested an [implementation plan for these tests](balance-tests-implementation-plan.md). The plan is draft documentation, separate from later implementation authorization.
 
 ## Working tree design direction (documented, not finalized)
 
@@ -42,7 +56,7 @@ The **recommended** player-facing structure is **Will / Echoes / Anchors**. Will
 | RW-P09 | Use **Will / Echoes / Anchors** as the working three-tree model, keeping **Treasury** and **Structures** as significant Anchors paths | Three memorable ways to master time, without a bland Currency multipliers tree; [details](upgrade-trees.md) |
 | RW-P10 | Preserve **Will / Echoes / Memory / Dominion** as a complete four-tree alternative | Dominion could earn top-level status if intertimeline economy and infrastructure justify it; [comparison](dominion-alternative.md) |
 | RW-P11 | Give one first meaningful upgrade choice in the nexus, with no permanent class lock, and permit later cross-tree synergies | Different second-run playstyles; shared free ~10× speed remains universal; [contracts](upgrade-tree-contracts.md) |
-| RW-P12 | Investigate a **shorter potion/temporal research capstone after Jungle Path, likely in Commerceville**, instead of repeating the original 1,000-stone Valley grind | Leverages the origin-story potion while preserving a meaningful ending and late-game economy; [comparison](potion-and-endgame-options.md). **Not approved for gameplay** |
+| RW-P12 | Historical Commerceville potion-finale exploration, superseded as the primary ending direction by RW-Q17 on 2026-11-06 | Owner selected a shorter Valley capstone; preserve the alternatives study as evidence only |
 
 ## Unresolved questions — priority for further design
 
@@ -64,7 +78,6 @@ The **recommended** player-facing structure is **Will / Echoes / Anchors**. Will
 | RW-Q14 | Is the first upgrade **free**, one-of-three/four and eventually cross-purchasable; which abilities ship? | Pivot / First Apprentice / Anchored Memory; optional fourth starter Timeless Treasury; final charge/goal/retention semantics not set | First compelling second playthrough |
 | RW-Q15 | How are **Memory, Treasury and Structures** balanced across the reset scopes, priced and potentially split into Dominion without save loss? | Stable per-ability IDs, independent lifetime/caps, limited gold/mana transfer, anti-duplication; no numeric policy yet | Nexus economy, RF02 migration and future taxonomy |
 | RW-Q16 | How are rewinds, conditional Echo tasks and cross-tree synergies made safe/deterministic? | Read-only forecast, one committed fork, explicit budget/stop conditions, no double grants | Predictor, RF01/RF03 and later ability implementation |
-| RW-Q17 | Does **Valley of Olympus remain**, become a short capstone, or cease to be a playable area? | **A** unchanged; **B** condensed; **C** replace with brief potion/temporal research finale in Commerceville. **C** recommended for exploration, not approved | Endgame, zone topology, story, save migration, RW-D02 |
 | RW-Q18 | Is **Looping Potion creation/understanding** part of the new required finale, or optional narrative/mastery content? | Strong narrative candidate; retain alternative legal route for players who bypass Valhalla; don't merely replace tower grind with repeated potion brewing | First completion accessibility, two reputation branches, stage gates |
 | RW-Q19 | How does the potion's existing **Jungle Totem → Wunderkind** use interact with a new finale? | Prefer optional stat-training use plus a separate earned-knowledge/ritual milestone; never depend on global `storyMax` alone due to source FIXME | Potion inventory, story flags, buffs, save/loop reset |
 | RW-Q20 | What replaces the tower, gods, temporal-stone hauling and `ImbueSoul` finale dependencies if Valley is retired? | Preserve a memorable climax, purposeful earlier exploration, appropriate optional trial/imbuement routes; no silent orphan content | Old content, SurveyZ8 divisor, SecretTrial gate, credits |

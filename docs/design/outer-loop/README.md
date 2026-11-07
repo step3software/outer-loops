@@ -1,6 +1,6 @@
 # Outer Loops — Real World / Timeloop Nexus
 
-**Status:** Product direction agreed; **design in progress**. This is a concept specification, not an implemented system or approval to change gameplay. Last updated: 2026-10-17.
+**Status:** Product direction agreed; **design in progress**. This is a concept specification, not an implemented system or approval to change gameplay. Last updated: 2026-11-06.
 
 ## North star
 
@@ -19,13 +19,11 @@ The first milestone should feel like a new chapter and immediately change the ex
 - Real World is a strong **pixel-art art-direction anchor**. The wider game's eventual pixel-art treatment is a related but separate workstream.
 - Do not establish that the earlier game was "fake" or a simulation; keep what **Real World** means deliberately mysterious at first.
 
-### New ending under consideration — not approved
+### Selected ending and campaign pacing direction
 
-The existing [Looping Potion](potion-and-endgame-options.md) is crafted on **Mt. Olympus after learning Alchemy in Forest Path and Spatiomancy via Valhalla**, can be consumed at the **Jungle Totem** for Wunderkind progression, and **is not presently required** for Valley of Olympus or Restore Time. Its role in the game's origin story makes it a promising basis for a shorter ending.
+On 2026-11-06 the owner selected **a shorter Valley capstone**, keeping Restore Time and its new threshold into Real World. Assess and rebalance all campaign sections together. First measure current pacing, then select total and section time budgets. See the [owner decision record](decisions.md#owner-decisions-on-2026-11-06) and [campaign balance test implementation plan](balance-tests-implementation-plan.md).
 
-Three routes are documented for decision: **retain Valley unchanged**, **condense Valley into a short divine capstone**, or **retire playable Valley and end via a potion/temporal research climax after Jungle Path, preferably in Commerceville**. The latter is recommended for exploration, *not selected*. Making the potion mandatory would also affect the dark/reputation route that bypasses Valhalla. Removing Valley physically would affect saves, the nine-zone survey average, temporal stone actions, trials, achievements and credits.
-
-**Existing RW-D02 and the nine-zone as-coded baseline remain in force unless specifically revised.** See [ending alternatives and migration risks](potion-and-endgame-options.md) and [open questions RW-Q17–RW-Q21](decisions.md).
+The current game remains the unchanged measurement baseline. Exact balance values, potion requirements and veteran-save treatment remain open. The [potion/Valley alternatives study](potion-and-endgame-options.md) preserves the earlier options and risks; its Commerceville replacement recommendation was not selected. This documentation does not implement or authorize gameplay changes.
 
 ### Working upgrade-tree recommendation — not yet approved
 
@@ -83,6 +81,7 @@ The [release plan](roadmap.md) separates design decisions and testing prerequisi
 - [Retiring legacy prestige/challenges](legacy-transition.md) — options, migration and compatibility
 - [Technical architecture and state boundaries](technical-architecture.md) — *not* town #9, save/predictor/rule considerations
 - [Pixel-art and hub experience](visual-direction.md) — future art direction, no assets generated
+- [RW00 campaign balance tests — implementation plan](balance-tests-implementation-plan.md) · [structured draft](balance-tests.plan.json)
 - [Roadmap and acceptance gates](roadmap.md) — thin slice → deeper timeline management
 - [Playtest/validation questions](validation.md) — future scenarios, key pacing risks and decisions
 - [Integration with RF01–RF06](integration-with-refactoring.md) — refactor dependencies and conflicts

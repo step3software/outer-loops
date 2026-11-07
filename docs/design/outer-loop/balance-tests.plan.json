@@ -1,0 +1,588 @@
+{
+  "milestone_id": "step3software/outer-loops#RW00",
+  "work_package": "campaign-pacing-tests",
+  "status": "draft_plan",
+  "objective": "Measure unchanged whole-campaign and section pacing with legal representative routes before choosing budgets and coordinating a later campaign-wide rebalance.",
+  "scope": {
+    "include": [
+      "Controlled-clock real-engine test adapter",
+      "R01 Valhalla and R02 Shadow earned campaign routes",
+      "C00-C14 checkpoints and support events",
+      "Five matched-state investment comparisons",
+      "Seeded reproducibility, browser/model fidelity, typed failure reporting and comparable baseline reports",
+      "Fast contract CI and bounded full measurements",
+      "Mandatory UI-equivalent queue admission and rejection invariants",
+      "Typed, versioned gameplay UI input configuration and state provenance",
+      "Early real-browser calibration gate before long-route work"
+    ],
+    "exclude": [
+      "Gameplay or balance changes, including shortened Valley implementation",
+      "Nexus/new-timeline reset, migration, currency/tree decisions or 10x production speed policy",
+      "RF03/RF04 fixes or broad test framework refactors",
+      "Real player saves, cloud accounts, source publication/merge/deployment, lifecycle acceptance or worker dispatch"
+    ]
+  },
+  "acceptance_criteria": [
+    "BT01: A controlled-clock adapter executes the real action, driver, loop-end and restart paths; no gameplay formula or reward path is reimplemented.",
+    "BT02: Gameplay waiting seconds, effective seconds, mana spent, loop count and host execution seconds are distinct, monotonic across restarts and reconciled without double counting.",
+    "BT03: R01 Valhalla and R02 Shadow each reach C14 from fresh defaults with earned progress, mandatory UI-equivalent queue admission and a frozen versioned legal policy; partial or stalled runs are not successful baselines.",
+    "BT04: C00-C14 and tagged support events are recorded from observed execution, with repeatable event ordering, source identity, route hash and RNG metadata.",
+    "BT05: Guild, potion/Totem, investment, shortcuts and rituals/imbuements have matched-state comparison scenarios reporting setup cost and downstream payoff; infeasible scenarios are explicitly reported.",
+    "BT06: Repeated seed/configuration runs reproduce semantic traces; a fixed seed set reports individual results, median and range without dropping failures.",
+    "BT07: Short real-browser admission/input/clock calibration passes before long routes; wider browser/model comparisons later cover Judgement, Escape, save/reload and endgame reward boundaries, with synthetic fixtures labeled.",
+    "BT08: Timeout, stall, illegal queue, non-finite state, unexpected offline credit and unsupported adapter behavior produce typed failures with last checkpoint and diagnostics.",
+    "BT09: Reporter tests reject incomparable policy, UI input, admission, calibration or runtime configurations, double-counted time, false checkpoints and incomplete baselines; no target gameplay duration is invented.",
+    "BT10: Existing repository checks remain green; fast contract checks enter PR CI and full measurements have explicit host-time and simulated-time budgets.",
+    "BT11: No production game, save format, player profile, balance number, challenge rule or outer-loop feature is changed by the test-only delivery.",
+    "BT12: An unchanged-campaign baseline report maps every criterion to evidence and states coverage gaps; owner pacing targets and the coordinated rebalance remain later work.",
+    "BT13: Every policy queue mutation or replay has UI-equivalent admission provenance; locked/invisible/invalid/over-limit edits fail without state changes, and positive cases match the real browser.",
+    "BT14: Gameplay-affecting DOM inputs, raw/parsed cap values, corresponding model values and setting changes are explicit, typed, source-backed, fingerprinted and matched across model, browser, replay and reports.",
+    "BT15: Official full measurements require matching successful early-calibration evidence; missing, failed, stale or incompatible calibration blocks success, and deliberate admission/facade faults are detected."
+  ],
+  "constraints": [
+    "Current user request authorizes writing this plan only; test implementation is not authorized.",
+    "Preserve normal earned progression, costs, clock semantics and current first-completion behavior.",
+    "Use dedicated protected project worktrees and current Orcha main for each future context.",
+    "The existing legacy milestone authority and other RW00 scope remain unchanged.",
+    "Official whole-campaign success requires actual C14 completion for both routes and all required seeds.",
+    "Owner-selected source and review target are main; do not fall back to stale dmchurch references.",
+    "This revision updates documentation only; no test, runner, fixture, facade, command or CI implementation is authorized."
+  ],
+  "decisions": [
+    {
+      "id": "RW-Q17",
+      "question": "Which ending should be developed?",
+      "answer": "B. Keep Valley as a shorter capstone.",
+      "decided_by": "user",
+      "evidence_reference": "Owner replies in this Codex chat, 2026-11-06 (America/New_York); publication pending on the RW00 docs branch.",
+      "exact_response": "2. We need to write \"balance\" tests basically tests for how long each section takes and rebalance, we'll do that all at once not just the valley"
+    },
+    {
+      "id": "RW00-BALANCE-SCOPE",
+      "question": "Which sections should be assessed and rebalanced?",
+      "answer": "All campaign sections together, not Valley alone.",
+      "decided_by": "user",
+      "evidence_reference": "Owner replies in this Codex chat, 2026-11-06 (America/New_York); publication pending on the RW00 docs branch."
+    },
+    {
+      "id": "RW00-PACING-TARGETS",
+      "question": "How should pacing targets be set?",
+      "answer": "Measure the current campaign first, then choose total and section time budgets from the results.",
+      "decided_by": "user",
+      "evidence_reference": "Owner replies in this Codex chat, 2026-11-06 (America/New_York); publication pending on the RW00 docs branch."
+    },
+    {
+      "id": "BT-ENGINE",
+      "question": "Which simulation should be authoritative?",
+      "answer": "Reuse the real driver/action paths with test-only clock/RNG injection and browser comparisons.",
+      "decided_by": "architect",
+      "requires_owner": false,
+      "evidence_reference": "scripts/load-game-model.mjs; driver.js executeGameTicks/loopEnd/restart; actions.js Actions.tick at 11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "rationale": "Avoid a second engine that can drift from real time, costs and resets."
+    },
+    {
+      "id": "BT-ROUTES",
+      "question": "Which initial representative routes?",
+      "answer": "R01 Valhalla and R02 Shadow, fixed policies and earned state; paired optional investments.",
+      "decided_by": "architect",
+      "requires_owner": false,
+      "evidence_reference": "actionList.js FaceJudgement.finish, getTravelNum and travel/action definitions at 11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "rationale": "Cover both actual reputation outcomes, avoid the known exact-50 planner discrepancy in the pacing sample and expose strategy sensitivity."
+    },
+    {
+      "id": "RW00-SOURCE",
+      "question": "Which source branch should this work package use?",
+      "answer": "main",
+      "decided_by": "user",
+      "evidence_reference": "Owner message in this Codex chat, 2026-11-06 (America/New_York).",
+      "exact_response": "Update the plan to address those three gaps and use main as the source branch. Don't start building the tests yet.",
+      "scope": "Source branch selection and plan revision only; no test implementation or global host/configuration mutation."
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "step3software/outer-loops#RF01",
+      "kind": "hard",
+      "reason": "Reuse existing merged model/queue/browser foundation; add missing campaign and clock coverage."
+    },
+    {
+      "id": "step3software/outer-loops#RF02",
+      "kind": "future_gate",
+      "reason": "Not required for isolated baseline tests; required before player-facing reset, recovery or migration."
+    },
+    {
+      "id": "browser-fidelity",
+      "kind": "hard",
+      "reason": "Short matched real-browser admission/input/clock calibration is a hard gate before long-route work and full baseline measurements; wider browser evidence follows later."
+    }
+  ],
+  "source_specification": "docs/design/outer-loop/balance-tests-implementation-plan.md",
+  "parent_source_specification": "docs/design/outer-loop/roadmap.md#design-tenet",
+  "open_questions": [],
+  "deferred_owner_decisions": [
+    "Total and section pacing targets after baseline",
+    "Acceptable repetition and optional-investment payoff",
+    "Other RW00 product decisions outside this work package"
+  ],
+  "plan_approval": null,
+  "implementation_authorization": null,
+  "source": {
+    "repository": "step3software/outer-loops",
+    "canonical_branch": "main",
+    "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+    "work_branch": "docs/rw00-balance-routes-20261106",
+    "selection_authority": "Explicit owner instruction in this chat on 2026-11-06: use main as the source branch.",
+    "intended_review_target": "main",
+    "observed_manifest_branch": "dmchurch",
+    "override_scope": "This work package only. Preserve global manifest/host settings and writer claims; explicit main selection must be carried or stale dispatch configuration reconciled before any future worker starts."
+  },
+  "shared_standards": {
+    "repository": "Wisteria-Psychological-Services/project-management-orchestration",
+    "branch": "main",
+    "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+    "verification": "standards_resolver.resolve against this task's freshly observed immutable Orcha main revision.",
+    "documents": [
+      {
+        "module": "milestone-format",
+        "path": "docs/milestone-file-conventions.md",
+        "sha256": "3eddc165b4a508a6c605892a7a5bd60fa8ff1dfd915388569b526e6c75789c75"
+      },
+      {
+        "module": "milestone-state",
+        "path": "docs/repository-milestones.md",
+        "sha256": "809e4c9872ee1a6896a1bbaea1dbfca938c883f63de4446973fc5de5c6991d98"
+      },
+      {
+        "module": "development",
+        "path": "docs/development-workflow.md",
+        "sha256": "b304fc38cca8931196ab032b3c4aa014c4dee0bc2c89ca0f0988486702ea1818"
+      },
+      {
+        "module": "intent-routing",
+        "path": "docs/agent-workflows/intent-routing.md",
+        "sha256": "fc05fdc681d2ae86eedcffad3edf7d8b81ddcfddfd9b7f60ff9bcedb8e096431"
+      },
+      {
+        "module": "intent-routing",
+        "path": "docs/agent-workflows/plan.md",
+        "sha256": "59be24a8593bdc000ca37f163fffdf52f0db5cc619765f1fd9caf41481aed287",
+        "workflow": "plan"
+      }
+    ],
+    "additional_documents": [
+      {
+        "path": "AGENTS.md",
+        "blob_sha": "bb6f8c7efbe07383736ba6d02939bb557607b904",
+        "sha256": "9f749c4394130b150e4cdabeb4394b9465b2da018d35427f6ef2b9df2412deb6"
+      },
+      {
+        "path": "config/repositories.json",
+        "blob_sha": "e91edec4d7c53966f0880991dcc9fe7af1a1463e",
+        "sha256": "00f76eb618856b51f1c75ee191519a92b575e0231a4d1a2368693a5a76472056"
+      },
+      {
+        "path": "README.md",
+        "blob_sha": "4a7b7c7b9977902c2c7bf38fe4550811d218b7ce",
+        "sha256": "1d9c3c0ec439a8f2babae6f090ba34368d4ab17946705781a2ed3cdd2fa51858"
+      },
+      {
+        "path": "standards/catalog.json",
+        "blob_sha": "1a454e3a1dfb2707a95b8d18e4b11b098a0b4023",
+        "sha256": "42190a534f181561a705d509fdc3d95765d0d3a4cce0312a9760cf5607e32dd3"
+      },
+      {
+        "path": "docs/documentation-first-planning.md",
+        "blob_sha": "fb2685bcb63ab1c70dd6ddb6a2098bdf5770b8f2",
+        "sha256": "758f32baec60643a666fe98c0393e189dfa7e97a587afcf3db7055aa0ee6aa50"
+      },
+      {
+        "path": "docs/delivery-principles.md",
+        "blob_sha": "a6039140acc2e6a1014f8678203b15d2158dc59c",
+        "sha256": "0a68cd274f31bafa3ab0eb8d783e8d336134a1b67e07bf393e8c41a5efd0c3de"
+      },
+      {
+        "path": "docs/agent-workflows/documentation-consolidation.md",
+        "blob_sha": "3929db1f5b0f733a0393831a004ed98fb2d2757b",
+        "sha256": "bbdec70077948b73ae2782d7007c61cbc9c2a47b2f05815e6bcc1899e1a2f9a2"
+      }
+    ]
+  },
+  "source_evidence": [
+    {
+      "path": "AGENTS.md",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "88388f2f475280dec27f42966509c5abb9b860e2dce2829ba2a1255154984949"
+    },
+    {
+      "path": ".orcha/repository.json",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "f8fcffcb0aa08f2d1768bbb238506c65d439e92b046110289f1ea4f750e6564d"
+    },
+    {
+      "path": "docs/README.md",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "68980aa68fbdbc809bc2bbb366ca7636be7cc36865f5bbf482db4a64b89eb91b"
+    },
+    {
+      "path": "docs/AGENTS.md",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "22e87164010ecc29ad1e0a32cae4fa85ecc63bbee88a162f4e9e7a8cd57276f8"
+    },
+    {
+      "path": "docs/design/outer-loop/AGENTS.md",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "b059d9e4866b21e1d8b38343004b9b53b2c974c7ddd060a4a4fe36af08db93fe"
+    },
+    {
+      "path": "docs/development/ai-workflow.md",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "2d3a52a739522dea54b3cc6718e9123e80c46cfbe57f9ae093fbaa2f7948680e"
+    },
+    {
+      "path": "docs/design/outer-loop/decisions.md",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "9c554b79876b1a569ded868b6d2b3608dad78506917f9a6bae016f9ab85c776f"
+    },
+    {
+      "path": "docs/design/outer-loop/roadmap.md",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "aa314fea8a2d3916714d4f6016d5046c3259aeb2c04caadcff8a8cbc2221aeaa"
+    },
+    {
+      "path": "docs/audit/progression.md",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "bbb79d60cd2d3a951abe8bfc57d538c23dec13dd0c145cd301c6c00d674baff7"
+    },
+    {
+      "path": "docs/audit/balance-formulas.md",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "8cb6a5dd0622317b8183c8e8c1ed7afc9b2f0d2345e3add06d6cf3f6fbf95318"
+    },
+    {
+      "path": "docs/development/validation.md",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "01f5d2a5c4f2c5b56eca429443af6214b1e0cb5ea7c4933cebade6e39a959072"
+    },
+    {
+      "path": "docs/state-and-saving.md",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "d0462b249b8f175829f8fc5827b203f5407030eb97e72aed0df743850b4dd971"
+    },
+    {
+      "path": "scripts/load-game-model.mjs",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "14bf4833dccc5184f13a9d7654a49be84ac8e25e74010cbd4c575e226b12b7b9"
+    },
+    {
+      "path": "scripts/test-action-execution.mjs",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "61d5e7cee6a818e7546c45541a1eb841b99c19de90efccb807dc5bfa8bea9e17"
+    },
+    {
+      "path": "scripts/test-rf01-model.mjs",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "38716f89bfdda556c52c937c0776c9b4a2205f60b0aebf1b56bdb97acf3cff2f"
+    },
+    {
+      "path": "scripts/test-browser-smoke.mjs",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "3f84a92a4dc044d285d5f586ef48d67b9b1769a0f7a840e0c5d00af80ab25727"
+    },
+    {
+      "path": "actionList.js",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "ea3cceb1b4e5017c3fd8c8485776809be53fba3fd37ea4e882e27205bdc968cb"
+    },
+    {
+      "path": "actions.js",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "3fde856ae294bf795015654239258e0ef36fdae890c6d278fdb423e9ad074873"
+    },
+    {
+      "path": "driver.js",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "1cdcd112e4f36ab1f0cb295f94c0cd4a528f3a5dd74fff57acf8215682cec792"
+    },
+    {
+      "path": "town.js",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "89196bdcb9ea9a1e613a2dc78a1f358bd5c6c9e1e74850820177e4c492f00034"
+    },
+    {
+      "path": "saving.js",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "e08c851af77bccd1bf003a9c98480578d2e62be08d4f9caf7fd9d9596e22a206"
+    },
+    {
+      "path": "prestige.js",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "0ab9f43594652b7c1ecf5ec0e5bdd868c084ce96fdf0fec439acdd0afa8af2ec"
+    },
+    {
+      "path": "package.json",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "1dd7597fc565e9907a8b5771be2c662751e10e17fceb65c0ad5cc45941c6252a"
+    },
+    {
+      "path": ".github/workflows/validate.yml",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "5090e266e609b8ee86a46ad2628d9739dce7a44dfa515a32ad1032216bfa9894"
+    }
+  ],
+  "verification": {
+    "documentation_check": "PASS for revision 2: npm run check; 39 JS files, 92 Markdown files / 698 links, 48 local scripts, 157 actions.",
+    "xml_validation": "PASS: five XML/Relax NG files well-formed.",
+    "structured_plan_consistency": "PASS: 15 criteria, C00-C14, seven ordered steps, all criterion mappings, early calibration gate, review coverage and null approvals.",
+    "link_anchor_check": "PASS: 11 local plan links and 1 heading anchors.",
+    "scope_check": "PASS: only the two plan artifacts edited in this revision; previous README/decision/roadmap edits preserved; no tests or gameplay implementation files added or changed.",
+    "source_branch": "PASS: explicit owner selection of main, freshly observed at the unchanged source commit; stale global manifest/host settings remain untouched.",
+    "standards": "PASS: standards_resolver verified current-main applicable hashes and nested instructions.",
+    "diff_whitespace": "PASS: git diff --check.",
+    "gameplay_tests": "not implemented or run",
+    "browser": "not implemented or run",
+    "campaign_benchmarks": "not implemented or run"
+  },
+  "implementation_steps": [
+    {
+      "id": "1",
+      "proposed_files": [
+        "scripts/load-game-model.mjs",
+        "scripts/balance/engine.mjs",
+        "scripts/balance/admission.mjs",
+        "scripts/balance/ui-inputs.mjs",
+        "scripts/test-balance-contracts.mjs"
+      ],
+      "acceptance_ids": [
+        "BT01",
+        "BT02",
+        "BT08",
+        "BT13",
+        "BT14"
+      ],
+      "checkpoint": "Faithful clocks; strict UI inputs; player-equivalent admission; negative edits have no side effects; existing loader callers unchanged.",
+      "authorized": false
+    },
+    {
+      "id": "2",
+      "proposed_files": [
+        "scripts/test-balance-browser.mjs",
+        "scripts/balance/engine.mjs"
+      ],
+      "acceptance_ids": [
+        "BT07",
+        "BT13",
+        "BT14",
+        "BT15"
+      ],
+      "checkpoint": "Short real-rendered-input/admission/clock calibration passes, with deliberate mismatches detected, before C00-C08 policies, full campaigns or comparisons.",
+      "authorized": false
+    },
+    {
+      "id": "3",
+      "proposed_files": [
+        "scripts/balance/checkpoints.mjs",
+        "scripts/balance/policies.mjs",
+        "scripts/balance/fixtures.mjs"
+      ],
+      "acceptance_ids": [
+        "BT03",
+        "BT04",
+        "BT13",
+        "BT14",
+        "BT15"
+      ],
+      "checkpoint": "Both earned C00-C08 prefixes after calibration; admitted edit/UI state provenance; no Escape observation side effects or guild conflicts.",
+      "authorized": false
+    },
+    {
+      "id": "4",
+      "proposed_files": [
+        "scripts/balance/policies.mjs",
+        "scripts/balance/fixtures.mjs",
+        "scripts/measure-balance.mjs"
+      ],
+      "acceptance_ids": [
+        "BT03",
+        "BT06",
+        "BT08",
+        "BT15"
+      ],
+      "checkpoint": "Both C14 completions across required seeds; matching successful calibration required; partial runs remain incomplete.",
+      "authorized": false
+    },
+    {
+      "id": "5",
+      "proposed_files": [
+        "scripts/balance/metrics.mjs",
+        "scripts/balance/report.mjs",
+        "scripts/balance/policies.mjs"
+      ],
+      "acceptance_ids": [
+        "BT05",
+        "BT09",
+        "BT14",
+        "BT15"
+      ],
+      "checkpoint": "Five matched-state comparisons; prefix/UI input reconstruction; mismatched configuration/calibration and corrupted reports rejected.",
+      "authorized": false
+    },
+    {
+      "id": "6",
+      "proposed_files": [
+        "scripts/test-balance-browser.mjs"
+      ],
+      "acceptance_ids": [
+        "BT07",
+        "BT15"
+      ],
+      "checkpoint": "Wider Judgement/Escape/endgame, save/reload and idempotency checks; synthetic late fixtures labeled; relevant changes trigger recalibration.",
+      "authorized": false
+    },
+    {
+      "id": "7",
+      "proposed_files": [
+        "package.json",
+        ".github/workflows/validate.yml",
+        ".gitignore",
+        "docs/development/validation.md",
+        "docs/design/outer-loop/balance-tests-implementation-plan.md"
+      ],
+      "acceptance_ids": [
+        "BT10",
+        "BT11",
+        "BT12"
+      ],
+      "checkpoint": "Fast CI; reproducible calibration and gated full measurement commands; bounded ignored output and evidence-backed unchanged baseline.",
+      "authorized": false
+    }
+  ],
+  "documentation_assessment": {
+    "organization": "Existing roadmap and decision ledger retained; this subordinate test package is not a competing RW00 milestone ledger.",
+    "navigation": "Design index links the canonical test plan and machine companion; root documentation index already links the design index.",
+    "corrections": [
+      "Recorded the owner-selected shorter Valley direction and baseline-first campaign-wide scope",
+      "Removed the answered RW-Q17 from the unresolved table",
+      "Labeled the earlier Commerceville option as historical and unselected",
+      "Mandatory admission and typed gameplay UI input contracts added",
+      "Initial browser calibration promoted to step 2 and enforced as a measurement gate",
+      "Owner-selected main source recorded without changing global host/configuration or starting implementation"
+    ],
+    "limitations": [
+      "No broad documentation reorganization or exhaustive code audit",
+      "Other RW00 product and migration decisions remain unresolved outside this package"
+    ]
+  },
+  "plan_revision": 2,
+  "ui_input_contract": {
+    "schema": "balance-ui-input-config/v1",
+    "minimum_fields": [
+      "element_id",
+      "element_type",
+      "checked_or_raw_value",
+      "parsed_cap_if_applicable",
+      "corresponding_model_cap",
+      "default_source",
+      "initial_config_hash",
+      "setting_change_policy",
+      "current_state_hash"
+    ],
+    "required_inputs": [
+      "All searchToggler controls used by a route",
+      "All gameplay buff-cap controls read by a route"
+    ],
+    "missing_or_mismatched_required_input": "Fail closed for the balance profile; do not silently substitute defaults.",
+    "comparison_rule": "Equivalent runs require matching input configuration and compatible recorded setting-change policy; explicit UI setting experiments are separately labeled treatments."
+  },
+  "early_calibration_gate": {
+    "step": "2",
+    "blocks_steps": [
+      "3",
+      "4",
+      "5"
+    ],
+    "required": [
+      "Real player-facing browser admission",
+      "Real rendered checkbox/cap values",
+      "Short action and loop clock checks",
+      "Rejection invariants",
+      "Deliberate admission/facade mismatch detection"
+    ],
+    "identity": [
+      "Source/relevant game and adapter hashes",
+      "Browser version",
+      "Clock/scheduler settings",
+      "Admission version",
+      "UI input configuration hash"
+    ],
+    "failure_rule": "Missing, failed, stale or mismatched evidence blocks official full measurement success; unavailable Chrome is not a silent skip.",
+    "implemented": false
+  },
+  "review_resolution": [
+    {
+      "id": "P1-queue-admission",
+      "addressed_in_plan": true,
+      "criteria": [
+        "BT03",
+        "BT13"
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "P1-gameplay-ui-inputs",
+      "addressed_in_plan": true,
+      "criteria": [
+        "BT09",
+        "BT14"
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "P2-early-browser-calibration",
+      "addressed_in_plan": true,
+      "criteria": [
+        "BT07",
+        "BT15"
+      ],
+      "runtime_verified": false
+    }
+  ],
+  "verification_history": [
+    {
+      "plan_revision": 1,
+      "artifact_sha256": "a3516db47758322493a0e4c7281517406186008fd18126f9341c5dd995a667c3",
+      "companion_sha256": "0de2d6f0e5bfac4924df69d7591b2cd186436628046465264c8d99aea2e7363a",
+      "results": {
+        "documentation_check": "PASS: npm run check; 39 JS files, 92 Markdown files, 698 Markdown links, 48 local scripts, 157 cataloged actions.",
+        "xml_validation": "PASS: 5 XML/Relax NG files well-formed.",
+        "structured_plan_consistency": "PASS: lifecycle keys, 12 shared criteria, C00-C14, owner provenance, null approvals, local links and changed-file heading anchors.",
+        "gameplay_tests": "not run; documentation-only change",
+        "campaign_benchmarks": "not implemented or run",
+        "browser": "not run",
+        "diff_whitespace": "PASS: git diff --check.",
+        "standards": "PASS: standards_resolver.resolve against freshly observed immutable Orcha main and effective nested instructions."
+      }
+    }
+  ],
+  "additional_source_evidence": [
+    {
+      "path": "helpers.js",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "23ecd47b869f1ea6c508c960fc307b6372e16e2c866a1d5d663ea201e488f8f2"
+    },
+    {
+      "path": "stats.js",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "cb27e410d4dc9fc584414ccc8d3b48693051e561fd50865a243c59b1b8010838"
+    },
+    {
+      "path": "views/main.view.js",
+      "revision": "11faa50c5f98d7b98d74b2d3be80d8b50c400fca",
+      "sha256": "b014acaec9f8b432ff5f1e2ff25363b5f5602cddaa4c38306e5e6c1f8ed51b3b"
+    }
+  ],
+  "publication_request": {
+    "requested_by": "user",
+    "evidence_reference": "Owner message in this Codex chat on 2026-11-06 (America/New_York): push all this in a pr",
+    "scope": "Commit and publish the five RW00 documentation files as one draft PR against main; no test implementation, plan acceptance, merge or deployment."
+  }
+}
