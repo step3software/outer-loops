@@ -218,7 +218,7 @@ export function runPotionCampaign({root,seed=42,endpoint='potion-totem',mode='ac
   try{
     while(true){
       const beforeObs=engine.lightweightObservation(),hostBefore=performance.now(),section=sectionForPhase(decision.phase,state);
-      engine.burstPolicyLoops(64);
+      engine.burstPolicyLoops(64,{stopOnActions:[endpoint==='potion-craft'?'Looping Potion':'Totem']});
       const hostDelta=(performance.now()-hostBefore)/1000,afterObs=engine.lightweightObservation();
       lastObs=afterObs;
       const gameDelta=afterObs.time-beforeObs.time,effectiveDelta=afterObs.effectiveSeconds-beforeObs.effectiveSeconds;
