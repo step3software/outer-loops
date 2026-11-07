@@ -69,6 +69,16 @@ The **recommended** player-facing structure is **Will / Echoes / Anchors**. Will
 | RW-Q19 | How does the potion's existing **Jungle Totem → Wunderkind** use interact with a new finale? | Prefer optional stat-training use plus a separate earned-knowledge/ritual milestone; never depend on global `storyMax` alone due to source FIXME | Potion inventory, story flags, buffs, save/loop reset |
 | RW-Q20 | What replaces the tower, gods, temporal-stone hauling and `ImbueSoul` finale dependencies if Valley is retired? | Preserve a memorable climax, purposeful earlier exploration, appropriate optional trial/imbuement routes; no silent orphan content | Old content, SurveyZ8 divisor, SecretTrial gate, credits |
 | RW-Q21 | How should **current Valley/partial tower/old prestige saves** migrate under a shortened or removed ending? | Versioned non-destructive compatibility layer and veteran entitlement treatment; no physical zone-index removal without regression proof | RF01/RF02, import, action loadouts, story numbering, refund/credits |
+| RW-Q22 | How are timeline keys earned, selected, reused or consumed? | Default for exploration: earned in normal play; do not consume until a safe new-timeline commitment | RW06 acquisition and save lifecycle |
+| RW-Q23 | Are keys curated, procedurally combined or both, and how many simultaneous modifiers are allowed? | Start with a curated, bounded set; generated affixes/rarity only after balance tests | RW06 catalog and rule conflicts |
+| RW-Q24 | How do key difficulty, rewards and old challenge/timeline variants interact? | Reuse one shared variant-rule and reward contract; avoid hidden multiplicative payouts | RW04/RW06 compatibility and economy |
+| RW-Q25 | What in-game value is staked on a wager and how are payouts balanced? | No real-world value; leave the precise in-game resource and payout curve open until the nexus economy is agreed | RW07 stake and reward rules |
+| RW-Q26 | What qualifies as a winning "will not" wager, and how are aborts/unfinished timelines handled? | Require an otherwise completed/qualifying timeline; no automatic profit for doing nothing; abandonment loss/refund terms need a decision | RW07 settlement and anti-exploit |
+| RW-Q27 | Can a player accept multiple wagers at once or combine them with keys? | One wager on the next timeline as the initial conservative scope; record key context if present | RW07 UI, validation and combinations |
+
+## New proposed milestone concepts — no product-mechanics approval
+
+The owner requested two new **separately numbered planning milestones** on 2026-11-06: [RW06 Timeline Keys](RW06.md) (PoE-style keys that change the attributes of a run) and [RW07 Timeline Wagers](RW07.md) (pre-run **will / will not** outcome bets). Their creation authorizes documentation planning only. The example modifiers, stake resource, reward rules, key generation/consumption and wager settlement remain unresolved. RW04's existing divergent-timeline design is not repealed.
 
 ## Change control and conflicts
 

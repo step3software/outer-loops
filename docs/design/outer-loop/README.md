@@ -84,6 +84,8 @@ The [release plan](roadmap.md) separates design decisions and testing prerequisi
 - [Technical architecture and state boundaries](technical-architecture.md) — *not* town #9, save/predictor/rule considerations
 - [Pixel-art and hub experience](visual-direction.md) — future art direction, no assets generated
 - [Roadmap and acceptance gates](roadmap.md) — thin slice → deeper timeline management
+- [RW06 — Timeline Keys](RW06.md) — proposed key-configured runs with previewed rules and rewards
+- [RW07 — Timeline Wagers](RW07.md) — proposed in-game stakes on will / will-not next-run conditions
 - [Playtest/validation questions](validation.md) — future scenarios, key pacing risks and decisions
 - [Integration with RF01–RF06](integration-with-refactoring.md) — refactor dependencies and conflicts
 
