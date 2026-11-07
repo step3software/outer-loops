@@ -1,6 +1,6 @@
 # RF05 — Organize action modules by shared code and nine zones
 
-- **Status:** Planned — approved scope; implementation not authorized
+**Status:** Planned — approved scope; implementation not authorized
 - **Priority:** After behavior and challenge contracts have stabilized
 - **Hard dependencies:** RF01 exact ordered registry/entrypoint baseline; recommend RF02–RF04 completed before moving declarations
 - **Enables:** Smaller per-zone AI patches and RF06's stable script organization

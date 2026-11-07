@@ -1,6 +1,6 @@
 # RF04 — Challenge rule isolation
 
-- **Status:** Planned — approved scope; implementation not authorized
+**Status:** Planned — approved scope; implementation not authorized
 - **Priority:** After RF03
 - **Hard dependencies:** RF01 challenge-mode characterization, RF02 challenge save boundaries, RF03 pure gameplay rule APIs
 - **Enables:** A stable action/runtime surface for RF05, fewer cross-system cases for RF06
