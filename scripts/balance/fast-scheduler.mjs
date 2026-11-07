@@ -36,6 +36,8 @@ export class FastScheduler {
     if (!observation.actionName) return fallback('no_observed_action');
     const eligible = actionCalibration(this.calibration, observation.actionName);
     if (!eligible) return fallback('uncalibrated_action');
+    // Queue cursors can be skipped; never batch without proven active execution.
+    if (observation.actionReady !== true) return fallback('unverified_active_action');
     // Only batch inside the CURRENT calibrated action/talent boundary. Using
     // loopBoundaryWallMs alone can run uncalibrated later actions in one batch.
     // A queue consisting of only the same calibrated action may safely use

@@ -86,7 +86,8 @@ for(const forbidden of ['setLevel(','addResource(','unlockTown(','resources.herb
 
 const source=potionSourceIdentity(root),acceleration=createPotionAcceleration(source.identity);
 for(const path of ['data.js','localization.js','prestige.js','scripts/balance/report.mjs',
-  'scripts/balance/campaign-estimate.mjs','scripts/balance/measurement-worker.mjs']){
+  'scripts/balance/campaign-estimate.mjs','scripts/balance/measurement-worker.mjs',
+  'index.html','views/main.view.js','views/views.js','hotkeys.js']){
   assert.ok(POTION_SOURCE_FILES.includes(path),'source identity omits '+path);
 }
 assert.deepEqual(Object.keys(acceleration.actions).sort(),['Smash Pots','Train Strength','Wander']);
@@ -94,13 +95,15 @@ assert.equal(acceleration.actions['Looping Potion'],undefined,
   'untested campaign actions must not receive fast batches');
 const scheduler=new FastScheduler({calibration:acceleration,maxBatchMs:60000});
 const observation={actionName:'Wander',stopped:false,offlineMs:0,
-  bonusSpeed:1,lagSpeed:0,boundaryWallMs:60,loopBoundaryWallMs:60000};
+  bonusSpeed:1,lagSpeed:0,actionReady:true,boundaryWallMs:60,loopBoundaryWallMs:60000};
 assert.equal(scheduler.select(observation,60000).level,'precision',
   'a calibrated action may not batch across an imminent action boundary');
 assert.equal(scheduler.select({...observation,singleActionName:'Wander'},60000).batchMs,10000,
   'a repeated single verified action retains its tested fast batch');
 assert.equal(scheduler.select({...observation,actionName:'Looping Potion'},60000).reason,
   'uncalibrated_action');
+assert.equal(scheduler.select({...observation,actionReady:false},60000).reason,
+  'unverified_active_action');
 const earlyStop=new BalanceEngine({mode:'accelerated',calibration:acceleration,
   policyBoundaries:true,maxHostMs:5000});
 assert.equal(earlyStop.edit({op:'add',name:'Wander',loops:1}).status,'admitted');

@@ -158,6 +158,10 @@ export class BalanceEngine {
   lightweightObservation() {
     const operation = () => JSON.parse(JSON.stringify(this.evaluate('(() => {' +
       'const action=actions.current[actions.currentPos]??null;' +
+      // An unstarted queue cursor is not execution proof. Never call mutating
+      // getNextValidAction() or canStart() just for a scheduler observation.
+      'const actionReady=!!(action&&actions.currentAction===action&&' +
+      'action.townNum===curTown&&action.loopsLeft>0&&!action.canStart);' +
       'const actionTicks=action?Math.max(0,action.adjustedTicks-action.ticks):0;' +
       'const talentTicks=action?Math.max(0,getMaxTicksForAction(action,true)):0;' +
       'const loopTicks=Math.max(0,timeNeeded-timer);' +
@@ -174,7 +178,7 @@ export class BalanceEngine {
       'manaSpent:timer,completedActions:totals.actions,progress:towns[0].expWander,' +
       'queuePosition:actions.currentPos,currentQueueCount:actions.current.length,' +
       'stopped:gameIsStopped,ticksLeftMs:gameTicksLeft,offlineMs:totalOfflineMs,lagSpeed,' +
-      'bonusSpeed,gameSpeed,shouldRestart,curTown,actionName:action?.name??null,' +
+      'bonusSpeed,gameSpeed,shouldRestart,curTown,actionName:action?.name??null,actionReady,' +
       'actionType:action?.type??null,singleActionName:actions.current.length===1?actions.current[0].name:null,' +
        'actionTicks,actionLoopsLeft:action?.loopsLeft??0,' +
       'boundaryTicks,boundaryKind,boundaryWallMs:ticksPerMs>0?boundaryTicks/ticksPerMs:0,' +

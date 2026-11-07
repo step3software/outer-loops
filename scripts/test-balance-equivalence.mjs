@@ -89,6 +89,15 @@ assert.deepEqual(boundaryBurst.model.rngSnapshot(),boundaryReference.model.rngSn
 assert.equal(boundaryBurst.snapshot().stopped,true);
 console.log('PASS policy-burst equivalence: 64 production restart boundaries in one outer call.');
 
+const skipped=new BalanceEngine({mode:'accelerated',calibration});
+assert.equal(skipped.edit({op:'add',name:'Wander',loops:1}).status,'admitted');
+skipped.start();
+assert.equal(skipped.lightweightObservation().actionReady,false,
+  'a queued but unstarted action cannot authorize a fast batch');
+skipped.model.evaluate('curTown=1');
+assert.equal(skipped.step({full:false}).batch.reason,'unverified_active_action',
+  'a skipped out-of-town queue cursor must use reference precision');
+
 assert.throws(()=>new BalanceEngine({mode:'accelerated'}),/calibration manifest/);
 assert.throws(()=>new BalanceEngine({mode:'accelerated',calibration:{...calibration,identity:'stale'}}),
   /Stale calibration/);

@@ -73,6 +73,12 @@ export function assertPotionReport(report){
 // policy, benchmark and report implementations that can change interpretation.
 export const POTION_SOURCE_FILES = Object.freeze([
   ...GAME_MODEL_SCRIPTS,
+  // Include real browser control, view and queue-entry sources in calibration.
+  'index.html','polyfills.js','uicomponents.js','google.js','actionLog.js',
+  'interval.js','statsgraph.js','talents.js','challenges.js','hotkeys.js',
+  'predictor.js','views/main.view.js','views/views.js','views/menu.view.js',
+  'views/trackedresources.view.js','views/timecontrols.view.js',
+  'views/buffs.view.js','views/talenttree.view.js',
   'scripts/load-game-model.mjs','scripts/balance/admission.mjs',
   'scripts/balance/ui-inputs.mjs','scripts/balance/engine.mjs',
   'scripts/balance/clock.mjs','scripts/balance/fast-scheduler.mjs',
@@ -206,7 +212,11 @@ export function runPotionCampaign({root,seed=42,endpoint='potion-totem',mode='ac
   };
   observe(state,engine.lightweightObservation());
   const install=()=>{
-    if(!decision.queue.length)throw new Error('Policy produced an empty incomplete queue');
+    if(!decision.queue.length){
+      const error=new Error('Policy cannot progress: '+decision.reason);
+      error.code=decision.phase==='blocked_resource_capacity'?'blocked_route':'invalid_route';
+      throw error;
+    }
     const result=engine.edit({op:'replay',queue:decision.queue},{source:'R01 potion policy',
       policyVersion:POTION_POLICY_VERSION});
     if(result.status!=='admitted')throw new Error('Policy admission failed: '+JSON.stringify(result));
