@@ -74,6 +74,8 @@ const observation={actionName:'Wander',stopped:false,offlineMs:0,
   bonusSpeed:1,lagSpeed:0,boundaryWallMs:60,loopBoundaryWallMs:60000};
 assert.equal(scheduler.select(observation,60000).level,'precision',
   'a calibrated action may not batch across an imminent action boundary');
+assert.equal(scheduler.select({...observation,singleActionName:'Wander'},60000).batchMs,10000,
+  'a repeated single verified action retains its tested fast batch');
 assert.equal(scheduler.select({...observation,actionName:'Looping Potion'},60000).reason,
   'uncalibrated_action');
 
