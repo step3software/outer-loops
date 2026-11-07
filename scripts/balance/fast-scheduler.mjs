@@ -38,7 +38,12 @@ export class FastScheduler {
     if (!eligible) return fallback('uncalibrated_action');
     // Only batch inside the CURRENT calibrated action/talent boundary. Using
     // loopBoundaryWallMs alone can run uncalibrated later actions in one batch.
-    const safeWallMs = Math.min(observation.boundaryWallMs, observation.loopBoundaryWallMs);
+    // A queue consisting of only the same calibrated action may safely use
+    // the separately tested repeated-action loop boundary. Mixed queues must
+    // stop before an unverified next action or talent change.
+    const singleVerifiedAction=observation.singleActionName===observation.actionName;
+    const safeWallMs = singleVerifiedAction?observation.loopBoundaryWallMs:
+      Math.min(observation.boundaryWallMs, observation.loopBoundaryWallMs);
     if (!Number.isFinite(safeWallMs) || safeWallMs <= this.quantumMs) {
       return fallback('near_or_unknown_boundary');
     }
@@ -51,6 +56,6 @@ export class FastScheduler {
     const batchMs = quantizeDown(offered, this.quantumMs);
     if (batchMs < 100) return fallback('quantized_boundary');
     const level = [...BATCH_LEVELS].reverse().find(item => batchMs >= item.ms)?.id ?? 'precision';
-    return {batchMs, level, reason:'calibrated_boundary', boundary:observation.boundaryKind};
+    return {batchMs, level, reason:'calibrated_boundary', boundary:singleVerifiedAction?'loop':observation.boundaryKind};
   }
 }
