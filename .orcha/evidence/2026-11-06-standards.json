@@ -1,0 +1,190 @@
+{
+  "schema": "outer-loops.documentation-observation/v1",
+  "observed_on": "2026-11-06",
+  "purpose": "Documentation and repository metadata alignment; not a standards pin, approval, migration receipt or activation grant",
+  "orcha": {
+    "repository": "Wisteria-Psychological-Services/project-management-orchestration",
+    "branch": "main",
+    "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+    "documents": [
+      {
+        "path": "AGENTS.md",
+        "git_blob": "bb6f8c7efbe07383736ba6d02939bb557607b904",
+        "sha256": "9f749c4394130b150e4cdabeb4394b9465b2da018d35427f6ef2b9df2412deb6"
+      },
+      {
+        "path": "README.md",
+        "git_blob": "4a7b7c7b9977902c2c7bf38fe4550811d218b7ce",
+        "sha256": "1d9c3c0ec439a8f2babae6f090ba34368d4ab17946705781a2ed3cdd2fa51858"
+      },
+      {
+        "path": "config/repositories.json",
+        "git_blob": "e91edec4d7c53966f0880991dcc9fe7af1a1463e",
+        "sha256": "00f76eb618856b51f1c75ee191519a92b575e0231a4d1a2368693a5a76472056"
+      },
+      {
+        "path": "standards/catalog.json",
+        "git_blob": "1a454e3a1dfb2707a95b8d18e4b11b098a0b4023",
+        "sha256": "42190a534f181561a705d509fdc3d95765d0d3a4cce0312a9760cf5607e32dd3"
+      },
+      {
+        "path": "docs/agent-workflows/intent-routing.md",
+        "git_blob": "7444576390bcf93566aa207b7985ed1277b65a33",
+        "sha256": "fc05fdc681d2ae86eedcffad3edf7d8b81ddcfddfd9b7f60ff9bcedb8e096431"
+      },
+      {
+        "path": "docs/agent-workflows/documentation-consolidation.md",
+        "git_blob": "3929db1f5b0f733a0393831a004ed98fb2d2757b",
+        "sha256": "bbdec70077948b73ae2782d7007c61cbc9c2a47b2f05815e6bcc1899e1a2f9a2"
+      },
+      {
+        "path": "docs/agent-workflows/review.md",
+        "git_blob": "1cc0c3dbcadb43dfeb343bed13ae5623cbaec809",
+        "sha256": "7d7d57f531158bb14e71bdaa6103c1bced4ff50219f64e39519320d6b541fe8b"
+      },
+      {
+        "path": "docs/development-workflow.md",
+        "git_blob": "ab5e4ecd2a34efd8944cb77faa58f103b77a69b5",
+        "sha256": "b304fc38cca8931196ab032b3c4aa014c4dee0bc2c89ca0f0988486702ea1818"
+      },
+      {
+        "path": "docs/pr-development-coordination.md",
+        "git_blob": "e30ec4eb7f50441565d8ea5b466908b6c4049bf3",
+        "sha256": "8be2fd08b5ee8e89408a18918ab86c6c565025b4be71c77fc0420d0fc07cc7fd"
+      },
+      {
+        "path": "docs/repository-milestones.md",
+        "git_blob": "74540e95080ad5740b6be09e2597fc2a3f6d75ce",
+        "sha256": "809e4c9872ee1a6896a1bbaea1dbfca938c883f63de4446973fc5de5c6991d98"
+      },
+      {
+        "path": "docs/milestone-file-conventions.md",
+        "git_blob": "0040fc006d90ef36d23dfde5d57615369179161c",
+        "sha256": "3eddc165b4a508a6c605892a7a5bd60fa8ff1dfd915388569b526e6c75789c75"
+      }
+    ]
+  },
+  "project_baseline": {
+    "repository": "step3software/outer-loops",
+    "branch": "dmchurch",
+    "revision": "25ce33330f4dcf1ecf4dd7e702a24f3bb419163d",
+    "documents": [
+      {
+        "path": "AGENTS.md",
+        "git_blob": "f1203417fb9319042f91fd642b4ccaed7abc7653",
+        "sha256": "92fc36d59a80f1cfda58965566e487f858a48732493e246af700166cd027db69"
+      },
+      {
+        "path": "README.md",
+        "git_blob": "c0c627f9cb97a5d4969ec8388c87f08036bd1536",
+        "sha256": "34c4f0286e65828cfbf963daf864fb47d2ff1dabdb99bad70218bc4312109d5e"
+      },
+      {
+        "path": "docs/AGENTS.md",
+        "git_blob": "6c7be68fbeb55bd8f8fd925495b950cae6b63188",
+        "sha256": "7325aef813dac3cebeda48724dbb061af299166d4f80187606948fbbfa3ece01"
+      },
+      {
+        "path": "docs/README.md",
+        "git_blob": "c7186fdb78f2719268cbbd20cf954fcb057587d4",
+        "sha256": "71d48ee3a11541966b59977dfed8c6aedd599c0959ab652b2d5bb58ab680fada"
+      },
+      {
+        "path": "docs/development/ai-workflow.md",
+        "git_blob": "38733bc7e3a050e8a46104f951dddcc63ea13c61",
+        "sha256": "ce091569f4b7209e04986b6f222cc77b211e0461042f092caf4a12c8761dfc16"
+      },
+      {
+        "path": "docs/development/validation.md",
+        "git_blob": "85265fdb7ae9a1cd6f4247976c3e1a22a074c97e",
+        "sha256": "1920946874cbce01b883c957bcb065d108ced7612ed6ea677992af869746139d"
+      },
+      {
+        "path": "docs/workflow/docs-maintenance.md",
+        "git_blob": "0749693db9f300d891af0e0093d04633a12cc2fa",
+        "sha256": "c18a1565ad3586157161a68e7a20155b83ed11a6e06661633921ac23ec3383a0"
+      },
+      {
+        "path": "docs/workflow/feature-or-bug-fix.md",
+        "git_blob": "2603792e78fe3371f49729be4f40397406f0c9c4",
+        "sha256": "821cb84a6c09e5993476a5a3bfbd82921cceb93d5b8f5e270b217d468f149e53"
+      },
+      {
+        "path": "docs/workflow/pr-review.md",
+        "git_blob": "90f9abad1d5db1222b1dc785566b42e16398db36",
+        "sha256": "b194c12e23535152fac2e32fc854b48dc06108a5e7af65f0b4fbd2c8157c6e8d"
+      },
+      {
+        "path": "docs/refactoring/README.md",
+        "git_blob": "2de0acfc42b440d2219a9898911082dbc0c9ae55",
+        "sha256": "d48079db7542e44bd99f8aaf8984b87070c6faaff727c3a1a17374e7c164c61c"
+      },
+      {
+        "path": "docs/refactoring/AGENTS.md",
+        "git_blob": "16ea8fb4229024f2231c1db771ae33602286897d",
+        "sha256": "bac44000ff6ec76a4a6331bf7a32b2cb004be23c3853a1da9df97a15d6903c66"
+      },
+      {
+        "path": "docs/refactoring/handoffs/README.md",
+        "git_blob": "928fb5fffea5bdbe32ad7df346d76d5d506b0b2b",
+        "sha256": "28116573b3cfb1cb6b54455404d24839b8f50530af722d50385574494e4ab377"
+      },
+      {
+        "path": "docs/design/outer-loop/roadmap.md",
+        "git_blob": "be10ce3c8755932e700149a407e5866fc22ca9c8",
+        "sha256": "2839c45d4e78395d489fac013ab014dbb25def23c4faab4160f5b48f923447e2"
+      },
+      {
+        "path": "package.json",
+        "git_blob": "282e0661ba0f8e3fbdb0fbd02f809d5742dd2b46",
+        "sha256": "5dac6dff96222723326559d55fcb3930d0ff8ce0e7480f50cfbf76cafe203cdc"
+      },
+      {
+        "path": "scripts/check-repo.mjs",
+        "git_blob": "bf06308d1c721a8509437f28d92fae294bdf32e9",
+        "sha256": "11841d464215868cd1fbcd9714ece599544bc239ed1bbda28b244d6c37971a22"
+      },
+      {
+        "path": ".github/workflows/static.yml",
+        "git_blob": "13e08ac5173db905f4c6d3a05fefe7f7fcd55359",
+        "sha256": "8a59bfa6f4c99e13c10d8bafb623429ae27d2bdaf7717298c79b61ff88d9f609"
+      },
+      {
+        "path": ".github/workflows/validate.yml",
+        "git_blob": "b5a602939e20823caf50447c419797a08d835622",
+        "sha256": "b77bb05486e19732b3b249cb98339442160b51b5db579131edc63025b75e76cc"
+      }
+    ]
+  },
+  "coverage": {
+    "substantive": [
+      "AGENTS.md",
+      "README.md",
+      "docs/AGENTS.md",
+      "docs/README.md",
+      "docs/development/ai-workflow.md",
+      "docs/development/validation.md",
+      "docs/workflow/docs-maintenance.md",
+      "docs/workflow/feature-or-bug-fix.md",
+      "docs/workflow/pr-review.md",
+      ".orcha/repository.json"
+    ],
+    "selective": [
+      "docs/refactoring/README.md",
+      "docs/refactoring/handoffs/README.md",
+      "docs/design/outer-loop/roadmap.md",
+      "scripts/check-repo.mjs",
+      ".github/workflows/static.yml",
+      ".github/workflows/validate.yml"
+    ],
+    "excluded": [
+      "gameplay implementation review",
+      "full design/refactoring audit",
+      "live worker execution",
+      "milestone migration or acceptance",
+      "service activation"
+    ]
+  },
+  "open_pr_documentation": "No open PRs returned by the repository-scoped GitHub search during this observation; no external PR documentation incorporated",
+  "authority_mode": "legacy"
+}

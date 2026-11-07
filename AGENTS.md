@@ -1,17 +1,39 @@
 # Agent operating instructions
 
-These instructions apply to the entire repository. Read `docs/README.md`, the [source-grounded review](docs/audit/README.md), and the relevant system guide before making a change; nested `AGENTS.md` files add directory-specific requirements.
+These instructions apply to the entire repository. Read [.orcha/repository.json](.orcha/repository.json), [the documentation index](docs/README.md), and the relevant system guide; nested `AGENTS.md` files add directory-specific requirements. The [local Orcha adapter](docs/development/ai-workflow.md) owns project-specific delivery and automation handoff details.
 
 ## Project identity
 
 Outer Loops is an independently maintained fork of Idle Loops: `step3software/outer-loops`, forked from `dmchurch/omsi-loops`, ultimately descended from `omsi6/omsi6.github.io`. It is a browser-based incremental/time-loop game, not a Node server or bundled SPA. The current default branch is `dmchurch`. Upstream code has no GitHub-recognized license; do not assume commercial reuse rights or add a license without the rights holder's authorization. See `docs/reference/upstream-and-rights.md`.
+
+## Shared process and authority
+
+Use current published Orcha `main`: read [Orcha AGENTS.md](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/AGENTS.md),
+[intent routing](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/intent-routing.md), and the selected
+shared procedure. Resolve the [registry](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/config/repositories.json) and
+[standards catalog](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/standards/catalog.json) from the same observed revision.
+Use `standards_resolver` to verify applicable document hashes; record the revision,
+paths and hashes for the run. Links alone do not load instructions. Offline workers
+receive the host's captured text. Do not pin shared versions or require module adoption.
+
+The manifest preserves `dmchurch` as canonical source and `legacy` milestone
+authority. Existing Orcha workflow records retain stage/approval authority; the
+[RF register](docs/refactoring/README.md) retains source delivery history and links
+to canonical specifications. Do not create a competing status ledger or treat
+documented readiness, a PR, or a status edit as owner acceptance. Repository-mode
+cutover, scheduling changes, service activation, merging and deployment retain
+their separate authorization gates.
+
+Questions, investigations and reviews are read-only. Only an explicit authorized
+write scope permits edits. Use the [shared development reading path](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/development-workflow.md#development-process-reading-path)
+for stages, writer protection and publication; retain all local game invariants below.
 
 ## Mandatory orientation
 
 1. Read `docs/audit/findings.md` for known hazards; read `README.md` for local launch and `docs/architecture.md` for script ordering and runtime ownership.
 2. Locate the smallest source-of-truth surface using `docs/reference/code-map.md`. Search the actual code rather than guessing from UI names.
 3. Read the applicable `docs/development/recipes.md`, `docs/state-and-saving.md`, and `docs/development/validation.md` before changing state, actions, saves, or UI.
-4. Inspect `git status` and the current branch; work on a feature branch. Never silently replace or rebase others' work.
+4. Inspect `git status`, current source revision and open PRs. Use a dedicated branch/worktree under `C:\Users\PhillipCurry\projects\codex` and verify existing fenced writer protection before edits. Never silently replace or rebase others' work; preserve uncertain ownership and publication outcomes.
 5. State the expected behavior and regression risks in the PR; preserve the default branch until review.
 
 ## Non-negotiable engineering invariants
@@ -38,9 +60,9 @@ The approved [RF01–RF06 planning register](docs/refactoring/README.md) is not 
 1. Identify the requirement, affected subsystems, invariant and likely failure path.
 2. Make the smallest change with explicit tests. Keep gameplay changes separate from broad refactors and documentation-only PRs.
 3. Update the relevant documentation and `docs/reference/action-catalog.md` when action definitions change. Record major decisions as ADRs in `docs/decisions/`.
-4. Run `npm run check`, `npm run test:model`, `npm run test:action` and `npm run check:mechanics` (static integrity plus limited runtime-model smoke checks). When Python is available, also run `python scripts/check-xml.py` and run `npm run test:browser` when Chromium is available. These are **not** a complete gameplay, save-migration or predictor-parity suite.
+4. For documentation-only changes, run `npm run check`, XML validation when Python is available, and focused manifest/standards validation when `.orcha/` changes. For code changes, run the automated baseline and affected cases in [validation](docs/development/validation.md), including RF01 characterization checks. These are **not** a complete gameplay, save-migration or predictor-parity suite.
 5. Exercise relevant scenarios with `docs/development/validation.md`, including at least one save/reload and loop restart for state-affecting changes.
-6. Open a PR against `dmchurch`. Include scope, changed mechanics, compatibility, test evidence, and what was **not** tested. Do not merge without explicit authorization.
+6. Publish through the authorized host path as a draft PR against `dmchurch`. Include scope, changed mechanics if any, compatibility, exact revision, test evidence, and what was **not** tested. Verify the remote result before releasing owned writer protection. Do not merge without explicit authorization.
 
 ## Change-specific checks
 
@@ -57,4 +79,4 @@ The approved [RF01–RF06 planning register](docs/refactoring/README.md) is not 
 
 ## Honest verification
 
-This repo begins with no established automated gameplay test suite. Do not describe syntax/URL checks as gameplay tests, claim a browser run without running one, or declare compatibility proven from code inspection. Flag unknowns and high-risk code paths in the PR. Prefer reversible, reviewable changes; do not adjust production deploy configuration or game behavior when the request is documentation-only.
+RF01 added synthetic model, challenge and isolated-browser regression coverage; see the [evidence ledger](docs/refactoring/rf01-evidence.md). Authentic historical-save compatibility, full progression and broad predictor parity remain unverified. Do not describe syntax/URL checks as gameplay tests, claim a browser run without running one, or declare compatibility proven from code inspection. Flag unknowns and high-risk code paths in the PR. Prefer reversible, reviewable changes; do not adjust production deploy configuration or game behavior when the request is documentation-only.

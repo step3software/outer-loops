@@ -33,7 +33,7 @@ Run `npm run test:model`, `npm run test:action`, `npm run test:rf01:model`, `npm
 - [Save format and compatibility](docs/state-and-saving.md)
 - [Development setup](docs/development/setup.md)
 - [Validation and smoke-testing](docs/development/validation.md)
-- [AI-assisted change workflow](docs/development/ai-workflow.md)
+- [Orcha development and automation adapter](docs/development/ai-workflow.md)
 - [RF01–RF06 refactoring program and milestone status](docs/refactoring/README.md)
 - [RF01 regression tests — merged coverage and observed behavior](docs/refactoring/rf01-evidence.md)
 - [RF02 persistence-safety implementation readiness and test matrix](docs/refactoring/rf02-readiness.md)

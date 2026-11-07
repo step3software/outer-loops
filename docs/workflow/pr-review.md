@@ -1,13 +1,29 @@
-# Agent thread prompt: PR review and merge readiness
+# Local supplement: PR review and merge readiness
 
-> Repository: `https://github.com/step3software/outer-loops`
->
-> Review PR [number] against `dmchurch`. Read root/nested `AGENTS.md` and the relevant system guides. Check the complete diff, commits, review threads and available checks. Independently verify any factual claims in the PR; do not equate a passing syntax check with gameplay validation.
->
-> Look for broken classic-script order, missing localized XML keys/assets, save or `varName` compatibility, invalid resource/progress curves, stale action catalog, loop/queue regressions, challenge/prestige interactions, predictor worker or snapshot divergence, data-editor/runtime confusion, cloud secrets and rights issues.
->
-> Apply focused repairs to the PR branch when authorized and possible; never bypass constraints by pushing to `dmchurch`. Re-run available checks and review the diff again. Report **ready** only when critical findings are addressed; separately list remaining unverified browser cases. Do not merge without explicit authorization.
+Load the current Orcha [review procedure](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/review.md)
+through the [adapter](../development/ai-workflow.md#read-for-the-requested-action),
+then root/nested instructions and the relevant project guides. Establish the
+PR's actual base/head repositories, refs and revisions; the ordinary publication
+target is `dmchurch`, but a stacked PR may have another actual comparison base.
 
-## Review evidence
+## Game-specific review focus
 
-Document code areas inspected, commands/checks actually passed, manual tests actually observed, changed save/migration assumptions, unresolved risks, and whether the branch is current with the target.
+Trace affected behavior for classic-script order, localized XML keys/assets,
+action `name`/`varName` compatibility, resources/progression, loop/queue semantics,
+save/load and recovery, challenge/prestige interactions, worker/snapshot parity,
+editor/runtime separation, cloud credentials and rights constraints. Use the
+[validation guide](../development/validation.md) and implicated assertions rather
+than equating static checks with gameplay proof.
+
+Map applicable current Orcha and project requirements to inspected paths and
+verification evidence. Report concrete findings, unverified checks and coverage
+limits, including skipped browser cases and save assumptions. Keep source,
+historical tests, current CI, installed behavior and owner acceptance distinct.
+
+Review is **read-only**. A request to review or assess readiness does not permit
+repairs, source/status edits, accepting a milestone, merging or deployment.
+An explicit request to prepare an existing PR for merge uses shared
+[PR readiness](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/pr-readiness.md) and its required
+review/fix procedures; fixes still require authorized scope and existing writer
+protection on that PR's head branch. Never push repairs to `dmchurch` or treat a
+clean review as merge permission.

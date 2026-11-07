@@ -1,52 +1,138 @@
-# AI-assisted development lifecycle
+# Orcha development and automation adapter
 
-The root [AGENTS.md](../../AGENTS.md) is the mandatory entry point. The branch target is `dmchurch`, not `main`. The current repo is a classic-script game: do not assume that a code agent can safely reorganize modules or generate a backend.
+The [root instructions](../../AGENTS.md) and [repository manifest](../../.orcha/repository.json)
+are the entry points. This document owns Outer Loops' local application of the
+shared process. It does not define another lifecycle or status ledger.
 
-For the approved **refactoring program RF01–RF06**, read [the milestone register](../refactoring/README.md), its [validation matrix](../refactoring/validation-matrix.md) and the matching [future implementation handoff](../refactoring/handoffs/README.md). These planning documents **do not authorize** implementation or merging; work begins only on a separate explicit request.
+## Read for the requested action
 
-For proposed Outer Loop / Real World features, first read the [design index](../design/outer-loop/README.md), [decision log](../design/outer-loop/decisions.md) and [RF coordination](../design/outer-loop/integration-with-refactoring.md). Distinguish **product direction** from the game's current `dmchurch` runtime: these design documents do not grant permission to replace legacy prestige, challenges or saves until separately authorized.
+Resolve current published Orcha `main` once for each new context, then read its
+[AGENTS.md](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/AGENTS.md), [intent routing](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/intent-routing.md),
+and selected procedure. The [development process reading path](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/development-workflow.md#development-process-reading-path)
+owns common stages, approvals, commit/PR structure and completion evidence.
 
-## 1. Scope and investigate
+| Requested work | Shared procedure | Local supplement |
+| --- | --- | --- |
+| Question or investigation | [Investigate](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/investigate.md) | [Code map](../reference/code-map.md), affected system guide and source; read-only |
+| Review | [Review](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/review.md) | [Review focus](../workflow/pr-review.md); actual PR base/head; read-only |
+| Bounded bug fix or small feature | [Fix](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/fix.md) or [feature](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/feature.md) | [Game constraints](../workflow/feature-or-bug-fix.md), affected invariants and checks |
+| Milestone plan | [Plan](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/plan.md) | Existing canonical specification, decisions, prior evidence and dependencies |
+| Milestone preparation | [Prepare](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/prepare.md) | Exact accepted plan and existing file-level handoff; no production source edits |
+| Milestone implementation | [Implement](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/implement.md) | Exact approved preparation/files and implementation grant, then relevant source/checks |
+| Documentation update | [Documentation consolidation](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/agent-workflows/documentation-consolidation.md) | [Documentation rules](../AGENTS.md) and [maintenance scope](../workflow/docs-maintenance.md) |
 
-Read [audit findings](../audit/findings.md) and the [progression graph](../audit/progression.md) for known regressions. State the requested player-observable behavior and acceptance tests. Read the smallest set of relevant source files and system docs first. Map the chain from `Action` definitions through engine/state, UI, XML, persistence and worker simulation. When asked to change a behavior, distinguish existing code, proposed design and unknown assumptions. Identify compatibility and licensing implications when relevant.
+Actually load each applicable shared document; a URL is a locator. Use
+`standards_resolver` against the observed main catalog and retain the exact
+revision, document paths, Git blob IDs and SHA-256 hashes as run evidence. The
+host supplies captured instruction text to offline workers; it must not substitute
+`dev`, an old local checkout or a historical evidence snapshot when main cannot
+be verified. Proposed catalog modules are not current rules. The checked-in
+[standards observation](../../.orcha/evidence/2026-11-06-standards.json) records this
+documentation update only, and is not a version pin for later work.
 
-For a nontrivial change, write a short implementation plan in the PR or working notes: constraints, impacted files, save/schema risks, and tests. Ask only when a product decision is genuinely blocked; do not invent mechanics.
+## Source, branches and publication
 
-## 2. Use a branch and small changes
+- Repository identity is `step3software/outer-loops` (GitHub ID `779319581`);
+  canonical source and PR target are `dmchurch`. Refresh its exact revision and
+  inspect open PRs before starting; do not substitute Orcha's `dev` branch.
+- Use `feature/<topic>`, `fix/<topic>` or `docs/<topic>` in an isolated worktree
+  under `C:\Users\PhillipCurry\projects\codex`. Confirm existing fenced writer
+  protection for that branch/checkout before edits and through verified publication.
+  The [control definitions](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/pr-development-coordination.md#branch-ownership-review-holds-and-integration-intent)
+  distinguish branch ownership, review holds and integration intent. Sharing the
+  eventual `dmchurch` target does not reserve that target throughout development.
+- Use only installed, verified coordination/publication support. Preserve active
+  or uncertain claims; do not enable a default-off coordinator or queue to start
+  this project. Record dependency order and exact parent revision for stacked work.
+- Automated model workers follow [Codex execution](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/codex-execution.md):
+  planning/preparation read source without production edits, implementation stays
+  within approved paths, and only the trusted host publishes verified work.
+  Do not expose host credentials or put raw agent traces/player saves in Git.
+- Deliver a focused draft PR against `dmchurch`, with exact source/candidate
+  revisions, scope, checks, compatibility risks and unverified cases. Reconcile
+  unknown remote outcomes before retrying. Keep the PR open for human review.
+  No completion report grants merge, release or deployment permission.
 
-- Start from the current default branch `dmchurch`; inspect open PRs and any in-progress branch before creating a duplicate.
-- Name branches `feature/<short-topic>`, `fix/<short-topic>` or `docs/<short-topic>`.
-- Change the narrowest functional surface; separate renames/refactors from balancing, save migration or new mechanics.
-- Respect nested agent instructions in `views/`, `lang/`, `data/` and `docs/`.
-- Never commit secrets, personal browser saves or generated node_modules artifacts. No hidden network/account mutations.
+The existing [Pages workflow](../../.github/workflows/static.yml) deploys on
+pushes to `dmchurch` and manual dispatch. A merge to this branch can therefore
+publish the game; do not merge or manually trigger deployment as documentation
+cleanup. Orcha's own local-dev delivery exception does not apply to Outer Loops.
 
-## 3. Preserve invariants
+## Milestone authority and reuse
 
-For gameplay, review zone indices, action identity, resource bounds, skill/stat curves, queue semantics, loop reset, save/load, stories and predictor parity. For UI, review localized keys, update hooks and responsiveness. For worker changes, avoid DOM access. Large architectural changes or new zone/additional persistence format require an ADR.
+The manifest declares **legacy** authority. Existing Orcha
+`workflow/records.json` owns orchestration stage acceptance and implementation
+grants. The [RF register](../refactoring/README.md) owns source delivery history
+and links to the existing `RFxx-*.md` specifications. Its historical vocabulary
+does not prove an Orcha stage receipt. Preserve RF01's merged completion and
+reuse RF02's [readiness brief](../refactoring/rf02-readiness.md),
+[test matrix](../refactoring/rf02-test-matrix.md) and
+[handoff](../refactoring/handoffs/RF02.md); do not restart completed work or
+discard those preparation candidates because accepted host artifacts are absent.
 
-Update the docs in the same branch as the implementation: [architecture](../architecture.md), [gameplay](../gameplay.md), [state](../state-and-saving.md), [predictor](../predictor.md), [validation](validation.md), [code map](../reference/code-map.md), [action catalog](../reference/action-catalog.md).
+`milestones.root: docs/refactoring` locates the existing RF material. It does not
+claim that typed state companions exist, enroll another roadmap or migrate
+authority. Preserve current specification paths and established criterion IDs.
+New milestone specifications contain one stable ID per file with independently
+testable scope, dependencies and verification, following the local layout and
+[milestone format](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/milestone-file-conventions.md). A future
+[repository milestone migration](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/repository-milestones.md) requires
+comparison, preserved approvals/artifact bytes and the existing owner cutover
+path. Do not generate accepted state or placeholder approval receipts here.
 
-## 4. Validate honestly
+The [Real World roadmap](../design/outer-loop/roadmap.md) remains proposed
+sequencing. Its [decision log](../design/outer-loop/decisions.md) owns approved
+direction and unresolved choices. The [RF integration guide](../design/outer-loop/integration-with-refactoring.md)
+owns scope tensions such as RF04. This adapter accepts no new game mechanics,
+currencies, migration terms or milestone implementation scope.
 
-Run `npm run check` and `python scripts/check-xml.py` when the respective runtimes are available. Run the matching [manual smoke tests](validation.md) in a **disposable** browser profile. Distinguish syntax checks from gameplay verification and record any environment limitation. Never claim a test passed because it was not available.
+## Host handoff and remaining gates
 
-## 5. Review and hand off
+This repository provides the source identity, current-main standards reference,
+local contracts and publication/check instructions. These become canonical when
+the documentation PR is reviewed and merged; a passing manifest check alone does
+not prove that a host has refreshed them or that automation can execute work.
 
-Open a PR against `dmchurch` with:
+Read-only inspection of the existing host on **2026-11-06** found Outer Loops'
+priority **Off**. The legacy records retain historical RF01 completion and RF02
+source preparation, without accepted Orcha RF02 plan/preparation artifacts.
+This is a dated observation, not a live priority or approval ledger. The host's
+existing `config/priorities.json`, workflow records and runtime journals remain
+authoritative. This documentation update changes none of them.
 
-- Context and exact user-visible change.
-- Files/system boundaries touched and reason.
-- Save compatibility, action identifier and player progress considerations.
-- Explicit automated and interactive test evidence, including **not run**.
-- Potential regressions and rollback route.
-- Documentation/ADR updates.
+For the next authorized stage, the trusted host must refresh canonical `dmchurch`
+after publication, reconcile the selected milestone against existing source and
+legacy evidence, reuse existing artifacts and collect only missing stage decisions.
+An owner priority/resume decision is required before new starts while the project
+is Off; it does not itself accept a plan or authorize implementation. Current
+quota/model/source checks, writer claims and any service/maintenance activation
+gates still apply. Never start workers, accept stages or activate services merely
+because this repository has a manifest.
 
-Review the diff for accidental changes, stale comments, hard-coded text, secrets, misleading claims, and framework/build creep. Avoid merging without explicit authorization.
+## Local implementation and verification
 
-## Ready-to-use task prompt
+Preserve classic-script order, stable actions/zone indices, save and reset
+boundaries, localization, and foreground/worker predictor behavior. Use the
+[code map](../reference/code-map.md) to locate the owning source, then the
+affected system guide and [recipes](recipes.md). Update those owners with code
+changes; use an [ADR](../decisions/README.md) for a significant durable decision.
 
-> Implement [specific behavior] in `step3software/outer-loops`. First read `AGENTS.md` and the related system guide. Work on a branch from `dmchurch` and preserve source/runtime/save compatibility. Update docs and action catalog where applicable. Run the checked-in static checks, exercise the relevant smoke scenarios if a browser is available, and open a PR with test evidence and outstanding risks. Do not merge.
+For documentation-only work, run `npm run check`, `python scripts/check-xml.py`
+when Python is available, and the focused manifest/standards checks below when
+the manifest or instruction chain changes. Code changes use the full
+[automated baseline and affected scenarios](validation.md). All state-affecting
+changes need save/reload and loop-restart coverage with synthetic data or a
+disposable profile. Report only checks actually performed.
 
-## Documentation-only workflow
+From a verified Orcha source checkout, the existing portable check is:
 
-Read [documentation maintenance](../workflow/docs-maintenance.md). Verify claims against source, repair relative links, run checks and open a docs PR without touching gameplay. Documentation does not establish unverified implementation guarantees.
+```powershell
+python -B standards_check.py --repository <outer-loops-worktree> --orcha <verified-orcha-checkout>
+```
+
+This validates the manifest, applicable current-main hashes, local contract
+paths and any existing typed records. Zero typed records is expected in this
+legacy integration; the check explicitly does not infer workflow approval or
+domain compliance. Validate task-specific nested instructions through
+`standards_resolver.resolve(..., task=..., paths=[...])` for affected paths.
+The command neither enables scheduling nor starts a service.
