@@ -40,6 +40,7 @@ export function loadGameModel({ withViewStubs = false, withChallenges = false, r
             adjustExpMult() {}
             updateNextActions() {}
             updateLockedHidden() {}
+            showTown() {}
             updateStats() {}
             updateSkills() {}
             updateBuffs() {}
