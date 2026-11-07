@@ -45,12 +45,14 @@ function knownGood(name,count) {
 function forestTravel(state) {
   // A new loop begins in Beginnersville; earn supplies and travel at each stage.
   const good=state.limited;
+  const healCount=good.goodLong>0?Math.max(0,Math.ceil((51-good.goodLong)/3)):0;
   return [...knownGood('Smash Pots',good.goodPots),
     ...knownGood('Pick Locks',good.goodLocks),
     ...knownGood('Short Quest',good.goodShort),
     ...knownGood('Long Quest',good.goodLong),
-    ...(good.goodLong>0?[q('Heal The Sick',Math.min(8,good.goodLong),'maxEffort'),
-      q('Haggle',Math.min(15,good.goodLong))]:[]),
+    ...(healCount>0?[q('Heal The Sick',healCount,'maxEffort')]:[]),
+    // Preserve 51 reputation for positive Judgement; haggling it away
+    // would strand the policy in Mt. Olympus despite successful quests.
     q('Buy Supplies',1),q('Start Journey',1)];
 }
 

@@ -71,6 +71,13 @@ const recraft=choosePotionPolicy(state({loopingPotion:true}),'potion-totem');
 assert.equal(recraft.phase,'recraft_potion_and_totem');
 assert.equal(['Start Journey','Continue On','Start Trek','Looping Potion','Totem'].every(name=>
   recraft.queue.some(item=>item.name===name)),true);
+const repReady=state({...potionReadyState,townsUnlocked:[0,1,2,3,4],
+  skills:{...potionReadyState.skills,Spatiomancy:0}});
+const judgementPlan=choosePotionPolicy(repReady).queue;
+assert.equal(judgementPlan.some(item=>item.name==='Haggle'),false,
+  'resource preparation must not consume the reputation needed for positive Judgement');
+assert.equal(judgementPlan.find(item=>item.name==='Heal The Sick').loops,8,
+  '27 known-good Long Quests plus eight heals attain 51 reputation');
 const olympus=choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4]})).queue;
 const at=name=>olympus.findIndex(item=>item.name===name);
 assert.ok(at('Buy Supplies')>=0&&at('Start Journey')>at('Buy Supplies')&&
