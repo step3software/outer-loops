@@ -204,6 +204,7 @@ try {
     JSON.parse(JSON.stringify(model.evaluate('({cap:getBuffCap("Ritual"),model:buffCaps.Ritual})'))));
 
   // Fresh browser, real driver clock path, 20 ms quanta, no synthetic progress.
+  await browser('localStorage.clear()'); // disposable profile: discard synthetic calibration state
   await client.send('Page.reload',{ignoreCache:true});await waitForBoot();
   const actual=await browser('(() => {'+
     'if(!gameIsStopped)pauseGame();animationTicksEnabled=false;clearInterval(mainTickLoop);'+
