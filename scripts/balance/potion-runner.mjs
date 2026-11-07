@@ -165,7 +165,10 @@ function sectionForPhase(phase,state){
   if(phase==='olympus')return 'judgement';
   if(phase==='valhalla')return state.skills.Spatiomancy>=1?'valhalla_training':'spatiomancy_requirement_met';
   if(phase==='startington')return state.townsUnlocked.includes(6)?'jungle_totem_unlocked':'jungle_entry';
-  if(phase==='craft_and_totem'||phase==='carry_potion')return state.loopingPotion?
+  if(phase==='imbuement_preparation')return 'imbuement_prerequisites';
+  if(phase==='resource_capacity_growth')return 'potion_resource_capacity_growth';
+  if(phase==='discover_potion_resources')return 'potion_resource_discovery';
+  if(phase==='craft_and_totem'||phase==='recraft_potion_and_totem')return state.loopingPotion?
     'looping_potion_used_at_totem':'potion_requirements_complete';
   return 'fresh_campaign';
 }
@@ -255,9 +258,9 @@ export function runPotionCampaign({root,seed=42,endpoint='potion-totem',mode='ac
     transitions.push({loop:state.totals.loops,phase:decision.phase,reason:decision.reason,
       queueHash:result.afterQueueHash,queue:result.resultQueue});onTransition?.(transitions.at(-1));
   };
-  install();engine.start();
   let status='incomplete',failure=null,lastCheckpoint='fresh_campaign';
   try{
+    install();engine.start();
     while(true){
       const beforeObs=engine.lightweightObservation(),hostBefore=performance.now(),section=sectionForPhase(decision.phase,state);
       engine.burstPolicyLoops(64,{stopOnActions:[endpoint==='potion-craft'?'Looping Potion':'Totem']});
