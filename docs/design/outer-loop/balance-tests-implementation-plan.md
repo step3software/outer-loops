@@ -1,6 +1,6 @@
 # RW00 campaign balance tests — implementation plan
 
-**Status:** Test foundation and accelerated scheduler calibration in progress on a stacked implementation branch. No complete earned campaign or benchmark duration has been measured. This is not acceptance of the complete RW00 milestone or permission to rebalance.
+**Status:** Test foundation, calibrated policy bursts, and an incomplete earned R01 potion policy are in progress on a stacked implementation branch. The policy has reached the Forest Alchemy/herb boundary from fresh defaults, but no complete potion craft, Totem use, or benchmark duration has passed. This is not acceptance of the complete RW00 milestone or permission to rebalance.
 
 **Owner request:** Codex chat, 2026-11-06 (America/New_York): “Write an implementation plan for those tests”.
 

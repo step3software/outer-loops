@@ -2,15 +2,14 @@
 // RW00 real-browser calibration, reusing the disposable Chrome/CDP smoke patterns.
 // No real player saves, accounts or production changes.
 import assert from 'node:assert/strict';
-import {createHash} from 'node:crypto';
 import {loadGameModel} from './load-game-model.mjs';
 import {BalanceEngine} from './balance/engine.mjs';
 import {admitQueueEdit,queueSnapshot,ADMISSION_VERSION} from './balance/admission.mjs';
 import {createDefaultUiProfile,installUiProfile,readUiProfile,changeUiInput} from './balance/ui-inputs.mjs';
 import {CLOCK_VERSION} from './balance/clock.mjs';
-import {createCalibrationManifest} from './balance/calibration.mjs';
 import {SCHEDULER_VERSION} from './balance/fast-scheduler.mjs';
 import {CALIBRATION_SCHEMA} from './balance/report.mjs';
+import {createPotionAcceleration,potionSourceIdentity} from './balance/potion-runner.mjs';
 import {spawn, spawnSync} from 'node:child_process';
 import {createServer} from 'node:http';
 import {existsSync, mkdtempSync, readFileSync, rmSync, statSync, mkdirSync, writeFileSync} from 'node:fs';
@@ -107,17 +106,7 @@ async function connect(url) {
 }
 
 
-const sourceFiles=['driver.js','actions.js','actionList.js','town.js','stats.js',
-  'saving.js','helpers.js','scripts/load-game-model.mjs',
-  'scripts/balance/admission.mjs','scripts/balance/ui-inputs.mjs',
-  'scripts/balance/engine.mjs','scripts/balance/clock.mjs',
-  'scripts/balance/fast-scheduler.mjs','scripts/balance/calibration.mjs',
-  'scripts/balance/events.mjs'];
-function sourceHash() {
-  const hash=createHash('sha256');
-  for(const name of sourceFiles){hash.update(name+'\0');hash.update(readFileSync(join(root,name)));}
-  return hash.digest('hex');
-}
+const potionSource=potionSourceIdentity(root);
 const args=process.argv.slice(2);
 const getArg=name=>{const i=args.indexOf(name);return i<0?null:args[i+1];};
 const phase=getArg('--phase')??'calibration';
@@ -244,10 +233,7 @@ try {
   }
   cases.push({id:'real-driver-opening',status:'passed',browser:actual,
     model:Object.fromEntries(Object.keys(actual).map(key=>[key,expected[key]]))});
-  const accelerationCalibration=createCalibrationManifest({sourceHash:sourceHash(),
-    schedulerVersion:SCHEDULER_VERSION,scenarios:['real-driver-opening'],actions:{
-      Wander:{status:'passed',maxBatchMs:10000,scenario:'real-driver-opening'}
-    }});
+  const accelerationCalibration=createPotionAcceleration(potionSource.identity);
   const accelerated=new BalanceEngine({seed:42,mode:'accelerated',
     calibration:accelerationCalibration,maxSimulatedSeconds:5.2});
   assert.equal(accelerated.edit({op:'add',name:'Wander',loops:1}).status,'admitted');
@@ -275,14 +261,16 @@ try {
   assert.notEqual(offsetClock.clock.elapsedMs,engine.clock.elapsedMs,
     'clock offset negative control must be detected');
   const report={schema:CALIBRATION_SCHEMA,status:'passed',phase,
-    sourceHash:sourceHash(),browserVersion,admissionVersion:ADMISSION_VERSION,
+    sourceHash:potionSource.identity,browserVersion,admissionVersion:ADMISSION_VERSION,
     schedulerVersion:SCHEDULER_VERSION,clockVersion:CLOCK_VERSION,
     accelerationCalibrationIdentity:accelerationCalibration.identity,
     uiConfigurationHash:config.configurationHash,
     clockQuantumMs:20,toleranceSeconds:0.021,scenarios:cases};
   if(output){
     const destination=resolve(root,output);
-    if(!destination.startsWith(root+sep))throw Error('Output must remain in repository');
+    if(!destination.startsWith(join(root,'.balance-results')+sep)){
+      throw Error('Output must remain beneath .balance-results');
+    }
     mkdirSync(dirname(destination),{recursive:true});
     writeFileSync(destination,JSON.stringify(report,null,2)+'\n');
   }
