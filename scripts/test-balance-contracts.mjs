@@ -7,7 +7,7 @@ import {admitQueueEdit,queueSnapshot} from './balance/admission.mjs';
 import {createDefaultUiProfile,installUiProfile,readUiProfile,changeUiInput,
   assertMatchingUiProfiles,fingerprint} from './balance/ui-inputs.mjs';
 import {assertCalibration,assertCompleteReport,assertComparableBaseline,
-  CHECKPOINTS,REPORT_SCHEMA,CALIBRATION_SCHEMA} from './balance/report.mjs';
+  createIncompleteReport,CHECKPOINTS,REPORT_SCHEMA,CALIBRATION_SCHEMA} from './balance/report.mjs';
 
 const unpack = (model, expr) => JSON.parse(JSON.stringify(model.evaluate(expr)));
 const fresh = () => loadGameModel({withViewStubs:true,rngSeed:42});
@@ -228,6 +228,7 @@ function potCase(checked, withProfile) {
 function calibration() {
   return {schema:CALIBRATION_SCHEMA,status:'passed',browserVersion:'Chrome fixture only',
     sourceHash:'a'.repeat(64),admissionVersion:'a/v1',schedulerVersion:'s/v1',
+    clockVersion:'clock/v1',accelerationCalibrationIdentity:'c'.repeat(64),
     uiConfigurationHash:'ui-default',scenarios:[{status:'passed',browser:true,model:true}]};
 }
 function report(cal=calibration()) {
@@ -235,9 +236,14 @@ function report(cal=calibration()) {
     sourceHash:cal.sourceHash,policyHash:'policy',optionsHash:'options',
     uiConfigurationHash:cal.uiConfigurationHash,uiChangePolicy:'recorded-ui-events/v1',
     admissionVersion:cal.admissionVersion,checkpointVersion:'c/v1',
-    schedulerVersion:cal.schedulerVersion,calibrationHash:fingerprint(cal),
+    schedulerVersion:cal.schedulerVersion,schedulerCalibrationIdentity:cal.accelerationCalibrationIdentity,
+    calibrationHash:fingerprint(cal),
     seeds:[{seed:42,status:'complete',totalSeconds:14,effectiveSeconds:14,
       loopCount:1,hostSeconds:0.1,uiStateHash:'ui-state',
+      rng:{algorithm:'xorshift32/v1',seed:42,state:42,calls:0},
+      performance:{hostSeconds:0.1,outerSchedulingCalls:1,internalActionTicks:14,
+        simulatedSecondsPerHostSecond:140,precisionFallbacks:0,peakHeapBytes:1024,
+        batchCounts:{medium:1}},
       uiChangeHistoryHash:'ui-history',effectiveUiConfigurationHash:'ui-effective',
       checkpoints:CHECKPOINTS.map((id,i)=>({id,status:'complete',seconds:i,
         ...(id==='C14'?{successfulRestoreTime:true}:{})})),
@@ -253,6 +259,7 @@ function report(cal=calibration()) {
   corrupt(r=>{r.seeds[0].checkpoints.pop();});
   corrupt(r=>{r.seeds[0].checkpoints[12].seconds=NaN;});
   corrupt(r=>{r.seeds[0].attribution.intervals[0].seconds=28;});
+  corrupt(r=>{r.seeds[0].performance.hostSeconds=0.2;});
   corrupt(r=>{r.seeds[0].checkpoints[14].successfulRestoreTime=false;});
   corrupt(r=>{r.uiConfigurationHash='changed';});
   corrupt(r=>{r.calibrationHash='stale';});
@@ -270,6 +277,9 @@ function report(cal=calibration()) {
   candidate.seeds[0].effectiveUiConfigurationHash='changed-cap-or-checkbox';
   assert.throws(()=>assertComparableBaseline(baseline,candidate),/Incomparable/);
   assert.throws(()=>assertCalibration({...cal,status:'failed'}),/not passed/);
+  const incomplete=createIncompleteReport({route:'R01',reason:'budget_exceeded',lastCheckpoint:'C03'});
+  assert.equal(incomplete.certifiedBaseline,false);
+  assert.throws(()=>assertCompleteReport(incomplete,cal),/Incomplete/);
   console.log('PASS RW00 report: calibration gate, false completion, accounting and incompatible runs rejected.');
 }
 // Late-game synthetic boundary fixtures characterize rules without advancing a route.

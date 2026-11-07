@@ -8,6 +8,8 @@ import {BalanceEngine} from './balance/engine.mjs';
 import {admitQueueEdit,queueSnapshot,ADMISSION_VERSION} from './balance/admission.mjs';
 import {createDefaultUiProfile,installUiProfile,readUiProfile,changeUiInput} from './balance/ui-inputs.mjs';
 import {CLOCK_VERSION} from './balance/clock.mjs';
+import {createCalibrationManifest} from './balance/calibration.mjs';
+import {SCHEDULER_VERSION} from './balance/fast-scheduler.mjs';
 import {CALIBRATION_SCHEMA} from './balance/report.mjs';
 import {spawn, spawnSync} from 'node:child_process';
 import {createServer} from 'node:http';
@@ -40,8 +42,11 @@ const server = createServer((req, res) => {
   }
 });
 const browserBinary = () => {
-  for(const candidate of [process.env.CHROME_BIN, 'google-chrome',
-      'google-chrome-stable', 'chromium', 'chromium-browser'].filter(Boolean)) {
+  for(const candidate of [process.env.CHROME_BIN,
+      'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+      'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+      'google-chrome','google-chrome-stable','chromium','chromium-browser'].filter(Boolean)) {
+    if(candidate.includes('\\') && existsSync(candidate))return candidate;
     if(spawnSync(candidate, ['--version'], {timeout:4000}).status === 0) return candidate;
   }
   throw Error('Google Chrome / Chromium not available; cannot run browser smoke test');
@@ -105,7 +110,9 @@ async function connect(url) {
 const sourceFiles=['driver.js','actions.js','actionList.js','town.js','stats.js',
   'saving.js','helpers.js','scripts/load-game-model.mjs',
   'scripts/balance/admission.mjs','scripts/balance/ui-inputs.mjs',
-  'scripts/balance/engine.mjs','scripts/balance/clock.mjs'];
+  'scripts/balance/engine.mjs','scripts/balance/clock.mjs',
+  'scripts/balance/fast-scheduler.mjs','scripts/balance/calibration.mjs',
+  'scripts/balance/events.mjs'];
 function sourceHash() {
   const hash=createHash('sha256');
   for(const name of sourceFiles){hash.update(name+'\0');hash.update(readFileSync(join(root,name)));}
@@ -124,13 +131,13 @@ try {
   });
   const url='http://127.0.0.1:'+server.address().port+'/';
   const bin=browserBinary();
-  const browserVersion=spawnSync(bin,['--version'],{encoding:'utf8'}).stdout.trim();
   chrome=spawn(bin,[
     '--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage',
     '--no-first-run','--disable-extensions','--remote-allow-origins=*',
     '--remote-debugging-port=0','--user-data-dir='+profile,url
   ],{stdio:'ignore'});
   client=await connect(await debuggerPage(await debugPort(profile,chrome),url));
+  const browserVersion=(await client.send('Browser.getVersion')).product;
   await client.send('Runtime.enable');await client.send('Page.enable');
   async function waitForBoot(){
     for(let i=0;i<120;i++){
@@ -206,17 +213,27 @@ try {
   // Fresh browser, real driver clock path, 20 ms quanta, no synthetic progress.
   await browser('localStorage.clear()'); // disposable profile: discard synthetic calibration state
   await client.send('Page.reload',{ignoreCache:true});await waitForBoot();
-  const actual=await browser('(() => {'+
+  const browserRun=await browser('(() => {'+
     'if(!gameIsStopped)pauseGame();animationTicksEnabled=false;clearInterval(mainTickLoop);'+
     'cancelAnimationFrame(animationFrameRequest);'+
+    // Headless Chrome can accrue lag credit while the page is booting before
+    // CDP can pause it. Record and isolate that pre-measurement state.
+    'const bootOfflineMs=totalOfflineMs;totalOfflineMs=0;bonusSpeed=1;lagSpeed=0;gameTicksLeft=0;'+
     'options.predictor=false;options.pauseBeforeRestart=false;'+
     'options.pauseOnFailedLoop=false;options.pauseOnComplete=false;'+
     'options.repeatLastAction=false;options.keepCurrentList=false;options.fractionalMana=false;'+
     'actions.clearActions();actions.addAmount=1;addActionToList("Wander",0,false,-1);'+
     'gameIsStopped=false;restart();'+
-    'for(let i=0;i<260;i++){gameTicksLeft+=20;executeGameTicks(performance.now()+20);}'+
-    'return {time:totals.time+timeCounter,effectiveSeconds:totals.effectiveTime+effectiveTime,'+
-    'loops:totals.loops,progress:towns[0].expWander,offlineMs:totalOfflineMs};})()');
+    // Keep the simulated quantum at 20 ms while giving host CPU work a distinct
+    // deadline. A missed host deadline would create lag/offline credit and fail.
+    'for(let i=0;i<260;i++){gameTicksLeft+=20;executeGameTicks(performance.now()+1000);}'+
+    'return {bootOfflineMs,measurement:{time:totals.time+timeCounter,effectiveSeconds:totals.effectiveTime+effectiveTime,'+
+    'loops:totals.loops,progress:towns[0].expWander,offlineMs:totalOfflineMs}};})()');
+  const actual=browserRun.measurement;
+  assert.ok(Number.isFinite(browserRun.bootOfflineMs)&&browserRun.bootOfflineMs>=0);
+  cases.push({id:'browser-boot-isolation',status:'passed',
+    browser:{discardedPreMeasurementOfflineMs:browserRun.bootOfflineMs},
+    model:{initialOfflineMs:0},coverage:'pre-measurement headless boot only'});
   const engine=new BalanceEngine({seed:42});
   assert.equal(engine.edit({op:'add',name:'Wander',loops:1}).status,'admitted');
   engine.start();const expected=engine.runSteps(260).last;
@@ -227,9 +244,41 @@ try {
   }
   cases.push({id:'real-driver-opening',status:'passed',browser:actual,
     model:Object.fromEntries(Object.keys(actual).map(key=>[key,expected[key]]))});
+  const accelerationCalibration=createCalibrationManifest({sourceHash:sourceHash(),
+    schedulerVersion:SCHEDULER_VERSION,scenarios:['real-driver-opening'],actions:{
+      Wander:{status:'passed',maxBatchMs:10000,scenario:'real-driver-opening'}
+    }});
+  const accelerated=new BalanceEngine({seed:42,mode:'accelerated',
+    calibration:accelerationCalibration,maxSimulatedSeconds:5.2});
+  assert.equal(accelerated.edit({op:'add',name:'Wander',loops:1}).status,'admitted');
+  accelerated.start();
+  while(accelerated.clock.elapsedMs<5200)accelerated.step({full:false});
+  const acceleratedExpected=accelerated.snapshot();
+  for(const [key,value] of Object.entries(actual)){
+    const tolerance=['time','effectiveSeconds'].includes(key)?0.021:0;
+    assert.ok(Math.abs(value-acceleratedExpected[key])<=tolerance,
+      'Accelerated/browser clock '+key+' '+value+' vs '+acceleratedExpected[key]);
+  }
+  cases.push({id:'accelerated-driver-opening',status:'passed',browser:actual,
+    model:Object.fromEntries(Object.keys(actual).map(key=>[key,acceleratedExpected[key]]))});
+
+  const contaminated=new BalanceEngine({seed:42,mode:'accelerated',calibration:accelerationCalibration});
+  assert.equal(contaminated.edit({op:'add',name:'Wander',loops:1}).status,'admitted');
+  contaminated.start();contaminated.model.evaluate('totalOfflineMs=1000;bonusSpeed=5');
+  assert.throws(()=>contaminated.step(),error=>error.code==='unsupported_runtime');
+  const alteredRng=new BalanceEngine({seed:1});
+  assert.notDeepEqual(alteredRng.model.rngSnapshot(),engine.model.rngSnapshot(),
+    'altered RNG seed must be detected');
+  const offsetClock=new BalanceEngine({seed:42});
+  assert.equal(offsetClock.edit({op:'add',name:'Wander',loops:1}).status,'admitted');
+  offsetClock.start();offsetClock.step();
+  assert.notEqual(offsetClock.clock.elapsedMs,engine.clock.elapsedMs,
+    'clock offset negative control must be detected');
   const report={schema:CALIBRATION_SCHEMA,status:'passed',phase,
     sourceHash:sourceHash(),browserVersion,admissionVersion:ADMISSION_VERSION,
-    schedulerVersion:CLOCK_VERSION,uiConfigurationHash:config.configurationHash,
+    schedulerVersion:SCHEDULER_VERSION,clockVersion:CLOCK_VERSION,
+    accelerationCalibrationIdentity:accelerationCalibration.identity,
+    uiConfigurationHash:config.configurationHash,
     clockQuantumMs:20,toleranceSeconds:0.021,scenarios:cases};
   if(output){
     const destination=resolve(root,output);
@@ -242,7 +291,11 @@ try {
   console.error('FAIL RW00 real browser calibration: '+(error.stack||error));
   process.exitCode=1;
 }finally{
-  client?.close();chrome?.kill('SIGTERM');
+  client?.close();
+  if(chrome&&chrome.exitCode===null){
+    chrome.kill('SIGTERM');
+    await new Promise(resolve=>{chrome.once('exit',resolve);setTimeout(resolve,2000);});
+  }
   await new Promise(done=>server.close(done));
-  rmSync(profile,{recursive:true,force:true});
+  rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:100});
 }
