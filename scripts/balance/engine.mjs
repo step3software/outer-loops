@@ -24,7 +24,7 @@ function read(model, expression) {
 export class BalanceEngine {
   constructor({seed = 42, quantumMs = 20, uiProfile, mode = 'reference', calibration,
     maxBatchMs = 10000, profiler = false, maxHostMs = 30*60*1000,
-    maxSimulatedSeconds = 180*86400} = {}) {
+    maxSimulatedSeconds = 180*86400, policyBoundaries = false, eventActions = null} = {}) {
     if (!Number.isFinite(quantumMs) || quantumMs <= 0 || quantumMs > 20) {
       throw new RangeError('Uncalibrated quantum: use 0 < quantumMs <= 20');
     }
@@ -43,6 +43,8 @@ export class BalanceEngine {
       new BalanceProfiler({budgetMs:maxHostMs}) : profiler || null;
     this.maxHostMs = maxHostMs;
     this.maxSimulatedSeconds = maxSimulatedSeconds;
+    this.policyBoundaries = policyBoundaries;
+    this.filteredEvents = Array.isArray(eventActions);
     this.startHostMs = hostPerformance.now();
     this.uiInitial = installUiProfile(this.model, uiProfile ?? createDefaultUiProfile(this.model));
     this.edits = [];
@@ -50,11 +52,23 @@ export class BalanceEngine {
     this.steps = 0;
     this.events = [];
     this.model.evaluate('globalThis.__balanceCounters={actionTicks:0,uiUpdates:0};' +
+      'globalThis.__balanceActionEvents=[];globalThis.__balanceEventFilter=' +
+      (Array.isArray(eventActions)?'new Set('+JSON.stringify(eventActions)+')':'null') + ';' +
+      'globalThis.__balanceEventSeen=new Set();' +
       'const __balanceActionTick=actions.tick;actions.tick=function(...args){' +
-      '__balanceCounters.actionTicks++;return __balanceActionTick.apply(this,args)};' +
+      '__balanceCounters.actionTicks++;const before=totals.actions;' +
+      'const spent=__balanceActionTick.apply(this,args);if(totals.actions>before&&' +
+      '(!__balanceEventFilter||(__balanceEventFilter.has(this.currentAction?.name)&&' +
+      '!__balanceEventSeen.has(this.currentAction?.name)))){' +
+      '__balanceEventSeen.add(this.currentAction?.name);const speed=getSpeedMult();' +
+      'const delta=spent/speed/baseManaPerSecond;__balanceActionEvents.push({' +
+      'type:"action_completed",action:this.currentAction?.name??null,' +
+      'seconds:totals.time+timeCounter+delta,effectiveSeconds:totals.effectiveTime+effectiveTime+delta});}' +
+      'return spent};' +
       'const __balanceViewUpdate=view.update;view.update=function(...args){' +
       '__balanceCounters.uiUpdates++;return __balanceViewUpdate.apply(this,args)};');
-    this.model.evaluate('options.predictor=false;options.pauseBeforeRestart=false;' +
+    this.model.evaluate('options.predictor=false;options.pauseBeforeRestart=' +
+      (policyBoundaries ? 'true' : 'false') + ';' +
       'options.pauseOnFailedLoop=false;options.pauseOnComplete=false;' +
       'options.repeatLastAction=false;options.keepCurrentList=false;' +
       'options.fractionalMana=false;options.speedIncreaseBackground=2;');
@@ -90,10 +104,50 @@ export class BalanceEngine {
     return this.snapshot();
   }
 
+  resumePolicyLoop() {
+    if (!this.policyBoundaries || !this.started || !read(this.model, 'gameIsStopped')) {
+      throw new BalanceRuntimeError('invalid_route','Policy resume requires a paused loop boundary',
+        this.snapshot());
+    }
+    this.model.evaluate('pauseGame(false)');
+    return this.snapshot();
+  }
+
+  burstPolicyLoops(count = 16) {
+    if (!this.policyBoundaries || !this.started || !Number.isSafeInteger(count) || count < 1) {
+      throw new BalanceRuntimeError('invalid_route','Policy burst requires a started boundary engine');
+    }
+    const before=this.lightweightObservation();
+    if (before.stopped) throw new BalanceRuntimeError('stalled','Resume before a policy burst',before);
+    if (hostPerformance.now()-this.startHostMs>=this.maxHostMs) {
+      throw new BalanceRuntimeError('budget_exceeded','Declared measurement ceiling reached',before);
+    }
+    const operation=()=>read(this.model,'(() => {' +
+      'const target=totals.loops+'+count+';let chunks=0;' +
+      'while(totals.loops<target&&chunks<100000){' +
+      'if(gameIsStopped)pauseGame(false);gameTicksLeft+=60000;' +
+      'executeGameTicks(performance.now()+60000);chunks++;}' +
+      'return {chunks,target,reached:totals.loops};})()');
+    const result=this.profiler?this.profiler.time('gameEngine',operation):operation();
+    if(result.chunks>=100000)throw new BalanceRuntimeError('stalled','Policy burst guard exceeded');
+    this.clock.advance(result.chunks*60000);
+    this.steps++;
+    const after=this.lightweightObservation();
+    const exactActionEvents=read(this.model,'__balanceActionEvents.slice('+before.actionEventCount+')');
+    const events=collectEvents(before,after,exactActionEvents,!this.filteredEvents,true);
+    const firstSequence=this.events.length;
+    this.events.push(...events.map((event,index)=>({...event,sequence:firstSequence+index})));
+    this.profiler?.count('outerSchedulingCalls');
+    this.profiler?.count('internalActionTicks',after.internalActionTicks-before.internalActionTicks);
+    this.profiler?.count('uiUpdates',after.uiUpdates-before.uiUpdates);
+    return after;
+  }
+
   snapshot() {
     const operation = () => JSON.parse(JSON.stringify(this.evaluate('(() => ({' +
-      'time:totals.time+timeCounter,effectiveSeconds:totals.effectiveTime+effectiveTime,' +
-      'closedLoopSeconds:totals.time,activeLoopSeconds:timeCounter,' +
+      'time:totals.time+((gameIsStopped&&(shouldRestart||timer>=timeNeeded))?0:timeCounter),' +
+      'effectiveSeconds:totals.effectiveTime+((gameIsStopped&&(shouldRestart||timer>=timeNeeded))?0:effectiveTime),' +
+      'closedLoopSeconds:totals.time,activeLoopSeconds:(gameIsStopped&&(shouldRestart||timer>=timeNeeded))?0:timeCounter,' +
       'loops:totals.loops,manaSpent:timer,completedActions:totals.actions,' +
       'progress:towns[0].expWander,queuePosition:actions.currentPos,' +
       'currentQueueCount:actions.current.length,stopped:gameIsStopped,' +
@@ -116,15 +170,19 @@ export class BalanceEngine {
       'if(boundaryTicks===actionTicks)boundaryKind="action";' +
       'else if(boundaryTicks===talentTicks)boundaryKind="talent";' +
       'else if(boundaryTicks===loopTicks)boundaryKind="loop";' +
-      'return {time:totals.time+timeCounter,effectiveSeconds:totals.effectiveTime+effectiveTime,' +
-      'closedLoopSeconds:totals.time,activeLoopSeconds:timeCounter,loops:totals.loops,' +
+      'const folded=gameIsStopped&&(shouldRestart||timer>=timeNeeded);' +
+      'return {time:totals.time+(folded?0:timeCounter),' +
+      'effectiveSeconds:totals.effectiveTime+(folded?0:effectiveTime),' +
+      'closedLoopSeconds:totals.time,activeLoopSeconds:folded?0:timeCounter,loops:totals.loops,' +
       'manaSpent:timer,completedActions:totals.actions,progress:towns[0].expWander,' +
       'queuePosition:actions.currentPos,currentQueueCount:actions.current.length,' +
       'stopped:gameIsStopped,ticksLeftMs:gameTicksLeft,offlineMs:totalOfflineMs,lagSpeed,' +
       'bonusSpeed,gameSpeed,shouldRestart,curTown,actionName:action?.name??null,' +
       'actionType:action?.type??null,actionTicks,actionLoopsLeft:action?.loopsLeft??0,' +
       'boundaryTicks,boundaryKind,boundaryWallMs:ticksPerMs>0?boundaryTicks/ticksPerMs:0,' +
-      'internalActionTicks:__balanceCounters.actionTicks,uiUpdates:__balanceCounters.uiUpdates};' +
+      'loopBoundaryWallMs:ticksPerMs>0?loopTicks/ticksPerMs:0,' +
+      'internalActionTicks:__balanceCounters.actionTicks,uiUpdates:__balanceCounters.uiUpdates,' +
+      'actionEventCount:__balanceActionEvents.length};' +
       '})()')));
     return this.profiler ? this.profiler.time('lightweightObservation', operation) : operation();
   }
@@ -200,7 +258,8 @@ export class BalanceEngine {
       throw new BalanceRuntimeError('error','Loop accounting did not reconcile',after);
     }
     try {
-      const events = collectEvents(before,after);
+      const exactActionEvents=read(this.model,'__balanceActionEvents.slice('+before.actionEventCount+')');
+      const events = collectEvents(before,after,exactActionEvents,!this.filteredEvents);
       const firstSequence=this.events.length;
       this.events.push(...events.map((event,index)=>({...event,sequence:firstSequence+index})));
     } catch (error) {

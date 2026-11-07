@@ -36,18 +36,19 @@ export class FastScheduler {
     if (!observation.actionName) return fallback('no_observed_action');
     const eligible = actionCalibration(this.calibration, observation.actionName);
     if (!eligible) return fallback('uncalibrated_action');
-    if (!Number.isFinite(observation.boundaryWallMs) || observation.boundaryWallMs <= this.quantumMs) {
+    const calibratedWallMs=observation.loopBoundaryWallMs;
+    if (!Number.isFinite(calibratedWallMs) || calibratedWallMs <= this.quantumMs) {
       return fallback('near_or_unknown_boundary');
     }
     const offered = Math.min(
       eligible.maxBatchMs,
       this.maxBatchMs,
-      observation.boundaryWallMs,
+      calibratedWallMs,
       remainingSimulationMs
     );
     const batchMs = quantizeDown(offered, this.quantumMs);
     if (batchMs < 100) return fallback('quantized_boundary');
     const level = [...BATCH_LEVELS].reverse().find(item => batchMs >= item.ms)?.id ?? 'precision';
-    return {batchMs, level, reason:'calibrated_boundary', boundary:observation.boundaryKind};
+    return {batchMs, level, reason:'calibrated_boundary', boundary:'loop'};
   }
 }

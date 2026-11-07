@@ -2,6 +2,8 @@
 
 **Status:** Fully recorded **alternative**, not the selected product structure. [Three-tree Will / Echoes / Anchors](upgrade-trees.md) remains the working recommendation. Dominion is **not** the old Currency multiplier tree with a new name; it represents durable *economic and material control*.
 
+**Onboarding alignment (2026-11-06):** Potion-first arrival leads to an alternate Beginnersville, an introductory self conversation and first-rerun **skill points plus a temporary major boost**. This four-tree option remains a serious later progression alternative, **not a requirement to present Dominion immediately on entry**; the points and boost are not automatically Dominion currency. The Valley of Olympus stays independent of Real World access.
+
 ## 1. Why a fourth tree may be worth it
 
 The strength of the three-tree scheme is its simplicity. Its main weakness is that **Anchors** must simultaneously contain remembering knowledge, persisting wealth, and building infrastructure. These activities may eventually be large enough that a single parent becomes a "miscellaneous permanence" drawer rather than a distinctive play style.
