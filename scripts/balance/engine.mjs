@@ -56,11 +56,11 @@ export class BalanceEngine {
       (Array.isArray(eventActions)?'new Set('+JSON.stringify(eventActions)+')':'null') + ';' +
       'globalThis.__balanceEventSeen=new Set();' +
       'const __balanceActionTick=actions.tick;actions.tick=function(...args){' +
-      '__balanceCounters.actionTicks++;const before=totals.actions;const speed=getSpeedMult();' +
+      '__balanceCounters.actionTicks++;const before=totals.actions;' +
       'const spent=__balanceActionTick.apply(this,args);if(totals.actions>before&&' +
       '(!__balanceEventFilter||(__balanceEventFilter.has(this.currentAction?.name)&&' +
       '!__balanceEventSeen.has(this.currentAction?.name)))){' +
-      '__balanceEventSeen.add(this.currentAction?.name);' +
+      '__balanceEventSeen.add(this.currentAction?.name);const speed=getSpeedMult();' +
       'const delta=spent/speed/baseManaPerSecond;__balanceActionEvents.push({' +
       'type:"action_completed",action:this.currentAction?.name??null,' +
       'seconds:totals.time+timeCounter+delta,effectiveSeconds:totals.effectiveTime+effectiveTime+delta});}' +
