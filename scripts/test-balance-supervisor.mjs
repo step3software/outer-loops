@@ -16,6 +16,12 @@ assert.ok(timeout.hostMs<2000,'hung worker must be killed by independent parent 
 const memory=await runSupervised({modulePath:worker,args:['memory'],maxHostMs:2000,maxHeapBytes:1024});
 assert.equal(memory.status,'memory_exceeded');
 assert.equal(memory.lastDiagnostic?.checkpoint,'memory-limit');
+const silentMemory=await runSupervised({modulePath:worker,args:['memory-silent'],
+  maxHostMs:4500,maxHeapBytes:64*1024*1024});
+assert.equal(silentMemory.status,'memory_exceeded',
+  'uncooperative worker memory is observed independently of its IPC messages');
+assert.ok(silentMemory.lastDiagnostic?.memoryMonitor?.observedBytes>64*1024*1024);
+assert.ok(silentMemory.hostMs<4500,'memory guard must win before host-time ceiling');
 const measurementWorker=fileURLToPath(new URL('./balance/measurement-worker.mjs',import.meta.url));
 const missingCalibration=await runSupervised({modulePath:measurementWorker,
   args:[JSON.stringify({endpoint:'potion-craft',seed:42,mode:'accelerated',maxHostSeconds:1})],
@@ -23,4 +29,4 @@ const missingCalibration=await runSupervised({modulePath:measurementWorker,
 assert.equal(missingCalibration.status,'complete','real worker must exit and return structured failure');
 assert.equal(missingCalibration.result.status,'incomplete');
 assert.match(missingCalibration.result.failure.message,/Missing browser calibration/);
-console.log('PASS independent supervisor: complete result, synchronous hang timeout, memory ceiling, structured measurement failure.');
+console.log('PASS process supervision: host timeout, cooperative and independent RSS ceilings, structured failure.');
