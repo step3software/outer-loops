@@ -36,13 +36,17 @@ IDs/approval history. Do not infer scheduler admission or installed host adoptio
 from manifest validity. No gameplay, save or worker behavior is verified by these
 documentation checks.
 
-## RW00 campaign balance test work package (partial)
+## RW00 campaign balance and accelerated scheduler (partial)
 
-`npm run test:balance` exercises test-only deterministic VM clocks and RNG, UI-equivalent queue admission, typed/hashed gameplay UI settings, synthetic Judgement/Escape/search/cap boundaries, short original-driver execution and fail-closed report validation. The automated suite is source-backed but not proof of a real earned campaign.
+`npm run test:balance` is the bounded pull-request suite. It exercises test-only deterministic VM clocks and RNG, UI-equivalent queue admission, typed/hashed gameplay UI settings, synthetic Judgement/Escape/search/cap boundaries, short original-driver execution, reference-versus-accelerated semantic equivalence, fail-closed acceleration eligibility, and an independent process watchdog. The watchdog test deliberately terminates a synchronous infinite loop and an over-budget worker. The suite is source-backed but is not proof of a real earned campaign.
 
-`npm run test:balance:browser -- --phase calibration --output .balance-results/calibration.json` requires Chrome/Chromium and a disposable local profile. It checks the real browser's queue admission, input defaults, limited-resource search/caps and a short driver schedule against the model facade. Missing or failing Chrome must be treated as a failure, not a skip. This new browser command is not yet part of the ordinary CI validation path.
+`npm run test:balance:equivalence` runs the reference and accelerated adapters from fresh, identical VMs for opening progression, normal training, limited resources, loop exhaustion and fractional mana. Exact state is required except for the named continuous fields and `1e-9` tolerances exported by `scripts/balance/calibration.mjs`. Unknown actions use 20 ms precision mode, and accelerated mode refuses to start without a current versioned calibration manifest.
 
-**Unverified:** full earned R01/R02 C00–C14 progression, long-route clock accuracy and sampling, five paired strategy comparisons, wider late-game browser parity and successful official campaign baselines. Tests use synthetic boundary fixtures where labeled; no real saves or gameplay balances are changed. The [RW00 plan](../design/outer-loop/balance-tests-implementation-plan.md) contains the complete planned acceptance criteria.
+`npm run test:balance:performance` (also exposed as `npm run profile:balance`) runs a bounded 120-second synthetic Wander workload. It requires equivalent semantic state and at least 100 times fewer outer scheduling calls. Its aggregate report separates host milliseconds, simulated seconds, engine time, observer/serialization time, VM evaluations, internal action ticks, batch distribution, precision fallbacks and peak heap. This synthetic workload is performance evidence only, not earned campaign evidence or a campaign-duration estimate.
+
+`npm run test:balance:browser -- --phase calibration --output .balance-results/calibration.json` requires Chrome/Chromium and a disposable local profile. It checks the real browser's queue admission, input defaults, limited-resource search/caps and a short driver schedule against both reference and accelerated model execution. Deliberate checkbox, cap, RNG, clock and offline-credit mismatches must be detected. Missing or failing Chrome is a failure, not a skip. This command remains outside ordinary CI.
+
+**Unverified / not implemented:** full earned R01/R02 C00–C14 policies, earned-prefix replay, five paired strategy comparisons, optimized checkpoint restore, wider late-game browser parity and successful official campaign baselines. No partial or synthetic run is certified as a baseline. Tests use synthetic fixtures where labeled; no real saves or gameplay balances are changed. The [RW00 plan](../design/outer-loop/balance-tests-implementation-plan.md) contains the wider acceptance criteria.
 
 ## Minimum interactive smoke suite
 
