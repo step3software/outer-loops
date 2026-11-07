@@ -93,12 +93,12 @@ local contracts and publication/check instructions. These become canonical when
 the documentation PR is reviewed and merged; a passing manifest check alone does
 not prove that a host has refreshed them or that automation can execute work.
 
-Read-only inspection of the existing host on **2026-11-06** found Outer Loops'
-priority **Off**. The legacy records retain historical RF01 completion and RF02
-source preparation, without accepted Orcha RF02 plan/preparation artifacts.
-This is a dated observation, not a live priority or approval ledger. The host's
-existing `config/priorities.json`, workflow records and runtime journals remain
-authoritative. This documentation update changes none of them.
+Read current priority, pauses/focus, stage approvals and runtime journals from
+the existing host before selecting work. Its `config/priorities.json` and
+`workflow/records.json` remain authoritative; do not copy their mutable values
+into this repository as another status ledger. Source preparation documents are
+candidates to reuse, not proof of accepted host artifacts. This documentation
+update changes no host policy or lifecycle approval.
 
 For the next authorized stage, the trusted host must refresh canonical `dmchurch`
 after publication, reconcile the selected milestone against existing source and
