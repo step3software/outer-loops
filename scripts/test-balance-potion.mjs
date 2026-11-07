@@ -68,11 +68,22 @@ assert.throws(()=>assertPotionReport({...incomplete,sections:[]}),/section recon
 assert.throws(()=>assertPotionPrefix({...incomplete.prefix,canonicalStateDigest:'bad'}),/canonical digest/);
 assert.equal(incomplete.endpointReached,null);
 assert.ok(incomplete.failure&&incomplete.missingMilestones.length>0);
-const estimate=createPotionRequirementEstimate();
-assert.equal(estimate.actions.learnAlchemy,40200);
-assert.equal(estimate.actions.pyromancy,20100);
-assert.equal(estimate.actions.restoration,500500);
-assert.equal(estimate.actions.exploreJungleTo75,14250);
+const estimate=createPotionRequirementEstimate({root});
+assert.ok(estimate.sections.length>=5&&estimate.sections.length<=10);
+assert.equal(new Set(estimate.sections.map(section=>section.id)).size,estimate.sections.length);
+assert.ok(estimate.sections.every(section=>Number.isFinite(section.realSeconds)&&section.realSeconds>0));
+assert.ok(estimate.balance.maxToMin<=3,'coherent sections should remain approximately equal in real time');
+assert.ok(estimate.balance.minToMedian>=.35&&estimate.balance.maxToMedian<=1.5);
+assert.ok(Math.abs(estimate.sections.reduce((sum,section)=>sum+section.realSeconds,0)-
+  estimate.realSeconds)<1e-6);
+const calculated=estimate.sections.flatMap(section=>section.components);
+const restoration=calculated.filter(component=>component.action==='Restoration');
+assert.equal(restoration.length,3);
+assert.ok(restoration.every(component=>component.collegeBonus>1&&
+  component.manaCost<component.unreducedManaCost),'Wizard College reduction must come from game code');
+assert.ok(calculated.filter(component=>component.adjustedTicks!==undefined).every(component=>
+  component.adjustedTicks<=component.manaCost),'representative stats must reduce production action ticks');
+assert.ok(calculated.filter(component=>component.kind==='survey').every(component=>component.count>0));
 for(const endpoint of ['potion-craft','potion-totem']){
   const injected=runInjectedPotionEndpoint({root,endpoint});
   assert.equal(injected.terminal,true);
