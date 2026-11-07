@@ -31,9 +31,21 @@ export function virtualClock(epochMs = Date.UTC(2026, 0, 1)) {
     }
     static now() { return epochMs + elapsedMs; }
   };
+  const marks = new Map();
   const performance = {
     // Engine deadline checks must advance even within a single virtual quantum.
-    now: () => elapsedMs + (++performanceCalls) / 10000
+    now: () => elapsedMs + (++performanceCalls) / 10000,
+    // data.js uses User Timing for snapshot instrumentation during loadDefaults.
+    mark(name) {
+      const result = {name, entryType:'mark', startTime:this.now(),duration:0};
+      marks.set(name,result);
+      return result;
+    },
+    measure(name,startMark,endMark) {
+      const start = marks.get(startMark)?.startTime ?? this.now();
+      const end = marks.get(endMark)?.startTime ?? this.now();
+      return {name,entryType:'measure',startTime:start,duration:Math.max(0,end-start)};
+    }
   };
   return {
     Date: ClockDate, performance,
