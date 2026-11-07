@@ -3,10 +3,14 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {ADMISSION_VERSION} from './balance/admission.mjs';
+import {BalanceEngine} from './balance/engine.mjs';
+import {CLOCK_VERSION} from './balance/clock.mjs';
+import {CALIBRATION_SCHEMA} from './balance/report.mjs';
+import {FastScheduler} from './balance/fast-scheduler.mjs';
 import {SCHEDULER_VERSION} from './balance/fast-scheduler.mjs';
 import {POTION_POLICY_ACTIONS,choosePotionPolicy} from './balance/potion-policy.mjs';
 import {assertPotionPrefix,assertPotionReport,createPotionAcceleration,potionSourceIdentity,
-  runPotionCampaign} from './balance/potion-runner.mjs';
+  POTION_SOURCE_FILES,runPotionCampaign} from './balance/potion-runner.mjs';
 import {createPotionRequirementEstimate,runInjectedPotionEndpoint} from './balance/potion-estimate.mjs';
 
 const root=resolve(import.meta.dirname,'..');
@@ -58,11 +62,40 @@ for(const forbidden of ['setLevel(','addResource(','unlockTown(','resources.herb
   'policy must not contain direct-state mutation: '+forbidden);
 
 const source=potionSourceIdentity(root),acceleration=createPotionAcceleration(source.identity);
-const calibration={status:'passed',sourceHash:source.identity,schedulerVersion:SCHEDULER_VERSION,
-  admissionVersion:ADMISSION_VERSION,accelerationCalibrationIdentity:acceleration.identity};
+for(const path of ['data.js','localization.js','prestige.js','scripts/balance/report.mjs',
+  'scripts/balance/campaign-estimate.mjs','scripts/balance/measurement-worker.mjs']){
+  assert.ok(POTION_SOURCE_FILES.includes(path),'source identity omits '+path);
+}
+assert.deepEqual(Object.keys(acceleration.actions).sort(),['Smash Pots','Train Strength','Wander']);
+assert.equal(acceleration.actions['Looping Potion'],undefined,
+  'untested campaign actions must not receive fast batches');
+const scheduler=new FastScheduler({calibration:acceleration,maxBatchMs:60000});
+const observation={actionName:'Wander',stopped:false,offlineMs:0,
+  bonusSpeed:1,lagSpeed:0,boundaryWallMs:60,loopBoundaryWallMs:60000};
+assert.equal(scheduler.select(observation,60000).level,'precision',
+  'a calibrated action may not batch across an imminent action boundary');
+assert.equal(scheduler.select({...observation,actionName:'Looping Potion'},60000).reason,
+  'uncalibrated_action');
+
+const browserCases=['locked-buy-mana','opening-wander','visible-locked-mana',
+  'unlocked-buy-mana','first-travel','excess-travel','real-search-false',
+  'real-search-true','real-cap-update','real-driver-opening','accelerated-driver-opening'];
+// Synthetic evidence SHAPE to test rejection; never counted as a real browser run.
+const calibration={schema:CALIBRATION_SCHEMA,status:'passed',phase:'calibration',
+  browserVersion:'Chromium structural-test-fixture',clockVersion:CLOCK_VERSION,
+  clockQuantumMs:20,uiConfigurationHash:new BalanceEngine().uiInitial.configurationHash,
+  sourceHash:source.identity,schedulerVersion:SCHEDULER_VERSION,
+  admissionVersion:ADMISSION_VERSION,accelerationCalibrationIdentity:acceleration.identity,
+  scenarios:browserCases.map(id=>({id,status:'passed',browser:{fixture:true},model:{fixture:true}}))};
 assert.throws(()=>runPotionCampaign({root,maxHostSeconds:1}),/Missing browser calibration/);
 assert.throws(()=>runPotionCampaign({root,maxHostSeconds:1,calibrationReport:{...calibration,
-  sourceHash:'0'.repeat(64)}}),/Stale browser calibration: sourceHash/);
+  sourceHash:'0'.repeat(64)}}),/browser calibration.*sourceHash/);
+assert.throws(()=>runPotionCampaign({root,maxHostSeconds:1,calibrationReport:{...calibration,
+  scenarios:[]}}),/Missing real-browser scenario proof/);
+assert.throws(()=>runPotionCampaign({root,maxHostSeconds:1,calibrationReport:{...calibration,
+  scenarios:calibration.scenarios.slice(1)}}),/Missing required browser calibration scenario/);
+assert.throws(()=>runPotionCampaign({root,maxHostSeconds:1,calibrationReport:{...calibration,
+  uiConfigurationHash:'different'}}),/uiConfigurationHash/);
 const incomplete=runPotionCampaign({root,seed:42,maxHostSeconds:.1,calibrationReport:calibration});
 assert.equal(incomplete.status,'incomplete');
 assert.equal(assertPotionReport(incomplete),true);
@@ -71,6 +104,35 @@ assert.throws(()=>assertPotionReport({...incomplete,sections:[]}),/section recon
 assert.throws(()=>assertPotionPrefix({...incomplete.prefix,canonicalStateDigest:'bad'}),/canonical digest/);
 assert.equal(incomplete.endpointReached,null);
 assert.ok(incomplete.failure&&incomplete.missingMilestones.length>0);
+
+function completedReportFixture(endpoint){
+  const result=structuredClone(incomplete),terminal=endpoint==='potion-craft'?
+    'looping_potion_crafted':'looping_potion_used_at_totem';
+  result.status='complete';result.endpointRequested=endpoint;result.endpointReached=endpoint;
+  result.failure=null;
+  result.resources.loopingPotion=endpoint==='potion-craft';
+  result.skills.Wunderkind=endpoint==='potion-totem'?1:0;
+  result.checkpoints.push({id:terminal,kind:'completed'});
+  result.prefix.semanticEvents=['Start Journey','Continue On','Start Trek','Looping Potion',
+    ...(endpoint==='potion-totem'?['Totem']:[])].map((action,index)=>
+      ({type:'action_completed',action,seconds:index}));
+  return result;
+}
+for(const endpoint of ['potion-craft','potion-totem']){
+  const complete=completedReportFixture(endpoint);
+  assert.equal(assertPotionReport(complete),true,'direct endpoint accepts its successful result');
+  const portal=structuredClone(complete);
+  portal.prefix.semanticEvents.splice(3,0,{type:'action_completed',action:'Open Portal'});
+  assert.throws(()=>assertPotionReport(portal),/unexpectedly used Open Portal/);
+  const misordered=structuredClone(complete);
+  [misordered.prefix.semanticEvents[0],misordered.prefix.semanticEvents[1]]=
+    [misordered.prefix.semanticEvents[1],misordered.prefix.semanticEvents[0]];
+  assert.throws(()=>assertPotionReport(misordered),/direct potion travel/);
+  if(endpoint==='potion-totem'){
+    const unconsumed=structuredClone(complete);unconsumed.resources.loopingPotion=true;
+    assert.throws(()=>assertPotionReport(unconsumed),/consumption/);
+  }
+}
 const estimate=createPotionRequirementEstimate({root});
 assert.ok(estimate.sections.length>=5&&estimate.sections.length<=10);
 assert.equal(new Set(estimate.sections.map(section=>section.id)).size,estimate.sections.length);
