@@ -8,56 +8,64 @@
 
 | Phase | Goal | Player-visible outcome | Readiness / acceptance |
 | --- | --- | --- | --- |
-| **RW00 — Contract and test preparation** | Resolve critical design choices, original ending characterization and veteran save safety | No player-visible behavior change | RF01 fixtures, RF02 safety plan, speed timekeeping baseline, first-self/legacy entitlements, **three-vs-four-tree decision and Valley/potion ending choice (RW-Q17–RW-Q21)** |
-| **RW01 — First nexus vertical slice (internal)** | Introduce post-Restore Time threshold, small scene and first self, persisted outer flags, explicit return/new-timeline flow | Two versions of the protagonist meet in Real World; **no forced reset** | First meeting once, save/reload, no Town#9, original ending and credits still accessible; keep hidden until replacement loop works |
-| **RW02 — First compelling outer replay (minimum releasable)** | Make single prestige home, retire standalone old menus, safe veteran migration, free ~10× replay and initial meaningful upgrades | A **new timeline feels unmistakably different** in speed and planning; no parallel prestige shop | One or more distinct upgrade decisions; idempotent completion; no double rewards; old save/challenge cases safe; speed/worker parity green |
-| **RW03 — Deepen upgrades and first useful self** | Add bounded automation, retained-knowledge abilities and functional first-self assignment | Player can delegate/automate a mastered task rather than only watch a faster clock | Explicit rule constraints, override/pause, deterministic reward; no hidden duplicate tasks or infinite grants |
+| **RW00 — Contract and test preparation** | Characterize potion acquisition, both reputation routes, independent Valley pacing, timeline entry and first-rerun entitlement semantics | No player-visible behavior change | RF01/RF02 protection, real potion/Totem flags, [campaign balance test plan](balance-tests-implementation-plan.md), free 10×/boost and points contracts |
+| **RW01 — Potion arrival and alternate Beginnersville (internal)** | Explicit potion drinking, several visible alternate selves, first guide conversation and small explorations | A self recognizes the newcomer in a familiar changed village; no forced reset | First visit once, safe return/save, no Town#9, original Valley and credits preserved |
+| **RW02 — First empowered rerun (minimum releasable)** | Initial skill points, substantial temporary boost, permanent free ~10× speed, enduring capability and safe new-timeline transition | A dramatically different first replay without full future systems unlocked | One-time grants, expiry/stacking, migration, worker/timekeeping parity, recoverable reset |
+| **RW03 — Reveal advanced upgrades and first useful self** | Contextual new upgrade choices and bounded companion/delegation tasks | The guide-self can eventually help without removing core strategy | Mastery limits, safe eligibility, deterministic automation and clear UI |
 | **RW04 — Divergent timeline challenges** | Add selected thematic variant rules and unique rewards/selves | Choosing a challenge meaningfully changes strategy and expands the nexus | Optional variants, separate activation context, safe challenge transition; old separate menu absent |
-| **RW05 — Multi-self/timeline management** | Coordinate several distinct selves and bounded archived/active timeline activities | Player manages a growing ensemble of alternate lives with competing priorities | Performance bounds, deterministic background outcomes, save recovery and clear UI |
-| **[RW06 — Timeline Potions](RW06.md)** | Recreate and customize the original time-loop alchemy to set the next timeline's previewable attributes | Newly brewed potions create distinct strategic runs; keys are the design analogy, not a separate item system | Stable formula/modifier contract, safe brewing/commitment, predictor parity and idempotent rewards; ingredients, lifecycle and economy still undecided |
-| **[RW07 — Timeline Wagers](RW07.md)** | Let players stake an in-game resource on a **will / will not** condition for their next timeline | Voluntary predictions make run objectives intentional; successful qualifying outcomes settle once | Immutable pre-run contract, success/failure/abandonment definition, safe reservation/settlement, no passive negative-wager wins |
+| **RW05 — Parties and multi-self management** | Grow distinct selves into small selectable parties and coordinated timeline activities | Parties become a meaningful later stage of progress, not a starting roster dump | Bounded roles, resource/performance limits, safe save and recovery |
+| **[RW06 — Timeline Potions](RW06.md)** | Learn to brew new alchemical potions that configure the **next timeline's** previewable attributes | Different formulas create strategic run tradeoffs; keys are an analogy, not a second player-facing item system | Versioned deterministic modifiers, safe commitment, predictor parity and once-only rewards; exact recipes/ingredients/economy open |
+| **[RW07 — Timeline Wagers](RW07.md)** | Optionally stake an in-game resource on a **will / will not** condition for the next timeline | Predictions make run goals intentional; qualifying outcomes settle once | Immutable pre-run contract, clear win/loss/abandonment, safe reservation and settlement; no passive negative-wager wins |
+| **[RW08 — Incremental Timeline Bosses](RW08.md)** | Reuse Valley's god fights as a foundation for deterministic, scaling incremental bosses across timelines | Solve through improving stats, resources and legal action queues; no real-time combat or parties | Characterized old trial behavior, bounded pacing, safe persistence and predictor parity |
 | **ART — Pixel-art workstream (parallel)** | Establish style bible from nexus; later apply to inner world | Cohesive, legible two-character nexus scene and expanded game presentation | Controlled asset scope, readable UI, responsive/reduced motion, asset rights documented |
 
-**RW06–RW07 are newly requested, separate proposed milestones.** Their IDs extend the roadmap but do not imply RW05 must be completed first: RW06 depends on a stable timeline lifecycle and compatible variant-rule contract; RW07 can work without a customized potion, but integrates with RW06 when present. RW04 remains a distinct existing concept and must be reconciled rather than silently replaced. Both proposals have unresolved mechanics and no implementation authorization.
+**RW06 and RW07 are separately requested proposed milestones, not implemented mechanics.** Their numbers do not make RW05 parties a prerequisite: RW06 builds on RW02's safe timeline lifecycle and RW04-compatible rules; RW07 can apply to ordinary timelines and integrate with RW06 later. RW04 remains distinct, and potion customization does not replace the approved potion-first Real World entry or the independent Valley capstone.
 
-**RW00–RW02** form the first target development effort. RW01 may be demoed internally as a narrative prototype, but should **not** be shipped to ordinary players while the only rewards are inaccessible or dmchurch's full old prestige shop still sits alongside it.
+**RW00–RW02** form the first target development effort. RW01 may be demoed internally as a narrative prototype, but should **not** be shipped to ordinary players without its first empowered rerun and safe state transitions.
 
-## Endgame design gate — unresolved
+## Endgame direction and pacing gate
 
-The current RW01–RW02 flow below is based on **nine zones and the existing Valley `Action.RestoreTime`**, consistent with approved RW-D02. Separately, a [source-grounded design comparison](potion-and-endgame-options.md) proposes **A** keeping Valley, **B** shortening its tower/trial grind, or **C** removing it from active play and using a shorter **Commerceville potion/temporal research climax** before Real World. **C is recommended for exploration, not chosen.**
+On 2026-11-06 the owner selected **a retained, shorter Valley of Olympus** as a future campaign-wide rebalance. The [RW00 campaign pacing test plan](balance-tests-implementation-plan.md) still measures the unchanged nine-zone game before proposing section time budgets. No numeric tower, gods trial or potion balance changes are approved.
 
-RW00 must settle this before finalizing the portal trigger, first-restoration flags, ending narrative and tests. If option B/C is approved, revise this roadmap and RW-D02 **explicitly**, add migration coverage for saved zone-8/tower/trial progress, protect the Spatiomancy/Valhalla bypass branch, and verify optional Totem/Wunderkind remains useful. Avoid a simplistic "delete town 8" patch: the nine-zone survey average, `Ruins/Haul`, key, `SecretTrial` and old prestiges also depend on it.
+**The Real World gateway is now independent of that Valley ending.** Drinking the recreated Looping Potion brings the player to an alternate Beginnersville, whether or not they have completed `RestoreTime`. The old post-`RestoreTime` portal approach is superseded in [decisions](decisions.md#selected-entry-and-valley-direction--2026-11-06). Preserve the Valley's own gods, tower, story, rewards and credits as meaningful ordinary-world content.
+
+Both high-reputation Valhalla and shadow/Startington routes must have fair access to the potion gateway; current Spatiomancy gating and existing Totem/Wunderkind potion consumption are separate implementation contracts. The historical [potion and Valley research](potion-and-endgame-options.md) remains source evidence, not an instruction to delete zone 8. Pacing tests and this documentation are not authorizations to rewrite gameplay.
 
 ## Proposed detailed first slice: RW01 + RW02
 
-### First completion
+### Potion and first arrival (RW01)
 
-- Normal nine-zone game concludes at `Action.RestoreTime` under its existing conditions.
-- The original time-restoration story still plays and credits remain accessible.
-- A *new* nexus portal/threshold unlocks once; the game **does not** substitute `Action.OpenPortal` and does not renumber zones.
-- The player explicitly enters Real World; a short first meeting conveys the presence of an alternate self.
-- Leaving without starting a new timeline preserves the completed timeline and original progression.
+- **Recreate and deliberately drink the Looping Potion.** A new player-controlled use enters Real World rather than the existing Jungle Totem use; exact eligibility and access route are not yet decided.
+- **Arrive in an altered Beginnersville,** inhabited by multiple alternate selves, without replacing normal `Town(0)` or adding `Town(9)`.
+- **Be greeted.** One other self notices the player is new, approaches and gives a short, characterful orientation without explaining everything.
+- **Explore briefly.** A few available interactions and returning dialogue build intrigue before the new-timeline button.
+- **Preserve progress.** No automatic timeline reset, forced Valley completion, duplicate grant or irreversible loss occurs just from potion arrival.
+- **Keep Valley independent.** `RestoreTime` and the original ending/credits remain accessible and worthy of completing, but are not needed to reach Real World.
 
 ### First replay
 
-- Real World offers a deliberate "Start New Timeline" control with a summary of what resets, what remains, and a recoverable backup/undo route.
-- The first new timeline starts with **~10× automatic playback/execution speed**, shown clearly.
-- A small initial set of **powerful, differentiated** upgrade choices is available. Current [working three-tree concept](upgrade-trees.md): **Will / Pivot**, **Echoes / First Apprentice**, **Anchors / Anchored Memory**; [four-tree Dominion alternative](dominion-alternative.md) adds **Timeless Treasury** as a separate economic specialization. Exact starter grant and branch structure require approval. Upgrades are not only stacked +5%/20% stat multipliers.
-- The other self remains in the nexus and can later become a functional helper; at least one immediate planning interaction should connect the companion to the second run (final choice requires approval).
-- The old Prestige Perks and Challenges *menus* are no longer independent player-facing systems. If old challenge concepts are retained, they appear as future nexus-launched variants.
-- Relaunches and save reloads preserve the nexus and new timeline state; no doubled original 90-point legacy grant.
+- The player explicitly chooses **Start New Timeline** with a clear reset/retention preview and recoverable backup.
+- The first new timeline provides **initial allocatable skill points** and a **large temporary boost**. Point types, sources, effect strength, duration and repeatability are open design choices, not implemented grants.
+- Automatic **~10× replay acceleration** is permanent, free and separate from that boost. The temporary bonus must not silently compound into a runaway time multiplier.
+- The player gains at least one meaningful long-term upgrade decision over the early Real World experience; the three-tree versus four-tree architecture remains unresolved.
+- Legacy prestige, challenge-active saves and the original Valley ending are handled safely, with no double reward for repeated potion use, reload or old `RestoreTime`.
+- Further capabilities, other selves, variants, customized potions, wagers and parties are revealed *later* rather than requiring a full metagame tutorial on arrival.
 
 ### Exit criteria for minimum releasable version
 
-**Narrative:** Player experiences the existing Restore Time climax, recognizes the second self and knows why returning is interesting.  
-**Systems:** Inner loops continue working, second timeline is measurably faster, chosen upgrade changes actual play, transitions are under player control.  
+**Narrative:** The player drinks a potion, enters an uncanny Beginnersville among other selves, is greeted as a newcomer and has a reason to explore; Valley is not the gateway.  
+**Systems:** The first rerun has allocatable skill points, an obvious bounded temporary boost, permanent ~10× replay speed and meaningful durable choices, with explicit transition control.  
 **Safety:** Both novice and veteran saves, including legacy purchases and challenge-active saves, have a reviewed, recoverable migration path.  
 **Technical:** Browser + predictor tests cover exact idempotent rewards, relevant time-based gates, normal/new timeline reset and storage.  
-**Visual:** Nexus scene is understandable, attractive and accessible; no need to illustrate all nine regions immediately.
+**Visual:** Alternate Beginnersville looks familiar-but-different, several selves are visible, the guide-self and replay action are clear, and no full RPG movement engine is required.
+
+## RW08 — proposed later Valley boss encounters
+
+[RW08](RW08.md) develops **incremental boss** challenges from Valley's existing Gods Trial and Challenge Gods. The player optimizes progression and queues to meet phased divine requirements. The system must not require party mechanics or gate potion entry; optional future [RW06 timeline potions and RW07 wagers](https://github.com/step3software/outer-loops/pull/9) may modify boss conditions. Exact boss and balance rules are unapproved.
 
 ## Deferred deliberately
 
-- Hundreds of unique alternate selves per run.
+- Hundreds of unique alternate selves per run or a full party-management engine on the first visit.
 - True fully concurrent simulation of nine-zone games in multiple tabs/workers.
 - Dozens of old prestige buffs simply moved into a new-looking shop.
 - Four mandatory entire-tier ladders with no interesting branch choices, or an obligatory "gain more nexus currency" opener.

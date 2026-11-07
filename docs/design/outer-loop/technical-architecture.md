@@ -6,25 +6,23 @@
 
 The existing game represents its nine regions with `townNames`, `initializeTowns` (0–8), `TownList<9>`, `SurveyZ0..8`, numeric travel deltas (`getTravelNum`), UI zone panels in `index.html`, action registrations and predictor worker imports. A tenth ordinary town would entangle a supposedly transcendent nexus with normal intra-loop progress and resource resets.
 
-**Proposed separation:** Real World is its own **scene/metagame layer**. It is entered by a newly unlocked transition **after** `Action.RestoreTime`, not by `Action.OpenPortal` and not from the queue's ordinary travel arithmetic. Existing `Action.*` IDs and all nine inner-world town indices remain unchanged.
+**Proposed separation:** Real World is an **alternate Beginnersville scene/metagame layer**, not ordinary town 0 or a tenth town. Deliberately **drinking the Looping Potion** is the entry transition, independent of both Valley's `Action.RestoreTime` and Jungle's `Action.OpenPortal` travel. Existing `Action.*` IDs and all nine inner-world town indices remain unchanged.
 
-## Alternative: fewer playable areas (under consideration, not implemented)
+## Retained Valley and potion entry — separate technical concerns
 
-The [Valley/potion ending alternatives](potion-and-endgame-options.md) assess retaining the current Valley, **condensing** it or **retiring it as a playable area** in favor of a shorter post-Jungle **Commerceville capstone**. This is not a decision to introduce `Town(9)` or remove `Town(8)` now.
+**Selected product direction (2026-11-06):** Keep Valley of Olympus (zone 8), shorten its repetitive progression later after the campaign-wide [RW00 pacing baseline](balance-tests-implementation-plan.md), and enter Real World via **drinking the Looping Potion**, not by completing `RestoreTime`. The earlier eight-area/Commerceville replacement study in [potion options](potion-and-endgame-options.md) is historical and does not authorize removing `Town(8)`, `SurveyZ8`, trials, `RestoreTime` or old save keys.
 
-If an eight-area campaign is selected, **logical retirement and physical deletion are different migrations**. Existing `Town(8)`, `SurveyZ8` and the nine-zone `getExploreProgress()` aggregation, four `Ruins/Haul` stone sources, `Leave City` and its key, `Build Tower`, `GodsTrial`/`ChallengeGods`, `ImbueSoul`, `SecretTrial` prerequisites, serialized dynamic `varName` fields and older zone-8 saves all require coordinated disposition. A hidden compatibility representation may be safer than immediately shrinking arrays.
+**As-coded:** `Action.LoopingPotion` is on Mt. Olympus and needs Alchemy, herbs and Spatiomancy normally learned in Valhalla. The low-reputation path to Startington can bypass Valhalla, so a future required potion gateway needs a fair legal acquisition route on both paths. Existing `Action.Totem` consumes the boolean `resources.loopingPotion` for Wunderkind; **drinking to enter** must be distinct from that use and may not rely on `storyMax` as proof of crafting.
 
-Potion-related gating also intersects alternate travel paths: `Action.LoopingPotion` is at Mt. Olympus, requires **Spatiomancy** (typically learned in Valhalla), while the main low-reputation route skips Valhalla. A future required potion must not inadvertently ban the shadow path. Current `storyMax` can imply potion story completion without `storyFlags.loopingPotionMade`, so source-accurate tracking is necessary. Any replaced Restore Time event still needs once-per-timeline entitlement and separate nexus portal actions. Coordinate with RF01/RF02 before deleting data or changing clocks.
-
-**Existing RW-D02 ending assumptions remain until explicitly amended.**
+The new Real World uses familiar Beginnersville imagery but has its own persisted scene/character state, never the ordinary `Town(0)` progression counters. Arriving cannot silently finish/archive the original timeline, including unfinished Valley content. `RestoreTime` completion, its original credits and old prestige history remain distinct legacy events. Exact new potion-use action, consumption, repeated entry and return policy remain to be specified.
 
 ## Model: explicit state lifetimes
 
 | Lifetime | Examples | Reset when |
 | --- | --- | --- |
 | **One inner loop** | `resources`, `timer`, `curTown`, current action segments, some stats | Normal `restart()` |
-| **One timeline** | Existing town progress, talents, skills, buffs, action/loadout development, story state, dungeon/trial history, the ability to reach Restore Time | Player **explicitly starts another timeline** using a validated reset transaction |
-| **Outer nexus** | First restoration, first-visit flags, alternate selves, permanent upgrades, unlocked variants, automation ownership, completed timeline summaries | **Never** on normal restart or timeline reset; only explicit hard reset under separate safeguards |
+| **One timeline** | Original world progress including optional Valley/Restore Time, talents, skills, buffs, story, dungeon/trial history and action/loadout state | Player **explicitly starts another timeline** using a validated reset transaction |
+| **Outer nexus** | First valid potion-entry/first-visit flags, alternate selves, skill-point/boost entitlement receipts, permanent upgrades, unlocked variants, later parties and timeline summaries | **Never** on normal restart or timeline reset; only explicit hard reset under separate safeguards |
 | **Temporary UI session** | Open panel, conversation focus, animations, hover/camera | View transition/reload as appropriate |
 
 This table is conceptual. **Existing dmchurch `prestigeValues` / `buffs` cross the old prestige boundary differently** and must be reconciled by a planned, versioned transition. Similarly, saved queue templates may be outer "knowledge" or timeline-bound—do not decide their new lifetime as an incidental technical choice.
@@ -35,15 +33,16 @@ This table is conceptual. **Existing dmchurch `prestigeValues` / `buffs` cross t
 outerState = {
   schemaVersion: 1,
   unlocked: false,
-  firstRestorationRecorded: false,
+  firstPotionEntryRecorded: false,   // not the old RestoreTime completion
   firstNexusVisitSeen: false,
   firstConversationSeen: false,
+  firstRerunGrantRecorded: false,  // skill points + temporary boost, once only
   replayAccelerationUnlocked: false, // automatic once a NEW timeline begins
   timelineCounter: 0,
   activeTimelineId: null,
   archives: [],        // bounded summaries, not necessarily full save snapshots
   ownedUpgrades: [],   // stable upgrade IDs with separate config
-  selves: [],          // stable identity, origin and earned capabilities
+  selves: [],          // visible guide and later specialists/party members
   assignments: [],    // future bounded tasks; not a full game simulation
   challengeUnlocks: [],
   migration: {
@@ -58,25 +57,29 @@ outerState = {
 ## New state transitions (design contract)
 
 ```text
-INNER PLAY
-   │
-   └─ RestoreTime finish (once for an eligible timeline)
-       └─ record restoration and unlock new Real World threshold
-            └─ player explicitly crosses threshold
-                 └─ Real World first encounter (once)
-                      ├─ inspect/return to previous timeline
-                      ├─ view/choose permanent abilities
-                      └─ confirm NEW TIMELINE
-                           ├─ archive/record previous timeline
-                           ├─ persist permanent nexus state and entitlements
-                           ├─ reset precisely timeline-scoped progress
-                           ├─ apply owned outer benefits / selected variant
-                           └─ start inner loop with ~10× baseline rate
+ORIGINAL WORLD — ordinary inner loops and nine playable zones
+   ├─ Optional Valley progression → RestoreTime / original story/credits
+   │    └─ existing old prestige reward handled separately
+   └─ Genuine Looping Potion acquired on a legal route
+         └─ player explicitly DRINKS potion for Real World entry
+              ├─ validate possession, entitlement and safe save transition
+              └─ ALTERNATE BEGINNERSVILLE (outer scene; not Town 0)
+                   ├─ several selves visible; one recognizes newcomer (once)
+                   ├─ explore/talk; continue original-world progress if allowed
+                   └─ player explicitly confirms NEW TIMELINE
+                        ├─ capture recoverable previous-timeline state
+                        ├─ commit new timeline ID and one-time benefits
+                        ├─ grant initial allocatable skill points
+                        ├─ apply one bounded temporary first-rerun boost
+                        ├─ reset only specified timeline-scoped progress
+                        └─ start inner loops with permanent free ~10× throughput
 ```
 
-Proposed rule: **Completing Restore Time, entering the nexus and choosing a new timeline must be separate, idempotent events.** A player should not get duplicate rewards by refreshing, crossing the portal twice or executing Restore Time again in the same completed timeline. The player should be able to leave/return without automatically resetting until the new-timeline confirmation.
+**Never equate:** potion acquisition, its actual consumption for Real World, Totem consumption for Wunderkind, first guide conversation, original `RestoreTime` completion, first new-timeline creation, first point/boost grant or later full timeline completion. Each transition needs validated prerequisites, durable idempotency and recovery. An invalid or interrupted entry must not delete original-world/Valley progress or duplicate grants.
 
-`Action.RestoreTime.finish` currently calls `completedCurrentGame()`, which grants old currency. The implementation must replace or adapt that hook *deliberately*, preserving the existing story unlock and once-per-completion guard without layering the old 90-point shop underneath the new system.
+**Boost contract required:** Choose the magnitude/type and a bounded lifetime (real time, in-world action/loop count or other measurable scope) before implementation. Recomputed derived stats, the live game and the predictor worker must agree on its activation and expiration. This is **not** the permanent ~10× acceleration and must not be implemented as an unreviewed extra `gameSpeed` multiplier.
+
+`Action.RestoreTime.finish` currently calls `completedCurrentGame()` and awards 90 old prestige points once per old cycle. Preserve that as-coded behavior as a separate compatibility/achievement concern. Retiring the old shop at launch still requires a versioned veteran entitlement policy, not a retroactive assertion that `RestoreTime` never happened.
 
 ## Speed model — approximately 10×, but preserve causality
 
@@ -109,12 +112,12 @@ Automation is not synonymous with hiding ticks. Early action-template reuse shou
 
 ## Saving, player-data safety and rollback
 
-`saving.js` currently builds `doSave()`, stores `idleLoops1` and `idleLoopsChallenge`, exports `ILSV01`, and migrates a number of historical fields. `prestigeConfirmation` also handles a `prestigeBackup` key. The new system may require cross-timeline archives and veteran migration, so **RF01 synthetic fixtures and RF02 validation-first backup recovery are direct prerequisites to irreversible reset/save work**.
+`saving.js` currently builds `doSave()`, stores `idleLoops1` and `idleLoopsChallenge`, exports `ILSV01`, and migrates a number of historical fields. `prestigeConfirmation` also handles a `prestigeBackup` key. The new system introduces **potion entry before possible Valley completion**, persistent other selves, initial skill-point/boost grants and later cross-timeline archives. **RF01 synthetic fixtures and RF02 validation-first backup recovery are direct prerequisites** to any irreversible reset/save change.
 
 Before implementation:
 1. Define precise outer, timeline, session and UI lifetimes.
 2. Decide whether the new system extends existing export JSON with optional fields or uses a new schema/envelope, with backward-compatibility/rollback guarantees.
-3. Define per-timeline completion idempotency and veteran legacy mapping; never invent a conversion rate.
+3. Define potion-entry and guide-dialogue idempotency, new-timeline grant receipts, optional Valley completion, permanent/temporary boost state and veteran legacy mapping separately; never invent a conversion rate.
 4. Test incomplete, corrupted and challenge-active old saves; protect both save slots and existing `prestigeBackup`.
 5. Ensure previous versions either safely ignore new optional fields or reject them without corrupting the save, according to a documented compatibility policy.
 6. Plan how a live timeline can be retained/archived and whether "return" means full playable saved state or viewing a summary (unresolved RW-Q06).
@@ -123,16 +126,17 @@ Before implementation:
 
 | Current source | Later implementation concern |
 | --- | --- |
-| `actionList.js` `Action.RestoreTime` | Completion event and optional portal unlock; do not confuse `Action.OpenPortal` |
+| `actionList.js` `Action.LoopingPotion` / `Action.Totem` | Actual craft and consumption semantics, distinct new drink action, valid high/low-reputation access, existing Wunderkind use |
+| `actionList.js` `Action.RestoreTime` | Independent Valley story/completion and old prestige grant; **no Real World portal requirement** |
 | `prestige.js` | Old grant/reset/effects and veterans' earned purchases; no duplicate prestige shops |
 | `challenges.js` | Legacy mode overrides; if kept, rebuild behind new timeline policy |
 | `saving.js` | Outer state, migration, new reset lifetime, archives, export/import, idempotency |
 | `driver.js` | Free replay acceleration, effective-time semantics, normal restart |
 | `stats.js`, `actions.js` | Upgrades, valid queues, resource/predicate behavior |
 | `data.js`, `predictor.js`, `predictor-worker.js` | Snapshot/reference identity, worker parity and read-only metagame during forecast |
-| `index.html`, `views/*`, `localization.js`, `lang/en-EN/game.xml` | Separate scene, portal, first dialogue, navigation, upgrade menus, credits |
+| `index.html`, `views/*`, `localization.js`, `lang/en-EN/game.xml` | Alternate Beginnersville with several visible selves and one first guide conversation, exploration, skill-point/boost UI, old credits |
 | `google.js` | Optional cloud save versioning and future integration; never use real accounts for tests |
 
 ## Architecture decision needed
 
-A reviewed ADR should specify: authoritative outer/timeline saved state; completion and portal event boundary; reset semantics; 10× clock and predictor policy; compatibility with veteran prestige/challenge data; and rollback. No such ADR is adopted simply by this conceptual design.
+A reviewed ADR should specify: actual potion acquisition/drinking and distinct Totem use; potion entry versus optional Valley completion versus new-timeline commit; outer/timeline and temporary-boost lifetimes; first skill-point grant; 10× clock and predictor policy; shadow-route fairness; veteran entitlement and rollback. No such ADR is adopted simply by this conceptual design.
