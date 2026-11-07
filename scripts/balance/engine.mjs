@@ -133,6 +133,9 @@ export class BalanceEngine {
         this.resumePolicyLoop();
       }
       observation = this.step({full:false});
+      if (terminalActions.size && this.events.slice(observedEventCount).some(event=>
+        event.type==='action_completed' && terminalActions.has(event.action))) break;
+      observedEventCount = this.events.length;
     }
     return observation;
   }
