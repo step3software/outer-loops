@@ -1,6 +1,6 @@
 # Real World — decisions and questions
 
-**Purpose:** Keep confirmed product direction separate from recommendations and issues that need genuine design/playtest decisions. Last updated: 2026-10-17.
+**Purpose:** Keep confirmed product direction separate from recommendations and issues that need genuine design/playtest decisions. Last updated: 2026-11-07.
 
 ## Approved product direction (do not reopen casually)
 
@@ -14,6 +14,7 @@
 | RW-D06 | Build a modest initial hub with meaningful choices **before** evolving into a richer multi-self/timeline-management game | Avoid full concurrent simulation of many complete games in the initial scope |
 | RW-D07 | Develop a cohesive **pixel-art graphic style**; the Real World is an appealing early showpiece | Art milestones can proceed separately from simulation/serialization code |
 | RW-D08 | Preserve the possibility that other selves came from alternate endings/choices | Leverage current Restore Time narrative rather than overwrite it with an unrelated explanation |
+| RW-D09 | **Timeline keys are potions.** The original Looping Potion was one; after learning its secret, the protagonist can make their own and alter the **next run's attributes** | Present RW06 as timeline alchemy, not as a parallel abstract key system. Brewing details and the first Real World entry route remain open; confirmed by owner on 2026-11-07 |
 
 ## Endgame reconsideration — under discussion, no new approval
 
@@ -69,16 +70,17 @@ The **recommended** player-facing structure is **Will / Echoes / Anchors**. Will
 | RW-Q19 | How does the potion's existing **Jungle Totem → Wunderkind** use interact with a new finale? | Prefer optional stat-training use plus a separate earned-knowledge/ritual milestone; never depend on global `storyMax` alone due to source FIXME | Potion inventory, story flags, buffs, save/loop reset |
 | RW-Q20 | What replaces the tower, gods, temporal-stone hauling and `ImbueSoul` finale dependencies if Valley is retired? | Preserve a memorable climax, purposeful earlier exploration, appropriate optional trial/imbuement routes; no silent orphan content | Old content, SurveyZ8 divisor, SecretTrial gate, credits |
 | RW-Q21 | How should **current Valley/partial tower/old prestige saves** migrate under a shortened or removed ending? | Versioned non-destructive compatibility layer and veteran entitlement treatment; no physical zone-index removal without regression proof | RF01/RF02, import, action loadouts, story numbering, refund/credits |
-| RW-Q22 | How are timeline keys earned, selected, reused or consumed? | Default for exploration: earned in normal play; do not consume until a safe new-timeline commitment | RW06 acquisition and save lifecycle |
-| RW-Q23 | Are keys curated, procedurally combined or both, and how many simultaneous modifiers are allowed? | Start with a curated, bounded set; generated affixes/rarity only after balance tests | RW06 catalog and rule conflicts |
-| RW-Q24 | How do key difficulty, rewards and old challenge/timeline variants interact? | Reuse one shared variant-rule and reward contract; avoid hidden multiplicative payouts | RW04/RW06 compatibility and economy |
+| RW-Q22 | How do customized timeline potions become available, and are formulas/ingredients reusable or consumed? | Player learns to make their own after uncovering the original potion's secret; acquisition, ingredient sources, brewing location and consumption policy still open | RW06 alchemy and save lifecycle |
+| RW-Q23 | Are potion attributes determined by curated formulas, ingredients/combinations, or generation, and what combinations are permitted? | Start design/testing with a small bounded catalog; exact alchemical crafting, affixes and limits unapproved | RW06 formula and modifier conflicts |
+| RW-Q24 | How do potion-imposed difficulty, rewards and old challenge/timeline variants interact? | Reuse one shared variant-rule and reward contract; avoid hidden multiplicative payouts | RW04/RW06 compatibility and economy |
 | RW-Q25 | What in-game value is staked on a wager and how are payouts balanced? | No real-world value; leave the precise in-game resource and payout curve open until the nexus economy is agreed | RW07 stake and reward rules |
 | RW-Q26 | What qualifies as a winning "will not" wager, and how are aborts/unfinished timelines handled? | Require an otherwise completed/qualifying timeline; no automatic profit for doing nothing; abandonment loss/refund terms need a decision | RW07 settlement and anti-exploit |
-| RW-Q27 | Can a player accept multiple wagers at once or combine them with keys? | One wager on the next timeline as the initial conservative scope; record key context if present | RW07 UI, validation and combinations |
+| RW-Q27 | Can a player accept multiple wagers at once or combine them with customized timeline potions? | One wager on the next timeline as the initial conservative scope; record committed potion context if present | RW07 UI, validation and combinations |
+| RW-Q28 | How does the first Looping Potion/Real World discovery relate to later customized timeline potions? | Share one alchemical lore through-line; precise first-entry trigger, Valley relationship and baseline potion flow remain separate endgame decisions | RW01/RW02 narrative, RW06 introduction and first-run onboarding |
 
 ## New proposed milestone concepts — no product-mechanics approval
 
-The owner requested two new **separately numbered planning milestones** on 2026-11-06: [RW06 Timeline Keys](RW06.md) (PoE-style keys that change the attributes of a run) and [RW07 Timeline Wagers](RW07.md) (pre-run **will / will not** outcome bets). Their creation authorizes documentation planning only. The example modifiers, stake resource, reward rules, key generation/consumption and wager settlement remain unresolved. RW04's existing divergent-timeline design is not repealed.
+The owner requested two new **separately numbered planning milestones** on 2026-11-06: [RW06 Timeline Potions](RW06.md) (initially framed as PoE-style keys that change a run's attributes; **reframed as customizable potions on 2026-11-07**) and [RW07 Timeline Wagers](RW07.md) (pre-run **will / will not** outcome bets). RW06's alchemical identity is approved product direction, while recipes, ingredients, modifier economics, consumption and wagering mechanics remain unresolved. The milestone documents do not authorize implementation. RW04's divergent-timeline design is not repealed.
 
 ## Change control and conflicts
 
