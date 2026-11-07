@@ -105,12 +105,16 @@ function invariant(model) {
   const event=changeUiInput(model,'searchTogglerPots',true);
   const checked=readUiProfile(model);
   assert.notEqual(initial.stateHash,checked.stateHash);
+  assert.notEqual(initial.effectiveConfigurationHash,checked.effectiveConfigurationHash,
+    'A checkbox edit changes effective configuration identity');
   assert.equal(checked.changes.length,1);
   assert.equal(event.beforeHash,initial.stateHash);
   changeUiInput(model,'buffRitualCap','5');
   assert.equal(unpack(model,'getBuffCap("Ritual")'),5);
   assert.equal(unpack(model,'buffCaps.Ritual'),5);
   assert.notEqual(readUiProfile(model).stateHash,checked.stateHash);
+  assert.notEqual(readUiProfile(model).effectiveConfigurationHash,
+    checked.effectiveConfigurationHash, 'Changing a cap changes configuration identity');
 
   const second=fresh();
   installUiProfile(second,createDefaultUiProfile(second));
@@ -131,6 +135,34 @@ function invariant(model) {
   model.balanceUI.elements.set('searchTogglerPots',search);
   assert.throws(()=>installUiProfile(fresh(),{...profile,inputs:{}}),/missing or unknown/i);
   console.log('PASS RW00 strict UI: defaults, cap synchronization, setting hashes and missing/wrong/invalid controls.');
+}
+
+// The real Dark Ritual eligibility predicate must obey typed cap boundaries.
+// Synthetic earned resources/reputation are used only in this isolated fixture.
+{
+  const model=fresh();
+  installUiProfile(model,createDefaultUiProfile(model));
+  model.evaluate('resources.reputation=-10;stats.Str.soulstone=100000;buffs.Ritual.amt=5');
+  const before=unpack(model,'({stones:stats.Str.soulstone,buff:buffs.Ritual.amt})');
+  const identities=[];
+  for(const [cap,allowed] of [[4,false],[5,false],[6,true]]) {
+    changeUiInput(model,'buffRitualCap',String(cap));
+    const state=unpack(model,'({allowed:Action.DarkRitual.canStart(),cap:getBuffCap("Ritual"),modelCap:buffCaps.Ritual})');
+    assert.equal(state.allowed,allowed,'actual Dark Ritual cap boundary '+cap);
+    assert.equal(state.cap,cap);
+    assert.equal(state.modelCap,cap);
+    identities.push(readUiProfile(model).effectiveConfigurationHash);
+    assert.deepEqual(unpack(model,'({stones:stats.Str.soulstone,buff:buffs.Ritual.amt})'),before,
+      'eligibility observation never spends soulstones or grants a buff');
+  }
+  assert.equal(new Set(identities).size,3,'each cap has distinct effective configuration');
+  const identity=readUiProfile(model).effectiveConfigurationHash;
+  for(const invalid of ['','Infinity','-1','667','1.5','not a cap']) {
+    assert.throws(()=>changeUiInput(model,'buffRitualCap',invalid));
+    assert.equal(readUiProfile(model).effectiveConfigurationHash,identity,
+      'rejected setting change must not mutate config identity');
+  }
+  console.log('PASS RW00 actual Dark Ritual cap below/at/above eligibility and failed edit isolation.');
 }
 
 // Synthetic limited-resource fixture: a missing checkbox is NOT the same as unchecked.
@@ -178,7 +210,18 @@ function potCase(checked, withProfile) {
     aRun.last.closedLoopSeconds-aRun.last.activeLoopSeconds)<1e-7);
   assert.ok(aRun.last.effectiveSeconds>=aRun.last.time-1e-8);
   assert.equal(a.diagnostics().status,'incomplete','opening fixture is not a full-route baseline');
-  console.log('PASS RW00 clock: real driver ticks, replayed seed, loop accounting, no offline credit.');
+  assert.throws(()=>new BalanceEngine({seed:0}),/nonzero/);
+  assert.throws(()=>new BalanceEngine({quantumMs:0}),/Uncalibrated/);
+  const capped=new BalanceEngine({seed:20261106,maxSimulatedSeconds:0.02});
+  assert.equal(capped.edit({op:'add',name:'Wander',loops:1}).status,'admitted');
+  capped.start();capped.step();
+  assert.throws(()=>capped.step(),error=>error.code==='budget_exceeded',
+    'hard technical budget is a typed failure');
+  const rng=capped.model.rngSnapshot();
+  assert.equal(rng.algorithm,'xorshift32/v1');
+  assert.equal(rng.seed,20261106);
+  assert.ok(Number.isSafeInteger(rng.calls) && rng.calls>=0);
+  console.log('PASS RW00 clock: real driver ticks, seeded RNG, loop accounting, budget failures, no offline credit.');
 }
 
 // Synthetic reporter fixture tests corruption sensitivity, not actual C14 completion.
@@ -195,6 +238,7 @@ function report(cal=calibration()) {
     schedulerVersion:cal.schedulerVersion,calibrationHash:fingerprint(cal),
     seeds:[{seed:42,status:'complete',totalSeconds:14,effectiveSeconds:14,
       loopCount:1,hostSeconds:0.1,uiStateHash:'ui-state',
+      uiChangeHistoryHash:'ui-history',effectiveUiConfigurationHash:'ui-effective',
       checkpoints:CHECKPOINTS.map((id,i)=>({id,status:'complete',seconds:i,
         ...(id==='C14'?{successfulRestoreTime:true}:{})})),
       attribution:{intervals:[{id:'all',seconds:14}],locations:[{id:'all',seconds:14}]}}]};
@@ -212,10 +256,18 @@ function report(cal=calibration()) {
   corrupt(r=>{r.seeds[0].checkpoints[14].successfulRestoreTime=false;});
   corrupt(r=>{r.uiConfigurationHash='changed';});
   corrupt(r=>{r.calibrationHash='stale';});
+  corrupt(r=>{r.seeds[0].uiChangeHistoryHash='';});
+  corrupt(r=>{r.seeds[0].effectiveUiConfigurationHash='';});
   const candidate=structuredClone(baseline);
   candidate.sourceHash='b'.repeat(64);
   assertComparableBaseline(baseline,candidate);
   candidate.uiConfigurationHash='different';
+  assert.throws(()=>assertComparableBaseline(baseline,candidate),/Incomparable/);
+  candidate.uiConfigurationHash=baseline.uiConfigurationHash;
+  candidate.seeds[0].uiChangeHistoryHash='changed-history';
+  assert.throws(()=>assertComparableBaseline(baseline,candidate),/Incomparable/);
+  candidate.seeds[0].uiChangeHistoryHash=baseline.seeds[0].uiChangeHistoryHash;
+  candidate.seeds[0].effectiveUiConfigurationHash='changed-cap-or-checkbox';
   assert.throws(()=>assertComparableBaseline(baseline,candidate),/Incomparable/);
   assert.throws(()=>assertCalibration({...cal,status:'failed'}),/not passed/);
   console.log('PASS RW00 report: calibration gate, false completion, accounting and incompatible runs rejected.');
