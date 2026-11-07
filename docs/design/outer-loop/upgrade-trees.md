@@ -22,7 +22,7 @@ All three branches deal with the same timeline but grant different kinds of powe
 
 ## 2. Common progression rules (proposed)
 
-- **Automatic replay speed is not part of a tree.** The already agreed ~10× faster new timeline is granted by the first completion by default, independently of the first upgrade choice. It does not cost an upgrade point.
+- **Automatic replay speed is not part of a tree.** The already agreed ~10× faster new timeline follows the **first potion entry and explicit new-timeline start**, independently of Valley completion or the first upgrade choice. It does not cost an upgrade point.
 - **One nexus progression system.** Spend from one *not-yet-named, not-yet-balanced* outer advancement pool or equivalent earned milestones. Do **not** resurrect dmchurch's old 90-point bonus shop as a second system. Ordinary-world gold is not the outer upgrade currency.
 - **Choose a specialty, not a class.** Recommend one impactful starter choice after meeting the first other self; the other two paths remain unlockable later. No permanent mutually exclusive starting class without a new design decision.
 - **Unlock abilities, not mostly percentages.** Nodes introduce new controls, legal automation policies or explicit persistence capacities. Stat/resource multipliers can supplement, but should not be the main reward.
@@ -139,6 +139,8 @@ The final category, numerical cap and allowed early-game progress are open. A fi
 The basic *idea* of wealth persistence is compelling; its exact cap is not. The old game converts gold into mana and has investment features. Unlimited gold persistence—even just across ordinary inner loops—could trivialize early optimization and is **not** proposed.
 
 ## 6. First Real World choice
+
+**Updated onboarding context (2026-11-06):** The first Real World arrival is an exploratory **alternate Beginnersville** with multiple selves and one welcome conversation. The **first rerun** also grants initial **skill points** and a **major temporary boost** distinct from permanent ~10× speed. Those grants are approved direction but their resource model, effects and expiry are open. The free-specialization sequence below is still a **working proposal**; do not require a large upgrade tree menu before the player explores.
 
 The proposed onboarding sequence is **one free impactful specialization**, on top of the separate **automatic ~10× replay acceleration**:
 
