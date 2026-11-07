@@ -1,6 +1,6 @@
 import {fingerprint} from './ui-inputs.mjs';
 
-export const POTION_POLICY_VERSION = 'rw00-r01-potion/v3';
+export const POTION_POLICY_VERSION = 'rw00-r01-potion/v4';
 export const POTION_ENDPOINTS = Object.freeze(['potion-craft','potion-totem']);
 export const POTION_SECTIONS = Object.freeze([
   'fresh_campaign','opening_mana_economy','forest_entry','forest_alchemy_and_herbs',
@@ -20,7 +20,7 @@ const CANDIDATES = Object.freeze([
   'Climb Mountain','Mana Geyser','Decipher Runes','Chronomancy','Pyromancy',
   'Explore Cavern','Check Walls','Take Artifacts',
   'Looping Potion','Face Judgement','Guided Tour','Canvass','Donate','Accept Donations',
-  'Tidy Up','Sell Artifact','Gift Artifact','Buy Mana Z5','Wizard College','Restoration',
+  'Tidy Up','Sell Artifact','Gift Artifact','Buy Mana Z5','Wizard College','Imbue Mind','Restoration',
   'Spatiomancy','Fall From Grace','Meander','Mana Well','Purchase Supplies','Journey Forth',
   'Explore Jungle','Open Portal','Totem'
 ]);
@@ -74,7 +74,7 @@ function routeToOlympus(state) {
     q('Buy Pickaxe',1),q('Start Trek',1)];
 }
 
-function mountainWork(state) {
+function mountainWork(state,{prepareImbuement=false}={}) {
   const geyserUnchecked=Math.max(0,state.limited.totalGeysers-state.limited.checkedGeysers);
   const geysers=geyserUnchecked?[q('Mana Geyser',geyserUnchecked,'unchecked')]:
     state.limited.goodGeysers?[q('Mana Geyser',state.limited.goodGeysers,'knownGood')]:[];
@@ -85,13 +85,14 @@ function mountainWork(state) {
     ...(state.levels.runes<60?[q('Decipher Runes',500)]:[]),
     ...(state.skills.Pyromancy<200?[q('Pyromancy',1000)]:[]),
     ...(state.levels.cavern<80?[q('Explore Cavern',500)]:[]),
-    ...(state.levels.illusions<5?[q('Check Walls',500)]:[]),...artifacts];
+    ...(state.levels.illusions<(prepareImbuement?70:5)?[q('Check Walls',500)]:[]),...artifacts];
 }
 
-function valhallaWork(state) {
+function valhallaWork(state,{spatiomancyTarget=1}={}) {
   return [q('Face Judgement',1),...(state.levels.tour<60?[q('Guided Tour',500)]:[]),
     q('Gift Artifact',10),q('Sell Artifact',10),q('Wizard College',1,'maxEffort'),
-    ...(state.skills.Spatiomancy<1?[q('Spatiomancy',1)]:[]),q('Fall From Grace',1)];
+    ...(state.skills.Spatiomancy<spatiomancyTarget?
+      [q('Spatiomancy',spatiomancyTarget>1?100:1)]:[]),q('Fall From Grace',1)];
 }
 
 function startingtonWork(state) {
@@ -103,23 +104,90 @@ function startingtonWork(state) {
 }
 
 export function assessPotionCarryResources(state) {
-  // Limited-action discovery yields one repeatable result per 5 Long Quests
-  // and per 10 Gather Herbs. Do not assume unknown slots are guaranteed.
-  const required={longQuests:27,herbs:400};
-  const knownGood={longQuests:state.limited.goodLong,herbs:state.limited.goodHerbs};
-  const possible={longQuests:Math.floor(state.limited.totalLong/5),
-    herbs:Math.floor(state.limited.totalHerbs/10)};
-  const shortages=Object.keys(required).filter(key=>knownGood[key]<required[key]);
-  const impossible=shortages.filter(key=>possible[key]<required[key]);
-  return {required,knownGood,possible,shortages,impossible};
+  const v=state.limited;
+  const rewards=state.goldRewards??{locks:10,short:20,long:30};
+  const required={herbs:400,gold:800};
+  const knownGood={herbs:v.goodHerbs,longQuests:v.goodLong,
+    shortQuests:v.goodShort,locks:v.goodLocks};
+  const possible={herbs:Math.floor(v.totalHerbs/10),longQuests:Math.floor(v.totalLong/5),
+    shortQuests:Math.floor(v.totalShort/5),locks:Math.floor(v.totalLocks/10)};
+  const gold=knownGood.locks*rewards.locks+knownGood.shortQuests*rewards.short+
+    knownGood.longQuests*rewards.long;
+  const potentialGold=possible.locks*rewards.locks+possible.shortQuests*rewards.short+
+    possible.longQuests*rewards.long;
+  const capacityShortages=[
+    ...(possible.herbs<required.herbs?['herbs']:[]),
+    ...(potentialGold<required.gold?['gold']:[])
+  ];
+  const discoveryShortages=[
+    ...(knownGood.herbs<required.herbs?['herbs']:[]),
+    ...(gold<required.gold?['gold']:[])
+  ];
+  return {required,knownGood,possible,rewards,gold,potentialGold,
+    capacityShortages,discoveryShortages};
 }
 
-function directPotionCarry(endpoint) {
-  return [q('Long Quest',27,'knownGood'),q('Heal The Sick',8,'maxEffort'),
-    q('Buy Supplies',1),q('Start Journey',1),q('Gather Herbs',400,'knownGood'),
-    q('Continue On',1),q('Start Trek',1),q('Looping Potion',1),q('Face Judgement',1),
+function growPotionCapacity(state,assessment) {
+  const lackGold=assessment.capacityShortages.includes('gold');
+  const lackHerbs=assessment.capacityShortages.includes('herbs');
+  if(lackGold){
+    if(state.levels.wander<100)return [q('Wander',100)];
+    if(state.levels.met<100)return [q('Meet People',100)];
+    if(state.levels.secrets<100)return [q('Investigate',100)];
+    if(state.skills.Practical<200)return [...forestTravel(state),q('Practical Magic',20)];
+  }
+  if(lackHerbs&&(state.levels.forest<100||state.levels.shortcut<100||
+      state.levels.flowers<100)){
+    return [...forestTravel(state),
+      ...(state.levels.forest<100?[q('Explore Forest',100)]:[]),
+      ...(state.levels.shortcut<100?[q('Old Shortcut',100)]:[]),
+      ...(state.levels.flowers<100?[q('Follow Flowers',100)]:[])];
+  }
+  if((lackGold||lackHerbs)&&state.skills.Spatiomancy<700){
+    return [...routeToOlympus(state),...mountainWork(state),
+      ...valhallaWork(state,{spatiomancyTarget:700})];
+  }
+  // The selected R01 policy has no remaining earned capacity lever.
+  return null;
+}
+
+function discoverPotionResources(state,assessment) {
+  const v=state.limited;
+  const unsearched=(name,total,checked)=>total>checked?
+    [q(name,total-checked,'unchecked')]:[];
+  const gold=assessment.discoveryShortages.includes('gold');
+  const herbs=assessment.discoveryShortages.includes('herbs');
+  return [...(gold?[
+      ...unsearched('Pick Locks',v.totalLocks,v.checkedLocks),
+      ...unsearched('Short Quest',v.totalShort,v.checkedShort),
+      ...unsearched('Long Quest',v.totalLong,v.checkedLong)]:[]),
+    ...(herbs?[...forestTravel(state),
+      ...unsearched('Gather Herbs',v.totalHerbs,v.checkedHerbs)]:[])];
+}
+
+function directPotionCarry(state,endpoint) {
+  const good=state.limited,heal=Math.max(0,Math.ceil((51-good.goodLong)/3));
+  return [...knownGood('Pick Locks',good.goodLocks),
+    ...knownGood('Short Quest',good.goodShort),
+    ...knownGood('Long Quest',good.goodLong),
+    ...(heal>0?[q('Heal The Sick',heal,'maxEffort')]:[]),
+    q('Buy Supplies',1),q('Start Journey',1),
+    q('Gather Herbs',400,'knownGood'),q('Continue On',1),
+    q('Start Trek',1),q('Looping Potion',1),q('Face Judgement',1),
     q('Fall From Grace',1),q('Purchase Supplies',1),q('Journey Forth',1),
     ...(endpoint==='potion-totem'?[q('Totem',1)]:[])];
+}
+
+function imbuementPreparation(state) {
+  // Meander's normal progress is exactly the Imbuement buff level.
+  const needSoulstones=(state.totalSoulstones??0)<20;
+  const needMagic=(state.skills.Magic??0)<300;
+  const canImbue=(state.levels.illusions??0)>=70&&!needMagic&&!needSoulstones;
+  return [...(needSoulstones?[q('Small Dungeon',1,'maxEffort')]:[]),
+    ...(needMagic?[q('Mage Lessons',10)]:[]),
+    ...routeToOlympus(state),...mountainWork(state,{prepareImbuement:true}),
+    ...(canImbue?[q('Imbue Mind',1,'maxEffort')]:[]),
+    ...valhallaWork(state)];
 }
 
 export function readPotionPolicyState(engine) {
@@ -145,6 +213,10 @@ export function readPotionPolicyState(engine) {
         meander:towns[5].expMeander,jungle:towns[6].expExploreJungle},
       skills:Object.fromEntries(Object.entries(skills).map(([k,v])=>[k,v.levelExp.level])),
       skillExp:Object.fromEntries(Object.entries(skills).map(([k,v])=>[k,v.levelExp.exp])),
+      buffs:{Imbuement:getBuffLevel('Imbuement')},
+      totalSoulstones:Object.values(stats).reduce((sum,stat)=>sum+(stat.soulstone??0),0),
+      goldRewards:{locks:Action.PickLocks.goldCost(),short:Action.ShortQuest.goldCost(),
+        long:Action.LongQuest.goldCost()},
       limited:{goodPots:towns[0].goodPots,checkedPots:towns[0].checkedPots,
         totalPots:towns[0].totalPots,goodLocks:towns[0].goodLocks,
         checkedLocks:towns[0].checkedLocks,totalLocks:towns[0].totalLocks,
@@ -199,32 +271,38 @@ export function choosePotionPolicy(state, endpoint='potion-totem') {
   if(!POTION_ENDPOINTS.includes(endpoint))throw new RangeError('Unknown potion endpoint');
   let phase,reason,recipe;
   if(state.wunderkind>=1){phase='complete';reason='observed first successful Totem reward';recipe=[];}
-  else if(state.loopingPotion){
-    // Resuming a paused loop resets temporary resources. Totem alone is never
-    // a valid recovery queue: recreate the potion and traverse all towns.
-    phase=endpoint==='potion-craft'?'complete':'recraft_potion_and_totem';
-    reason='Temporary potion cannot survive a restarted loop; repeat full craft and travel';
-    recipe=endpoint==='potion-craft'?[]:directPotionCarry(endpoint);
+  else if(state.loopingPotion&&endpoint==='potion-craft'){
+    phase='complete';reason='potion retained at exact completion boundary';recipe=[];
   }
   else if(state.skills.Spatiomancy>=1&&state.skills.Pyromancy>=200&&
       state.skills.Alchemy>=200&&state.levels.meander>=100&&state.levels.jungle>=50){
     const resources=assessPotionCarryResources(state);
-    if(resources.impossible.length){
-      phase='blocked_resource_capacity';
-      reason='Direct potion carry lacks obtainable limited resources: '+JSON.stringify(resources);
-      recipe=[];
-    }else if(resources.shortages.length){
+    if(resources.capacityShortages.length){
+      const progression=growPotionCapacity(state,resources);
+      if(progression?.length){
+        phase='resource_capacity_growth';
+        reason='Earn exploration, skill or bonus capacity: '+JSON.stringify(resources);
+        recipe=progression;
+      }else{
+        phase='blocked_resource_capacity';
+        reason='No supported R01 resource-capacity lever remains: '+JSON.stringify(resources);
+        recipe=[];
+      }
+    }else if(resources.discoveryShortages.length){
       phase='discover_potion_resources';
-      reason='Earn known-good resource locations before the carry: '+JSON.stringify(resources);
-      recipe=[...(resources.shortages.includes('longQuests')?
-        [q('Long Quest',state.limited.totalLong-state.limited.checkedLong,'unchecked')]:[]),
-        ...forestTravel(state),
-        ...(resources.shortages.includes('herbs')?
-          [q('Gather Herbs',state.limited.totalHerbs-state.limited.checkedHerbs,'unchecked')]:[])];
+      reason='Discover enough repeatable gold and herbs: '+JSON.stringify(resources);
+      recipe=discoverPotionResources(state,resources);
     }else{
-      phase='craft_and_totem';reason='direct craft, carry, and Totem prerequisites persistently earned';
-      recipe=directPotionCarry(endpoint);
+      phase=state.loopingPotion?'recraft_potion_and_totem':'craft_and_totem';
+      reason=state.loopingPotion?'Recreate temporary potion after loop reset':
+        'Earned known-good gold and herb sources cover the carry';
+      recipe=directPotionCarry(state,endpoint);
     }
+  }
+  else if(state.townsUnlocked.includes(5)&&(state.buffs?.Imbuement??0)<1){
+    phase='imbuement_preparation';
+    reason='Imbue Mind must be earned before Meander can progress';
+    recipe=imbuementPreparation(state);
   }else if(state.townsUnlocked.includes(5)){
     phase='startington';reason='Startington earned; progress Meander and Jungle route';
     recipe=[...routeToOlympus(state),...mountainWork(state),...valhallaWork(state),...startingtonWork(state)];
