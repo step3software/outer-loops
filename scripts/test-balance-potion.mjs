@@ -7,6 +7,7 @@ import {SCHEDULER_VERSION} from './balance/fast-scheduler.mjs';
 import {POTION_POLICY_ACTIONS,choosePotionPolicy} from './balance/potion-policy.mjs';
 import {assertPotionPrefix,assertPotionReport,createPotionAcceleration,potionSourceIdentity,
   runPotionCampaign} from './balance/potion-runner.mjs';
+import {createPotionRequirementEstimate,runInjectedPotionEndpoint} from './balance/potion-estimate.mjs';
 
 const root=resolve(import.meta.dirname,'..');
 const accessible=Object.fromEntries(POTION_POLICY_ACTIONS.map(name=>[name,
@@ -14,11 +15,14 @@ const accessible=Object.fromEntries(POTION_POLICY_ACTIONS.map(name=>[name,
 function state(overrides={}){
   return {resources:{herbs:0,wizardCollege:false},townsUnlocked:[0],curTown:0,
     levels:{wander:0,met:0,secrets:0,forest:0,shortcut:0,hermit:0,flowers:0,city:0,
-      mountain:0,runes:0,tour:0,canvassed:0,meander:0,jungle:0},
-    skills:{Combat:0,Magic:0,Practical:0,Alchemy:0,Spatiomancy:0,Pyromancy:0},
+      mountain:0,runes:0,cavern:0,illusions:0,tour:0,canvassed:0,meander:0,jungle:0},
+    skills:{Combat:0,Magic:0,Practical:0,Alchemy:0,Spatiomancy:0,Pyromancy:0,Restoration:0},
     limited:{goodPots:0,checkedPots:0,totalPots:0,goodLocks:0,checkedLocks:0,totalLocks:0,
       goodShort:0,checkedShort:0,totalShort:0,goodWild:0,checkedWild:0,totalWild:0,
       goodGamble:0,checkedGamble:0,totalGamble:0,goodHerbs:0,checkedHerbs:0,totalHerbs:0,
+      goodGeysers:0,checkedGeysers:0,totalGeysers:0,goodArtifacts:0,checkedArtifacts:0,
+      totalArtifacts:0,goodDonations:0,checkedDonations:0,totalDonations:0,
+      goodWells:0,checkedWells:0,totalWells:0,
       goodLong:0,checkedLong:0,totalLong:0},storyFlags:{},totals:{time:0,loops:0},
     loopingPotion:false,wunderkind:0,action:accessible,persistent:{},...overrides};
 }
@@ -31,6 +35,18 @@ assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4]})).phase,'valha
 assert.equal(choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4,5]})).phase,'startington');
 assert.equal(choosePotionPolicy(state({loopingPotion:true})).phase,'carry_potion');
 assert.equal(choosePotionPolicy(state({loopingPotion:false,wunderkind:1})).phase,'complete');
+const craft=choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4,5,6],
+  levels:{...state().levels,meander:100,jungle:75},
+  skills:{...state().skills,Alchemy:200,Spatiomancy:1,Restoration:1000}}));
+assert.equal(craft.phase,'craft_and_totem');
+assert.ok(craft.queue.findIndex(item=>item.name==='Open Portal')<
+  craft.queue.findIndex(item=>item.name==='Looping Potion'));
+assert.ok(craft.queue.findIndex(item=>item.name==='Looping Potion')<
+  craft.queue.findIndex(item=>item.name==='Totem'));
+const craftOnly=choosePotionPolicy(state({townsUnlocked:[0,1,2,3,4,5,6],
+  levels:{...state().levels,meander:100,jungle:75},
+  skills:{...state().skills,Alchemy:200,Spatiomancy:1,Restoration:1000}}),'potion-craft');
+assert.equal(craftOnly.queue.some(item=>item.name==='Totem'),false);
 assert.throws(()=>choosePotionPolicy(state(),'wrong-endpoint'),/Unknown potion endpoint/);
 
 const policySource=readFileSync(resolve(root,'scripts/balance/potion-policy.mjs'),'utf8');
@@ -52,4 +68,22 @@ assert.throws(()=>assertPotionReport({...incomplete,sections:[]}),/section recon
 assert.throws(()=>assertPotionPrefix({...incomplete.prefix,canonicalStateDigest:'bad'}),/canonical digest/);
 assert.equal(incomplete.endpointReached,null);
 assert.ok(incomplete.failure&&incomplete.missingMilestones.length>0);
-console.log('PASS potion policy phases, mutation guard, calibration failures and incomplete evidence validation.');
+const estimate=createPotionRequirementEstimate();
+assert.equal(estimate.actions.learnAlchemy,40200);
+assert.equal(estimate.actions.pyromancy,20100);
+assert.equal(estimate.actions.restoration,500500);
+assert.equal(estimate.actions.exploreJungleTo75,14250);
+for(const endpoint of ['potion-craft','potion-totem']){
+  const injected=runInjectedPotionEndpoint({root,endpoint});
+  assert.equal(injected.terminal,true);
+  assert.equal(injected.state.portalOpened,true);
+  const names=injected.events.map(event=>event.action);
+  assert.deepEqual(names,endpoint==='potion-craft'?['Open Portal','Looping Potion']:
+    ['Open Portal','Looping Potion','Totem']);
+  if(endpoint==='potion-craft')assert.equal(injected.state.loopingPotion,true);
+  else{
+    assert.equal(injected.state.loopingPotion,false);
+    assert.equal(injected.state.wunderkind,1);
+  }
+}
+console.log('PASS potion policy, calculated requirements, injected portal/craft/Totem endpoints, and evidence guards.');

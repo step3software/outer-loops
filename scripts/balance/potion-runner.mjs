@@ -16,7 +16,7 @@ export const POTION_PREFIX_SCHEMA = 'rw00-earned-prefix/v1';
 export const POTION_CHECKPOINT_VERSION = 'rw00-potion-checkpoints/v1';
 const POTION_EVENT_ACTIONS=Object.freeze(['Buy Mana Z1','Start Journey','Continue On','Start Trek',
   'Face Judgement','Wizard College','Spatiomancy','Fall From Grace','Journey Forth',
-  'Looping Potion','Totem']);
+  'Open Portal','Looping Potion','Totem']);
 
 function requireValue(condition,message){if(!condition)throw new Error('Invalid potion evidence: '+message);}
 
@@ -48,6 +48,15 @@ export function assertPotionReport(report){
       'looping_potion_used_at_totem';
     requireValue(report.checkpoints.some(event=>event.id===terminal&&event.kind==='completed'),
       'terminal checkpoint');
+    const exact=report.prefix.semanticEvents.filter(event=>event.type==='action_completed');
+    const portal=exact.findIndex(event=>event.action==='Open Portal');
+    const potion=exact.findIndex(event=>event.action==='Looping Potion');
+    const totem=exact.findIndex(event=>event.action==='Totem');
+    requireValue(portal>=0&&potion>portal,'portal-before-potion exact action order');
+    if(report.endpointRequested==='potion-totem'){
+      requireValue(totem>potion&&!report.resources.loopingPotion&&report.skills.Wunderkind>=1,
+        'potion-before-Totem exact action order and consumption');
+    }
   }else requireValue(report.failure||report.missingMilestones.length>0,'incomplete diagnosis');
   return true;
 }
@@ -57,7 +66,8 @@ export const POTION_SOURCE_FILES = Object.freeze([
   'scripts/load-game-model.mjs','scripts/balance/admission.mjs','scripts/balance/ui-inputs.mjs',
   'scripts/balance/engine.mjs','scripts/balance/clock.mjs','scripts/balance/fast-scheduler.mjs',
   'scripts/balance/calibration.mjs','scripts/balance/events.mjs',
-  'scripts/balance/potion-policy.mjs','scripts/balance/potion-runner.mjs'
+  'scripts/balance/potion-policy.mjs','scripts/balance/potion-runner.mjs',
+  'scripts/balance/potion-estimate.mjs'
 ]);
 
 export function potionSourceIdentity(root) {
@@ -88,10 +98,12 @@ const MILESTONES=Object.freeze([
   ['judgement',s=>!!s.storyFlags.acceptedIntoValhalla],
   ['valhalla_training',s=>s.levels.tour>=60&&!!s.resources.wizardCollege],
   ['spatiomancy_requirement_met',s=>s.skills.Spatiomancy>=1],
-  ['potion_requirements_complete',s=>s.skills.Spatiomancy>=1&&s.skills.Alchemy>=200&&s.resources.herbs>=400],
-  ['looping_potion_crafted',s=>s.loopingPotion],
   ['jungle_entry',s=>s.townsUnlocked.includes(6)],
   ['jungle_totem_unlocked',s=>s.levels.jungle>=50],
+  ['portal_opened',s=>!!s.storyFlags.portalOpened],
+  ['potion_requirements_complete',s=>s.skills.Spatiomancy>=1&&s.skills.Restoration>=1000&&
+    s.skills.Alchemy>=200&&s.levels.jungle>=75&&!!s.storyFlags.portalOpened],
+  ['looping_potion_crafted',s=>s.loopingPotion],
   ['looping_potion_used_at_totem',s=>s.wunderkind>=1&&!s.loopingPotion]
 ]);
 
@@ -142,7 +154,7 @@ export function runPotionCampaign({root,seed=42,endpoint='potion-totem',mode='ac
     const key=name+':'+kind;if(milestones.has(key))return;
     const value={id:name,kind,gameplaySeconds:obs.time,effectiveSeconds:obs.effectiveSeconds,
       loopCount:obs.loops,earnedState:{townsUnlocked:s.townsUnlocked,levels:s.levels,
-        skills:{Alchemy:s.skills.Alchemy,Spatiomancy:s.skills.Spatiomancy,
+        skills:{Alchemy:s.skills.Alchemy,Restoration:s.skills.Restoration,Spatiomancy:s.skills.Spatiomancy,
           Pyromancy:s.skills.Pyromancy,Wunderkind:s.wunderkind},
         herbs:s.resources.herbs,loopingPotion:s.loopingPotion}};
     milestones.set(key,value);semanticEvents.push({...value,type:'milestone_'+kind});
@@ -220,7 +232,7 @@ export function runPotionCampaign({root,seed=42,endpoint='potion-totem',mode='ac
     limited:state.limited,
     skills:{Combat:state.skills.Combat,Magic:state.skills.Magic,Practical:state.skills.Practical,
       Alchemy:state.skills.Alchemy,Spatiomancy:state.skills.Spatiomancy,
-      Pyromancy:state.skills.Pyromancy,Wunderkind:state.wunderkind},
+      Restoration:state.skills.Restoration,Pyromancy:state.skills.Pyromancy,Wunderkind:state.wunderkind},
     performance:engine.profiler.report({simulatedSeconds:finalObs.time,
       completedActions:finalObs.completedActions,loops:finalObs.loops}),
     missingMilestones:MILESTONES.filter(([name])=>!milestones.has(name+':completed')).map(([name])=>name),

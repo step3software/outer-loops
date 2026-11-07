@@ -1,12 +1,12 @@
 import {fingerprint} from './ui-inputs.mjs';
 
-export const POTION_POLICY_VERSION = 'rw00-r01-potion/v1';
+export const POTION_POLICY_VERSION = 'rw00-r01-potion/v2';
 export const POTION_ENDPOINTS = Object.freeze(['potion-craft','potion-totem']);
 export const POTION_SECTIONS = Object.freeze([
   'fresh_campaign','opening_mana_economy','forest_entry','forest_alchemy_and_herbs',
   'merchanton_entry','merchanton_preparation','mt_olympus_entry','judgement',
   'valhalla_training','spatiomancy_requirement_met','potion_requirements_complete',
-  'looping_potion_crafted','jungle_entry','jungle_totem_unlocked',
+  'looping_potion_crafted','jungle_entry','jungle_totem_unlocked','portal_opened',
   'looping_potion_used_at_totem'
 ]);
 
@@ -18,9 +18,11 @@ const CANDIDATES = Object.freeze([
   'Practical Magic','Learn Alchemy','Follow Flowers','Clear Thicket','Continue On',
   'Explore City','Gamble','Buy Mana Z3','Adventure Guild','Read Books','Buy Pickaxe','Start Trek',
   'Climb Mountain','Mana Geyser','Decipher Runes','Chronomancy','Pyromancy',
+  'Explore Cavern','Check Walls','Take Artifacts',
   'Looping Potion','Face Judgement','Guided Tour','Canvass','Donate','Accept Donations',
-  'Tidy Up','Buy Mana Z5','Wizard College','Restoration','Spatiomancy','Fall From Grace',
-  'Meander','Mana Well','Purchase Supplies','Journey Forth','Explore Jungle','Totem'
+  'Tidy Up','Sell Artifact','Gift Artifact','Buy Mana Z5','Wizard College','Restoration',
+  'Spatiomancy','Fall From Grace','Meander','Mana Well','Purchase Supplies','Journey Forth',
+  'Explore Jungle','Open Portal','Totem'
 ]);
 
 export const POTION_POLICY_ACTIONS = CANDIDATES;
@@ -37,8 +39,9 @@ function openingEconomy() {
 }
 
 function forestTravel() {
-  return [q('Long Quest',80,'knownGood'),q('Buy Mana Z1',1),q('Haggle',16),
-    q('Buy Supplies',1),q('Start Journey',1)];
+  return [q('Smash Pots',50,'knownGood'),q('Pick Locks',10,'knownGood'),
+    q('Short Quest',20,'knownGood'),q('Buy Mana Z1',1),
+    q('Long Quest',80,'knownGood'),q('Heal The Sick',20,'maxEffort')];
 }
 
 function forestWork() {
@@ -48,28 +51,47 @@ function forestWork() {
     q('Clear Thicket',300)];
 }
 
-function routeToOlympus() {
-  return [...forestTravel(),q('Explore Forest',20),q('Wild Mana',200,'knownGood'),
-    q('Gather Herbs',1000,'knownGood'),q('Continue On',1),q('Explore City',300),
-    q('Gamble',100,'unchecked'),q('Buy Mana Z3',1),q('Adventure Guild',20,'maxEffort'),
-    q('Read Books',200),q('Buy Pickaxe',1),q('Start Trek',1)];
+function routeToOlympus(state) {
+  const gambleUnchecked=Math.max(0,state.limited.totalGamble-state.limited.checkedGamble);
+  const gamble=gambleUnchecked?[q('Gamble',gambleUnchecked,'unchecked')]:
+    state.limited.goodGamble?[q('Gamble',state.limited.goodGamble,'knownGood')]:[];
+  return [...forestTravel(),q('Wild Mana',200,'knownGood'),
+    ...(state.levels.city<90?[q('Explore City',100)]:[]),...gamble,q('Buy Pickaxe',1)];
 }
 
-function mountainWork() {
-  return [q('Climb Mountain',500),q('Mana Geyser',500,'unchecked'),q('Decipher Runes',500),
-    q('Chronomancy',500),q('Pyromancy',1000)];
+function mountainWork(state) {
+  const geyserUnchecked=Math.max(0,state.limited.totalGeysers-state.limited.checkedGeysers);
+  const geysers=geyserUnchecked?[q('Mana Geyser',geyserUnchecked,'unchecked')]:
+    state.limited.goodGeysers?[q('Mana Geyser',state.limited.goodGeysers,'knownGood')]:[];
+  const artifactUnchecked=Math.max(0,state.limited.totalArtifacts-state.limited.checkedArtifacts);
+  const artifacts=artifactUnchecked?[q('Take Artifacts',artifactUnchecked,'unchecked')]:
+    state.limited.goodArtifacts?[q('Take Artifacts',state.limited.goodArtifacts,'knownGood')]:[];
+  return [...(state.levels.mountain<100?[q('Climb Mountain',500)]:[]),...geysers,
+    ...(state.levels.runes<60?[q('Decipher Runes',500)]:[]),
+    ...(state.skills.Pyromancy<200?[q('Pyromancy',1000)]:[]),
+    ...(state.levels.cavern<80?[q('Explore Cavern',500)]:[]),
+    ...(state.levels.illusions<5?[q('Check Walls',500)]:[]),...artifacts];
 }
 
-function valhallaWork() {
-  return [q('Face Judgement',1),q('Guided Tour',500),q('Canvass',300),q('Donate',100),
-    q('Accept Donations',200,'unchecked'),q('Tidy Up',20,'maxEffort'),q('Buy Mana Z5',1),
-    q('Wizard College',1,'maxEffort'),q('Restoration',500),q('Spatiomancy',500),
-    q('Fall From Grace',1)];
+function valhallaWork(state) {
+  const donationUnchecked=Math.max(0,state.limited.totalDonations-state.limited.checkedDonations);
+  const donations=donationUnchecked?[q('Accept Donations',donationUnchecked,'unchecked')]:
+    state.limited.goodDonations?[q('Accept Donations',state.limited.goodDonations,'knownGood')]:[];
+  return [q('Face Judgement',1),...(state.levels.tour<60?[q('Guided Tour',500)]:[]),
+    ...(state.levels.canvassed<100?[q('Canvass',300)]:[]),q('Tidy Up',20,'maxEffort'),
+    q('Donate',100),...donations,q('Gift Artifact',10),
+    q('Sell Artifact',500),q('Wizard College',1,'maxEffort'),q('Restoration',5000),
+    q('Spatiomancy',50),q('Fall From Grace',1)];
 }
 
-function startingtonWork() {
-  return [q('Meander',800),q('Mana Well',500,'unchecked'),q('Purchase Supplies',1),
-    q('Journey Forth',1),q('Explore Jungle',500),q('Totem',1)];
+function startingtonWork(state, finishEndpoint=null) {
+  const wellUnchecked=Math.max(0,state.limited.totalWells-state.limited.checkedWells);
+  const wells=wellUnchecked?[q('Mana Well',wellUnchecked,'unchecked')]:
+    state.limited.goodWells?[q('Mana Well',state.limited.goodWells,'knownGood')]:[];
+  return [...(state.levels.meander<100?[q('Meander',800)]:[]),...wells,q('Purchase Supplies',1),
+    q('Journey Forth',1),q('Explore Jungle',500),
+    ...(finishEndpoint?[q('Open Portal',1),q('Looping Potion',1),
+      ...(finishEndpoint==='potion-totem'?[q('Totem',1)]:[])]:[])];
 }
 
 export function readPotionPolicyState(engine) {
@@ -84,12 +106,14 @@ export function readPotionPolicyState(engine) {
       levels:{wander:level(0,'Wander'),met:level(0,'Met'),secrets:level(0,'Secrets'),
         forest:level(1,'Forest'),shortcut:level(1,'Shortcut'),hermit:level(1,'Hermit'),
         flowers:level(1,'Flowers'),city:level(2,'City'),mountain:level(3,'Mountain'),
-        runes:level(3,'Runes'),tour:level(4,'Tour'),canvassed:level(4,'Canvassed'),
+        runes:level(3,'Runes'),cavern:level(3,'Cavern'),illusions:level(3,'Illusions'),
+        tour:level(4,'Tour'),canvassed:level(4,'Canvassed'),
         meander:level(5,'Meander'),jungle:level(6,'ExploreJungle')},
       progressExp:{wander:towns[0].expWander,met:towns[0].expMet,secrets:towns[0].expSecrets,
         forest:towns[1].expForest,shortcut:towns[1].expShortcut,hermit:towns[1].expHermit,
         flowers:towns[1].expFlowers,city:towns[2].expCity,mountain:towns[3].expMountain,
-        runes:towns[3].expRunes,tour:towns[4].expTour,canvassed:towns[4].expCanvassed,
+        runes:towns[3].expRunes,cavern:towns[3].expCavern,illusions:towns[3].expIllusions,
+        tour:towns[4].expTour,canvassed:towns[4].expCanvassed,
         meander:towns[5].expMeander,jungle:towns[6].expExploreJungle},
       skills:Object.fromEntries(Object.entries(skills).map(([k,v])=>[k,v.levelExp.level])),
       skillExp:Object.fromEntries(Object.entries(skills).map(([k,v])=>[k,v.levelExp.exp])),
@@ -102,6 +126,14 @@ export function readPotionPolicyState(engine) {
         totalWild:towns[1].totalWildMana,
         goodGamble:towns[2].goodGamble,checkedGamble:towns[2].checkedGamble,
         totalGamble:towns[2].totalGamble,
+        goodGeysers:towns[3].goodGeysers,checkedGeysers:towns[3].checkedGeysers,
+        totalGeysers:towns[3].totalGeysers,
+        goodArtifacts:towns[3].goodArtifacts,checkedArtifacts:towns[3].checkedArtifacts,
+        totalArtifacts:towns[3].totalArtifacts,
+        goodDonations:towns[4].goodDonations,checkedDonations:towns[4].checkedDonations,
+        totalDonations:towns[4].totalDonations,
+        goodWells:towns[5].goodWells,checkedWells:towns[5].checkedWells,
+        totalWells:towns[5].totalWells,
         goodHerbs:towns[1].goodHerbs,checkedHerbs:towns[1].checkedHerbs,
         totalHerbs:towns[1].totalHerbs,goodLong:towns[0].goodLQuests,
         checkedLong:towns[0].checkedLQuests,totalLong:towns[0].totalLQuests},storyFlags:{...storyFlags},
@@ -113,7 +145,7 @@ export function readPotionPolicyState(engine) {
         buffs:Object.fromEntries(Object.entries(buffs).map(([k,v])=>[k,v.amt])),
         storyFlags:{...storyFlags},storyVars:{...storyVars},townsUnlocked:[...townsUnlocked],
         completedActions},
-      totals:{...totals},loopingPotion:!!resources.loopingPotion,
+      totals:{...totals},loopingPotion:!!resources.loopingPotion,portalUsed,
       suppliesCost:towns[0].suppliesCost,
       wunderkind:getSkillLevel('Wunderkind'),action};
   })()`)));
@@ -121,12 +153,15 @@ export function readPotionPolicyState(engine) {
 
 function legalize(recipe, state) {
   const seenTravel=new Set();
+  const portalQueued=recipe.some(item=>item.name==='Open Portal');
   return recipe.filter(item=>{
     const a=state.action[item.name];
     if(!a||!a.accessible||!a.visible||!a.unlocked)return false;
     if(['Start Journey','Continue On','Start Trek','Face Judgement','Fall From Grace',
-      'Journey Forth'].includes(item.name)){
-      if(seenTravel.has(item.name))return false;seenTravel.add(item.name);
+      'Journey Forth','Open Portal'].includes(item.name)){
+      const used=seenTravel.has(item.name);
+      if(used&&(!portalQueued||!['Start Journey','Continue On','Start Trek','Journey Forth'].includes(item.name)))return false;
+      seenTravel.add(item.name);
     }
     return true;
   });
@@ -136,20 +171,22 @@ export function choosePotionPolicy(state, endpoint='potion-totem') {
   if(!POTION_ENDPOINTS.includes(endpoint))throw new RangeError('Unknown potion endpoint');
   let phase,reason,recipe;
   if(state.wunderkind>=1){phase='complete';reason='observed first successful Totem reward';recipe=[];}
-  else if(state.loopingPotion){phase='carry_potion';reason='potion crafted; continue legal travel to Totem';
-    recipe=[...routeToOlympus(),...mountainWork(),...valhallaWork(),...startingtonWork()];}
-  else if(state.skills.Spatiomancy>=1&&state.skills.Alchemy>=200&&state.levels.meander>=100){
-    phase='craft_and_totem';reason='all persistent craft and Jungle access prerequisites earned';
-    recipe=[...routeToOlympus(),q('Looping Potion',1),...mountainWork(),...valhallaWork(),...startingtonWork()];
+  else if(state.loopingPotion){phase='carry_potion';reason='potion crafted; consume it at the unlocked Totem';
+    recipe=[q('Totem',1)];}
+  else if(state.skills.Spatiomancy>=1&&state.skills.Restoration>=1000&&
+      state.skills.Alchemy>=200&&state.levels.meander>=100&&state.levels.jungle>=75){
+    phase='craft_and_totem';reason='portal, craft, and Totem prerequisites persistently earned';
+    recipe=[...routeToOlympus(state),...mountainWork(state),...valhallaWork(state),
+      ...startingtonWork(state,endpoint)];
   }else if(state.townsUnlocked.includes(5)){
     phase='startington';reason='Startington earned; progress Meander and Jungle route';
-    recipe=[...routeToOlympus(),...mountainWork(),...valhallaWork(),...startingtonWork()];
+    recipe=[...routeToOlympus(state),...mountainWork(state),...valhallaWork(state),...startingtonWork(state)];
   }else if(state.townsUnlocked.includes(4)){
     phase='valhalla';reason='Valhalla earned; train College, Spatiomancy and Pyromancy';
-    recipe=[...routeToOlympus(),...mountainWork(),...valhallaWork()];
+    recipe=[...routeToOlympus(state),...mountainWork(state),...valhallaWork(state)];
   }else if(state.townsUnlocked.includes(3)){
     phase='olympus';reason='Mt. Olympus earned; progress Mountain, Runes and positive Judgement';
-    recipe=[...routeToOlympus(),...mountainWork(),...valhallaWork()];
+    recipe=[...routeToOlympus(state),...mountainWork(state),...valhallaWork(state)];
   }else if(state.townsUnlocked.includes(2)){
     phase='merchanton';reason='Merchanton earned; progress City and prepare Mt. Olympus entry';
     const longGold=Array.from({length:state.limited.goodLong},(_,index)=>index===state.limited.goodLong-1?
@@ -180,12 +217,12 @@ export function choosePotionPolicy(state, endpoint='potion-totem') {
         state.limited.goodWild?[q('Wild Mana',state.limited.goodWild,'knownGood')]:[];
       const herbsUnchecked=Math.max(0,state.limited.totalHerbs-state.limited.checkedHerbs);
       const herbs=herbsUnchecked?[q('Gather Herbs',herbsUnchecked,'unchecked')]:
-        state.limited.goodHerbs?[q('Gather Herbs',Math.min(30,state.limited.goodHerbs),'knownGood')]:[];
+        state.limited.goodHerbs?[q('Gather Herbs',Math.min(70,state.limited.goodHerbs),'knownGood')]:[];
       recipe=[...journey,...(state.levels.forest<100?[q('Explore Forest',100)]:[]),...forestMana,
         ...(state.levels.shortcut<100?[q('Old Shortcut',100)]:[]),
         ...(state.levels.hermit<100?[q('Talk To Hermit',100)]:[]),
         ...((state.skills.Practical??0)<50?[q('Practical Magic',50)]:[]),...herbs,
-        ...(state.skills.Alchemy<200?[q('Learn Alchemy',3)]:[]),
+        ...(state.skills.Alchemy<200?[q('Learn Alchemy',7)]:[]),
         ...(state.skills.Alchemy>=200?[q('Continue On',1)]:[])];
     }
   }else{
