@@ -1,6 +1,6 @@
 # RF02 — Persistence safety
 
-**Status:** Planned — **ready for explicit implementation authorization** on the merged RF01 foundation. Documentation and safety test planning only; **RF02 implementation has not started**.
+**Status:** Preparation complete — documentation only; **implementation remains separately authorized and has not started**.
 - **Priority:** After RF01
 - **Hard dependencies:** RF01's current/legacy synthetic save, corrupt-import, challenge-slot and restart fixtures
 - **Enables:** Safe resource/state contracts in RF03 and challenge save transitions in RF04
