@@ -1932,6 +1932,7 @@ function updateBuffCaps(changedBuff) {
     // Keep the no-argument form for existing callers.
     for (const buff of changedBuff === undefined ? buffList : [changedBuff]) {
         const input = inputElement(`buff${buff}Cap`);
+        const previous = getBuffCap(buff);
         try {
             const value = input.value.trim();
             if (!/^\d+$/.test(value)) throw new RangeError(`Invalid buff cap for ${buff}`);
@@ -1940,6 +1941,10 @@ function updateBuffCaps(changedBuff) {
             console.warn(error.message);
         }
         input.value = String(getBuffCap(buff));
+        if (getBuffCap(buff) !== previous) {
+            // Refresh queue predictions so worker snapshots include the new cap.
+            view.requestUpdate("updateNextActions", null);
+        }
     }
 }
 
