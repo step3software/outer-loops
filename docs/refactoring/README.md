@@ -1,8 +1,8 @@
 # Outer Loops refactoring program — RF01–RF06
 
-**Approval/status (2026-10-17):** [RF01 regression coverage PR #4](https://github.com/step3software/outer-loops/pull/4) and prerequisite documentation PRs #1–#3 are **merged into `dmchurch`**. **RF02 is prepared for a separately authorized implementation, not started**, with [readiness brief](rf02-readiness.md) and [test matrix](rf02-test-matrix.md). RF03–RF06 remain planned/unimplemented. These documents do not authorize persistence code edits, broader gameplay changes or merging.
+**Approval/status (2026-10-17):** [RF01 regression coverage PR #4](https://github.com/step3software/outer-loops/pull/4) and prerequisite documentation PRs #1–#3 are **merged into `dmchurch`**. **RF02 implementation is in progress in [draft PR #16](https://github.com/step3software/outer-loops/pull/16), not merged or accepted**, with [readiness brief](rf02-readiness.md), [test matrix](rf02-test-matrix.md) and [implementation evidence](rf02-evidence.md). RF03–RF06 remain planned/unimplemented. These documents do not authorize persistence code edits, broader gameplay changes or merging.
 
-**Repository:** `step3software/outer-loops` · production/default branch `dmchurch`. These plans depend on the AI-development foundation in [the technical/gameplay audit](../audit/README.md) and [root agent instructions](../../AGENTS.md). Existing tests and files cited here refer to that baseline; agents must verify the current default branch and source before starting any milestone.
+**Repository:** `step3software/outer-loops` · default and approved canonical source branch `main`. These plans depend on the AI-development foundation in [the technical/gameplay audit](../audit/README.md) and [root agent instructions](../../AGENTS.md). Existing tests and files cited here refer to that baseline; agents must verify the current default branch and source before starting any milestone.
 
 ## Portfolio and sequence
 
@@ -19,7 +19,7 @@ The **recommended delivery order is RF01 → RF02 → RF03 → RF04 → RF05 →
 
 ## RF01 implementation evidence
 
-[RF01 coverage and verification ledger](rf01-evidence.md) maps A1–A8 and F01–F15 to **merged** tests from [PR #4](https://github.com/step3software/outer-loops/pull/4), including synthetic legacy imports and reproducible Chrome/Worker scenarios. R01/R04/R08/R15 remain known risks (not gameplay fixes). **RF02's exact prerequisites and risks are now documented** in the [readiness brief](rf02-readiness.md) and [matrix](rf02-test-matrix.md). No RF02 implementation has begun.
+[RF01 coverage and verification ledger](rf01-evidence.md) maps A1–A8 and F01–F15 to **merged** tests from [PR #4](https://github.com/step3software/outer-loops/pull/4), including synthetic legacy imports and reproducible Chrome/Worker scenarios. R01/R04/R08/R15 remain known risks (not gameplay fixes). **RF02's prerequisites and risks are documented** in the [readiness brief](rf02-readiness.md) and [matrix](rf02-test-matrix.md). Draft [PR #16](https://github.com/step3software/outer-loops/pull/16) implements a candidate pending full verification.
 
 ## Product-direction reconciliation — new Real World system
 
@@ -49,7 +49,7 @@ See the [cross-milestone validation matrix](validation-matrix.md) for exact scen
 Each approved milestone is a separate prospective implementation effort. When separately authorized:
 
 1. Read its milestone file, [implementation handoff](handoffs/), the root/nested agent rules, and audit references.
-2. Refresh current `dmchurch` and active PR status. Start one focused implementation branch and PR for the authorized milestone; break into sequential PRs only if a clear testable seam makes that safer.
+2. Refresh current `main` and active PR status. Start one focused implementation branch and PR for the authorized milestone; break into sequential PRs only if a clear testable seam makes that safer.
 3. Capture characterization tests and baseline fixtures before changing behavior. Treat recorded historic behavior as evidence, not necessarily a product requirement if it is confirmed unsafe.
 4. Implement only the accepted scope. Open an ADR when changing a long-lived API, data schema, global rule contract or script layout.
 5. Run baseline and milestone-specific checks, verify full PR diff, update docs and hand off for review; **do not merge**.
@@ -68,4 +68,4 @@ The milestone plans are **not** stand-alone authorization to fix findings unrela
 - [Decision log and unresolved choices](decision-log.md)
 - [Reusable implementation handoffs](handoffs/README.md)
 
-**Status register:** **RF01 Merged** · **RF02 Ready for implementation authorization (documentation only)** · RF03 Planned · RF04 Planned · RF05 Planned · RF06 Planned. RF02 gameplay/source changes remain unstarted and not yet authorized.
+**Source delivery:** **RF01 Merged** · **RF02 Draft implementation in PR #16, pending tests/review/merge** · RF03 Planned · RF04 Planned · RF05 Planned · RF06 Planned. Orcha's legacy stage record must still reconcile the chat-approved scope and preparation before claiming formal workflow acceptance.

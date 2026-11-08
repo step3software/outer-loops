@@ -1,6 +1,6 @@
 # Refactoring decisions and open design questions
 
-**Status (2026-10-17):** The RF01–RF06 scopes and broad sequencing are approved; **RF01 implementation merged via PR #4**. **RF02 implementation is not yet authorized**, but [readiness](rf02-readiness.md) and [prospective P01–P22 tests](rf02-test-matrix.md) are prepared. **Not approved:** changing save formats, adding runtime dependencies, rewriting gameplay/UI or starting RF02–RF06 code merely because this planning document exists. Entries remain provisional choices unless explicitly accepted during the relevant authorized milestone.
+**Status (2026-10-17):** The RF01–RF06 scopes and broad sequencing are approved; **RF01 implementation merged via PR #4**. **RF02 implementation has now been explicitly authorized in this chat and is being developed in draft PR #16; merging/deployment remain unauthorized**, but [readiness](rf02-readiness.md) and [prospective P01–P22 tests](rf02-test-matrix.md) are prepared. **Not approved:** changing save formats, adding runtime dependencies, rewriting gameplay/UI or starting RF02–RF06 code merely because this planning document exists. Entries remain provisional choices unless explicitly accepted during the relevant authorized milestone.
 
 | Key | Milestone | Provisional choice | Decision needed before change? |
 | --- | --- | --- | --- |
@@ -26,3 +26,15 @@ Hard gates are test or API prerequisites, not excuses to stall unconnected prepa
 ## Change control
 
 When implementation begins, resolve the milestone's decisions in a reviewed PR or [ADR](../decisions/TEMPLATE.md). Mark accepted/rejected with evidence, and update the related milestone and handoff. No table entry here is permission to start or merge code.
+
+## RF02 owner decisions — 2026-11-07
+
+After review of the RF02 implementation plan, the owner explicitly accepted the three options below and separately requested implementation. This is owner direction reported in the current conversation, not a claim that Orcha's legacy workflow records have received an accepted-plan hash or preparation receipt.
+
+| Decision | Accepted owner selection | Scope boundary |
+| --- | --- | --- |
+| RF02-D01 | **A: canonical source is main** | Update source configuration/instructions and PR target; do not activate Pages deployment |
+| RF02-D02 | **A: one previous pre-import backup per slot plus recovery journal** | Preserve both save slots and prestigeBackup; verify rollback and interrupted boot |
+| RF02-D03 | **A: reject incompatible unknown fields without changing existing saves** | Preserve recognized legacy data; reject future unsupported state safely |
+
+The chosen design is documented in [ADR 001](../decisions/ADR-001-recoverable-save-import.md). The implementation remains unmerged and cannot be considered complete without [A1–A8 evidence](rf02-evidence.md) and owner-controlled merge.
