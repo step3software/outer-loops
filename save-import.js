@@ -396,6 +396,45 @@ var SaveImport = (() => {
         }
     }
 
+
+    // Pre-v0.94 format: Base64(UTF8(LZW-code-units)). First decode only
+    // the size-bounded compressed stream, then cap every expanded phrase.
+    function decompressBoundedLegacy(input, decodeBase64, maxOutput = MAX_DECODED_CHARS) {
+        if (typeof input!=="string" || !Number.isSafeInteger(maxOutput) || maxOutput<1)
+            invalid("DECODE","Invalid legacy save input.");
+        const encoded=input.replace(/\s+/g,"");
+        if (!encoded.length || encoded.length>MAX_ENCODED_CHARS ||
+            encoded.length%4!==0 || !/^[A-Za-z0-9+/]*={0,2}$/.test(encoded))
+            invalid("DECODE","The legacy save is not valid Base64.");
+        let compressed;
+        try { compressed=decodeBase64(encoded); }
+        catch { invalid("DECODE","The legacy save could not be decoded."); }
+        if (typeof compressed!=="string" || !compressed.length)
+            invalid("DECODE","The legacy save could not be decoded.");
+        if (compressed.length>MAX_LEGACY_CODES)
+            invalid("TOO_COMPLEX","The legacy save contains too many compressed codes.");
+        let previous=compressed.charAt(0);
+        const output=[previous], dictionary=new Map();
+        let produced=previous.length, nextCode=256;
+        for (let i=1;i<compressed.length;i++) {
+            const code=compressed.charCodeAt(i);
+            let phrase;
+            if (code<256) phrase=compressed.charAt(i);
+            else if (dictionary.has(code)) phrase=dictionary.get(code);
+            else phrase=previous+previous.charAt(0);
+            // Preserve the original LZWDecode's fallback for old codewords:
+            // some historical data relies on it. Invalid output will still
+            // fail JSON/shape validation before any save is modified.
+            if (produced+phrase.length>maxOutput)
+                invalid("TOO_LARGE","The decoded legacy save is too large.");
+            output.push(phrase);
+            produced+=phrase.length;
+            dictionary.set(nextCode++,previous+phrase.charAt(0));
+            previous=phrase;
+        }
+        return output.join("");
+    }
+
     function prepare(raw, decoders) {
         if (typeof raw !== "string") invalid("INVALID_INPUT", "Choose a text save export.");
         if (raw.length === 0) invalid("EMPTY", "An empty import is not a save.");
@@ -407,7 +446,7 @@ var SaveImport = (() => {
         try {
             decoded = raw.startsWith("ILSV01")
                 ? (decoders.boundedDecompress ?? decoders.decompress)(raw.slice(6), MAX_DECODED_CHARS)
-                : decoders.legacyDecode(raw);
+                : (decoders.boundedLegacyDecode ?? decoders.legacyDecode)(raw);
         } catch (error) {
             if (error instanceof SaveImportError) throw error;
             invalid("DECODE", "The save could not be decoded.");
@@ -433,7 +472,7 @@ var SaveImport = (() => {
     }
 
     return Object.freeze({
-        prepare, validateParsed, normalizeParsed, decompressBoundedBase64, SaveImportError,
+        prepare, validateParsed, normalizeParsed, decompressBoundedBase64, decompressBoundedLegacy, SaveImportError,
         MAX_ENCODED_CHARS, MAX_DECODED_CHARS
     });
 })();

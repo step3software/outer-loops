@@ -1704,7 +1704,7 @@ function processSave(saveData) {
     try {
         const candidate = SaveImport.prepare(saveData, {
             boundedDecompress: SaveImport.decompressBoundedBase64,
-            legacyDecode: text => decode(text),
+            boundedLegacyDecode: text => SaveImport.decompressBoundedLegacy(text, Base64.decode.bind(Base64)),
             allowedActionVars: totalActionList.map(action => action.varName).filter(Boolean),
             contract: getImportContract(),
         });
