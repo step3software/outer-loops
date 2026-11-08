@@ -1,0 +1,46 @@
+# RF02 — Persistence safety implementation evidence
+
+**Status:** Implementation candidate in [draft PR #16](https://github.com/step3software/outer-loops/pull/16), unmerged, not verified complete. Reuses previously authored code from [closed, unmerged PR #6](https://github.com/step3software/outer-loops/pull/6) and preserves current RW00 changes on main.
+
+## Accepted scope and source
+
+- RF02-D01: canonical source and draft PR target main; no publication or deployment changes.
+- RF02-D02: one previous imported-over save per normal/challenge slot, plus an independent recovery journal.
+- RF02-D03: reject incompatible unknown fields without changing existing saves.
+- Original external ILSV01 and recognized historical Base64/LZW inputs remain supported. No changed gameplay economy, action IDs, prestige formulas, challenge rules, Google OAuth or player data fixtures.
+
+## Candidate code
+
+- save-import.js contains pure validation and normalized historical aliases, bounded Base64 LZString expansion and registered-action dynamic field checks.
+- saving.js contains pre-import journal, exact-byte backup/restore, verified storage writes, load-time rollback, startup recovery and protected explicit deletion.
+- index.html, predictor-worker.js and scripts/load-game-model.mjs preserve classic-script order and the current RW00 harness.
+- views/menu.view.js and lang/en-EN/game.xml add a previous-save restore control.
+- New preflight and transaction scripts, updated real-browser smoke, validation workflow and package commands retain the original RF01 and RW00 suites.
+- The repository's canonical source instructions now reference main. The Pages deployment workflow remains untouched.
+
+## Tests executed in the implementation session
+
+The actual Github-source save-import.js and bundled LZString library were evaluated in an isolated V8 runtime. Seven valid compress/decompress roundtrips, including Unicode and highly compressible strings, matched exactly. An over-limit expansion raised TOO_LARGE, a valid generated ILSV01 payload prepared correctly, and unknown dynamic action fields were rejected when the runtime action allowlist was supplied.
+
+The actual shipping transaction functions were independently evaluated in a synthetic JavaScript environment with exact-string storage. Twenty-one assertions passed for valid import, previous-copy restore, rejection without mutation, journal/active/backup quota faults, apply-time failure, intentional deletion, failed partial deletion and exact rollback. The tool-backed functional exercises were not the repository Node script or the real browser.
+
+## Acceptance status
+
+| Gate | Required cases | Current evidence |
+| --- | --- | --- |
+| A1 | P09–P17, P19, P22 | Partial isolated functional checks; full browser pending |
+| A2 | P01–P06, P18, P20 | Test source present; full legacy/browser exercise pending |
+| A3 | P02–P04, P07–P08 | Idempotency tests ported; full cross-mode verification pending |
+| A4 | P01, P05–P08 | Semantic roundtrips not fully executed |
+| A5 | P14–P17, P19, P21 | Partial rollback checks passed; reload/real Chrome pending |
+| A6 | Pure preflight + public doSave compatibility | Pure module exercised; full worker check pending |
+| A7 | RF01, challenge, prestige, predictor, RW00 | Full regression suite not executed |
+| A8 | Size/unknown-field/backup/rollback decisions | Explicit in ADR 001; representative save sizing pending |
+
+Run npm run check, npm run test:model, npm run test:action, both RF01 suites, both RF02 suites, npm run test:balance, npm run check:mechanics, Python XML check and npm run test:browser. No green CI or Chrome acceptance is claimed without evidence.
+
+## Risks and rollback
+
+Real legacy historical saves were not available; fixtures are synthetic. The old LZW decoder is not streaming. Extreme storage quota conditions may leave a journal for boot retry and must never cause deleting site storage. Restoring previously persisted state does not guarantee unsaved activity. The deployment workflow still listens for the historical dmchurch branch; changing it requires separate authorization.
+
+Keep PR #16 draft and unmerged until the A1–A8 evidence and independent review gates are met.
