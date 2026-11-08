@@ -657,7 +657,7 @@ try {
     " options.predictorRepeatPrediction=previous.repeat;",
     "}",
     "})()"
-  ].join("\\n"));
+  ].join("\n"));
   assert.equal(rf04Browser.ok,true,JSON.stringify(rf04Browser));
   assert.deepEqual(rf04Browser.transitions.map(s=>s.speed),[1,2,1,1,1,1,1]);
   assert.ok(rf04Browser.transitions.every(s=>s.stable),
