@@ -579,6 +579,107 @@ try {
   }
   console.log('PASS RF01 Chrome challenge entry/exit: modes 1–3, isolated slots and normal-game restoration after reload.');
 
+  // RF04: stable policy references and real foreground/Worker challenge parity.
+  // All state changes occur in this disposable profile and are restored below.
+  const rf04Browser=await client.evaluate([
+    "(async()=>{",
+    "const instance=Koviko.instance;",
+    "const previous={mode:challengeSave.challengeMode,merchant:totalMerchantMana,",
+    " gold:resources.gold,timing:totals.effectiveTime,",
+    " background:options.predictorBackgroundThread,slow:options.predictorSlowMode,",
+    " predictor:options.predictor,repeat:options.predictorRepeatPrediction};",
+    "try{",
+    " if(!gameIsStopped)pauseGame();",
+    " options.predictor=false;options.predictorBackgroundThread=false;",
+    " options.predictorSlowMode=false;options.predictorRepeatPrediction=false;",
+    " const originals=[restart,getSelfCombat,getTeamCombat,",
+    "  Action.BuyManaZ1.canStart,Action.BuyManaZ1.manaCost,",
+    "  Action.BuyManaZ1.goldCost,Action.BuyManaZ1.finish,",
+    "  Action.BuyManaZ3.visible,Action.BuyManaZ5.visible];",
+    " const transitions=[];",
+    " for(const mode of [0,1,0,2,0,3,0]){",
+    "  challengeSave.challengeMode=mode;loadChallenge();",
+    "  const funcs=[restart,getSelfCombat,getTeamCombat,",
+    "   Action.BuyManaZ1.canStart,Action.BuyManaZ1.manaCost,",
+    "   Action.BuyManaZ1.goldCost,Action.BuyManaZ1.finish,",
+    "   Action.BuyManaZ3.visible,Action.BuyManaZ5.visible];",
+    "  transitions.push({mode,speed:gameSpeed,stable:originals.every((f,i)=>f===funcs[i]),",
+    "   z3:Action.BuyManaZ3.visible(),z5:Action.BuyManaZ5.visible()});",
+    " }",
+    " challengeSave.challengeMode=1;loadChallenge();",
+    " totalMerchantMana=360;resources.gold=12;",
+    " const before=timeNeeded;Action.BuyManaZ1.finish();",
+    " const purchase={gain:timeNeeded-before,gold:resources.gold,merchant:totalMerchantMana};",
+    " const seed=await instance.update([{name:'Wander',loops:1,disabled:false,loopsType:'actions'}]);",
+    " const make=(name,town,mode,gold,merchant,id)=>{",
+    "  const data={...seed,id,actions:[{name,loops:1,disabled:false,loopsType:'maxEffort'}],",
+    "   state:structuredClone(seed.state),affected:instance.predictions[name].affected.slice(),",
+    "   total:0,loop:0,isValid:false,cacheIsValid:false,finalIndex:0};",
+    "  Object.assign(data.state.resources,{town,challengeMode:mode,gold,manaBought:merchant,",
+    "   mana:10000000,rep:3,zombie:4,team:3,adventures:1});",
+    "  Object.assign(data.state.skills,{combat:1000000000,dark:1000000000,",
+    "   restoration:1000000000,magic:1000000000});",
+    "  return data;",
+    " };",
+    " const forecast=async(name,town,mode,gold,merchant,id)=>{",
+    "  challengeSave.challengeMode=mode;loadChallenge();totalMerchantMana=merchant;",
+    "  const fg=make(name,town,mode,gold,merchant,id);",
+    "  for await(const _ of instance.doUpdate(fg)){}",
+    "  const bg=make(name,town,mode,gold,merchant,id+1);",
+    "  options.predictorBackgroundThread=true;",
+    "  await Promise.race([",
+    "   (async()=>{for await(const _ of instance.doBackgroundUpdate(bg)){} })(),",
+    "   new Promise((_,reject)=>setTimeout(()=>reject(Error('RF04 Worker timeout: '+name)),12000))",
+    "  ]);",
+    "  options.predictorBackgroundThread=false;",
+    "  const summary=d=>({total:d.total,valid:d.isValid,",
+    "   mana:d.state.resources.mana,gold:d.state.resources.gold,",
+    "   merchant:d.state.resources.manaBought,town:d.state.resources.town});",
+    "  return {foreground:summary(fg),background:summary(bg)};",
+    " };",
+    " const normal=await forecast('Buy Mana Z1',0,0,12,360,9200);",
+    " const drought=await forecast('Buy Mana Z1',0,1,12,360,9202);",
+    " const noodle=await forecast('Fight Monsters',1,2,0,7500,9204);",
+    " const burn=await forecast('Wander',0,3,0,7500,9206);",
+    " challengeSave.challengeMode=3;loadChallenge();",
+    " totals.effectiveTime=86400;currentLoop=321;restart();",
+    " const boundary={timeNeeded,currentLoop};",
+    " return {ok:true,transitions,purchase,normal,drought,noodle,burn,boundary};",
+    "}catch(e){return {ok:false,error:String(e),stack:String(e.stack)};}",
+    "finally{",
+    " instance.terminateWorker();",
+    " challengeSave.challengeMode=previous.mode;loadChallenge();",
+    " totalMerchantMana=previous.merchant;resources.gold=previous.gold;",
+    " totals.effectiveTime=previous.timing;",
+    " options.predictorBackgroundThread=previous.background;",
+    " options.predictorSlowMode=previous.slow;",
+    " options.predictor=previous.predictor;",
+    " options.predictorRepeatPrediction=previous.repeat;",
+    "}",
+    "})()"
+  ].join("\\n"));
+  assert.equal(rf04Browser.ok,true,JSON.stringify(rf04Browser));
+  assert.deepEqual(rf04Browser.transitions.map(s=>s.speed),[1,2,1,1,1,1,1]);
+  assert.ok(rf04Browser.transitions.every(s=>s.stable),
+    'RF04 global and Action method references must remain unchanged');
+  assert.deepEqual(rf04Browser.transitions.map(s=>[s.z3,s.z5]),
+    [[true,true],[false,false],[true,true],[true,true],[true,true],[true,true],[true,true]]);
+  assert.deepEqual(rf04Browser.purchase,{gain:360,gold:0,merchant:0});
+  for(const mode of ['normal','drought','noodle','burn']) {
+    assert.deepEqual(rf04Browser[mode].foreground,rf04Browser[mode].background,
+      mode+' real foreground/Worker challenge-policy parity');
+  }
+  assert.equal(rf04Browser.drought.foreground.gold,0);
+  assert.equal(rf04Browser.drought.foreground.merchant,0);
+  assert.equal(rf04Browser.drought.foreground.mana-rf04Browser.normal.foreground.mana,
+    360-600+99,'Mana Drought and normal purchase differ in rate and base mana cost');
+  assert.deepEqual(rf04Browser.boundary,{timeNeeded:0,currentLoop:321});
+  // Restore the saved pre-scenario browser game before RF01 prestige coverage.
+  await client.evaluate("localStorage['idleLoops1']="+JSON.stringify(originalSave));
+  await client.send('Page.reload',{ignoreCache:true});
+  await waitForBoot();
+  console.log('PASS RF04 Chrome: stable identities, Mana Drought, Noodle Arms and Mana Burn, real Worker snapshots.');
+
   // RF01: original destructive prestige reset, only in the disposable profile.
   const oldPrestige=await client.evaluate("(() => {"
     +"window.confirm=()=>true;const originalProgress=towns[0].expWander;"
