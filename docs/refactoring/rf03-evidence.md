@@ -13,9 +13,9 @@
 - `actionList.js`: pure `Escape.canStart` and guarded formerly direct writes (Wizard College, reputation, heart).
 - `actions.js`: first positive mana-spending step commits Escape activation if still eligible; no commit on queue inspection or zero-mana probes. `Actions.restart` retains the original reset.
 - `driver.js`: validated numeric/boolean setters and the old `addResource` signature for valid callers, with finite-result checks, worker-safe view guards and in-place registered resource reset.
-- `predictor.js`: change Escape forecast admission from `<= 60` to original runtime `< 60` boundary.
+- `predictor.js`: preserve strict Escape `< 60` admission and gate real Ritual/Imbuement predictions against state-owned caps, including previously forecast increases within a queue. Foreground and Worker use the same rule.
 - `scripts/test-rf01-model.mjs` and `scripts/test-balance-contracts.mjs`: update previously bug-preserving R04/R08/RW00 expectations; the RW00 suite now verifies that a mere Escape predicate query leaves the flag false and actual positive spending makes it sticky. Preserve the 157-action registry fingerprint and unrelated R15 Gods Trial characterization.
-- `scripts/test-rf03-model.mjs`, `scripts/test-browser-smoke.mjs`, `package.json` and `.github/workflows/validate.yml`: add source-backed and browser/real-worker checks; no production dependencies or changes to challenges.
+- `scripts/test-rf03-model.mjs`, `scripts/test-browser-smoke.mjs`, `package.json` and `.github/workflows/validate.yml`: add source-backed assertions and Chrome cases for edited cap UI/save/reload, actual `predictor-worker.js` Data snapshot imports and foreground/background cap-blocked Ritual/Imbuement runs, foreground/background Escape predictions on both sides of 60, and the production `executeGameTicks` scheduler when paused, zero-spending, aborted, started, sticky or reset. Test fixtures use an isolated browser profile and restore an exact pre-scenario save before the inherited suites; no production dependencies or challenge changes.
 
 ## Verification actually performed
 
@@ -30,6 +30,7 @@
 | Generated mechanics regeneration | **Baseline exact-match**, candidate reference regenerated from real 157-action model | Reproduced in isolated V8, not the Node generator executable |
 | Full registered predicate scan | **Passed:** 422 `visible`, `unlocked`, `canStart` queries evaluated without exceptions or tracked gameplay-state mutations | Synthetic default fixture, not all progression branches |
 | Changed JS/MJS syntax | **Passed:** parsed 12 relevant runtime/test files in V8 after removing only ESM import wrappers for MJS | Not the repository `npm run check` |
+| Follow-up browser regression test syntax | **Passed V8 parse only:** the modified browser script and separately constructed predictor/scheduler evaluation bodies parse | Actual Node execution, Chrome, Worker and full CI remain untested |
 
 ## Validation pending before acceptance
 
@@ -50,14 +51,14 @@ python scripts/check-xml.py
 npm run test:browser
 ```
 
-Also pending: real foreground and background predictor comparison for ritual/imbuement queues, original challenges 1–3, prestige and RF02 legacy import/restore in Chrome. The browser script now exercises cap editing/save/reload and a real Worker importing rules, but has not been run. No claims of full save history or complete campaign parity.
+Also pending: **execution** of the new real Worker/cap and scheduler/Escape Chrome cases, original challenges 1–3, prestige and RF02 legacy import/restore. The browser script now drives the production `Koviko.instance.doBackgroundUpdate`/`predictor-worker.js` snapshot protocol and `executeGameTicks`, rather than merely launching a separate default-cap Blob Worker. The code is written and parsed, not yet executed under Chrome. At the follow-up review, the PR head had no GitHub Actions workflow run/check result. No claims of full save history or complete campaign parity.
 
 ## Acceptance and rollback
 
-- **A1/A5/A6:** DOM-less rule and snapshot model tested; actual browser/worker/save roundtrip pending.
-- **A2/A3:** Escape predicate purity and first-spend boundary tested in the model; full browser queue/predictor parity pending.
+- **A1/A5/A6:** DOM-less rule and snapshot model tested; actual Chrome save/reload and production Worker edited-cap parity cases authored, execution pending.
+- **A2/A3:** Escape predicate purity and first-spend boundary tested in the model; Chrome scheduler pause/zero/abort/start/sticky/reset and actual foreground/Worker 59.99/60 prediction cases authored, execution pending.
 - **A4:** All 27 resource classes and invalid writes tested in the model; downstream browser economy cases pending.
-- **A7:** Registry count and regenerated mechanics observed; RW00 original Escape expectations updated and its positive-spend case added, but inherited RF01/RF02/balance/challenge/Chrome regression suites still pending.
+- **A7:** Registry count and regenerated mechanics observed; RW00 Escape expectations updated and a positive-spend case added. The inherited RF01/RF02/balance/challenge/Chrome suites remain pending successful normal CI execution.
 - **A8:** Function ownership documented here, in `docs/state-and-saving.md`, `docs/predictor.md` and `docs/reference/code-map.md`; evidence must be updated after CI.
 
 No save key, `ILSV01` envelope, action identifier, town number or production dependency was intentionally changed. RF02's import backups/journal must survive both code deployment and rollback. Do not rollback by replacing or clearing persisted saves. No automatic merge, Pages deployment or release.
