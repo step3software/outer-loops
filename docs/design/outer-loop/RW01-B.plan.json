@@ -1,0 +1,79 @@
+{
+  "milestone_id": "step3software/outer-loops#RW01-B",
+  "status": "proposed_plan",
+  "objective": "Produce a fully playable, replay-safe **Other You** introduction in Outer Loop Beginnersville with reusable NPC, triggered-event and branching-dialogue systems rather than hardcoded one-off queue actions.",
+  "scope": {
+    "include": [
+      "NPC and event registry",
+      "Branching dialogue definitions",
+      "First Other You encounter",
+      "Game-native responsive dialogue UI",
+      "Save/reload and idempotent rewards"
+    ],
+    "exclude": [
+      "Party control",
+      "New timeline",
+      "Full RPG engine"
+    ]
+  },
+  "acceptance_criteria": [
+    "RW01-B-AC01: The first eligible arrival at Outer Loop Beginnersville (regardless of potion-use location) triggers exactly one approach from the first Other You.",
+    "RW01-B-AC02: Several distinct selves appear as contextual inhabitants, not extra original-world queue actions or automatic party units.",
+    "RW01-B-AC03: A conversation offers at least three selectable responses producing observable branches under validated choice eligibility.",
+    "RW01-B-AC04: The player can dismiss, resume, revisit and finish dialogue, continuing location exploration and bidirectional travel without getting trapped.",
+    "RW01-B-AC05: First-meeting receipts, selected responses and any once-only effects survive save, reload and export/import without repetition.",
+    "RW01-B-AC06: Character, event and dialogue definitions use stable serializable IDs and localized content; adding another simple conversation requires no new core queue special case.",
+    "RW01-B-AC07: UI preserves the recognizable three-column game layout, established colors/fonts/buttons, accessible focus, keyboard choices and mobile/narrow behavior.",
+    "RW01-B-AC08: Dialogue/event code cannot advance original-world actions, grant rewards on display alone, bypass eligibility or alter original game saves/predictor outcomes accidentally."
+  ],
+  "constraints": [
+    "No source gameplay edits or stage approvals from publication",
+    "Preserve existing nine ordinary towns, actions, saves and Valley",
+    "Provisional decisions are not treated as owner answers"
+  ],
+  "decisions": [
+    {
+      "id": "RW-Q19",
+      "choice": "A: separately consuming potion uses; rebrewing allowed",
+      "authority": "owner 2026-11-07"
+    },
+    {
+      "id": "RW-D12",
+      "choice": "Drink potion from any original location",
+      "authority": "owner 2026-11-07"
+    },
+    {
+      "id": "RW-D13",
+      "choice": "Outer Loop has no mana costs, most original actions unavailable, bidirectional travel",
+      "authority": "owner 2026-11-07"
+    }
+  ],
+  "dependencies": [
+    "RW01-A"
+  ],
+  "source_specification": "docs/design/outer-loop/RW01-B.md",
+  "open_questions": [
+    {
+      "id": "RW-Q30-GREETING-UI",
+      "question": "How does the first Other You interaction start?",
+      "options": [
+        "Approach notice then dismissible dialogue",
+        "Immediate but dismissible dialogue"
+      ],
+      "recommended_default": "Approach notice then dismissible dialogue"
+    }
+  ],
+  "plan_approval": null,
+  "implementation_authorization": null,
+  "source": {
+    "repository": "step3software/outer-loops",
+    "canonical_source_observation": "main",
+    "revision": "860872f7db08a1870d33f6105a5d9aae40ea5f18",
+    "branch": "docs/rw01-rw02-interaction-milestones-20261107",
+    "orcha_main_observation": "b8bf6bf07073823d108fd356c48916ea0cafd615"
+  },
+  "verification": {
+    "automated": "not run; planning documents only",
+    "browser": "not run"
+  }
+}

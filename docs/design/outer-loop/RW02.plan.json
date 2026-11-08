@@ -1,0 +1,109 @@
+{
+  "milestone_id": "step3software/outer-loops#RW02",
+  "status": "proposed_plan",
+  "objective": "After Outer Loop exploration and the first conversation, let the player **explicitly** start a new timeline with allocatable starting skill points, a major bounded temporary boost, permanent free approximately **10× replay throughput**, and an early meaningful durable ability choice, without losing valuable legacy progress.",
+  "scope": {
+    "include": [
+      "Explicit new timeline transition",
+      "Recoverable save and legacy migration",
+      "First point allocation",
+      "Temporary boost",
+      "Free ~10x replay speed",
+      "Durable early ability choice"
+    ],
+    "exclude": [
+      "Later RW03–RW08 mechanics",
+      "Campaign rebalance",
+      "Unapproved balance or conversion rates"
+    ]
+  },
+  "acceptance_criteria": [
+    "RW02-AC01: Only explicit confirmation of Start New Timeline resets selected timeline state; potion entry and dialogue preserve the active original campaign.",
+    "RW02-AC02: Cancelled/failed/interrupted/repeated commits recover the previous timeline without duplicate grants or partial irreversible reset.",
+    "RW02-AC03: Outer Loop character and progression state persists through ordinary loops, timeline resets, reload/export/import and restores according to accepted lifetime contracts.",
+    "RW02-AC04: First-rerun points are visibly allocatable via a validated UI and granted once under the accepted economy, distinct from old prestige points.",
+    "RW02-AC05: The powerful temporary first-rerun boost has an observable approved effect, cap and expiry; it cannot persist or stack beyond contract.",
+    "RW02-AC06: Approximately 10× free replay throughput improves wall-clock execution without changing corresponding action costs, mana, outcomes, effective-time checks or predictor semantics.",
+    "RW02-AC07: At least one lasting ability choice is available without permanent class locking by assumption, and the released experience does not maintain a second independent prestige/challenge shop.",
+    "RW02-AC08: Veteran saves, Valley `RestoreTime` history/credits, challenge-active saves and existing purchased effects remain valid or have separately approved recoverable migration.",
+    "RW02-AC09: Browser, model and predictor worker parity tests cover normal/new timeline reset, rewards, boost expiry, offline time, save-reload and error recovery."
+  ],
+  "constraints": [
+    "No source gameplay edits or stage approvals from publication",
+    "Preserve existing nine ordinary towns, actions, saves and Valley",
+    "Provisional decisions are not treated as owner answers"
+  ],
+  "decisions": [
+    {
+      "id": "RW-Q19",
+      "choice": "A: separately consuming potion uses; rebrewing allowed",
+      "authority": "owner 2026-11-07"
+    },
+    {
+      "id": "RW-D12",
+      "choice": "Drink potion from any original location",
+      "authority": "owner 2026-11-07"
+    },
+    {
+      "id": "RW-D13",
+      "choice": "Outer Loop has no mana costs, most original actions unavailable, bidirectional travel",
+      "authority": "owner 2026-11-07"
+    }
+  ],
+  "dependencies": [
+    "RW01-A",
+    "RW01-B",
+    "RF02"
+  ],
+  "source_specification": "docs/design/outer-loop/RW02.md",
+  "open_questions": [
+    {
+      "id": "RW-Q28",
+      "question": "What do first-rerun points allocate?",
+      "options": [
+        "New Outer Loop points",
+        "Bounded grants to existing skills"
+      ],
+      "recommended_default": "New Outer Loop points"
+    },
+    {
+      "id": "RW-Q29",
+      "question": "How is the major temporary boost defined?",
+      "options": [
+        "Timed or bounded progression modifier",
+        "Starting-resource and preparation package"
+      ]
+    },
+    {
+      "id": "RW-Q04",
+      "question": "How does replay throughput interact with existing speed systems?",
+      "options": [
+        "Explicit outer throughput policy preserving causal ticks",
+        "Adjust existing gameSpeed after validated equivalence"
+      ],
+      "recommended_default": "Explicit outer throughput policy preserving causal ticks"
+    },
+    {
+      "id": "RW-Q02",
+      "question": "How are legacy prestige investments treated?",
+      "options": [
+        "Versioned conversion after owner approval",
+        "Preserved separately pending later approved conversion"
+      ],
+      "recommended_default": "Preserved separately pending later approved conversion"
+    }
+  ],
+  "plan_approval": null,
+  "implementation_authorization": null,
+  "source": {
+    "repository": "step3software/outer-loops",
+    "canonical_source_observation": "main",
+    "revision": "860872f7db08a1870d33f6105a5d9aae40ea5f18",
+    "branch": "docs/rw01-rw02-interaction-milestones-20261107",
+    "orcha_main_observation": "b8bf6bf07073823d108fd356c48916ea0cafd615"
+  },
+  "verification": {
+    "automated": "not run; planning documents only",
+    "browser": "not run"
+  }
+}

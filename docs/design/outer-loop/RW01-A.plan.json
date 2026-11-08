@@ -1,0 +1,90 @@
+{
+  "milestone_id": "step3software/outer-loops#RW01-A",
+  "status": "proposed_plan",
+  "objective": "Provide a separate, navigable **Outer Loop** mode and shared contextual-activity foundation without changing the original 157-action, nine-town mana-queue game.",
+  "scope": {
+    "include": [
+      "Mode and location state",
+      "Contextual activity registry",
+      "Potion consumption and travel",
+      "Preserved original-world execution and saves",
+      "Game-native navigation UI"
+    ],
+    "exclude": [
+      "NPC conversations",
+      "Timeline reset",
+      "Original-world balance edits"
+    ]
+  },
+  "acceptance_criteria": [
+    "RW01-A-AC01: Drinking is available with an actually held potion in all nine original locations, consumes exactly one on successful entry, and cannot run without possession or from a story flag alone.",
+    "RW01-A-AC02: Existing Totem use still consumes one held potion for Wunderkind; a single potion cannot serve both uses, and legitimate rebrewing remains possible.",
+    "RW01-A-AC03: On entry, original-world queue, resources, progression, unfinished Valley and first-rerun entitlement remain recoverable; no timeline reset occurs.",
+    "RW01-A-AC04: The inner mana queue/timer does not execute in Outer Loop mode, and only eligible Outer Loop activities are shown/dispatchable at zero mana cost.",
+    "RW01-A-AC05: Travel between adjacent Outer Loop locations works in both directions and handles branch/end locations without relying on original one-way travel gates.",
+    "RW01-A-AC06: Each contextual activity has stable identity and deterministic eligibility/effect processing; invalid events cannot partially mutate persistent state.",
+    "RW01-A-AC07: Mode/location/consumption are consistent across save, reload, export, import and interrupted entry; older saves default safely to original-world mode.",
+    "RW01-A-AC08: Nine-town indices, original `Action.*` keys, Valley/Restore Time, predictor assumptions and normal action gameplay remain compatible.",
+    "RW01-A-AC09: The mode and travel UI use the game's existing theme, panels, typography, keyboard affordances and narrow-screen behavior."
+  ],
+  "constraints": [
+    "No source gameplay edits or stage approvals from publication",
+    "Preserve existing nine ordinary towns, actions, saves and Valley",
+    "Provisional decisions are not treated as owner answers"
+  ],
+  "decisions": [
+    {
+      "id": "RW-Q19",
+      "choice": "A: separately consuming potion uses; rebrewing allowed",
+      "authority": "owner 2026-11-07"
+    },
+    {
+      "id": "RW-D12",
+      "choice": "Drink potion from any original location",
+      "authority": "owner 2026-11-07"
+    },
+    {
+      "id": "RW-D13",
+      "choice": "Outer Loop has no mana costs, most original actions unavailable, bidirectional travel",
+      "authority": "owner 2026-11-07"
+    }
+  ],
+  "dependencies": [
+    "RF01",
+    "RW01-B follows"
+  ],
+  "source_specification": "docs/design/outer-loop/RW01-A.md",
+  "open_questions": [
+    {
+      "id": "RW-Q05-ENTRY-LOCATION",
+      "question": "Where does the first Outer Loop entry start when drinking away from Beginnersville?",
+      "options": [
+        "Same named location in Outer Loop",
+        "Outer Loop Beginnersville"
+      ],
+      "recommended_default": "Same named location in Outer Loop"
+    },
+    {
+      "id": "RW-Q06",
+      "question": "How can a player return to an unfinished active original timeline before a new-timeline commitment?",
+      "options": [
+        "Reversible return to original timeline",
+        "Alternate explicitly recoverable exit flow"
+      ],
+      "recommended_default": "Reversible return to original timeline"
+    }
+  ],
+  "plan_approval": null,
+  "implementation_authorization": null,
+  "source": {
+    "repository": "step3software/outer-loops",
+    "canonical_source_observation": "main",
+    "revision": "860872f7db08a1870d33f6105a5d9aae40ea5f18",
+    "branch": "docs/rw01-rw02-interaction-milestones-20261107",
+    "orcha_main_observation": "b8bf6bf07073823d108fd356c48916ea0cafd615"
+  },
+  "verification": {
+    "automated": "not run; planning documents only",
+    "browser": "not run"
+  }
+}
