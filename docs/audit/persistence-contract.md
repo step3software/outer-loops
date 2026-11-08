@@ -16,7 +16,7 @@ RF02: bounded decode → validate/normalize → snapshot prior bytes → journal
       → verified slot write → load/apply → rotate backup → finalize
 ```
 
-The original storage-before-validation import order is risk [R01](findings.md). [Draft RF02 PR #16](https://github.com/step3software/outer-loops/pull/16) changes this to validation-first import with explicit recovery; browser acceptance remains pending. Legacy encoded saves still use `decode()`. The external `ILSV01` envelope is unchanged; localStorage multi-key operations are not atomic.
+The original storage-before-validation import order is risk [R01](findings.md). [Draft RF02 PR #16](https://github.com/step3software/outer-loops/pull/16) changes this to validation-first import with explicit recovery; browser acceptance remains pending. RF02 handles older exports through bounded LZW decoding with the existing Base64 decoder, without changing the legacy helper's other callers. The external `ILSV01` envelope is unchanged; localStorage multi-key operations are not atomic.
 
 ## Field inventory
 
@@ -88,6 +88,9 @@ Fresh profile; recent and old synthetic saves; optional field absent; corrupt en
 
 The import-specific storage keys are idleLoopsImportPendingV1 (prior-byte journal and interrupted-import recovery), idleLoopsImportBackupV1_normal and idleLoopsImportBackupV1_challenge (one last pre-import copy per slot). These keys do not repurpose prestigeBackup. The journal captures the exact previous ordinary and challenge slots, existing import backups, prestigeBackup and updateRate. Writes are verified; failure restores prior bytes and startup retries an interrupted journal before loading gameplay.
 
-Current ILSV01 exports and recognized Base64/LZW legacy imports remain supported. Unknown top-level fields or action-progress fields without a registered action varName are rejected. LZString Base64 decompression has an output bound applied during expansion; historical LZW retains encoded and post-decode size bounds. A deliberate confirmed empty import clears both slots only after their protective backup and journal writes have succeeded; partial deletion failure restores them.
+Current ILSV01 exports and recognized Base64/LZW legacy imports remain supported. Incompatible top-level, nested, numeric, queue and dynamic action fields are rejected before writes. Both LZString and historical Base64/LZW expansion are bounded during decompression. A deliberate confirmed empty import clears both slots only after their protective backup and journal writes have succeeded; partial deletion failure restores them.
 
 These are unmerged candidate behaviors. [RF02 evidence](../refactoring/rf02-evidence.md) identifies remaining verification gates.
+
+
+Restoring a previous backup preserves its exact stored JSON bytes; it does not reserialize normalized state. Separate Normal and Challenge recovery controls allow restoring an inactive slot without touching the active session. The full compatibility and browser acceptance gates remain open until evidenced.

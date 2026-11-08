@@ -11,16 +11,16 @@
 
 ## Candidate code
 
-- save-import.js contains pure validation and normalized historical aliases, bounded Base64 LZString expansion and registered-action dynamic field checks.
-- saving.js contains pre-import journal, exact-byte backup/restore, verified storage writes, load-time rollback, startup recovery and protected explicit deletion.
+- save-import.js contains pure validation of current and legacy saves, nested numeric/boolean/type schemas derived from current gameplay registries, guarded action fields/queues/compressed logs, and bounded expansion of both LZString and legacy Base64/LZW formats.
+- saving.js contains pre-import journal, exact-byte backup/restore, verified storage writes, load-time rollback, startup recovery and protected explicit deletion. Normal and challenge backup restoration are selected explicitly; inactive restoration does not switch gameplay, and active restoration reloads after a byte-identical commit.
 - index.html, predictor-worker.js and scripts/load-game-model.mjs preserve classic-script order and the current RW00 harness.
-- views/menu.view.js and lang/en-EN/game.xml add a previous-save restore control.
+- views/menu.view.js and lang/en-EN/game.xml offer separate normal/challenge restore controls.
 - New preflight and transaction scripts, updated real-browser smoke, validation workflow and package commands retain the original RF01 and RW00 suites.
 - The repository's canonical source instructions now reference main. The Pages deployment workflow remains untouched.
 
 ## Tests executed in the implementation session
 
-The actual Github-source save-import.js and bundled LZString library were evaluated in an isolated V8 runtime. Seven valid compress/decompress roundtrips, including Unicode and highly compressible strings, matched exactly. An over-limit expansion raised TOO_LARGE, a valid generated ILSV01 payload prepared correctly, and unknown dynamic action fields were rejected when the runtime action allowlist was supplied.
+The actual GitHub-source save-import.js and bundled LZString library were evaluated in an isolated V8 runtime. Seven valid compress/decompress roundtrips, including Unicode and highly compressible strings, matched exactly. An over-limit expansion raised TOO_LARGE, a valid generated ILSV01 payload prepared correctly, and unknown dynamic action fields were rejected when the runtime action allowlist was supplied.
 
 The actual shipping transaction functions were independently evaluated in a synthetic JavaScript environment with exact-string storage. Twenty-one assertions passed for valid import, previous-copy restore, rejection without mutation, journal/active/backup quota faults, apply-time failure, intentional deletion, failed partial deletion and exact rollback. The tool-backed functional exercises were not the repository Node script or the real browser.
 
@@ -43,6 +43,15 @@ Run npm run check, npm run test:model, npm run test:action, both RF01 suites, bo
 
 ## Risks and rollback
 
-Real legacy historical saves were not available; fixtures are synthetic. The old LZW decoder is not streaming. Extreme storage quota conditions may leave a journal for boot retry and must never cause deleting site storage. Restoring previously persisted state does not guarantee unsaved activity. The deployment workflow still listens for the historical dmchurch branch; changing it requires separate authorization.
+Real historical player saves were not available; fixtures are synthetic. RF02 uses bounded LZW expansion for imports, while the original helper remains unchanged. Extreme storage quota conditions may leave a journal for boot retry and must never cause deleting site storage. Restoring previously persisted state does not guarantee unsaved activity. The deployment workflow still listens for the historical dmchurch branch; changing it requires separate authorization.
 
 Keep PR #16 draft and unmerged until the A1–A8 evidence and independent review gates are met.
+
+## Review remediation — five findings
+
+- **F01/F03:** Pure validation now checks nested names/fields, actual stat/skill/buff identity, finite numeric/boolean contracts, supported queue identity and action-specific dynamic field families; malformed or incompatible data is rejected before storage writes.
+- **F02:** Previous-save restoration validates raw persisted JSON without serializing it again. Journaled restoration writes the exact original byte string.
+- **F04:** The Save menu exposes independent normal/challenge restoration. An inactive-slot restore keeps the active save untouched and does not reload the current session.
+- **F05:** Legacy Base64/LZW decoding now checks expanded output per phrase and limits compressed code count. The original legacy `decode()` helper remains unchanged outside the RF02 path.
+
+**Focused verification:** The two RF02 test bodies passed in an isolated V8 evaluator with Node-style shims. Six representative legacy strings matched the original decoder and over-limit output was rejected. A source-backed no-DOM simulation successfully validated a progressed save produced by the actual serializer with **157 action definitions, 139 saved fields, and an array-valued action log**; malformed buffs and unsupported nested fields were rejected. Browser smoke was extended for exact-byte recovery after navigation and both-slot recovery following intentional clear. **The new Chrome cases and complete Node/CI suite have not been executed in this conversation.**
