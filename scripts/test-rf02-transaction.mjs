@@ -12,6 +12,7 @@ import vm from 'node:vm';
 const root=join(dirname(fileURLToPath(import.meta.url)),'..');
 const require=createRequire(import.meta.url);
 const SaveImport=require('../save-import.js');
+const LZString=require('../lib/lz-string.min.js');
 const saving=readFileSync(join(root,'saving.js'),'utf8');
 const first=saving.indexOf('const importPendingKey =');
 const last=saving.indexOf('let overquotaWarned = false;');
@@ -26,7 +27,7 @@ const candidate={
     stats:{},skills:{},buffs:{},expWander:700,
     challengeSave:{challengeMode:0,inChallenge:false},
 };
-const packed=data=>'ILSV01'+JSON.stringify(data);
+const packed=data=>'ILSV01'+LZString.compressToBase64(JSON.stringify(data));
 const backupNormal='idleLoopsImportBackupV1_normal';
 const backupChallenge='idleLoopsImportBackupV1_challenge';
 const pending='idleLoopsImportPendingV1';
@@ -47,7 +48,7 @@ function fixture({failWrite=null,throwInLoad=false,active='idleLoops1'}={}) {
         removeItem:key=>entries.delete(key),
     };
     const world={
-        SaveImport,window:{localStorage:storage},
+        SaveImport,LZString,totalActionList:[{varName:'Wander'}],window:{localStorage:storage},
         saveName:active,defaultSaveName:'idleLoops1',challengeSaveName:'idleLoopsChallenge',
         challengeSave:{challengeMode:0,inChallenge:false},
         doSave:()=>structuredClone(original),
@@ -60,7 +61,6 @@ function fixture({failWrite=null,throwInLoad=false,active='idleLoops1'}={}) {
         confirm:()=>true,clearSave:()=>{
             entries.set('idleLoops1','');entries.set('idleLoopsChallenge','');
         },
-        LZString:{compressToBase64:x=>x,decompressFromBase64:x=>x},
         decode:x=>x,location:{reload:()=>{reloads++;}},
     };
     vm.createContext(world);
@@ -91,7 +91,8 @@ assert.equal(JSON.parse(good.storage.getItem(backupNormal)).prior,JSON.stringify
 for(const bad of [
     'ILSV01{"stats":', 'ILSV01{"stats":[]}', 'ILSV01null',
     'ILSV01{"stats":{},"unknownFuture":{"valuable":1}}',
-    'ILSV02anything'
+    'ILSV02anything',
+    packed({...candidate,expInventedFutureAction:10})
 ]){
     const f=fixture();
     const before=f.state();

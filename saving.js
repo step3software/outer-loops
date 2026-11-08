@@ -1696,8 +1696,12 @@ function processSave(saveData) {
         });
         return applyProtectedImport(candidate);
     } catch (error) {
-        const safeMessage = error instanceof SaveImport.SaveImportError
-            ? error.message : "Your previous save was kept or restored. Inspect your recovery copy before retrying.";
+        const recoveryPending = window.localStorage.getItem(importPendingKey) !== null;
+        const safeMessage = recoveryPending
+            ? "Automatic recovery is pending. Reload to retry recovery; do not clear browser data."
+            : error instanceof SaveImport.SaveImportError
+                ? error.message
+                : "The previous saved progress was preserved or restored.";
         alert("Save import failed. " + safeMessage);
         return false;
     }

@@ -29,6 +29,7 @@ const old={
 const codecs={
     decompress:text=>text,
     legacyDecode:text=>text,
+    allowedActionVars:['Wander'],
 };
 const baseline=structuredClone(example);
 const current=SaveImport.prepare('ILSV01'+JSON.stringify(example),codecs);
