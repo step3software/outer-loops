@@ -590,8 +590,10 @@
               Paste a save and click Import to import.]]></export_comment>
             <import_button>Import</import_button>
             <import_comment><![CDATA[
-              WARNING: Import will break the game if invalid save. Empty import will hard clear the game<br>
-              If you reaaallly want to edit your save file, ]]></import_comment>
+              Invalid imports are rejected before replacing progress. Importing an empty field deletes both save slots only after confirmation; export a backup first.<br>
+              If you want to edit your save file, ]]></import_comment>
+            <restore_import_button>Restore Previous Imported-Over Save</restore_import_button>
+            <restore_import_comment>Restore the last saved game replaced by an import for the current mode. The prestige backup is kept separately.</restore_import_comment>
             <import_hover_special>hover me</import_hover_special>
             <import_hover_special_tooltip>
                 <![CDATA[In the console, use decode("pasted savefile"), edit, then encode('pasted savefile'), then import it<br>This is mainly for fixing broken savefiles - don't be a cheater.]]></import_hover_special_tooltip>

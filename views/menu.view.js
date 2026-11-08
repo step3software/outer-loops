@@ -112,6 +112,9 @@ const menuView = Views.registerView("menu", {
                 <button class='button' style='margin-top: 1px;' onclick='openSaveFile()'>${_txt("menu>save>importfile_button")}</button>
                 <input id="SaveFileInput" type='file' style="visibility:hidden;" onchange="importSaveFile(event)" />
                 <br>
+                <button class='button' style='margin-top: 5px;' onclick='restorePreviousImport()'>${_txt("menu>save>restore_import_button")}</button>
+                <br>
+                ${_txt("menu>save>restore_import_comment")}<br>
                 <div id="cloud_save" class="block" style="display:none">
                     ${_txt("menu>save>cloud_label")}<br>
                     <button class='button' style='margin-top: 5px; margin-right: 2px;' onclick='googleCloud.exportSave()'>${_txt("menu>save>exportcloud_button")}</button>

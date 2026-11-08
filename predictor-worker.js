@@ -2,6 +2,7 @@ importScripts(
     "data.js",
     "localization.js",
     "helpers.js",
+    "save-import.js",
     "actionList.js",
     "driver.js",
     "stats.js",
