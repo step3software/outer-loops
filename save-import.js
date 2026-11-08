@@ -87,13 +87,17 @@ var SaveImport = (() => {
         }
     }
 
-    function validateActionEntries(entries, label) {
+    function validateActionEntries(entries, label, knownNames = null) {
         if (!Array.isArray(entries) || entries.length > MAX_ACTIONS) {
             invalid("INVALID_QUEUE", label + " must be an action list.");
         }
         for (const entry of entries) {
             if (!record(entry) || typeof entry.name !== "string"
                 || entry.name.length < 1 || entry.name.length > 200
+                || (knownNames && !knownNames.has(entry.name) && !aliases.has(entry.name))
+                || Object.keys(entry).some(k => !["name","loops","disabled","collapsed","loopsType","actionId"].includes(k))
+                || (entry.collapsed !== undefined && typeof entry.collapsed !== "boolean")
+                || (entry.actionId !== undefined && (!Number.isSafeInteger(entry.actionId) || entry.actionId < 0))
                 || !isFiniteNonnegative(entry.loops) || entry.loops > 1_000_000_000
                 || (entry.disabled !== undefined && typeof entry.disabled !== "boolean")
                 || (entry.loopsType !== undefined && !allowedLoops.has(entry.loopsType))) {
@@ -205,6 +209,24 @@ var SaveImport = (() => {
                 if(log.length!==2||!Array.isArray(log[0])||!Array.isArray(log[1])||
                     log[0].some(v=>typeof v!=="string"&&(typeof v!=="number"||!Number.isFinite(v))))
                     invalid("INVALID_LOG","Action log has an invalid compressed format.");
+                // Compressed row data contains dictionary references, not
+                // arbitrary additional save objects that will be discarded.
+                const pending=[log[1]];
+                while(pending.length){
+                    const node=pending.pop();
+                    if (Array.isArray(node)) {
+                        pending.push(...node);
+                    } else if (record(node)) {
+                        for(const [key,value] of Object.entries(node)){
+                            if(!/^\\d+$/.test(key) || +key>=log[0].length)
+                                invalid("INVALID_LOG","Action log references an unknown field.");
+                            pending.push(value);
+                        }
+                    } else if (node !== null && typeof node !== "boolean" &&
+                        (!Number.isInteger(node) || node < 0 || node >= log[0].length)) {
+                        invalid("INVALID_LOG","Action log references unknown data.");
+                    }
+                }
             } else if(!record(log)||Object.keys(log).length)
                 invalid("INVALID_LOG","Action log has an unsupported format.");
         }
@@ -254,11 +276,12 @@ var SaveImport = (() => {
             !Number.isInteger(n) || n < 0 || n > 8)) {
             invalid("INVALID_TOWN", "The save contains an invalid area.");
         }
-        if (input.nextList !== undefined) validateActionEntries(input.nextList, "The action queue");
+        const knownActionNames = contract.actions ? new Set(contract.actions.map(action=>action.name)) : null;
+        if (input.nextList !== undefined) validateActionEntries(input.nextList, "The action queue", knownActionNames);
         if (input.loadouts !== undefined) {
             if (input.loadouts.length > MAX_LOADOUTS) invalid("INVALID_LOADOUT", "Too many loadouts.");
             input.loadouts.forEach((entries, index) => {
-                if (entries != null) validateActionEntries(entries, "Loadout " + (index + 1));
+                if (entries != null) validateActionEntries(entries, "Loadout " + (index + 1), knownActionNames);
             });
         }
         if (input.hiddenVars && input.hiddenVars.some(x => !Array.isArray(x))) {
