@@ -165,6 +165,28 @@ assert.equal(cleared.storage.getItem('idleLoops1'),'');
 assert.equal(cleared.storage.getItem('idleLoopsChallenge'),'');
 assert.equal(JSON.parse(cleared.storage.getItem(backupNormal)).prior,JSON.stringify(original));
 assert.equal(cleared.storage.getItem(pending),null);
+const clearedChallenge=JSON.stringify({...original,expWander:800,
+    challengeSave:{challengeMode:2,inChallenge:true}});
+assert.equal(cleared.tx.restorePreviousImport('idleLoopsChallenge'),true);
+assert.equal(cleared.storage.getItem('idleLoopsChallenge'),clearedChallenge);
+assert.equal(cleared.storage.getItem('idleLoops1'),'');
+assert.equal(cleared.tx.restorePreviousImport('idleLoops1'),true);
+assert.equal(cleared.storage.getItem('idleLoops1'),JSON.stringify(original));
+
+// Restoration itself must be recoverable when its journal/backup write fails.
+for(const failurePoint of [pending,backupChallenge]){
+    const f=fixture();
+    const previous=f.storage.getItem('idleLoopsChallenge');
+    f.storage.setItem(backupChallenge,JSON.stringify({
+        version:1,slot:'idleLoopsChallenge',prior:previous
+    }));
+    const before=f.state();
+    f.fail(failurePoint);
+    assert.equal(f.tx.restorePreviousImport('idleLoopsChallenge'),false);
+    assert.deepEqual(f.state(),before,'restore failure must preserve both prior slots');
+    assert.equal(f.storage.getItem(pending),null,'restore failure journal must roll back');
+}
+
 const clearFailure=fixture({failWrite:'idleLoopsChallenge'});
 const beforeClear=clearFailure.state();
 assert.equal(clearFailure.tx.processSave(''),false);
