@@ -112,7 +112,8 @@ const menuView = Views.registerView("menu", {
                 <button class='button' style='margin-top: 1px;' onclick='openSaveFile()'>${_txt("menu>save>importfile_button")}</button>
                 <input id="SaveFileInput" type='file' style="visibility:hidden;" onchange="importSaveFile(event)" />
                 <br>
-                <button class='button' style='margin-top: 5px;' onclick='restorePreviousImport()'>${_txt("menu>save>restore_import_button")}</button>
+                <button class='button' style='margin-top: 5px; margin-right: 2px;' onclick='restorePreviousImport(defaultSaveName)'>${_txt("menu>save>restore_normal_button")}</button>
+                <button class='button' style='margin-top: 5px;' onclick='restorePreviousImport(challengeSaveName)'>${_txt("menu>save>restore_challenge_button")}</button>
                 <br>
                 ${_txt("menu>save>restore_import_comment")}<br>
                 <div id="cloud_save" class="block" style="display:none">

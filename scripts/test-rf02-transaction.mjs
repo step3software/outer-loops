@@ -48,7 +48,8 @@ function fixture({failWrite=null,throwInLoad=false,active='idleLoops1'}={}) {
         removeItem:key=>entries.delete(key),
     };
     const world={
-        SaveImport,LZString,totalActionList:[{varName:'Wander'}],window:{localStorage:storage},
+        SaveImport,LZString,totalActionList:[{varName:'Wander',type:'progress'}],window:{localStorage:storage},
+        getImportContract:()=>({actions:[{name:'Wander',varName:'Wander',type:'progress'}],statNames:['Dex'],skillNames:['Combat'],buffNames:['PrestigeCombat'],storyFlags:[],storyVars:[],optionTypes:{}}),
         saveName:active,defaultSaveName:'idleLoops1',challengeSaveName:'idleLoopsChallenge',
         challengeSave:{challengeMode:0,inChallenge:false},
         doSave:()=>structuredClone(original),
@@ -61,7 +62,7 @@ function fixture({failWrite=null,throwInLoad=false,active='idleLoops1'}={}) {
         confirm:()=>true,clearSave:()=>{
             entries.set('idleLoops1','');entries.set('idleLoopsChallenge','');
         },
-        decode:x=>x,location:{reload:()=>{reloads++;}},
+        decode:x=>x,Base64:{decode:x=>x},location:{reload:()=>{reloads++;}},
     };
     vm.createContext(world);
     vm.runInContext(code+`
@@ -139,6 +140,25 @@ const oldBytes=mismatch.state();
 assert.equal(mismatch.tx.processSave(packed(candidate)),false);
 assert.deepEqual(mismatch.state(),oldBytes,'normal import cannot silently overwrite challenge');
 // Deliberate deletion is recoverable and remains distinct from malformed imports.
+// Recover byte-identical formatted JSON, and independently restore the
+// inactive challenge slot without changing or reloading normal progress.
+const exact=fixture();
+const pretty=' { "stats": {}, "skills": {}, "buffs": {}, "expWander": 17, "challengeSave": {"challengeMode":0,"inChallenge":false} } ';
+exact.storage.setItem('idleLoopsImportBackupV1_normal',JSON.stringify({version:1,slot:'idleLoops1',prior:pretty}));
+const challengeBytes=exact.storage.getItem('idleLoopsChallenge');
+assert.equal(exact.tx.restorePreviousImport('idleLoops1'),true);
+assert.equal(exact.storage.getItem('idleLoops1'),pretty,'backup restore must preserve exact bytes');
+assert.equal(exact.storage.getItem('idleLoopsChallenge'),challengeBytes);
+const separate=fixture();
+const priorChallenge=separate.storage.getItem('idleLoopsChallenge');
+separate.storage.setItem(backupChallenge,JSON.stringify({version:1,slot:'idleLoopsChallenge',prior:priorChallenge}));
+separate.storage.setItem('idleLoopsChallenge','');
+const oldNormal=separate.storage.getItem('idleLoops1');
+assert.equal(separate.tx.restorePreviousImport('idleLoopsChallenge'),true);
+assert.equal(separate.storage.getItem('idleLoopsChallenge'),priorChallenge);
+assert.equal(separate.storage.getItem('idleLoops1'),oldNormal,'other slot must be byte-identical');
+assert.equal(separate.reloads(),0,'inactive slot restore must not reload the live game');
+
 const cleared=fixture();
 assert.equal(cleared.tx.processSave(''),true);
 assert.equal(cleared.storage.getItem('idleLoops1'),'');
