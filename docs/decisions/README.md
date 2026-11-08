@@ -7,3 +7,5 @@ Create a numbered Markdown file such as `0001-descriptive-decision.md` using [TE
 Each ADR should document alternatives, assumptions, tradeoffs, save/predictor compatibility, test evidence and the consequence of reversal. Once accepted, update relevant system guides; if superseded, link to the replacement. Do not retroactively claim that an undocumented historic architectural choice was formally approved.
 
 [ADR 001 — Recoverable legacy-compatible save import](ADR-001-recoverable-save-import.md) is proposed in [draft RF02 PR #16](https://github.com/step3software/outer-loops/pull/16), not adopted on `main`.
+
+[ADR 002 — Stable challenge-mode policy dispatcher](ADR-002-challenge-policy-dispatch.md) records owner RF04-Q01/Q02/Q03 selections in [draft PR #21](https://github.com/step3software/outer-loops/pull/21). It is proposed pending code review and verification.
