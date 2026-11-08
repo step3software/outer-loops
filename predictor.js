@@ -864,7 +864,8 @@ const Koviko = {
           canStart:(input) => (input.rep <= 0),
           effect:(r, k) => (r.rep--, k.dark += Math.floor(100 * (1 + buffs.Ritual.amt / 100)))},
         'Dark Ritual':{ affected:['ritual','soul'],
-          canStart:(input) => (input.rep <= -5), loop: {
+          canStart:(input) => (input.rep <= -5 &&
+            getBuffLevel('Ritual') + (input.ritual || 0) < getBuffCap('Ritual')), loop: {
           max:() => 1,
           cost:(p) => segment => 1000000 * (segment * 2 + 1),
           tick:(p, a, s, k) => offset => {
@@ -1018,7 +1019,7 @@ const Koviko = {
           r.artifacts += r.temp11 <= towns[3].goodArtifacts ? 1 : 0;
         }},
         'Imbue Mind':{ affected:['mind','soul'],
-          canStart:true, loop: {
+          canStart:(input) => (getBuffLevel('Imbuement') + (input.mind || 0) < getBuffCap('Imbuement')), loop: {
           max:() => 1,
           cost:(p) => segment => 100000000 * (segment * 5 + 1),
           tick:(p, a, s, k) => offset => {
