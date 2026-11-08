@@ -51,7 +51,7 @@ var SaveImport = (() => {
         "prestigeCurrentPoints", "prestigeTotalPoints"
     ]);
 
-    const dynamicSaveField = /^(?:exp|total|checked|good|goodTemp|searchToggler)[A-Za-z][A-Za-z0-9]*$/;
+    const dynamicSaveField = /^(exp|total|checked|goodTemp|good|searchToggler)([A-Za-z][A-Za-z0-9]*)$/;
     const allowedLoops = new Set(["actions", "maxMana", "maxEffort", "knownGood", "unchecked"]);
     const aliases = new Map([
         ["Sell Gold", "Buy Mana Z1"],
@@ -101,7 +101,8 @@ var SaveImport = (() => {
         }
     }
 
-    function validateParsed(input) {
+    function validateParsed(input, allowedActionVars = null) {
+        const knownActionVars = allowedActionVars === null ? null : new Set(allowedActionVars);
         if (!record(input)) invalid("INVALID_ROOT", "The save must contain a JSON object.");
         checkFiniteStructure(input);
 
@@ -112,7 +113,8 @@ var SaveImport = (() => {
             invalid("NO_SAVE_DATA", "The input does not look like a game save.");
         }
         for (const key of keys) {
-            if (!allowedFields.has(key) && !dynamicSaveField.test(key)) {
+            const dynamic = dynamicSaveField.exec(key);
+            if (!allowedFields.has(key) && !(dynamic && (knownActionVars === null || knownActionVars.has(dynamic[2])))) {
                 invalid("UNSUPPORTED_FIELD", "This save contains unsupported data fields. Keep your original export.");
             }
         }
@@ -181,8 +183,8 @@ var SaveImport = (() => {
         return input;
     }
 
-    function normalizeParsed(input) {
-        const copy = JSON.parse(JSON.stringify(validateParsed(input)));
+    function normalizeParsed(input, allowedActionVars = null) {
+        const copy = JSON.parse(JSON.stringify(validateParsed(input, allowedActionVars)));
         const normalizeList = (list) => {
             for (const entry of list) if (aliases.has(entry.name)) entry.name = aliases.get(entry.name);
         };
@@ -196,6 +198,82 @@ var SaveImport = (() => {
         return {data:copy, legacyChallengeMode};
     }
 
+
+    // LZString-compatible bounded Base64 decoder. Check the generated output
+    // length DURING decompression rather than allocating an expansion bomb
+    // before MAX_DECODED_CHARS can be checked.
+    function decompressBoundedBase64(input, maxOutput = MAX_DECODED_CHARS) {
+        if (typeof input !== "string" || !input.length ||
+            !/^[A-Za-z0-9+/]*={0,3}$/.test(input) ||
+            !Number.isSafeInteger(maxOutput) || maxOutput < 1) {
+            invalid("DECODE", "The save could not be decoded.");
+        }
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        let index = 1, position = 32;
+        let val = alphabet.indexOf(input.charAt(0));
+        function readBits(count) {
+            let bits = 0, power = 1;
+            const end = 2 ** count;
+            while (power !== end) {
+                if ((val & position) !== 0) bits += power;
+                position >>= 1;
+                if (position === 0) {
+                    position = 32;
+                    if (index >= input.length) {
+                        invalid("DECODE", "The save is truncated or malformed.");
+                    }
+                    val = alphabet.indexOf(input.charAt(index++));
+                }
+                power *= 2;
+            }
+            return bits;
+        }
+        const dict = [0, 1, 2];
+        let size = 4, enlarge = 4, bits = 3;
+        const initial = readBits(2);
+        let word;
+        if (initial === 0) word = String.fromCharCode(readBits(8));
+        else if (initial === 1) word = String.fromCharCode(readBits(16));
+        else if (initial === 2) return "";
+        else invalid("DECODE", "The save could not be decoded.");
+        dict[3] = word;
+        const output = [word];
+        let outputLength = word.length;
+        while (true) {
+            const next = readBits(bits);
+            let code = next;
+            if (code === 0 || code === 1) {
+                const symbol = String.fromCharCode(readBits(code === 0 ? 8 : 16));
+                dict[size++] = symbol;
+                code = size - 1;
+                enlarge--;
+            } else if (code === 2) {
+                return output.join("");
+            }
+            if (enlarge === 0) {
+                enlarge = 2 ** bits;
+                bits++;
+            }
+            let entry = dict[code];
+            if (!entry) {
+                if (code !== size) invalid("DECODE", "The save contains an invalid compressed reference.");
+                entry = word + word.charAt(0);
+            }
+            if (outputLength + entry.length > maxOutput) {
+                invalid("TOO_LARGE", "The decoded save is too large.");
+            }
+            output.push(entry);
+            outputLength += entry.length;
+            dict[size++] = word + entry.charAt(0);
+            enlarge--;
+            word = entry;
+            if (enlarge === 0) {
+                enlarge = 2 ** bits;
+                bits++;
+            }
+        }
+    }
+
     function prepare(raw, decoders) {
         if (typeof raw !== "string") invalid("INVALID_INPUT", "Choose a text save export.");
         if (raw.length === 0) invalid("EMPTY", "An empty import is not a save.");
@@ -206,9 +284,10 @@ var SaveImport = (() => {
         let decoded;
         try {
             decoded = raw.startsWith("ILSV01")
-                ? decoders.decompress(raw.slice(6))
+                ? (decoders.boundedDecompress ?? decoders.decompress)(raw.slice(6), MAX_DECODED_CHARS)
                 : decoders.legacyDecode(raw);
-        } catch {
+        } catch (error) {
+            if (error instanceof SaveImportError) throw error;
             invalid("DECODE", "The save could not be decoded.");
         }
         if (typeof decoded !== "string" || !decoded.length) {
@@ -223,7 +302,7 @@ var SaveImport = (() => {
         } catch {
             invalid("INVALID_JSON", "The save contains invalid JSON.");
         }
-        const normalized = normalizeParsed(parsed);
+        const normalized = normalizeParsed(parsed, decoders.allowedActionVars ?? null);
         return {
             ...normalized,
             json:JSON.stringify(normalized.data),
@@ -232,7 +311,7 @@ var SaveImport = (() => {
     }
 
     return Object.freeze({
-        prepare, validateParsed, normalizeParsed, SaveImportError,
+        prepare, validateParsed, normalizeParsed, decompressBoundedBase64, SaveImportError,
         MAX_ENCODED_CHARS, MAX_DECODED_CHARS
     });
 })();

@@ -60,6 +60,17 @@ rejects('ILSV01{"anything":true}','NO_SAVE_DATA');
 rejects('ILSV01{"stats":[]}','INVALID_OBJECT');
 rejects('ILSV01{"stats":{},"buffs":null}','INVALID_OBJECT');
 rejects('ILSV01{"stats":{},"unknownFutureField":{"valuable":1}}','UNSUPPORTED_FIELD');
+rejects('ILSV01{"stats":{},"expInventedFutureAction":123}','UNSUPPORTED_FIELD');
+// Verify real LZString compatibility and early expansion-size enforcement.
+const LZString=require('../lib/lz-string.min.js');
+const boundedCodecs={...codecs,boundedDecompress:SaveImport.decompressBoundedBase64};
+const realPacked=SaveImport.prepare('ILSV01'+LZString.compressToBase64(JSON.stringify(example)),boundedCodecs);
+assert.equal(realPacked.data.expWander,400);
+assert.throws(
+    ()=>SaveImport.decompressBoundedBase64(LZString.compressToBase64('Z'.repeat(4096)),128),
+    e=>e instanceof SaveImport.SaveImportError&&e.code==='TOO_LARGE'
+);
+
 rejects('ILSV01{"stats":{},"nextList":"not a queue"}','INVALID_QUEUE');
 rejects('ILSV01{"stats":{},"nextList":[{"name":"Wander","loops":-4}]}','INVALID_QUEUE');
 rejects('ILSV01{"stats":{},"townsUnlocked":[0,11]}','INVALID_TOWN');

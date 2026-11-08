@@ -1656,32 +1656,43 @@ function processSave(saveData) {
         if (!confirm("Importing an empty save will delete BOTH normal and challenge progress. Export a backup first. Continue?")) {
             return false;
         }
-        // Intentional deletion, not a failed import. Preserve the two most
-        // recent active slots under separate recovery keys before clearing.
+        // Intentional deletion is also a recoverable, journaled transaction.
+        // Do not remove the journal until both slots are confirmed cleared.
+        let journalWritten = false;
         try {
             const before = snapshotBeforeImport();
-            const pending = JSON.stringify({version:1,before});
-            putImportBytes(importPendingKey, pending);
+            putImportBytes(importPendingKey, JSON.stringify({version:1,before}));
+            journalWritten = true;
             for (const slot of [defaultSaveName, challengeSaveName]) {
                 if (before[slot]) putImportBytes(importBackupKey(slot), JSON.stringify({
                     version:1,slot,prior:before[slot]
                 }));
             }
-            window.localStorage.removeItem(importPendingKey);
+            putImportBytes(defaultSaveName, "");
+            putImportBytes(challengeSaveName, "");
+            putImportBytes(importPendingKey, null);
         } catch {
-            try { restoreInterruptedImport(); } catch {}
-            alert("Could not protect the old saves. Nothing was deleted; free browser storage or export your save.");
+            let restored = !journalWritten;
+            if (journalWritten) {
+                try { restoreInterruptedImport(); restored = true; }
+                catch { restored = false; }
+            }
+            if (!restored && typeof stopGame === "function") stopGame();
+            alert(restored
+                ? "Could not safely delete the saves. Your previous progress was preserved."
+                : "Save recovery is pending. Do not clear browser data; reload to retry recovery.");
             return false;
         }
         challengeSave = {};
-        clearSave(); // explicit deletion retains prior public semantics
+        location.reload();
         return true;
     }
 
     try {
         const candidate = SaveImport.prepare(saveData, {
-            decompress: text => LZString.decompressFromBase64(text),
+            boundedDecompress: SaveImport.decompressBoundedBase64,
             legacyDecode: text => decode(text),
+            allowedActionVars: totalActionList.map(action => action.varName).filter(Boolean),
         });
         return applyProtectedImport(candidate);
     } catch (error) {

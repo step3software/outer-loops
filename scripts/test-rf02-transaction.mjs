@@ -137,4 +137,17 @@ const mismatch=fixture({active:'idleLoopsChallenge'});
 const oldBytes=mismatch.state();
 assert.equal(mismatch.tx.processSave(packed(candidate)),false);
 assert.deepEqual(mismatch.state(),oldBytes,'normal import cannot silently overwrite challenge');
+// Deliberate deletion is recoverable and remains distinct from malformed imports.
+const cleared=fixture();
+assert.equal(cleared.tx.processSave(''),true);
+assert.equal(cleared.storage.getItem('idleLoops1'),'');
+assert.equal(cleared.storage.getItem('idleLoopsChallenge'),'');
+assert.equal(JSON.parse(cleared.storage.getItem(backupNormal)).prior,JSON.stringify(original));
+assert.equal(cleared.storage.getItem(pending),null);
+const clearFailure=fixture({failWrite:'idleLoopsChallenge'});
+const beforeClear=clearFailure.state();
+assert.equal(clearFailure.tx.processSave(''),false);
+assert.deepEqual(clearFailure.state(),beforeClear,'partial deletion must restore both slots');
+assert.equal(clearFailure.storage.getItem(pending),null);
+
 console.log('PASS RF02 transaction: exact rollback on parse/quota/apply failure, interrupted journal recovery, previous-save restore, legacy challenge isolation and prestige backup retention.');
