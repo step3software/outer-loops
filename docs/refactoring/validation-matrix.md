@@ -1,6 +1,6 @@
 # Cross-milestone regression and acceptance matrix
 
-This matrix defines **milestone-level required scenarios**, not an assertion that all are currently covered. RF01's representative suite was **merged** in [PR #4](https://github.com/step3software/outer-loops/pull/4); its [evidence ledger](rf01-evidence.md) records which parts of F01–F15 passed, failed (original R01), or remain untested. **RF02's detailed P01–P22 tests are planned, not implemented**, in [its matrix](rf02-test-matrix.md). RF03–RF06 cases remain future work. Also see [audit coverage](../audit/coverage.md).
+This matrix defines **milestone-level required scenarios**, not an assertion that all are currently covered. RF01's representative suite was **merged** in [PR #4](https://github.com/step3software/outer-loops/pull/4); its [evidence ledger](rf01-evidence.md) records which parts of F01–F15 passed, failed (original R01), or remain untested. **RF02's detailed P01–P22 tests are planned, not implemented**, in [its matrix](rf02-test-matrix.md). RF03 and RF04 have source-backed implementation candidates, but RF04 validation is not yet demonstrated; RF05–RF06 remain future work. Also see [audit coverage](../audit/coverage.md).
 
 ## Existing baseline that every milestone inherits
 
@@ -12,6 +12,7 @@ npm run test:model
 npm run test:action
 npm run test:rf01:model
 npm run test:rf01:challenges
+npm run test:rf04:model
 npm run check:mechanics
 python scripts/check-xml.py
 npm run test:browser
@@ -39,7 +40,7 @@ Proposed fixture families:
 | F10 | Ritual and imbuement cap | Same eligibility/buff cap in browser and background predictor, no DOM read in rule calculation | RF03 |
 | F11 | Escape at effective-time boundary | `canStart` queries read-only; actual execution preserves original `< 60` eligibility and activation semantics | RF03 |
 | F12 | Numeric vs boolean resources | Finite numeric arithmetic, boolean flags, invalid numeric rejection, loop reset and save roundtrip | RF03 |
-| F13 | Challenge selection/re-entry | No mutated function identity; three modes preserve controls, prices, combat, timer and save slots | RF04 |
+| F13 | Challenge selection/re-entry | Stable functions; modes 0–3 preserve controls, economy, combat, Mana Burn boundary, independent slots and Worker context | RF04 |
 | F14 | Action definition split | Exact ordered registry, action names/`varName`/metadata, all nine zone actions and all three entry points | RF05 |
 | F15 | Queue, tooltip, responsive UI | DOM IDs, loadouts, focus, themes, stories, mobile-size layout, predictor overlays and render updates | RF06 |
 
@@ -56,6 +57,17 @@ Proposed fixture families:
 | UI keyboard/theme/responsive | Smoke | Error UX | Rule UI parity | Challenge controls | Boot | Own |
 
 Here **Build** means add representative tests, **Own** means directly address with tests, **Regress** means rerun relevant previously established tests, not add a new gameplay feature.
+
+## RF04 verification mapping
+
+- **A1/A2 — F06/F13:** `npm run test:rf01:challenges` and `npm run test:rf04:model` compare original formulas and stable global/Action identities.
+- **A3/A8 — F08/F09/F13:** RF02 preflight/transaction tests plus disposable Chrome challenge entry/exit/reload and legacy import protect both slots.
+- **A4 — F06/F13:** 0/12/400 gold and 0/2/7500 merchant fixtures, 2× speed and Z3/Z5 visibility-only behavior.
+- **A5 — F06/F07:** mode 2 zombie/team combat and synthetic foreground/Worker Fight Monsters prediction.
+- **A6 — F06/F13:** mode 3 duration at 0, 86,399, 86,400 and 86,401 total effective seconds, including non-positive budgets.
+- **A7 — F07/F13:** actual `predictor-worker.js` and foreground field-level comparisons in modes 0–3.
+
+**These cases are present in the implementation candidate and not verified as passing.** See [RF04 evidence](rf04-evidence.md).
 
 ## Evidence template for every implementation PR
 
