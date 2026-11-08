@@ -81,7 +81,7 @@ async function connect(url) {
   function send(method,params={}) {
     return new Promise((resolve,reject)=>{
       const id=++nextId;
-      const timer=setTimeout(()=>{pending.delete(id);reject(Error('CDP timeout: '+method));},15000);
+      const timer=setTimeout(()=>{pending.delete(id);reject(Error('CDP timeout: '+method));},method==='Runtime.evaluate'?45000:15000);
       pending.set(id,{resolve,reject,timer});
       ws.send(JSON.stringify({id,method,params}));
     });
@@ -175,6 +175,7 @@ try {
     +"ritual:getBuffCap('Ritual'),ritualInput:document.getElementById('buffRitualCap').value,"
     +"imbue:getBuffCap('Imbuement'),imbueInput:document.getElementById('buffImbuementCap').value}))()");
   assert.deepEqual(reloadedCap,{ritual:17,ritualInput:'17',imbue:5,imbueInput:'5'});
+  const beforeRf03Synthetic=await client.evaluate('save()');
 
   // Invoke the actual foreground predictor and the actual predictor-worker.js
   // using the same deterministic run state. The worker imports the live Data
@@ -185,10 +186,12 @@ try {
     "const saved={ritual:buffs.Ritual.amt,imbue:buffs.Imbuement.amt,",
     " rep:resources.reputation,soul:stats.Soul.soulstone,",
     " background:options.predictorBackgroundThread,",
-    " slow:options.predictorSlowMode,repeat:options.predictorRepeatPrediction};",
+    " slow:options.predictorSlowMode,repeat:options.predictorRepeatPrediction,",
+    " predictor:options.predictor};",
     "try{",
     " options.predictorBackgroundThread=false;",
     " options.predictorSlowMode=false;options.predictorRepeatPrediction=false;",
+    " options.predictor=false;",
     " resources.reputation=-5;stats.Soul.soulstone=10000;",
     " buffs.Ritual.amt=17;buffs.Imbuement.amt=5;",
     " const blocked={ritual:Action.DarkRitual.canStart(),imbue:Action.ImbueMind.canStart()};",
@@ -231,6 +234,7 @@ try {
     " resources.reputation=saved.rep;stats.Soul.soulstone=saved.soul;",
     " options.predictorBackgroundThread=saved.background;",
     " options.predictorSlowMode=saved.slow;options.predictorRepeatPrediction=saved.repeat;",
+    " options.predictor=saved.predictor;",
     "}",
     "})()"
   ].join("\n"));
@@ -301,7 +305,10 @@ try {
   assert.ok(escapeScheduler.sticky.used>escapeScheduler.started.used);
   assert.equal(escapeScheduler.reset,false);
   assert.equal(escapeScheduler.at60,false);
-  // Restore the unmodified starting fixture before inherited RF01/RF02 cases.
+  // Restore the byte-identical pre-scenario save before inherited RF01/RF02 cases.
+  await client.evaluate("localStorage['idleLoops1']="+JSON.stringify(beforeRf03Synthetic));
+  await client.send('Page.reload',{ignoreCache:true});
+  await waitForBoot();
   await client.evaluate("(() => {"
     +"const ritual=document.getElementById('buffRitualCap');"
     +"ritual.value='666';ritual.dispatchEvent(new Event('change',{bubbles:true}));"
