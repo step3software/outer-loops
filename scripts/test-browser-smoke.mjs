@@ -129,6 +129,32 @@ try {
   const boot=await waitForBoot();
   assert.equal(boot.count,157);
   assert.equal(boot.lang,'en-EN');
+  // RF03: cap UI edits, rejection and real DOM-less worker imports.
+  const capEdit=await client.evaluate("(() => {"
+    +"const input=document.getElementById('buffRitualCap');"
+    +"const original=getBuffCap('Ritual');"
+    +"input.value='17';input.dispatchEvent(new Event('change',{bubbles:true}));"
+    +"const edited=getBuffCap('Ritual');"
+    +"input.value='';input.dispatchEvent(new Event('change',{bubbles:true}));"
+    +"return {original,edited,invalid:getBuffCap('Ritual'),"
+    +"shown:input.value,saved:JSON.parse(save()).buffCaps.Ritual};"
+    +"})()");
+  assert.deepEqual(capEdit,{original:666,edited:17,invalid:17,shown:'17',saved:17});
+  const capWorker=await client.evaluate("(async()=>{"
+    +"const files=['data.js','localization.js','helpers.js','save-import.js',"
+    +"'actionList.js','driver.js','stats.js','actions.js','town.js','prestige.js','saving.js'];"
+    +"const code='importScripts('+files.map(f=>JSON.stringify(location.origin+'/'+f)).join(',')+');'"
+    +"+'loadDefaults();postMessage({cap:getBuffCap(\"Ritual\"),snap:Data.rootObjects.buffCaps.Ritual});';"
+    +"const url=URL.createObjectURL(new Blob([code],{type:'text/javascript'}));"
+    +"const worker=new Worker(url);"
+    +"try{return await new Promise((resolve,reject)=>{"
+    +"const id=setTimeout(()=>reject(Error('RF03 worker cap timed out')),8000);"
+    +"worker.onmessage=e=>{clearTimeout(id);resolve(e.data);};"
+    +"worker.onerror=e=>{clearTimeout(id);reject(Error(e.message));};"
+    +"});}finally{worker.terminate();URL.revokeObjectURL(url);}"
+    +"})()");
+  assert.deepEqual(capWorker,{cap:666,snap:666});
+
   const executed=await client.evaluate("(() => {"
     +"if(!gameIsStopped) pauseGame();"
     +"actions.clearActions();actions.addAction('Wander',1);restart();view.update();"
@@ -151,6 +177,14 @@ try {
   assert.equal(loaded.progress,200);
   assert.equal(loaded.queued,true);
   assert.equal(loaded.saved,true);
+  const reloadedCap=await client.evaluate("(() => ({"
+    +"value:getBuffCap('Ritual'),input:document.getElementById('buffRitualCap').value}))()");
+  assert.deepEqual(reloadedCap,{value:17,input:'17'});
+  await client.evaluate("(() => {"
+    +"const input=document.getElementById('buffRitualCap');"
+    +"input.value='666';input.dispatchEvent(new Event('change',{bubbles:true}));save();"
+    +"})()");
+  console.log('PASS RF03 Chrome: cap edit, invalid rollback, save/reload and worker rule.');
 
   // RF01: disposable synthetic saves, NOT historical player exports.
   // processSave is exercised on this random local port/browser profile only.
