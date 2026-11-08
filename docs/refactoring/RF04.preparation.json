@@ -1,0 +1,499 @@
+{
+  "milestone_id": "step3software/outer-loops#RF04",
+  "plan_sha256": "7e8c288a71482c8c0a14a41a143554b5337aed39535e6c64e9dd112115b2a97d",
+  "base_revision": "b88f46e8566d7c0711bf90f2df75a7625621d612",
+  "implementation_branch": "refactor/rf04-challenge-rule-isolation",
+  "file_changes": [
+    {
+      "path": "challenges.js",
+      "operation": "modify",
+      "implementation": "Replace loadChallenge() monkey-patches with an immutable mode 0/1/2/3 policy map and an explicit getChallengePolicy(mode) / getActiveChallengeMode() read surface. Encapsulate mode 1 converter (canStart, manaCost 1, goldCost 30, spendGold=min(gold,300), buyMana=min(spendGold*30,totalMerchantMana), subtract full spendGold), Z3/Z5 visibility, mode 2 combat combination, and mode 3 timeNeeded=4320000-totals.effectiveTime*50. loadChallenge selects policy and sets mode-dependent gameSpeed (mode 1=2; normal otherwise) without replacing functions. Preserve mode 3 negative/zero duration, no clamping and original restart omission details; keep helpers DOM-free, pure where practical and callable by Worker.",
+      "verification": [
+        "node scripts/test-rf04-model.mjs: stable identities, mode 0–3 formulas, mode 1 repeat/zero/high merchant amount, nonpositive mode 3 budget",
+        "npm run check"
+      ],
+      "criteria": [
+        "A1",
+        "A2",
+        "A4",
+        "A5",
+        "A6",
+        "A7"
+      ]
+    },
+    {
+      "path": "actionList.js",
+      "operation": "modify",
+      "implementation": "Keep Action.BuyManaZ1's same constructed action instance and stable callback references; express canStart, manaCost, goldCost, finish as policy calls at invocation time. Add stable visibility dispatch in BuyManaZ3 and BuyManaZ5 while retaining their original unlock, canStart, story/reward and gold price contracts. Explicitly characterize hidden-but-already-queued Z3/Z5 action behavior; do not conflate visible() with executable canStart(). Do not change action names, varName, order or town indexes.",
+      "verification": [
+        "node scripts/test-rf04-model.mjs: Z1 exact arithmetic, Z3/Z5 visibility/queue, callback identity",
+        "npm run check:mechanics"
+      ],
+      "criteria": [
+        "A1",
+        "A2",
+        "A4",
+        "A8"
+      ]
+    },
+    {
+      "path": "stats.js",
+      "operation": "modify",
+      "implementation": "Preserve global function declaration identities of getSelfCombat/getTeamCombat. Dispatch via explicit challenge policy: normal self/team formulas unchanged; mode 2 returns max(zombieStrength,teamStrength)/2 and zombieStrength+teamStrength. Keep getZombieStrength/getTeamStrength, Feast/Ritual/prestige, teamMembers and guild modifiers unchanged.",
+      "verification": [
+        "node scripts/test-rf04-model.mjs: zero and nonzero team/zombie, buffs/prestige/guild, function reference stability",
+        "npm run test:rf01:model"
+      ],
+      "criteria": [
+        "A1",
+        "A2",
+        "A5"
+      ]
+    },
+    {
+      "path": "driver.js",
+      "operation": "modify",
+      "implementation": "Keep a single stable restart declaration and dispatch its mode-specific budget/reset sequence internally. Normal path retains timeNeededInitial/currentLoop/Data.updateSnapshot; mode 3 preserves the source override's exact timer, effective-time, town, stat, queue reset ordering, 4320000-totals.effectiveTime*50 and its observed missing currentLoop and Data.updateSnapshot steps unless owner-approved scope changes. Do not alter loopEnd/prepareRestart, mana tick speed or regular prestige.",
+      "verification": [
+        "node scripts/test-rf04-model.mjs: 0, 86399, 86400, 86401 effectiveTime, normal and mode 3 reset field comparisons",
+        "npm run test:action",
+        "npm run test:balance"
+      ],
+      "criteria": [
+        "A1",
+        "A2",
+        "A6",
+        "A8"
+      ]
+    },
+    {
+      "path": "saving.js",
+      "operation": "modify",
+      "implementation": "Ensure load()/doLoad() select the explicit mode deterministically after restoring challengeSave and before consumers read visibility; default a missing legacy challengeSave.challengeMode to normal for a fresh/missing-mode load without erasing existing c1/c2/c3 progress keys. Retain beginChallenge/resumeChallenge/exitChallenge order, normal/challenge slot names, overwrite confirmation, exit reload, imported legacy challenge marker, ILSV01 and RF02 protected import/rollback keys. No schema migration, new persistent field, saved-slot reassignment or destructive in-place change.",
+      "verification": [
+        "npm run test:rf02:preflight",
+        "npm run test:rf02:transaction",
+        "npm run test:browser: challenge entry/exit/reload/resume/legacy inline import and recovery assertions"
+      ],
+      "criteria": [
+        "A3",
+        "A8"
+      ]
+    },
+    {
+      "path": "predictor.js",
+      "operation": "modify",
+      "implementation": "Carry selected numeric challengeMode and current totalMerchantMana explicitly into predictor runData and forecast state; use the same challenge policy for modeled Buy Mana Z1 rate/cost/admission and combat self/team strength. Replace the existing mode-1-only isManaDrought + hardcoded manaBought=7500 initialization with correct scenario state. For Z1 define a state-dependent prediction manaCost/canStart so the Worker does not call Action.BuyManaZ1.manaCost() against its default-mode global; replace mode-dependent goldCost calls with explicit pure policy values. Do not automatically block previously queued Z3/Z5 if runtime only hides them. Include mode, merchant budget, buffs/caps in slow-mode and predictor cache identity; document forecast limitations for mode 3 boundaries and ensure actual-vs-forecast representative queues match.",
+      "verification": [
+        "node scripts/test-rf04-model.mjs: selected policy per seeded forecast",
+        "npm run test:browser: foreground/Worker/actual field-level parity for mode 0–3, mode flips and merchant cache changes"
+      ],
+      "criteria": [
+        "A1",
+        "A4",
+        "A5",
+        "A7"
+      ]
+    },
+    {
+      "path": "predictor-worker.js",
+      "operation": "modify",
+      "implementation": "Insert challenges.js into importScripts after saving.js and before predictor.js (matching the existing browser order). Propagate/run with the runData challenge mode in the production Worker, not its default challengeSave global; preserve Data snapshot heritage and the existing message protocol, including resetToDefaults and error handling. Do not access window, document, localStorage or view from policy code.",
+      "verification": [
+        "npm run test:browser: actual predictor-worker.js import, foreground/background equivalent runData, snapshot restore, no stale mode",
+        "npm run check"
+      ],
+      "criteria": [
+        "A2",
+        "A7"
+      ]
+    },
+    {
+      "path": "scripts/load-game-model.mjs",
+      "operation": "modify",
+      "implementation": "Mirror the new production Worker classic-script import order by loading challenges.js exactly once after saving.js in all worker-like model contexts. Retain the existing withChallenges test option as a backward-compatible no-op or adjust every existing caller without double-loading; keep synthetic isolated VM/view facades.",
+      "verification": [
+        "npm run test:model",
+        "npm run test:rf01:challenges",
+        "npm run test:rf03:model",
+        "npm run test:rf04:model"
+      ],
+      "criteria": [
+        "A1",
+        "A2",
+        "A7"
+      ]
+    },
+    {
+      "path": "scripts/test-rf01-challenges.mjs",
+      "operation": "modify",
+      "implementation": "Freeze the original source-backed numeric outputs for modes 0–3 (including 12-gold Z1 purchase 360, 7140 merchant remaining, zero gold; 2x speed; mode 2 strength; mode 3 duration). Replace only historical assertions that global/Action methods must be overwritten with same-realm identity-stability assertions after the refactor. Keep independent VM scenarios and explicitly label pre-refactor characterized behavior versus post-refactor implementation.",
+      "verification": [
+        "npm run test:rf01:challenges"
+      ],
+      "criteria": [
+        "A1",
+        "A2",
+        "A4",
+        "A5",
+        "A6"
+      ]
+    },
+    {
+      "path": "scripts/test-rf04-model.mjs",
+      "operation": "create",
+      "implementation": "Add independent synthetic, deterministic source-backed model fixtures: stable identity of restart/combat/Z1 and Z3/Z5 across mode changes; normal→1/2/3→normal; Z1 0/12/300/400 gold with merchant 0/1/low/7500; preserve full-gold spending and no-purchase when merchant empty; mode 2 zero/nonzero zombie/team with Feast/Ritual/prestige/guild; mode 3 effectiveTime 0/86399/86400/86401 and queue/loop fields; invalid/missing legacy mode defaults; Data roots and save roundtrip. Compare against captured baseline, exact integers and 1e-9 tolerance for permitted float fields only.",
+      "verification": [
+        "npm run test:rf04:model"
+      ],
+      "criteria": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A8"
+      ]
+    },
+    {
+      "path": "scripts/test-browser-smoke.mjs",
+      "operation": "modify",
+      "implementation": "Extend the existing disposable Chrome test (reuse its actual predictor-worker.js and Data snapshot harness). Capture same-realm callback identities, normal/challenge slot data and UI/queue transitions for 0↔1/2/3, reject/accept overwrite, load/import/reload/resume, legacy challenge migration, typed save recovery, prestige/ordinary loops. For representative Z1/combat/restarter short queues compare real runtime to foreground/Worker forecast fields and cache identity after mode/merchant changes; restore a saved fixture after each scenario.",
+      "verification": [
+        "npm run test:browser"
+      ],
+      "criteria": [
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "A8"
+      ]
+    },
+    {
+      "path": "package.json",
+      "operation": "modify",
+      "implementation": "Add test:rf04:model script invoking node scripts/test-rf04-model.mjs; retain all existing package scripts and dev-only dependencies without a new runtime dependency.",
+      "verification": [
+        "npm run test:rf04:model",
+        "npm run check"
+      ],
+      "criteria": [
+        "A8"
+      ]
+    },
+    {
+      "path": ".github/workflows/validate.yml",
+      "operation": "modify",
+      "implementation": "Add a bounded RF04 model test step after RF03 in the existing static validation job. Preserve existing PR/push triggers, 22.x Node setup and browser, XML, RF01–RF03, RW00 checks; no deployment workflow change.",
+      "verification": [
+        "GitHub Actions PR validation: RF04 step and existing model/Chrome/XML checks"
+      ],
+      "criteria": [
+        "A8"
+      ]
+    },
+    {
+      "path": "docs/decisions/ADR-002-challenge-policy-dispatch.md",
+      "operation": "create",
+      "implementation": "Document the accepted RF04-Q01-A/Q02-A/Q03-A decisions, stable mode-specific API, separate predictor context/Worker mode transport, source-to-Worker script load order and alternatives. Use docs/decisions/TEMPLATE.md. Keep an explicitly proposed status until the later contract is reviewed and accepted; do not invent new owner architectural choices.",
+      "verification": [
+        "npm run check: valid Markdown links and ADR documented contract"
+      ],
+      "criteria": [
+        "A2",
+        "A7"
+      ]
+    },
+    {
+      "path": "docs/decisions/README.md",
+      "operation": "modify",
+      "implementation": "Add link to ADR-002 and reconcile its actual proposed/accepted status without rewriting ADR-001 approval history.",
+      "verification": [
+        "npm run check: ADR links"
+      ],
+      "criteria": [
+        "A2"
+      ]
+    },
+    {
+      "path": "docs/architecture.md",
+      "operation": "modify",
+      "implementation": "Describe challenges.js as stable policy owner, browser/Worker classic-script ordering and mode-aware dispatch without function replacement. Preserve all nine towns and editor entry point.",
+      "verification": [
+        "npm run check: links and script inventory"
+      ],
+      "criteria": [
+        "A2",
+        "A7"
+      ]
+    },
+    {
+      "path": "docs/state-and-saving.md",
+      "operation": "modify",
+      "implementation": "Replace obsolete monkey-patch description with challenge mode selection, unchanged idleLoops1/idleLoopsChallenge and ILSV01, load/exit/reload ordering, RF02 recovery guarantees and explicit distinction of predictor runData state from persisted save state.",
+      "verification": [
+        "npm run check",
+        "npm run test:rf02:transaction"
+      ],
+      "criteria": [
+        "A3",
+        "A7"
+      ]
+    },
+    {
+      "path": "docs/predictor.md",
+      "operation": "modify",
+      "implementation": "Document forecast mode ownership, merchant budget behavior, mode 2 strength, Worker runData/snapshot/cache import, runtime comparison fields and mode 3 predictor limitations; preserve existing known R15 risk unless separately corrected.",
+      "verification": [
+        "npm run check",
+        "npm run test:browser"
+      ],
+      "criteria": [
+        "A7"
+      ]
+    },
+    {
+      "path": "docs/reference/code-map.md",
+      "operation": "modify",
+      "implementation": "Update challenge dispatch and worker/predictor ownership rows, retaining all existing source-owner mappings.",
+      "verification": [
+        "npm run check"
+      ],
+      "criteria": [
+        "A2",
+        "A7"
+      ]
+    },
+    {
+      "path": "docs/audit/findings.md",
+      "operation": "modify",
+      "implementation": "Update R03 only with actual completed RF04 evidence; leave unresolved before full worker/Chrome verification and preserve unrelated R15 or RF03 verification gaps. Link the RF04 evidence ledger and PR.",
+      "verification": [
+        "npm run check",
+        "Cross-check R03 claims against rf04-evidence.md"
+      ],
+      "criteria": [
+        "A2",
+        "A7",
+        "A8"
+      ]
+    },
+    {
+      "path": "docs/refactoring/rf04-evidence.md",
+      "operation": "create",
+      "implementation": "Create RF04 verification ledger with source/base/head revisions, before/after parity table for modes 0–3, A1–A8 and F06/F07/F13 matrix, command outputs, actual Chrome version and Worker evidence, unverified cases, known boundaries and rollback. Do not label unrun steps passed.",
+      "verification": [
+        "npm run check",
+        "Review logged command output against claims"
+      ],
+      "criteria": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "A8"
+      ]
+    },
+    {
+      "path": "docs/refactoring/README.md",
+      "operation": "modify",
+      "implementation": "After actual implementation evidence, add the RF04 execution/evidence links and accurate status without declaring a milestone accepted or complete solely from PR creation.",
+      "verification": [
+        "npm run check"
+      ],
+      "criteria": [
+        "A8"
+      ]
+    },
+    {
+      "path": "docs/refactoring/validation-matrix.md",
+      "operation": "modify",
+      "implementation": "Map RF04 A1–A8 to F06/F07/F13 and exact source-backed/Chrome/Worker tests, identifying true pre-refactor characterization versus new stable-identity checks.",
+      "verification": [
+        "npm run check"
+      ],
+      "criteria": [
+        "A1",
+        "A2",
+        "A7",
+        "A8"
+      ]
+    },
+    {
+      "path": "docs/development/validation.md",
+      "operation": "modify",
+      "implementation": "Document RF04 model and browser/Worker checks, known unverified coverage and any observed baseline deviations with concrete commands. Do not imply authentic save corpus or long campaign tests ran.",
+      "verification": [
+        "npm run check"
+      ],
+      "criteria": [
+        "A8"
+      ]
+    }
+  ],
+  "validation_commands": [
+    "npm run check",
+    "npm run test:model",
+    "npm run test:action",
+    "npm run test:rf01:model",
+    "npm run test:rf01:challenges",
+    "npm run test:rf02:preflight",
+    "npm run test:rf02:transaction",
+    "npm run test:rf03:model",
+    "npm run test:rf04:model",
+    "npm run test:balance",
+    "npm run check:mechanics",
+    "python scripts/check-xml.py",
+    "npm run test:browser"
+  ],
+  "handoff_instructions": [
+    "Read current published Orcha main AGENTS, intent routing, implement procedure, standards catalog/registry and source AGENTS/nested contracts; verify the record revision/plan hash and branch writers before editing.",
+    "Pin the accepted source plan at PR #19 head b88f46e8566d7c0711bf90f2df75a7625621d612, its RF04.plan.json SHA-256, and main gameplay source at 1815ad7b52e9b976e92f11b845309bd9e0d80724. If PR #19 or main changed, reconcile against current source and repin; do not silently replace accepted scope.",
+    "Only after separate explicit approval of this exact preparation and an implementation grant, create a dedicated refactor/rf04-challenge-rule-isolation branch/worktree from the verified integration base, keeping plan PR #19 and prep PR stacked as needed.",
+    "Before functional edits, capture pre-RF04 mode 0–3 numeric/queue/save/identity baseline at 1815ad7 and document its known mutations; compare new outputs to that frozen baseline.",
+    "Deliver the two planned implementation verification seams inside one RF04 milestone: mode 1 + central policy/stable references; then mode 2 combat + mode 3 restart + mode-aware foreground/Worker predictor and lifecycle. Preserve owner Q01=A Q02=A Q03=A.",
+    "Change only file_changes paths (or stop for explicit scope reconciliation if another path is indispensable). Do not change balance, Real World mechanics, save schema, action IDs/order, unrelated R15 fixes, or deployment.",
+    "Run every validation_commands entry on the actual candidate, capture actual results including Chrome/Worker and Github Actions. Mark skipped/blocked items unverified; rerun source affected by any rebasing.",
+    "Open a focused draft PR for RF04 implementation against verified main or the properly stacked parent branch; include exact commit SHA, behavior parity evidence, rollback, and excluded/unverified work. Leave it unmerged and do not deploy."
+  ],
+  "open_questions": [],
+  "source_specification": "https://github.com/step3software/outer-loops/blob/b88f46e8566d7c0711bf90f2df75a7625621d612/docs/refactoring/RF04-challenge-rule-isolation.md",
+  "source_plan": "https://github.com/step3software/outer-loops/blob/b88f46e8566d7c0711bf90f2df75a7625621d612/docs/refactoring/RF04.plan.json",
+  "source_blob_shas": {
+    "docs/refactoring/RF04.plan.json": "c8edb775ea0113445b5125da5f743cf0555f7e77",
+    "docs/refactoring/RF04-challenge-rule-isolation.md": "c69e67c6fc7fc4b30f8d16542d2f0cb46f60718e"
+  },
+  "owner_decisions": [
+    "RF04-Q01=A",
+    "RF04-Q02=A",
+    "RF04-Q03=A"
+  ],
+  "owner_plan_acceptance": {
+    "kind": "explicit_user_chat",
+    "evidence_reference": "Owner message in this conversation (2026-11-08): 'Plan accepted, prepare implementation'",
+    "scope": "Plan accepted for preparation; implementation is not authorized"
+  },
+  "provenance": {
+    "source_main_revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+    "approved_plan_pr": 19,
+    "approved_plan_head": "b88f46e8566d7c0711bf90f2df75a7625621d612",
+    "preparation_parent_pr": 19,
+    "orcha_main_revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+    "orcha_prepare_blob": "5422bbd7f5a99a09d01d9c9b38637f1811fc4c4a",
+    "orcha_legacy_stage_observed": "proposed; workflow/records.json has no accepted plan SHA or preparation receipt",
+    "plan_digest_kind": "SHA-256 of exact source-repository RF04.plan.json bytes; NOT an Orcha workflow approval receipt",
+    "candidate_readiness": "Documentation-only preparation candidate; owner approval of this file contract and separate implementation grant required"
+  },
+  "acceptance_criteria_coverage": {
+    "A1": [
+      "challenges.js",
+      "actionList.js",
+      "stats.js",
+      "driver.js",
+      "predictor.js",
+      "scripts/load-game-model.mjs",
+      "scripts/test-rf01-challenges.mjs",
+      "scripts/test-rf04-model.mjs",
+      "docs/refactoring/rf04-evidence.md",
+      "docs/refactoring/validation-matrix.md"
+    ],
+    "A2": [
+      "challenges.js",
+      "actionList.js",
+      "stats.js",
+      "driver.js",
+      "predictor-worker.js",
+      "scripts/load-game-model.mjs",
+      "scripts/test-rf01-challenges.mjs",
+      "scripts/test-rf04-model.mjs",
+      "scripts/test-browser-smoke.mjs",
+      "docs/decisions/ADR-002-challenge-policy-dispatch.md",
+      "docs/decisions/README.md",
+      "docs/architecture.md",
+      "docs/reference/code-map.md",
+      "docs/audit/findings.md",
+      "docs/refactoring/rf04-evidence.md",
+      "docs/refactoring/validation-matrix.md"
+    ],
+    "A3": [
+      "saving.js",
+      "scripts/test-rf04-model.mjs",
+      "scripts/test-browser-smoke.mjs",
+      "docs/state-and-saving.md",
+      "docs/refactoring/rf04-evidence.md"
+    ],
+    "A4": [
+      "challenges.js",
+      "actionList.js",
+      "predictor.js",
+      "scripts/test-rf01-challenges.mjs",
+      "scripts/test-rf04-model.mjs",
+      "scripts/test-browser-smoke.mjs",
+      "docs/refactoring/rf04-evidence.md"
+    ],
+    "A5": [
+      "challenges.js",
+      "stats.js",
+      "predictor.js",
+      "scripts/test-rf01-challenges.mjs",
+      "scripts/test-rf04-model.mjs",
+      "scripts/test-browser-smoke.mjs",
+      "docs/refactoring/rf04-evidence.md"
+    ],
+    "A6": [
+      "challenges.js",
+      "driver.js",
+      "scripts/test-rf01-challenges.mjs",
+      "scripts/test-rf04-model.mjs",
+      "scripts/test-browser-smoke.mjs",
+      "docs/refactoring/rf04-evidence.md"
+    ],
+    "A7": [
+      "challenges.js",
+      "predictor.js",
+      "predictor-worker.js",
+      "scripts/load-game-model.mjs",
+      "scripts/test-browser-smoke.mjs",
+      "docs/decisions/ADR-002-challenge-policy-dispatch.md",
+      "docs/architecture.md",
+      "docs/state-and-saving.md",
+      "docs/predictor.md",
+      "docs/reference/code-map.md",
+      "docs/audit/findings.md",
+      "docs/refactoring/rf04-evidence.md",
+      "docs/refactoring/validation-matrix.md"
+    ],
+    "A8": [
+      "actionList.js",
+      "driver.js",
+      "saving.js",
+      "scripts/test-rf04-model.mjs",
+      "scripts/test-browser-smoke.mjs",
+      "package.json",
+      ".github/workflows/validate.yml",
+      "docs/audit/findings.md",
+      "docs/refactoring/rf04-evidence.md",
+      "docs/refactoring/README.md",
+      "docs/refactoring/validation-matrix.md",
+      "docs/development/validation.md"
+    ]
+  },
+  "risks": [
+    "Current predictor.js has independent default combat helpers and initializes Mana Drought state with hardcoded 7500; changes must be mode-aware in real Worker and foreground without modifying player economy.",
+    "challengeSave is not Data.registerAll snapshot root, but totalMerchantMana is virtualized in globals; use explicit mode/budget in prediction runData or prove safe state/root registration rather than relying on worker defaults.",
+    "Mode 3 override omits normal restart currentLoop and Data.updateSnapshot paths; preserve this observed difference under Q03=A until a separate corrective scope is authorized.",
+    "Mode 1 Z3/Z5 are hidden by visible() overrides, not necessarily blocked from executing an already queued action; characterize both instead of introducing a gameplay restriction.",
+    "Legacy Orcha RF04 stage still reports proposed and has no accepted plan SHA; the explicit owner chat acceptance is recorded as evidence here, not a forged workflow stage receipt.",
+    "PR #19 is unmerged; this preparation PR is stacked, must remain draft, and requires revalidation/retargeting if the parent merges or advances."
+  ],
+  "implementation_authorization": null,
+  "preparation_approval": null,
+  "executed_tests": []
+}
