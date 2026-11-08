@@ -1622,7 +1622,12 @@ const Koviko = {
 
       // Reset the cache's index
       // returns false on cache miss
-      let cacheIsValid = this.cache.reset([state, affected]);
+      // A cap/buff edit changes ritual and imbuement eligibility even when the
+      // initial forecast resources are otherwise identical. Include rule inputs
+      // in the cache identity so updated caps cannot reuse stale predictions.
+      const buffRuleState = Object.fromEntries(buffList.map(name =>
+        [name, [getBuffLevel(name), getBuffCap(name)]]));
+      let cacheIsValid = this.cache.reset([state, affected, buffRuleState]);
 
 
       //Statistik parammeters
