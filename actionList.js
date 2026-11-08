@@ -5670,6 +5670,7 @@ Action.FallFromGrace = new Action("Fall From Grace", {
     },
     finish() {
         if (resources.reputation >= 0) setResourceValue("reputation", -1);
+        else if (view) view.requestUpdate("updateResource", "reputation");
         setStoryFlag("fellFromGrace");
         unlockTown(5);
     },
