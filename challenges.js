@@ -66,7 +66,12 @@ function getActiveChallengeMode() {
 function getChallengePolicy(mode = getActiveChallengeMode()) {
     return challengePolicies[mode] || normalChallengePolicy;
 }
+let previouslyLoadedChallengeMode = 0;
 function loadChallenge() {
-    // Avoid stale Mana Drought speed after a same-page normal-save load.
-    gameSpeed = getChallengePolicy().gameSpeed;
+    const mode = getActiveChallengeMode();
+    // The original modes 0/2/3 did not modify a manually selected game speed.
+    // Reset it only when leaving Mana Drought's forced 2× speed.
+    if (mode === 1) gameSpeed = 2;
+    else if (previouslyLoadedChallengeMode === 1) gameSpeed = 1;
+    previouslyLoadedChallengeMode = mode;
 }
