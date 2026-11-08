@@ -13,7 +13,7 @@ The predictor's job is to model likely effects of the planned action queue. It i
 
 `predictor-worker.js` explicitly imports:
 
-`data.js`, `localization.js`, `helpers.js`, `actionList.js`, `driver.js`, `stats.js`, `actions.js`, `town.js`, `prestige.js`, `saving.js`, and `predictor.js`.
+`data.js`, `localization.js`, `helpers.js`, `save-import.js`, `actionList.js`, `driver.js`, `stats.js`, `actions.js`, `town.js`, `prestige.js`, `saving.js`, and `predictor.js`.
 
 It calls `loadDefaults()`, constructs `Koviko.initWorkerPredictor()` and exchanges typed messages with the page. Message categories include `setOptions`, `verifyDefaultIds`, `importSnapshots`, `startUpdate`, `getSnapshots`, `update`, `endUpdate` and `error`. New simulation dependencies must work in **both** these execution environments.
 
@@ -24,6 +24,12 @@ Because `selfIsWorker` / `selfIsGame` are inferred from the environment, a helpe
 `Data.registerAll` identifies mutable roots; `Data.recordDefaults` captures a baseline and `Data.recordBase` / other snapshot operations support later comparisons. Worker updates can import serialized snapshots and apply state before simulation. Some UI, cached labels and ephemeral view properties are intentionally omitted through `Data.omitProperties`.
 
 An algorithm that writes around registered state, mutates unsnapshotted objects, makes irreversible global changes or introduces non-serializable references can cause forecast drift even when the game plays. The predictor is sensitive to stale snapshots, reference identity, queue loop types, rounding and branch-specific cost formulas.
+
+## RF03 explicit gameplay-rule state
+
+`stats.js` `getBuffCap` reads `saving.js`'s authoritative `buffCaps`, never an `HTMLInputElement`. The existing saved `buffCaps` field is also a registered `Data` snapshot root and is projected into browser inputs; the worker can evaluate cap-dependent ritual and imbuement predicates without DOM. Loop resources are validated against `resourcesTemplate` and reset in place to preserve `Data.rootObjects.resources` identity. `Escape.canStart` only reads state; `Actions.tick` commits its sticky flag upon the first positive mana-spending execution step. The predictor's Escape threshold uses strict `< 60` effective seconds.
+
+The predictor's internal `state.resources` is a separate forecast model; it is not an excuse to introduce arbitrary keys into the gameplay `resources` object. Browser and actual-worker prediction parity must be validated for relevant queues; a DOM-less Node model alone is insufficient.
 
 ## Change checklist
 
