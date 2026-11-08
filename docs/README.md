@@ -59,9 +59,10 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [Legacy prestige/challenge retirement and veteran saves](design/outer-loop/legacy-transition.md)
 - [Nexus technical architecture](design/outer-loop/technical-architecture.md)
 - [Pixel-art and UI direction](design/outer-loop/visual-direction.md)
-- [RW00–RW05 potion-first development roadmap](design/outer-loop/roadmap.md) · [future validation](design/outer-loop/validation.md)
+- [RW00–RW08 potion-first development roadmap](design/outer-loop/roadmap.md) · [future validation](design/outer-loop/validation.md)
 - [RW00 campaign pacing test implementation plan (draft in PR #10)](design/outer-loop/balance-tests-implementation-plan.md)
-- [RW06 Timeline Potions / RW07 Timeline Wagers (separate draft PR #9)](https://github.com/step3software/outer-loops/pull/9)
+- [RW06 Timeline Potions — approved alchemical identity, proposed detailed mechanics](design/outer-loop/RW06.md)
+- [RW07 Timeline Wagers — proposed in-game prediction mechanics](design/outer-loop/RW07.md)
 - [RW08 Incremental Timeline Bosses (proposed)](design/outer-loop/RW08.md)
 - [RF coordination and product scope conflicts](design/outer-loop/integration-with-refactoring.md)
 

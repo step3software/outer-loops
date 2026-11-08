@@ -1,6 +1,6 @@
 # Outer Loops — Real World / Timeloop Nexus
 
-**Status:** Product direction agreed; **design in progress**. This is a concept specification, not an implemented system or approval to change gameplay. Last updated: 2026-11-06.
+**Status:** Product direction agreed; **design in progress**. This is a concept specification, not an implemented system or approval to change gameplay. Last updated: 2026-11-07.
 
 ## North star
 
@@ -15,7 +15,8 @@ The first milestone should feel like a new chapter and immediately change the ex
 - Real World is the **only player-facing prestige/metaprogression home**. The separate dmchurch **Prestige Perks** system and separate **Challenges** menu **will not remain as independent systems**. Individual effects or challenge concepts may be adapted, or discarded; selection is not settled.
 - The first deliberately started **new timeline after potion entry** grants **initial skill points** and a **major temporary boost** on top of permanently free **~10× replay acceleration** and later meaningful permanent upgrade choices. Exact point and temporary-bonus rules remain undecided. Exact multiplication/stacking is still a technical design decision.
 - Multiple alternate selves are visible from first arrival. One approaches the new player; others eventually become characters with meaningful roles and potential **party membership**, not automatic clones per completion.
-- Build a meaningful first village and empowered rerun before gradually exposing advanced upgrade trees, automation, variant timelines, keys, wagers and parties.
+- Build a meaningful first village and empowered rerun before gradually exposing advanced upgrade trees, automation, variant timelines, timeline potions, wagers and parties.
+- **Timeline Potions (RW06)** extend the original Looping Potion: after uncovering its secret, the protagonist can brew customized potions that modify the **next timeline**. The alchemical identity is owner-confirmed; recipes, economy and implementation remain proposed.
 - Real World is a strong **pixel-art art-direction anchor**. The wider game's eventual pixel-art treatment is a related but separate workstream.
 - Do not establish that the earlier game was "fake" or a simulation; keep what **Real World** means deliberately mysterious at first.
 
@@ -84,7 +85,8 @@ The [roadmap](roadmap.md) separates the arrival, initial replay and future syste
 - [RW00 campaign balance tests — implementation plan](balance-tests-implementation-plan.md) · [structured draft](balance-tests.plan.json)
 - [Calculated original-campaign timing baseline](calculated-timing-baseline.md) — generated 29-day potion breakdown and full C08–C14 timing findings
 - [Roadmap and acceptance gates](roadmap.md) — potion village → empowered rerun → later party play
-- [RW06 Timeline Potions and RW07 Wagers proposals (draft PR #9)](https://github.com/step3software/outer-loops/pull/9) — proposed future mechanics, not adopted into this source branch
+- [RW06 — Timeline Potions](RW06.md) — owner-confirmed timeline-alchemy identity; detailed modifiers and brewing proposed
+- [RW07 — Timeline Wagers](RW07.md) — proposed optional pre-run will / will-not in-game stakes
 - [RW08 — Incremental Timeline Bosses](RW08.md) — proposed gods-as-bosses milestone, solved with incremental progression and action queues; no party system
 - [Playtest/validation questions](validation.md) — future scenarios, key pacing risks and decisions
 - [Integration with RF01–RF06](integration-with-refactoring.md) — refactor dependencies and conflicts

@@ -14,9 +14,12 @@
 | **RW03 — Reveal advanced upgrades and first useful self** | Contextual new upgrade choices and bounded companion/delegation tasks | The guide-self can eventually help without removing core strategy | Mastery limits, safe eligibility, deterministic automation and clear UI |
 | **RW04 — Divergent timeline challenges** | Add selected thematic variant rules and unique rewards/selves | Choosing a challenge meaningfully changes strategy and expands the nexus | Optional variants, separate activation context, safe challenge transition; old separate menu absent |
 | **RW05 — Parties and multi-self management** | Grow distinct selves into small selectable parties and coordinated timeline activities | Parties become a meaningful later stage of progress, not a starting roster dump | Bounded roles, resource/performance limits, safe save and recovery |
-| **RW06–RW07 — Keys and Wagers (separate proposals)** | [Draft PR #9](https://github.com/step3software/outer-loops/pull/9) documents later key-modified runs and will/will-not wagers; not adopted into this branch | Discover them gradually after the first rerun | Keep review/implementation independent of early village mechanics |
+| **[RW06 — Timeline Potions](RW06.md)** | Learn to brew new alchemical potions that configure the **next timeline's** previewable attributes | Different formulas create strategic run tradeoffs; keys are an analogy, not a second player-facing item system | Versioned deterministic modifiers, safe commitment, predictor parity and once-only rewards; exact recipes/ingredients/economy open |
+| **[RW07 — Timeline Wagers](RW07.md)** | Optionally stake an in-game resource on a **will / will not** condition for the next timeline | Predictions make run goals intentional; qualifying outcomes settle once | Immutable pre-run contract, clear win/loss/abandonment, safe reservation and settlement; no passive negative-wager wins |
 | **[RW08 — Incremental Timeline Bosses](RW08.md)** | Reuse Valley's god fights as a foundation for deterministic, scaling incremental bosses across timelines | Solve through improving stats, resources and legal action queues; no real-time combat or parties | Characterized old trial behavior, bounded pacing, safe persistence and predictor parity |
 | **ART — Pixel-art workstream (parallel)** | Establish style bible from nexus; later apply to inner world | Cohesive, legible two-character nexus scene and expanded game presentation | Controlled asset scope, readable UI, responsive/reduced motion, asset rights documented |
+
+**RW06 and RW07 are separately requested proposed milestones, not implemented mechanics.** Their numbers do not make RW05 parties a prerequisite: RW06 builds on RW02's safe timeline lifecycle and RW04-compatible rules; RW07 can apply to ordinary timelines and integrate with RW06 later. RW04 remains distinct, and potion customization does not replace the approved potion-first Real World entry or the independent Valley capstone.
 
 **RW00–RW02** form the first target development effort. RW01 may be demoed internally as a narrative prototype, but should **not** be shipped to ordinary players without its first empowered rerun and safe state transitions.
 
@@ -46,7 +49,7 @@ Both high-reputation Valhalla and shadow/Startington routes must have fair acces
 - Automatic **~10× replay acceleration** is permanent, free and separate from that boost. The temporary bonus must not silently compound into a runaway time multiplier.
 - The player gains at least one meaningful long-term upgrade decision over the early Real World experience; the three-tree versus four-tree architecture remains unresolved.
 - Legacy prestige, challenge-active saves and the original Valley ending are handled safely, with no double reward for repeated potion use, reload or old `RestoreTime`.
-- Further capabilities, other selves, variants, keys, wagers and parties are revealed *later* rather than requiring a full metagame tutorial on arrival.
+- Further capabilities, other selves, variants, customized potions, wagers and parties are revealed *later* rather than requiring a full metagame tutorial on arrival.
 
 ### Exit criteria for minimum releasable version
 

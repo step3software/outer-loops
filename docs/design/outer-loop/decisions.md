@@ -1,6 +1,6 @@
 # Real World — decisions and questions
 
-**Purpose:** Keep confirmed product direction separate from recommendations and issues that need genuine design/playtest decisions. Last updated: 2026-11-06 (potion-first clarification).
+**Purpose:** Keep confirmed product direction separate from recommendations and issues that need genuine design/playtest decisions. Last updated: 2026-11-07 (potion-first direction, RW06–RW08 proposals).
 
 ## Approved product direction (do not reopen casually)
 
@@ -16,6 +16,7 @@
 | RW-D08 | Keep alternate-ending/choice selves possible and preserve original Restore Time story without making it an entry gate | Existing Valley climax/credits remain meaningful even if potion access occurs earlier |
 | RW-D09 | **Retain Valley of Olympus** as an independently rewarding, eventually **shorter** capstone in a campaign-wide rebalance | Preserve zone 8 and current mechanics until baseline pacing tests and separate implementation approval; no Valley completion gate for Real World |
 | RW-D10 | The first arrival follows **potion → alternate Beginnersville → recognition by one self → exploration → first empowered rerun**; subsequent timelines reveal more systems and eventual parties | Reframe RW00–RW05 without renumbering or accepting their implementation plans |
+| RW-D11 | **Timeline keys are potions:** the original Looping Potion is the first example of this alchemy; after learning its secret, the protagonist can brew potions that set the **next timeline's attributes** | RW06 presents later customizable run conditions as alchemy, not a parallel key-item system. First Real World entry is already potion-triggered under RW-D02; formulas, ingredients and economy remain open (owner clarification 2026-11-07) |
 
 ## Selected entry and Valley direction — 2026-11-06
 
@@ -91,6 +92,12 @@ The **recommended** player-facing structure is **Will / Echoes / Anchors**. Will
 | RW-Q18 | Which authentic potion-drinking requirements and alternate paths lead to Real World without requiring Valley? | Potion required for entry; exact access for the shadow/Startington route and optional knowledge shortcuts need design | RW00/RW01 acquisition |
 | RW-Q19 | How do **drink-to-enter** and existing **Totem → Wunderkind** potion uses coexist? | Separate player-controlled uses; no duplicate consumption or inferred crafting from `storyMax` | Inventory, saving and story |
 | RW-Q21 | How are partial Valley/tower/trial saves and old prestige entitlements preserved under shorter-Valley tuning and potion-first entry? | Keep the ninth zone and existing progress; protect old saves with explicit compatibility | RF01/RF02 and migration |
+| RW-Q22 | How do customized timeline potions become available, and are formulas/ingredients reusable or consumed? | The protagonist learns to brew them after discovering the first Looping Potion's secret; acquisition, ingredient sources, location and consumption policy remain open | RW06 alchemy, state and save lifecycle |
+| RW-Q23 | Are potion attributes determined by curated formulas, ingredients/combinations or generation, and what combinations are permitted? | Begin testing with a small bounded catalog; exact crafting, generated effects and limits are unapproved | RW06 formula and modifier conflicts |
+| RW-Q24 | How do potion-imposed difficulty, rewards and older challenge/timeline variants interact? | Reuse a shared variant-rule and reward contract; avoid hidden multiplicative payouts | RW04/RW06 compatibility and economy |
+| RW-Q25 | What in-game value is staked on a wager, and how are payouts balanced? | No real-world value; precise stake resource and payout curve remain open until nexus economics are decided | RW07 stake and rewards |
+| RW-Q26 | What qualifies as a winning **will not** wager, and how are aborted/unfinished timelines handled? | Require an otherwise qualifying completed run; no profit for inactivity; abandonment loss/refund terms still need a decision | RW07 settlement and anti-exploit |
+| RW-Q27 | Can players accept multiple wagers or combine them with customized timeline potions? | One wager on the next timeline is a conservative design starting point, not approved economics; preserve committed potion context when present | RW07 UI, validation and combinations |
 
 | RW-Q28 | What do first-rerun **skill points** actually allocate? | New outer points or bounded grants to existing skills; choose only after inspecting existing skill/XP rules | RW02 state and UI |
 | RW-Q29 | What exactly is the **major temporary boost**, and when does it expire? | Strong but bounded, distinct from free 10× speed, with explicit cap/stacking and an in-game expiration indicator | RW02 pacing and predictor |
@@ -102,10 +109,15 @@ The **recommended** player-facing structure is **Will / Echoes / Anchors**. Will
 | RW-Q34 | Which progression thresholds produce distinctive, optimizable boss solutions? | Multiple viable stats/skills/resource/action-queue strategies; deterministic, not reflex-based | RW08 rules and balancing |
 | RW-Q35 | How do boss progress, difficulty tiers and rewards persist or scale between timelines? | Versioned per-timeline state, bounded escalation, once-only rewards and measured pacing | RW08 saves/outputs, RW00 |
 | RW-Q36 | Should customized timeline potions or wagers modify bosses? | Possible later interface to RW06/RW07 when separately implemented; boss works without them | RW08 integration contracts |
+| RW-Q37 | When and how does the protagonist master and unlock **customized timeline potions** after first drinking the original potion to enter Real World? | First entry already follows RW-D02; timing, unlock, source of brewing knowledge and the baseline formula path remain open, independently of Valley completion | RW01/RW02 narrative and RW06 onboarding |
+
+## RW06–RW07 proposals — timeline alchemy and wagers (2026-11-07)
+
+The owner requested two separate proposed planning milestones: [RW06 Timeline Potions](RW06.md), which applies customized potion attributes to later timelines, and [RW07 Timeline Wagers](RW07.md), which supports optional pre-run **will / will not** stakes. **RW06's potion identity is an approved design direction (RW-D11)**, while recipe mechanics, modifier economics, consumption and wager terms remain unapproved. The original potion's **first Real World entry** remains governed by approved RW-D02; RW04 variants and RW08 bosses retain independent scope. Neither milestone authorizes implementation, merge or deployment.
 
 ## RW08 proposal — incremental timeline bosses (2026-11-07)
 
-The owner proposed Valley of Olympus's existing **fights against the gods** as a place for timeline boss encounters, with an explicit correction: bosses in this **incremental game must have incremental solutions**. [RW08](RW08.md) records the proposed progression/stat/resource/action-queue boss design. No party formation, manual combat or new Real World entry requirement is part of this milestone. Boss identity, scaling and rewards remain open; the separately proposed [RW06 Timeline Potions / RW07 Wagers](https://github.com/step3software/outer-loops/pull/9) can later integrate without becoming prerequisites.
+The owner proposed Valley of Olympus's existing **fights against the gods** as a place for timeline boss encounters, with an explicit correction: bosses in this **incremental game must have incremental solutions**. [RW08](RW08.md) records the proposed progression/stat/resource/action-queue boss design. No party formation, manual combat or new Real World entry requirement is part of this milestone. Boss identity, scaling and rewards remain open; the separately proposed [RW06 Timeline Potions](RW06.md) and [RW07 Timeline Wagers](RW07.md) can later integrate without becoming prerequisites.
 
 ## Change control and conflicts
 
