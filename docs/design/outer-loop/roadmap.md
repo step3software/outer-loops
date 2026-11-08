@@ -4,13 +4,14 @@
 
 ## Design tenet
 
-**The first publicly playable Outer Loop must be more than a portal and a pretty room.** On the very first successful return to Beginnersville, the player should already be running around 10× faster **and** have access to meaningful new capabilities. Build a narrow but complete second-playthrough loop before adding multiverse-scale complexity.
+**The first publicly playable Outer Loop must be more than a portal and a pretty room.** On the first **voluntarily started new timeline** after exploration, the player should already be running around 10× faster **and** have access to meaningful new capabilities. Build a narrow but complete second-playthrough loop before adding multiverse-scale complexity.
 
 | Phase | Goal | Player-visible outcome | Readiness / acceptance |
 | --- | --- | --- | --- |
 | **RW00 — Contract and test preparation** | Characterize potion acquisition, both reputation routes, independent Valley pacing, timeline entry and first-rerun entitlement semantics | No player-visible behavior change | RF01/RF02 protection, real potion/Totem flags, [campaign balance test plan](balance-tests-implementation-plan.md), free 10×/boost and points contracts |
-| **RW01 — Potion arrival and alternate Beginnersville (internal)** | Explicit potion drinking, several visible alternate selves, first guide conversation and small explorations | A self recognizes the newcomer in a familiar changed village; no forced reset | First visit once, safe return/save, no Town#9, original Valley and credits preserved |
-| **RW02 — First empowered rerun (minimum releasable)** | Initial skill points, substantial temporary boost, permanent free ~10× speed, enduring capability and safe new-timeline transition | A dramatically different first replay without full future systems unlocked | One-time grants, expiry/stacking, migration, worker/timekeeping parity, recoverable reset |
+| **[RW01-A — Outer Loop foundation](RW01-A.md)** | Drink potion anywhere, mode-filtered actions and bidirectional mana-free travel | Explore Outer Loop locations without advancing original queues | Safe consumption, location save/reload, normal-world compatibility |
+| **[RW01-B — Other You and conversations](RW01-B.md)** | NPC approach events, branching dialogue and native UI | Other You recognizes the newcomer in Outer Loop Beginnersville | One-time triggers, persistent dialogue and game-native presentation |
+| **[RW02 — First empowered rerun (minimum releasable)](RW02.md)** | Skill points, substantial temporary boost, free ~10× replay speed, durable choice, safe new-timeline reset | A dramatically different first replay | One-time grants, migration, worker/clock parity, recoverable reset |
 | **RW03 — Reveal advanced upgrades and first useful self** | Contextual new upgrade choices and bounded companion/delegation tasks | The guide-self can eventually help without removing core strategy | Mastery limits, safe eligibility, deterministic automation and clear UI |
 | **RW04 — Divergent timeline challenges** | Add selected thematic variant rules and unique rewards/selves | Choosing a challenge meaningfully changes strategy and expands the nexus | Optional variants, separate activation context, safe challenge transition; old separate menu absent |
 | **RW05 — Parties and multi-self management** | Grow distinct selves into small selectable parties and coordinated timeline activities | Parties become a meaningful later stage of progress, not a starting roster dump | Bounded roles, resource/performance limits, safe save and recovery |
@@ -21,7 +22,7 @@
 
 **RW06 and RW07 are separately requested proposed milestones, not implemented mechanics.** Their numbers do not make RW05 parties a prerequisite: RW06 builds on RW02's safe timeline lifecycle and RW04-compatible rules; RW07 can apply to ordinary timelines and integrate with RW06 later. RW04 remains distinct, and potion customization does not replace the approved potion-first Real World entry or the independent Valley capstone.
 
-**RW00–RW02** form the first target development effort. RW01 may be demoed internally as a narrative prototype, but should **not** be shipped to ordinary players without its first empowered rerun and safe state transitions.
+**RW00–RW02** form the first target development effort. The earlier RW01 arrival phase is divided into [RW01-A](RW01-A.md) and [RW01-B](RW01-B.md), followed by [RW02](RW02.md). RW01-A/B may be demonstrated internally, but should **not** ship without RW02's safe rerun transitions and grants.
 
 ## Endgame direction and pacing gate
 
@@ -35,8 +36,9 @@ Both high-reputation Valhalla and shadow/Startington routes must have fair acces
 
 ### Potion and first arrival (RW01)
 
-- **Recreate and deliberately drink the Looping Potion.** A new player-controlled use enters Real World rather than the existing Jungle Totem use; exact eligibility and access route are not yet decided.
-- **Arrive in an altered Beginnersville,** inhabited by multiple alternate selves, without replacing normal `Town(0)` or adding `Town(9)`.
+- **Recreate and drink the Looping Potion from any original-world location.** This consumes one held potion, separately from the Totem/Wunderkind use; another can be brewed. The first Outer Loop destination after drinking is still an open design choice.
+- **Travel freely through the Outer Loop,** where mana costs disappear, most original actions are unavailable and travel is bidirectional from every location.
+- **Reach altered Beginnersville,** inhabited by multiple alternate selves, without replacing normal `Town(0)` or adding `Town(9)`.
 - **Be greeted.** One other self notices the player is new, approaches and gives a short, characterful orientation without explaining everything.
 - **Explore briefly.** A few available interactions and returning dialogue build intrigue before the new-timeline button.
 - **Preserve progress.** No automatic timeline reset, forced Valley completion, duplicate grant or irreversible loss occurs just from potion arrival.
@@ -53,7 +55,7 @@ Both high-reputation Valhalla and shadow/Startington routes must have fair acces
 
 ### Exit criteria for minimum releasable version
 
-**Narrative:** The player drinks a potion, enters an uncanny Beginnersville among other selves, is greeted as a newcomer and has a reason to explore; Valley is not the gateway.  
+**Narrative:** The player can drink a potion anywhere, explore the mana-free bidirectionally navigable Outer Loop and meet the approaching Other You in altered Beginnersville; Valley is not the gateway.
 **Systems:** The first rerun has allocatable skill points, an obvious bounded temporary boost, permanent ~10× replay speed and meaningful durable choices, with explicit transition control.  
 **Safety:** Both novice and veteran saves, including legacy purchases and challenge-active saves, have a reviewed, recoverable migration path.  
 **Technical:** Browser + predictor tests cover exact idempotent rewards, relevant time-based gates, normal/new timeline reset and storage.  

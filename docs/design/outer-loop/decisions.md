@@ -1,22 +1,24 @@
 # Real World — decisions and questions
 
-**Purpose:** Keep confirmed product direction separate from recommendations and issues that need genuine design/playtest decisions. Last updated: 2026-11-07 (potion-first direction, RW06–RW08 proposals).
+**Purpose:** Keep confirmed product direction separate from recommendations and issues that need genuine design/playtest decisions. Last updated: 2026-11-07 (Outer Loop potion/travel decisions and interaction milestone proposals).
 
 ## Approved product direction (do not reopen casually)
 
 | ID | Decision | Consequence |
 | --- | --- | --- |
 | RW-D01 | Add **Real World**, a location outside the existing game, as the true outer prestige/timeloop nexus | Do not append a normal ninth-index/10th town; separate lifetime and UI |
-| RW-D02 | Drink the recreated **Looping Potion** to enter Real World: a changed Beginnersville populated by other selves. **Valley/Restore Time is not the entry route** | Supersedes the prior post-Restore Time portal requirement; keep potion entry, Valley ending and new-timeline reset separate |
-| RW-D03 | Multiple alternate selves are visible on arrival; one notices the newcomer, approaches and talks | The first encounter feels social and exploratory, not like a prestige-shop opening |
+| RW-D02 | Drink the recreated **Looping Potion** to enter the separate Real World/Outer Loop, which contains a changed Beginnersville with other selves; **Valley/Restore Time is not the entry route** | The potion may be drunk from any original location; its initial Outer Loop destination is still open; entry and new-timeline reset are separate |
+| RW-D03 | Several alternate selves occupy Outer Loop Beginnersville; one notices and approaches the newcomer upon reaching the village | The encounter is not contingent on drinking specifically in the original starter area |
 | RW-D04 | Old standalone **Prestige Perks** and **Challenges** systems **must not remain separately** in the released new experience | Reuse selected capabilities/concepts *or* discard them; do not run two competing metagames |
 | RW-D05 | The first new timeline, started by choice after potion arrival, gets free **~10× replay speed**, initial **skill points** and a **major temporary boost**, plus access to meaningful permanent choices | Separate permanent throughput from a bounded temporary reward; point type, amount and boost effect/expiration remain open |
 | RW-D06 | Begin with a modest explorable alternate Beginnersville; reveal advanced systems gradually, culminating in party-based play with other selves | Avoid a feature dump, full roster controller or many concurrent simulations in the first release |
 | RW-D07 | Develop a cohesive **pixel-art graphic style**; the Real World is an appealing early showpiece | Art milestones can proceed separately from simulation/serialization code |
 | RW-D08 | Keep alternate-ending/choice selves possible and preserve original Restore Time story without making it an entry gate | Existing Valley climax/credits remain meaningful even if potion access occurs earlier |
 | RW-D09 | **Retain Valley of Olympus** as an independently rewarding, eventually **shorter** capstone in a campaign-wide rebalance | Preserve zone 8 and current mechanics until baseline pacing tests and separate implementation approval; no Valley completion gate for Real World |
-| RW-D10 | The first arrival follows **potion → alternate Beginnersville → recognition by one self → exploration → first empowered rerun**; subsequent timelines reveal more systems and eventual parties | Reframe RW00–RW05 without renumbering or accepting their implementation plans |
+| RW-D10 | **Potion → Outer Loop travel/exploration → alternate Beginnersville → recognition by one self → voluntary empowered rerun** | Preserve travel freedom and delay new-timeline benefits until the player chooses to start again |
 | RW-D11 | **Timeline keys are potions:** the original Looping Potion is the first example of this alchemy; after learning its secret, the protagonist can brew potions that set the **next timeline's attributes** | RW06 presents later customizable run conditions as alchemy, not a parallel key-item system. First Real World entry is already potion-triggered under RW-D02; formulas, ingredients and economy remain open (owner clarification 2026-11-07) |
+| RW-D12 | **RW-Q19 owner choice A:** Drinking and Jungle Totem are distinct alternative uses of a held Looping Potion, **each consuming one**; a potion can be rebrewed. Drinking works in **any original-world location** | No double consumption, no story-flag-only entry and no starter-area-only requirement (2026-11-07) |
+| RW-D13 | **Outer Loop mode has no mana costs, most original actions unavailable and bidirectional travel from every location** | Keep mode-specific activities/navigation separate from the original mana queue and original-world travel (2026-11-07) |
 
 ## Selected entry and Valley direction — 2026-11-06
 
@@ -26,7 +28,7 @@ On 2026-11-06 the owner first selected **B: retain Valley as a shorter capstone*
 
 **Real World is a separate state/scene**, not a replacement of normal `Town(0)`. Potion entry, guide-self introduction, choosing to start a new timeline and receiving one-time rerun benefits are separate transitions. The first rerun retains the previously approved free ~10× wall-clock acceleration; the temporary boost and points are additional, not an unapproved multiplier formula.
 
-The [RW00 campaign balance test plan](balance-tests-implementation-plan.md) remains the future shorter-Valley measurement baseline. Exact potion acquisition for the shadow route, separate Totem use, point economy, temporary boost specification, state retention and return UX are unresolved. These decisions approve product direction **only**, not a stage transition, implementation, merge or deployment.
+The [RW00 campaign balance test plan](balance-tests-implementation-plan.md) remains the future shorter-Valley measurement baseline. Optional Shadow potion access is deferred and not an RW00 blocker. Distinct Totem/drinking consumption is settled in RW-D12; initial outer destination, point economy, temporary boost specification, state retention and return UX remain unresolved. These decisions approve product direction **only**, not a stage transition, implementation, merge or deployment.
 
 ## Owner decisions on 2026-11-06
 
@@ -45,6 +47,14 @@ Evidence: owner replies in this Codex chat (America/New_York), retained here as 
 Exact first response: “2. We need to write "balance" tests basically tests for how long each section takes and rebalance, we'll do that all at once not just the valley”. The follow-up selected “Measure the current campaign first, then choose total and section time budgets from the results (Recommended).”
 
 The owner subsequently requested an [implementation plan for these tests](balance-tests-implementation-plan.md). The plan is draft documentation, separate from later implementation authorization.
+
+## Owner decisions on 2026-11-07 — potion and Outer Loop travel
+
+The owner selected **RW-Q19 A**: a potion may be **drunk** to enter Outer Loop or **used at the Jungle Totem** for Wunderkind; each consumes one and another may be brewed. The owner then removed the interim Beginnersville-only restriction: **drink from any original-world location**. Inside Outer Loop, mana costs disappear, most ordinary actions are unavailable, and travel is bidirectional from every location. The approaching Other You encounter takes place in Outer Loop Beginnersville; entering alone does not start a new timeline.
+
+The owner classified the direct R02 Shadow/no-potion distinction as **acceptable, not an RW00 blocker**. Alternate potion access is deferred, not silently approved. First Outer Loop arrival destination and unfinished-timeline return UX remain open. Evidence: the 2026-11-07 conversation and [prior PR #9 discussion](https://github.com/step3software/outer-loops/pull/9). These owner product choices do not authorize implementation, stage acceptance, merge or deployment.
+
+Proposed specifications are [RW01-A](RW01-A.md) for mode/activities/travel, [RW01-B](RW01-B.md) for events/dialogue and [RW02](RW02.md) for the empowered replay.
 
 ## Working tree design direction (documented, not finalized)
 
@@ -77,7 +87,7 @@ The **recommended** player-facing structure is **Will / Echoes / Anchors**. Will
 | RW-Q02 | What happens to the **90 old points**, unused points, prior completions and repeated Restore Time achievements? | Avoid directly importing 90 points per run as the new currency by assumption; no double award; show existing veterans an appropriate starting grant | Currency and migration |
 | RW-Q03 | Do **Mana Drought**, **Noodle Arms**, **Mana Burn** or other old challenge variants return? | Rebuild only those that add interesting distinct choices, or discard; don't preserve as separate bonus-less menu | Challenge system/legacy save |
 | RW-Q04 | How does the ~10× base rate **stack** with gameSpeed, offline time, Chronomancy, Imbue Soul, challenge rules and frame budgets? | Keep separate from earned multipliers; define before implementation with real game/predictor parity tests | Replay speed architecture |
-| RW-Q05 | What exact act of **drinking the potion** commits first entry, and how is it distinguished from Valley completion and a new-timeline reset? | Potion entry approved; action trigger, prerequisite and repeat use are open | RW01 UX and state transitions |
+| RW-Q05 | Once the potion is drunk from any original location, which Outer Loop location appears first and how is entry committed safely? | Matching-location entry is recommended but not owner-selected; consumption and entry are approved | RW01-A mode/transition |
 | RW-Q06 | How can a player return to a possibly **unfinished original timeline** after visiting Real World, and when is it archived? | Preserve until voluntary new-timeline start; define safe return/retention behavior | Save lifetimes |
 | RW-Q07 | Who is the self who notices the newcomer, and how much do they know? | An apparently experienced guide with incomplete knowledge; actual personality/dialogue open | RW01 narrative |
 | RW-Q08 | How are future selves **earned and differentiated**? | Distinct achievements/build/choices rather than every clear producing an NPC | Roster and challenges |
@@ -89,8 +99,7 @@ The **recommended** player-facing structure is **Will / Echoes / Anchors**. Will
 | RW-Q14 | How are **initial skill points** granted and used relative to a later free lasting upgrade choice? | Grant an early allocation without assuming an existing skill-point ledger or a specific tree lock | RW02 grant economics |
 | RW-Q15 | How are **Memory, Treasury and Structures** balanced across the reset scopes, priced and potentially split into Dominion without save loss? | Stable per-ability IDs, independent lifetime/caps, limited gold/mana transfer, anti-duplication; no numeric policy yet | Nexus economy, RF02 migration and future taxonomy |
 | RW-Q16 | How are rewinds, conditional Echo tasks and cross-tree synergies made safe/deterministic? | Read-only forecast, one committed fork, explicit budget/stop conditions, no double grants | Predictor, RF01/RF03 and later ability implementation |
-| RW-Q18 | Which authentic potion-drinking requirements and alternate paths lead to Real World without requiring Valley? | Potion required for entry; exact access for the shadow/Startington route and optional knowledge shortcuts need design | RW00/RW01 acquisition |
-| RW-Q19 | How do **drink-to-enter** and existing **Totem → Wunderkind** potion uses coexist? | Separate player-controlled uses; no duplicate consumption or inferred crafting from `storyMax` | Inventory, saving and story |
+| RW-Q18 | What optional route allows Shadow/Startington players to craft a potion without first visiting Valhalla? | Deferred; the original Shadow campaign/RW00 R02 benchmark is acceptable without potion and not blocked | Later RW01 acquisition design |
 | RW-Q21 | How are partial Valley/tower/trial saves and old prestige entitlements preserved under shorter-Valley tuning and potion-first entry? | Keep the ninth zone and existing progress; protect old saves with explicit compatibility | RF01/RF02 and migration |
 | RW-Q22 | How do customized timeline potions become available, and are formulas/ingredients reusable or consumed? | The protagonist learns to brew them after discovering the first Looping Potion's secret; acquisition, ingredient sources, location and consumption policy remain open | RW06 alchemy, state and save lifecycle |
 | RW-Q23 | Are potion attributes determined by curated formulas, ingredients/combinations or generation, and what combinations are permitted? | Begin testing with a small bounded catalog; exact crafting, generated effects and limits are unapproved | RW06 formula and modifier conflicts |

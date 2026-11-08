@@ -11,10 +11,10 @@ The first milestone should feel like a new chapter and immediately change the ex
 ### Approved direction
 
 - **Real World** is the name of the additional area, **outside** the existing nine-zone world.
-- The player deliberately **drinks the recreated Looping Potion** and enters a **transformed Beginnersville** populated by other selves; one notices the newcomer and starts a conversation. **Valley/Restore Time is not required for entry.**
+- The player deliberately **drinks a held Looping Potion from any original-world location** to enter the separate Outer Loop. Mana costs disappear, most original actions are unavailable and travel is bidirectional between locations. Altered **Beginnersville** in that world has several other selves; one approaches and starts the first conversation. **Valley/Restore Time is not required for entry.**
 - Real World is the **only player-facing prestige/metaprogression home**. The separate dmchurch **Prestige Perks** system and separate **Challenges** menu **will not remain as independent systems**. Individual effects or challenge concepts may be adapted, or discarded; selection is not settled.
 - The first deliberately started **new timeline after potion entry** grants **initial skill points** and a **major temporary boost** on top of permanently free **~10× replay acceleration** and later meaningful permanent upgrade choices. Exact point and temporary-bonus rules remain undecided. Exact multiplication/stacking is still a technical design decision.
-- Multiple alternate selves are visible from first arrival. One approaches the new player; others eventually become characters with meaningful roles and potential **party membership**, not automatic clones per completion.
+- Several alternate selves are visible in **Outer Loop Beginnersville** when the player reaches it. One approaches the newcomer; others can eventually become meaningful characters or later **party members**, not automatic clones per completion.
 - Build a meaningful first village and empowered rerun before gradually exposing advanced upgrade trees, automation, variant timelines, timeline potions, wagers and parties.
 - **Timeline Potions (RW06)** extend the original Looping Potion: after uncovering its secret, the protagonist can brew customized potions that modify the **next timeline**. The alchemical identity is owner-confirmed; recipes, economy and implementation remain proposed.
 - Real World is a strong **pixel-art art-direction anchor**. The wider game's eventual pixel-art treatment is a related but separate workstream.
@@ -22,9 +22,9 @@ The first milestone should feel like a new chapter and immediately change the ex
 
 ### Selected potion-first entry and independent faster Valley
 
-On 2026-11-06 the owner selected **a shorter Valley capstone**, following a campaign-wide baseline measurement. The later clarification is decisive: **Valley remains playable but is not the route to Real World**. Recreate and **drink the Looping Potion**, return to an alternate Beginnersville among other versions of yourself, meet a self who notices you are new, explore, then embark on a first rerun with initial skill points and an impactful temporary boost. Automatic ~10× replay speed is an independent permanent effect.
+On 2026-11-06 the owner selected **a shorter Valley capstone** after campaign-wide baseline measurement; Valley remains playable but is not the route to Real World. The later 2026-11-07 clarification allows drinking the recreated Looping Potion **anywhere** to enter the Outer Loop, travel in either direction through its locations without mana, and reach alternate Beginnersville to meet other selves before voluntarily starting the empowered first rerun. Automatic ~10× replay speed is distinct from initial skill points and the temporary boost.
 
-The [decision record](decisions.md#selected-entry-and-valley-direction--2026-11-06) explicitly supersedes the old `RestoreTime → new portal` gateway but does not reverse the faster-Valley direction. The [RW00 campaign pacing plan](balance-tests-implementation-plan.md) is preserved; the [earlier A/B/C endgame study](potion-and-endgame-options.md) is historical research, not active scope. Both reputation routes, the separate Jungle Totem use, the first point/boost economy, return policies and save migration remain design and test work. **None of this is implemented.**
+The [decision record](decisions.md) preserves the retained-Valley direction and now confirms separate consuming potion uses and mode-specific Outer Loop traversal. The [RW00 pacing plan](balance-tests-implementation-plan.md) is unaffected; Shadow/no-potion R02 remains a valid baseline. Initial outer destination, skill-point/boost economics, prior-timeline return and migration remain future decisions. **None of these new gameplay features is implemented.**
 
 ### Working upgrade-tree recommendation — not yet approved
 
@@ -32,7 +32,7 @@ The preferred **three-tree** model is **Will / Echoes / Anchors** (active contro
 
 ### Out of scope at this stage
 
-Implementing the nexus; replacing or deleting existing prestige code; migrating saves; changing any of the 157 original actions; rewriting challenge rules; renumbering towns; generating pixel-art assets; adopting a UI/game-engine framework. This PR changes **documentation only**.
+Implementing the nexus; replacing or deleting existing prestige code; migrating saves; changing any of the 157 original actions; rewriting challenge rules; renumbering towns; generating pixel-art assets; adopting a UI/game-engine framework. These proposals change **documentation only**.
 
 ## What already exists, precisely
 
@@ -61,7 +61,7 @@ REAL WORLD — outer progression (persists through entire timelines)
 The initial slice is not just a decorative room:
 
 1. A legitimate **Looping Potion** can be deliberately used to enter Real World **without completing Valley**. Existing Totem/Wunderkind consumption remains a separate supported interaction.
-2. The player arrives in an altered **Beginnersville** among several other selves, one of whom recognizes the newcomer, talks briefly and invites exploration.
+2. The player traverses Outer Loop locations in both directions at no mana cost, reaches altered **Beginnersville** among several other selves, and can speak with the one who recognizes the newcomer.
 3. Entering the village does **not** automatically reset the current timeline, lose unfinished Valley progress or spend a first-rerun entitlement.
 4. The first explicit **Start New Timeline** delivers allocatable **skill points**, a large **temporary boost**, free permanent **~10× replay speed** and an early lasting ability choice. Quantitative grant and boost rules are still open.
 5. The outer world and ordinary game preserve separate state, recoverable saves and idempotent entry/reward grants; the original Valley story and credits remain accessible.
@@ -85,6 +85,9 @@ The [roadmap](roadmap.md) separates the arrival, initial replay and future syste
 - [RW00 campaign balance tests — implementation plan](balance-tests-implementation-plan.md) · [structured draft](balance-tests.plan.json)
 - [Calculated original-campaign timing baseline](calculated-timing-baseline.md) — generated 29-day potion breakdown and full C08–C14 timing findings
 - [Roadmap and acceptance gates](roadmap.md) — potion village → empowered rerun → later party play
+- [RW01-A — Outer Loop mode and travel](RW01-A.md) · [structured plan](RW01-A.plan.json) — proposed activity foundation
+- [RW01-B — approaching Other You and conversation UI](RW01-B.md) · [structured plan](RW01-B.plan.json) — proposed first encounter
+- [RW02 — explicit empowered replay](RW02.md) · [structured plan](RW02.plan.json) — proposed safe timeline transition
 - [RW06 — Timeline Potions](RW06.md) — owner-confirmed timeline-alchemy identity; detailed modifiers and brewing proposed
 - [RW07 — Timeline Wagers](RW07.md) — proposed optional pre-run will / will-not in-game stakes
 - [RW08 — Incremental Timeline Bosses](RW08.md) — proposed gods-as-bosses milestone, solved with incremental progression and action queues; no party system
