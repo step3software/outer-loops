@@ -3,6 +3,7 @@
 // Does not boot a browser, mutate storage or consume private saves.
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
+import {loadGameModel} from './load-game-model.mjs';
 const require=createRequire(import.meta.url);
 const SaveImport=require('../save-import.js');
 
@@ -71,6 +72,25 @@ assert.throws(
     ()=>SaveImport.decompressBoundedBase64(LZString.compressToBase64('Z'.repeat(4096)),128),
     e=>e instanceof SaveImport.SaveImportError&&e.code==='TOO_LARGE'
 );
+
+// Real game doSave() is the authoritative current schema, not a hand-authored
+// sample. Test it in the same worker-like model used by the RF01 suite.
+const {evaluate}=loadGameModel({withViewStubs:true});
+const fromGame=evaluate(`(() => ({
+    saveJson:JSON.stringify(doSave()),
+    allowedActionVars:totalActionList.map(action=>action.varName).filter(Boolean)
+}))()`);
+const gameSave=SaveImport.prepare('ILSV01'+LZString.compressToBase64(fromGame.saveJson),{
+    ...boundedCodecs,allowedActionVars:fromGame.allowedActionVars
+});
+assert.deepEqual(gameSave.data,JSON.parse(fromGame.saveJson),
+    'current game serializer must round-trip without losing recognized fields');
+assert.equal(fromGame.allowedActionVars.length,157);
+const unexpected={...JSON.parse(fromGame.saveJson),expUnsupportedFutureAction:77};
+assert.throws(()=>SaveImport.prepare(
+    'ILSV01'+LZString.compressToBase64(JSON.stringify(unexpected)),{
+        ...boundedCodecs,allowedActionVars:fromGame.allowedActionVars
+    }),e=>e instanceof SaveImport.SaveImportError&&e.code==='UNSUPPORTED_FIELD');
 
 rejects('ILSV01{"stats":{},"nextList":"not a queue"}','INVALID_QUEUE');
 rejects('ILSV01{"stats":{},"nextList":[{"name":"Wander","loops":-4}]}','INVALID_QUEUE');
