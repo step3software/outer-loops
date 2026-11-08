@@ -8,7 +8,7 @@ import {seededMath} from './balance/clock.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const GAME_MODEL_SCRIPTS = Object.freeze([
-    'data.js', 'localization.js', 'helpers.js', 'actionList.js',
+    'data.js', 'localization.js', 'helpers.js', 'save-import.js', 'actionList.js',
     'driver.js', 'stats.js', 'actions.js', 'town.js', 'prestige.js', 'saving.js',
 ]);
 

@@ -33,14 +33,14 @@ documentation update only, and is not a version pin for later work.
 ## Source, branches and publication
 
 - Repository identity is `step3software/outer-loops` (GitHub ID `779319581`);
-  canonical source and PR target are `dmchurch`. Refresh its exact revision and
+  canonical source and PR target are `main`. Refresh its exact revision and
   inspect open PRs before starting; do not substitute Orcha's `dev` branch.
 - Use `feature/<topic>`, `fix/<topic>` or `docs/<topic>` in an isolated worktree
   under `C:\Users\PhillipCurry\projects\codex`. Confirm existing fenced writer
   protection for that branch/checkout before edits and through verified publication.
   The [control definitions](https://github.com/Wisteria-Psychological-Services/project-management-orchestration/blob/main/docs/pr-development-coordination.md#branch-ownership-review-holds-and-integration-intent)
   distinguish branch ownership, review holds and integration intent. Sharing the
-  eventual `dmchurch` target does not reserve that target throughout development.
+  eventual `main` target does not reserve that target throughout development.
 - Use only installed, verified coordination/publication support. Preserve active
   or uncertain claims; do not enable a default-off coordinator or queue to start
   this project. Record dependency order and exact parent revision for stacked work.
@@ -48,15 +48,17 @@ documentation update only, and is not a version pin for later work.
   planning/preparation read source without production edits, implementation stays
   within approved paths, and only the trusted host publishes verified work.
   Do not expose host credentials or put raw agent traces/player saves in Git.
-- Deliver a focused draft PR against `dmchurch`, with exact source/candidate
+- Deliver a focused draft PR against `main`, with exact source/candidate
   revisions, scope, checks, compatibility risks and unverified cases. Reconcile
   unknown remote outcomes before retrying. Keep the PR open for human review.
   No completion report grants merge, release or deployment permission.
 
-The existing [Pages workflow](../../.github/workflows/static.yml) deploys on
-pushes to `dmchurch` and manual dispatch. A merge to this branch can therefore
-publish the game; do not merge or manually trigger deployment as documentation
-cleanup. Orcha's own local-dev delivery exception does not apply to Outer Loops.
+The existing [Pages workflow](../../.github/workflows/static.yml) still listens
+for pushes to the historical `dmchurch` branch (which no longer exists), and it
+allows manual dispatch. Aligning or activating deployment is **not** part of
+RF02 and requires separate owner authorization. Do not modify or trigger that
+workflow as a source-branch cleanup. Orcha's own local-dev delivery exception
+does not apply to Outer Loops.
 
 ## Milestone authority and reuse
 
@@ -100,7 +102,7 @@ into this repository as another status ledger. Source preparation documents are
 candidates to reuse, not proof of accepted host artifacts. This documentation
 update changes no host policy or lifecycle approval.
 
-For the next authorized stage, the trusted host must refresh canonical `dmchurch`
+For the next authorized stage, the trusted host must refresh canonical `main`
 after publication, reconcile the selected milestone against existing source and
 legacy evidence, reuse existing artifacts and collect only missing stage decisions.
 An owner priority/resume decision is required before new starts while the project
