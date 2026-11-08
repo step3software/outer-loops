@@ -200,6 +200,12 @@ try {
     " setBuffCap('Ritual',17);setBuffCap('Imbuement',5);",
     " const plan=[{name:'Wander',loops:1,disabled:false,loopsType:'actions'}];",
     " const seed=await instance.update(plan);",
+    " const cached=JSON.stringify(instance.cache.cache[0].data[2]);",
+    " setBuffCap('Ritual',18);await instance.update(plan);",
+    " const changedCache=JSON.stringify(instance.cache.cache[0].data[2]);",
+    " setBuffCap('Ritual',17);await instance.update(plan);",
+    " const restoredCache=JSON.stringify(instance.cache.cache[0].data[2]);",
+    " const cacheInvalidated=cached!==changedCache&&cached===restoredCache;",
     " const make=(name,town,id,totalTicks=0)=>{",
     "  const data={...seed,id,actions:[{name,loops:1,disabled:false,loopsType:'maxEffort'}],",
     "   state:structuredClone(seed.state),affected:instance.predictions[name].affected.slice(),",
@@ -225,7 +231,7 @@ try {
     " const imbue=await run('Imbue Mind',3,9102);",
     " const early=await run('Escape',6,9104,2999.99);",
     " const at60=await run('Escape',6,9106,3000);",
-    " return {ok:true,blocked,allowed,ritual,imbue,early,at60,",
+    " return {ok:true,blocked,allowed,ritual,imbue,early,at60,cacheInvalidated,",
     "  caps:{ritual:getBuffCap('Ritual'),imbue:getBuffCap('Imbuement')}};",
     "}catch(error){return {ok:false,error:String(error),stack:String(error.stack)};}",
     "finally{",
@@ -242,6 +248,7 @@ try {
   assert.deepEqual(capParity.blocked,{ritual:false,imbue:false});
   assert.deepEqual(capParity.allowed,{ritual:true,imbue:true});
   assert.deepEqual(capParity.caps,{ritual:17,imbue:5});
+  assert.equal(capParity.cacheInvalidated,true,'cap change must invalidate predictor cache');
   for(const name of ['ritual','imbue']) {
     const parity=capParity[name];
     assert.deepEqual(parity.foreground,parity.background,name+' real worker parity');
