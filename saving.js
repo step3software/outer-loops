@@ -997,9 +997,12 @@ function load(inChallenge, saveJson = window.localStorage[saveName]) {
 
     console.log("Loading game from: " + saveName + " inChallenge: " + inChallenge);
 
-    if (toLoad.challengeSave !== undefined) {
+    if (toLoad.challengeSave && typeof toLoad.challengeSave === "object") {
         for (const challengeProgress in toLoad.challengeSave) {
             challengeSave[challengeProgress] = toLoad.challengeSave[challengeProgress];
+        }
+        if (toLoad.challengeSave.challengeMode === undefined && inChallenge !== true) {
+            challengeSave.challengeMode = 0;
         }
     } else if (inChallenge !== true) {
         // Loading a normal legacy save must not retain a previous mode.
