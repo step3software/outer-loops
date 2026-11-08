@@ -5119,7 +5119,7 @@ Action.WizardCollege = new MultipartAction("Wizard College", {
         return towns[4].getLevel("Tour") >= 60;
     },
     finish() {
-        resources.wizardCollege = true;
+        setResourceFlag("wizardCollege", true);
         increaseStoryVarTo("maxWizardGuildSegmentCleared", 0);
     },
 });
@@ -5669,8 +5669,7 @@ Action.FallFromGrace = new Action("Fall From Grace", {
         return getSkillLevel("Pyromancy") >= 200;
     },
     finish() {
-        if (resources.reputation >= 0) resources.reputation = -1;
-        view.requestUpdate("updateResource", 'reputation');
+        if (resources.reputation >= 0) setResourceValue("reputation", -1);
         setStoryFlag("fellFromGrace");
         unlockTown(5);
     },
@@ -6406,12 +6405,9 @@ Action.Escape = new Action("Escape", {
         return 1;
     },
     canStart() {
-        if (escapeStarted) return true;
-        else if (effectiveTime < 60) {
-            escapeStarted = true;
-            return true;
-        }
-        else return false;
+        // Read-only eligibility. The first positive mana-spending tick in
+        // Actions.tick activates sticky Escape eligibility for this run.
+        return escapeStarted || effectiveTime < 60;
     },
     manaCost() {
         return 50000;
@@ -7012,7 +7008,7 @@ Action.GuildAssassin = new Action("Guild Assassin", {
         if (resources.heart > 0) assassinExp = 100 * Math.pow(resources.heart, 2);
         this.skills.Assassin = assassinExp;
         handleSkillExp(this.skills);
-        resources.heart = 0;
+        setResourceValue("heart", 0);
         guild = "Assassin";
     }
 });
