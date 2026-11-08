@@ -30,6 +30,8 @@ Primary browser save keys:
 
 User-visible exported game saves use the prefix `ILSV01`, followed by LZString-compressed Base64 JSON. `exportSave()` / `exportSaveFile()` and `importSave()` / `importSaveFile()` / `processSave()` handle the paths. `doLoad()` includes backward-compatibility transformations, including older story data and absent optional fields.
 
+[RF02 draft PR #16](https://github.com/step3software/outer-loops/pull/16) adds pure validation before import writes, bounded LZString expansion, registered action-field checks, one pre-import copy per slot and independent journaled rollback. The Save menu offers previous-import restoration. Deliberate blank imports remain confirmed deletion and are journaled; malformed nonempty input cannot clear saves. These are candidate behaviors pending browser/CI verification, not a claim of merged support.
+
 Do not write a save migration based solely on an example save. Preserve imports from at least one older fixture when available, default missing fields safely and make repeated load/save idempotent.
 
 ## Loop restart is not prestige
