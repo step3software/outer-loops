@@ -30,7 +30,7 @@ Primary browser save keys:
 
 User-visible exported game saves use the prefix `ILSV01`, followed by LZString-compressed Base64 JSON. `exportSave()` / `exportSaveFile()` and `importSave()` / `importSaveFile()` / `processSave()` handle the paths. `doLoad()` includes backward-compatibility transformations, including older story data and absent optional fields.
 
-[RF02 draft PR #16](https://github.com/step3software/outer-loops/pull/16) adds pure validation before import writes, bounded LZString and legacy LZW expansion, strict nested-value and action-field checks, one pre-import copy per slot and independent journaled rollback. The Save menu offers separate normal and challenge restoration, preserving the exact original persisted bytes. Deliberate blank imports remain confirmed deletion and are journaled; malformed nonempty input cannot clear saves. These are candidate behaviors pending browser/CI verification, not a claim of merged support.
+[Merged RF02 PR #16](https://github.com/step3software/outer-loops/pull/16) adds validation-before-import, bounded LZString and legacy LZW expansion, per-slot pre-import copies and an independent rollback journal. The Save menu offers separate normal/challenge restore paths. Full historical-save compatibility remains unproven; verify the actual RF02 tests before modifying these contracts.
 
 Do not write a save migration based solely on an example save. Preserve imports from at least one older fixture when available, default missing fields safely and make repeated load/save idempotent.
 
@@ -47,6 +47,14 @@ Do not write a save migration based solely on an example save. Preserve imports 
 `Data` in `data.js` maintains registered object roots and snapshots. `Data.registerAll(...)` in `saving.js` registers core state such as `actions`, `towns`, `stats`, `resources`, `skills`, `buffs`, `prestigeValues`, `storyFlags`, `storyVars` and `totals`. Defaults/base snapshots are used in the predictor simulation pipeline; their semantics are **not** equivalent to browser save JSON.
 
 Any new mutable root may need registration. A field omitted from both save serialization and snapshots can behave correctly during ordinary play but disappear on reload or produce incorrect predictions.
+
+## RF03 gameplay state ownership
+
+`buffCaps` in `saving.js` is authoritative for Ritual/Imbuement and other player-editable buff ceilings; `stats.js` `getBuffCap` reads state, while `setBuffCap` validates integers from 0 through each existing `buffHardCaps` value. `views/buffs.view.js` projects saved state into inputs and `updateBuffCaps` applies only the changed cap. `doSave` retains the original `buffCaps` field and `doLoad` normalizes eligible legacy numeric values without needing a DOM. `Data.registerAll` now registers `buffCaps` for foreground/background predictor snapshots.
+
+The 27 loop resources use the types already present in `resourcesTemplate`: **18 numeric** (finite deltas and finite results, including negative/fractional values) and **9 boolean** (explicit true/false). `driver.js` owns `addNumericResource`, `setResourceFlag`, `setResourceValue`, validated legacy `addResource`, `resetResource` and `resetResources`. Unknown/wrong-class/nonfinite operations throw before changing state or the view; no sentinel exceptions. The loop reset updates the existing registered resource object in place, so `Data.rootObjects.resources` remains the same object across loops.
+
+`Action.Escape.canStart` is a read-only eligibility query. `actions.js` commits `escapeStarted` only on the first positive mana-spending tick below 60 effective seconds; the flag is sticky until `Actions.restart` clears it. Observing or queueing the action does not activate it. Preserve action IDs, original cost/reward values and the existing save envelope.
 
 ## Safe migration procedure
 
