@@ -140,20 +140,14 @@ try {
     +"shown:input.value,saved:JSON.parse(save()).buffCaps.Ritual};"
     +"})()");
   assert.deepEqual(capEdit,{original:666,edited:17,invalid:17,shown:'17',saved:17});
-  const capWorker=await client.evaluate("(async()=>{"
-    +"const files=['data.js','localization.js','helpers.js','save-import.js',"
-    +"'actionList.js','driver.js','stats.js','actions.js','town.js','prestige.js','saving.js'];"
-    +"const code='importScripts('+files.map(f=>JSON.stringify(location.origin+'/'+f)).join(',')+');'"
-    +"+'loadDefaults();postMessage({cap:getBuffCap(\"Ritual\"),snap:Data.rootObjects.buffCaps.Ritual});';"
-    +"const url=URL.createObjectURL(new Blob([code],{type:'text/javascript'}));"
-    +"const worker=new Worker(url);"
-    +"try{return await new Promise((resolve,reject)=>{"
-    +"const id=setTimeout(()=>reject(Error('RF03 worker cap timed out')),8000);"
-    +"worker.onmessage=e=>{clearTimeout(id);resolve(e.data);};"
-    +"worker.onerror=e=>{clearTimeout(id);reject(Error(e.message));};"
-    +"});}finally{worker.terminate();URL.revokeObjectURL(url);}"
+  // Cap state is verified below through the production predictor-worker.js,
+  // not an independent Blob worker that only imports the default rules.
+  const imbueEdit=await client.evaluate("(() => {"
+    +"const input=document.getElementById('buffImbuementCap');"
+    +"input.value='5';input.dispatchEvent(new Event('change',{bubbles:true}));"
+    +"return {cap:getBuffCap('Imbuement'),shown:input.value,saved:JSON.parse(save()).buffCaps.Imbuement};"
     +"})()");
-  assert.deepEqual(capWorker,{cap:666,snap:666});
+  assert.deepEqual(imbueEdit,{cap:5,shown:'5',saved:5});
 
   const executed=await client.evaluate("(() => {"
     +"if(!gameIsStopped) pauseGame();"
@@ -178,13 +172,146 @@ try {
   assert.equal(loaded.queued,true);
   assert.equal(loaded.saved,true);
   const reloadedCap=await client.evaluate("(() => ({"
-    +"value:getBuffCap('Ritual'),input:document.getElementById('buffRitualCap').value}))()");
-  assert.deepEqual(reloadedCap,{value:17,input:'17'});
+    +"ritual:getBuffCap('Ritual'),ritualInput:document.getElementById('buffRitualCap').value,"
+    +"imbue:getBuffCap('Imbuement'),imbueInput:document.getElementById('buffImbuementCap').value}))()");
+  assert.deepEqual(reloadedCap,{ritual:17,ritualInput:'17',imbue:5,imbueInput:'5'});
+
+  // Invoke the actual foreground predictor and the actual predictor-worker.js
+  // using the same deterministic run state. The worker imports the live Data
+  // snapshot, including both edited caps and buff levels restored after reload.
+  const capParity=await client.evaluate([
+    "(async()=>{",
+    "const instance=Koviko.instance;",
+    "const saved={ritual:buffs.Ritual.amt,imbue:buffs.Imbuement.amt,",
+    " rep:resources.reputation,soul:stats.Soul.soulstone,",
+    " background:options.predictorBackgroundThread,",
+    " slow:options.predictorSlowMode,repeat:options.predictorRepeatPrediction};",
+    "try{",
+    " options.predictorBackgroundThread=false;",
+    " options.predictorSlowMode=false;options.predictorRepeatPrediction=false;",
+    " resources.reputation=-5;stats.Soul.soulstone=10000;",
+    " buffs.Ritual.amt=17;buffs.Imbuement.amt=5;",
+    " const blocked={ritual:Action.DarkRitual.canStart(),imbue:Action.ImbueMind.canStart()};",
+    " setBuffCap('Ritual',18);setBuffCap('Imbuement',6);",
+    " const allowed={ritual:Action.DarkRitual.canStart(),imbue:Action.ImbueMind.canStart()};",
+    " setBuffCap('Ritual',17);setBuffCap('Imbuement',5);",
+    " const plan=[{name:'Wander',loops:1,disabled:false,loopsType:'actions'}];",
+    " const seed=await instance.update(plan);",
+    " const make=(name,town,id,totalTicks=0)=>{",
+    "  const data={...seed,id,actions:[{name,loops:1,disabled:false,loopsType:'maxEffort'}],",
+    "   state:structuredClone(seed.state),affected:instance.predictions[name].affected.slice(),",
+    "   total:0,loop:0,isValid:false,cacheIsValid:false,finalIndex:0};",
+    "  Object.assign(data.state.resources,{town,mana:100000000,rep:-5,",
+    "   totalTicks,ritual:0,mind:0,soul:10000,nonDungeonSS:10000});",
+    "  return data;",
+    " };",
+    " const run=async(name,town,id,totalTicks=0)=>{",
+    "  const fg=make(name,town,id,totalTicks);",
+    "  for await(const _ of instance.doUpdate(fg)){}",
+    "  const bg=make(name,town,id+1,totalTicks);",
+    "  options.predictorBackgroundThread=true;",
+    "  await Promise.race([",
+    "   (async()=>{for await(const _ of instance.doBackgroundUpdate(bg)){} })(),",
+    "   new Promise((_,reject)=>setTimeout(()=>reject(Error('RF03 real predictor worker timeout: '+name)),8000))",
+    "  ]);",
+    "  options.predictorBackgroundThread=false;",
+    "  const summary=r=>({total:r.total,valid:r.isValid,town:r.state.resources.town});",
+    "  return {foreground:summary(fg),background:summary(bg)};",
+    " };",
+    " const ritual=await run('Dark Ritual',1,9100);",
+    " const imbue=await run('Imbue Mind',3,9102);",
+    " const early=await run('Escape',6,9104,2999.99);",
+    " const at60=await run('Escape',6,9106,3000);",
+    " return {ok:true,blocked,allowed,ritual,imbue,early,at60,",
+    "  caps:{ritual:getBuffCap('Ritual'),imbue:getBuffCap('Imbuement')}};",
+    "}catch(error){return {ok:false,error:String(error),stack:String(error.stack)};}",
+    "finally{",
+    " instance.terminateWorker();",
+    " buffs.Ritual.amt=saved.ritual;buffs.Imbuement.amt=saved.imbue;",
+    " resources.reputation=saved.rep;stats.Soul.soulstone=saved.soul;",
+    " options.predictorBackgroundThread=saved.background;",
+    " options.predictorSlowMode=saved.slow;options.predictorRepeatPrediction=saved.repeat;",
+    "}",
+    "})()"
+  ].join("\n"));
+  assert.equal(capParity.ok,true,JSON.stringify(capParity));
+  assert.deepEqual(capParity.blocked,{ritual:false,imbue:false});
+  assert.deepEqual(capParity.allowed,{ritual:true,imbue:true});
+  assert.deepEqual(capParity.caps,{ritual:17,imbue:5});
+  for(const name of ['ritual','imbue']) {
+    const parity=capParity[name];
+    assert.deepEqual(parity.foreground,parity.background,name+' real worker parity');
+    assert.equal(parity.foreground.valid,false,name+' should be blocked at edited cap');
+    assert.equal(parity.foreground.total,0,name+' must not spend past edited cap');
+  }
+  assert.deepEqual(capParity.early.foreground,capParity.early.background,
+    'Escape real worker parity immediately before 60 seconds');
+  assert.deepEqual(capParity.at60.foreground,capParity.at60.background,
+    'Escape real worker parity at exactly 60 seconds');
+  assert.ok(capParity.early.foreground.total>0,'Escape forecast spends before 60');
+  assert.equal(capParity.early.foreground.town,7);
+  assert.equal(capParity.at60.foreground.total,0);
+  assert.equal(capParity.at60.foreground.town,6);
+  console.log('PASS RF03 Chrome: real predictor-worker snapshots of saved caps and Escape 59.99/60 parity.');
+
+  // Run the production scheduler, not merely Actions.tick or canStart.
+  // A queued Escape must not start while paused, after a zero-spend probe,
+  // or if the time boundary elapses before its first positive expenditure.
+  const escapeScheduler=await client.evaluate([
+    "(()=>{",
+    "if(!gameIsStopped)pauseGame();",
+    "options.repeatLastAction=false;options.keepCurrentList=false;",
+    "options.fractionalMana=false;",
+    "const setup=time=>{",
+    " actions.clearActions();actions.addAction('Escape',1);actions.restart();",
+    " curTown=6;effectiveTime=time;timer=0;timeNeeded=250;",
+    " gameSpeed=1;bonusSpeed=1;gameTicksLeft=20;shouldRestart=false;",
+    "};",
+    "setup(59.99);",
+    "const eligible=Action.Escape.canStart(),pure=!escapeStarted;",
+    "gameIsStopped=true;executeGameTicks(performance.now()+1000);",
+    "const paused={flag:escapeStarted,used:actions.current[0].manaUsed};",
+    "const zero=actions.tick(0),afterZero=escapeStarted;",
+    "effectiveTime=60;gameIsStopped=false;",
+    "executeGameTicks(performance.now()+1000);",
+    "const aborted={flag:escapeStarted,used:actions.current[0]?.manaUsed||0};",
+    "setup(59.99);gameIsStopped=false;",
+    "executeGameTicks(performance.now()+1000);",
+    "const started={flag:escapeStarted,used:actions.current[0].manaUsed,time:effectiveTime};",
+    "effectiveTime=60.01;gameTicksLeft=20;",
+    "executeGameTicks(performance.now()+1000);",
+    "const sticky={flag:escapeStarted,eligible:Action.Escape.canStart(),",
+    " used:actions.current[0].manaUsed};",
+    "restart();",
+    "return {eligible,pure,paused,zero,afterZero,aborted,started,sticky,",
+    " reset:escapeStarted,at60:(effectiveTime=60,Action.Escape.canStart())};",
+    "})()"
+  ].join("\n"));
+  assert.equal(escapeScheduler.eligible,true);
+  assert.equal(escapeScheduler.pure,true);
+  assert.deepEqual(escapeScheduler.paused,{flag:false,used:0});
+  assert.equal(escapeScheduler.zero,0);
+  assert.equal(escapeScheduler.afterZero,false);
+  assert.deepEqual(escapeScheduler.aborted,{flag:false,used:0});
+  assert.equal(escapeScheduler.started.flag,true);
+  assert.ok(escapeScheduler.started.used>0);
+  assert.ok(escapeScheduler.started.time>60);
+  assert.equal(escapeScheduler.sticky.flag,true);
+  assert.equal(escapeScheduler.sticky.eligible,true);
+  assert.ok(escapeScheduler.sticky.used>escapeScheduler.started.used);
+  assert.equal(escapeScheduler.reset,false);
+  assert.equal(escapeScheduler.at60,false);
+  // Restore the unmodified starting fixture before inherited RF01/RF02 cases.
   await client.evaluate("(() => {"
-    +"const input=document.getElementById('buffRitualCap');"
-    +"input.value='666';input.dispatchEvent(new Event('change',{bubbles:true}));save();"
+    +"const ritual=document.getElementById('buffRitualCap');"
+    +"ritual.value='666';ritual.dispatchEvent(new Event('change',{bubbles:true}));"
+    +"const imbue=document.getElementById('buffImbuementCap');"
+    +"imbue.value='500';imbue.dispatchEvent(new Event('change',{bubbles:true}));"
+    +"save();"
     +"})()");
-  console.log('PASS RF03 Chrome: cap edit, invalid rollback, save/reload and worker rule.');
+  await client.send('Page.reload',{ignoreCache:true});
+  await waitForBoot();
+  console.log('PASS RF03 Chrome: edited cap save/reload, real worker and scheduler Escape boundaries.');
 
   // RF01: disposable synthetic saves, NOT historical player exports.
   // processSave is exercised on this random local port/browser profile only.
