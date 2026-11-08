@@ -15,7 +15,7 @@ The ordered script list near the end of `index.html` is critical. After vendored
 3. `actionList.js`, `actionLog.js`, `interval.js`
 4. `driver.js`, `stats.js`, `statsgraph.js`, `actions.js`, `views/main.view.js`
 5. `town.js`, `talents.js`, `prestige.js`, `saving.js`
-6. `challenges.js`, `hotkeys.js`, `predictor.js`
+6. `challenges.js` (stable policy), `hotkeys.js`, `predictor.js`
 7. `views/views.js` and registered view scripts in `views/`
 
 An inline script then invokes `loadDefaults()` and waits for `Localization.ready`; after that it calls `Views.draw()`, localizes the page, and starts the game via `startGame()`. `startGame()` invokes `load()`, which sets up the ticking machinery.
@@ -45,12 +45,18 @@ All of these files execute in the same page-global lexical environment, not as i
 | Per-zone progress, limited-item counts | `town.js` |
 | Stats, experience, skills, buffs | `stats.js`; registries in `saving.js` |
 | Global resources, story, saves, options, initialization | `saving.js` |
-| Challenge overrides | `challenges.js` |
+| Challenge context and stable dispatch | `challenges.js` (mode 0–3 policy; browser and predictor Worker) |
 | Prestige reset and permanent bonuses | `prestige.js` |
 | HTML generation, updates and menus | `views/*` and `uicomponents.js` |
 | Localization and story text | `localization.js` and `lang/en-EN/game.xml` |
 | Prediction and threaded model | `predictor.js`, `predictor-worker.js`, `data.js` |
 | Browser persistence and cloud save | `saving.js` and `google.js` |
+
+## RF04 challenge policy
+
+`challenges.js` exports `getActiveChallengeMode()`, `getChallengePolicy(mode)` and `loadChallenge()`. Existing Buy Mana Z1/Z3/Z5 Action callbacks, `getSelfCombat`, `getTeamCombat` and `restart` retain stable identities and consult policy when called. Mode 3 retains its original special reset sequence and can produce a non-positive time budget.
+
+Both browser and Worker load `challenges.js` after `saving.js` and before `predictor.js`. The forecast serializes challenge mode and merchant mana in `runData.state.resources`, not by reading the Worker's default `challengeSave`. These are forecast-only fields, not new saved gameplay resources; see [RF04 evidence](refactoring/rf04-evidence.md).
 
 ## Data flow and update discipline
 
