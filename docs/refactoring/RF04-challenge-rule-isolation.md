@@ -1,60 +1,89 @@
 # RF04 — Challenge rule isolation
 
-**Status:** Planned — approved scope; implementation not authorized
-- **Priority:** After RF03
-- **Hard dependencies:** RF01 challenge-mode characterization, RF02 challenge save boundaries, RF03 pure gameplay rule APIs
-- **Enables:** A stable action/runtime surface for RF05, fewer cross-system cases for RF06
-- **Primary implementation handoff:** [RF04](handoffs/RF04.md)
+**Lifecycle:** Existing RF04 charter approved as a planning scope. This revised plan is **proposed for owner review**, not an accepted plan or implementation grant (2026-11-08).
+**Repository:** `step3software/outer-loops` · **Source:** `main` at `1815ad7b52e9b976e92f11b845309bd9e0d80724`, the merge commit of [RF03 PR #18](https://github.com/step3software/outer-loops/pull/18).
+**Dependencies:** RF01 [#4](https://github.com/step3software/outer-loops/pull/4), RF02 [#16](https://github.com/step3software/outer-loops/pull/16) and RF03 [#18](https://github.com/step3software/outer-loops/pull/18) are merged in source; their specific verification gates must still be checked.
+**Implementation handoff:** [Existing RF04 handoff](handoffs/RF04.md) — informational until a separately accepted plan, preparation and implementation authorization.
 
 ## Objective
 
-Replace challenge-specific **global function/Action method replacement** with explicit, stable rules selected from game context, while preserving the behavior and storage separation of all three existing challenge modes. The refactor is about lifecycle reliability, not rebalancing or introducing a new challenge.
+Replace challenge-time mutation of action methods and global function declarations with one explicit, deterministic challenge-policy boundary. Preserve the three original challenge modes, their save-slot lifecycle and normal-mode behavior while making foreground/worker prediction consistent with the chosen mode. This is a compatibility refactor, not the eventual Real World redesign.
 
-## Source-confirmed current behaviors
+## Source-grounded baseline (2026-11-08)
 
-`challenges.js` `loadChallenge` contains three switch branches:
-
-| Mode | Existing modifications to preserve | Key sources |
+| Mode | Observed production path | Behavior to characterize and preserve |
 | --- | --- | --- |
-| **1** | Sets `gameSpeed = 2`; overwrites `Action.BuyManaZ1.canStart`, `manaCost`, `goldCost` and `finish`; prevents Buy Mana Z3/Z5 visibility. The Z1 converter uses merchant-mana availability, a per-use gold spending bound and current `totalMerchantMana`. | `challenges.js`, `actionList.js`, `driver.js` |
-| **2** | Replaces global `getSelfCombat` and `getTeamCombat` functions; combat depends on max(zombie/team) and combines zombie + team strength. | `challenges.js`, `stats.js` |
-| **3** | Replaces global `restart`; run duration is based on `4320000 - totals.effectiveTime * 50` and reset logic differs from normal mode. | `challenges.js`, `driver.js` |
+| **0 — normal** | [`actionList.js`](../../actionList.js), [`stats.js`](../../stats.js), [`driver.js`](../../driver.js) | Default merchant pricing, combat, restart budget and action visibility; no challenge-specific rule leakage. |
+| **1 — Mana Drought** | [`challenges.js`](../../challenges.js) replaces five `Action.BuyManaZ1`/Z3/Z5 callbacks and sets `gameSpeed = 2`. | Z1 `canStart` requires `totalMerchantMana > 0`; mana cost 1, gold rate 30, spending `min(gold,300)` per purchase, purchase `min(spendGold * 30,totalMerchantMana)`, merchant balance decremented, Z3/Z5 hidden. |
+| **2 — Noodle Arms** | `challenges.js` replaces global `getSelfCombat` and `getTeamCombat`. | Self = `max(getZombieStrength(), getTeamStrength()) / 2`; team = `getZombieStrength() + getTeamStrength()`, with underlying buff/prestige/skill multipliers unchanged. |
+| **3 — Mana Burn** | `challenges.js` replaces global `restart`. | `timeNeeded = 4320000 - totals.effectiveTime * 50` on restart; mode-specific reset order and queue behavior as observed. The override currently omits normal restart's `currentLoop` assignment and `Data.updateSnapshot`, an explicit parity risk, not permission to change balance. |
 
-`saving.js` `load`/`doLoad` apply `loadChallenge` after restoring state; `beginChallenge`, `resumeChallenge` and `exitChallenge` coordinate separate `idleLoopsChallenge` and `idleLoops1` slots, with a reload on exit. The current `predictor-worker.js` import list does **not** include `challenges.js`. Challenge-state propagation and worker behavior must therefore be examined deliberately rather than assumed.
+[`saving.js`](../../saving.js) stores normal/challenge saves in `idleLoops1` and `idleLoopsChallenge`, calls `loadChallenge()` during load, and uses `beginChallenge()`, `resumeChallenge()` and `exitChallenge()` to transition. Exit currently reloads the page. [`predictor-worker.js`](../../predictor-worker.js) does **not** import `challenges.js`, and [`predictor.js`](../../predictor.js) contains independent default-combat helper formulas: mode propagation/parity cannot be assumed. [RF01 characterization](../../scripts/test-rf01-challenges.mjs) currently expects monkey-patched function identities, so retain its numerical baseline but replace that *specific* old-implementation assertion with stable-reference assertions only after baseline capture.
 
-## Scope
+## Included scope
 
-1. Introduce an **explicit challenge context / policy surface** for economy, combat, available actions and restart budgeting, with stable top-level function references. The exact policy API/file layout requires a reviewed design/ADR.
-2. Preserve mode 0 baseline and all mode 1/2/3 formulas, action availability, ability to queue/execute, story implications, failure/stop conditions, and **separate slot** lifecycle.
-3. Make mode selection deterministic at initialization and after import/exit; avoid stale closures, reused overrides or behavior from a previously active challenge.
-4. Ensure the predictor (foreground and worker) sees the same challenge mode and parameters; keep `Data` snapshots and any global virtualization coherent.
-5. Change only callers necessary to retire function overwrites, preserving existing public functions/callback contracts to the extent possible.
+1. A small challenge context/policy for mode 0/1/2/3, selected explicitly from loaded game state. Stable `restart`, combat functions and `Action.BuyManaZ1` callbacks dispatch through the chosen policy without overwriting executable function identities. Keep rule/predicate evaluation independent of the DOM.
+2. Preserve mode 1 action admission, visibility, purchase bounds, merchant balance, 2× speed, timer and queue effects; mode 2 strength formulas; mode 3 restart arithmetic and sequencing. Preserve standard gameplay and prestige behavior outside challenges.
+3. Preserve existing `challengeSave` fields, both save slot names, `ILSV01` import/export, RF02 recovery/journal keys, existing overwrite confirmation, legacy challenge migration, resume and explicit reload-on-exit behavior. Mode selection must not leak after loading a different slot.
+4. Propagate the same challenge context to foreground prediction and the real Worker, including `Data` snapshot import/reset/cache invalidation. Address existing mode-specific predictor discrepancies as narrowly as needed to satisfy RF04 parity, without changing gameplay rewards.
+5. Extend RF01/RF02/RF03 regression fixtures and real-browser tests with stable identities, same-page policy selection, mode transitions, save/import/reload and explicit foreground/worker parity.
+6. Document the durable rule contract in an ADR if the interface changes a long-lived runtime API; refresh architecture, state/save, predictor and code-map ownership documentation during the separately authorized implementation.
 
-## Explicitly out of scope
+## Excluded scope
 
-Adding or removing challenges, adjusting difficulty, changing the 2× speed, merchant gold/mana conversion, combat formulas, restart time budget, save format, or UI aesthetics. Do not modify default gameplay just to make challenge policies convenient.
+No new challenges, removal or retirement of legacy modes, timeline-variant conversion, new Real World/Totem/Potion mechanics, balancing or minimum-timer correction without owner acceptance, new save fields/schema, action renaming/reordering, tenth town, action-module split (RF05), view overhaul (RF06), runtime bundler/framework, cloud/account operations, deploy or merge.
 
-## Acceptance criteria
+## Proposed architecture and delivery
 
-- **A1:** All three modes reproduce characterized RF01 player-visible actions, resource conversion, combat and restart outcomes for the same seeded fixtures (with explicit numeric tolerance where required).
-- **A2:** Global `restart`, `getSelfCombat`, `getTeamCombat` and `Action.BuyManaZ1` method identities do not change when selecting, loading, exiting or resuming challenges. Branch-specific calculations instead dispatch through documented rule policies.
-- **A3:** Starting a challenge writes only the intended challenge slot, preserves the regular save, enforces existing overwrite confirmation, and resumes correctly. Exiting restores default-game rules with no stale challenge state, including after browser reload.
-- **A4:** Mode 1 reaches exactly the expected gold/mana result and `totalMerchantMana` balance at zero, low and high amounts, and appropriately hides Buy Mana Z3/Z5.
-- **A5:** Mode 2 self/team/zombie combat values match original formulas for zero and nonzero teams/zombies plus buffs and prestige modifiers.
-- **A6:** Mode 3 duration and looping match the original for representative `totals.effectiveTime` values, with a documented decision for any problematic non-positive budget boundary; no accidental changes to normal restart or prestige.
-- **A7:** Foreground and worker predictions use identical selected challenge policies and match actual outcomes for representative short queues. Snapshot restores do not change the active mode unexpectedly.
-- **A8:** Tests cover mode 0 → mode 1 → normal, 0 → 2 → normal, 0 → 3 → normal, and challenge reload/import/resume. All existing CI and browser smoke pass.
+**One RF04 implementation milestone, two internal verification seams (not additional milestones).** The preferred design is a single small policy dispatcher/lookup in the existing classic-script runtime, with policy decisions made from explicit state rather than reassigned function declarations. Preserve existing action and global entry points; centralize mode-specific arithmetic in the existing owning files instead of scattering `if (challengeMode)` throughout unrelated actions. Share the policy with the Worker by a verified script inclusion and snapshot/run-data contract, not by assuming globals or DOM exist there. The exact layout is pending **RF04-Q02**.
 
-## Proposed implementation slices
+1. **Characterize and establish policy:** freeze mode 0–3 numeric/queue/save outputs from the PR #18 source, including `Action.BuyManaZ1` and global function identities. Extend deterministic source-backed fixtures before changing behavior; document mode ownership, policy read API and snapshot requirements. Implement the central selection seam and mode 1 with identical foreground outcomes.
+2. **Migrate and prove remaining policies:** move mode 2 combat and mode 3 restart selection into stable dispatch. Reconcile initialization, speed reset, browser reload, challenge-slot restore/import and foreground/Worker prediction. Remove remaining runtime overwrites only after comparing all characterized outputs. Produce one focused implementation PR with an ADR if applicable, test evidence and a rollback path.
 
-1. Capture **immutable baseline outputs** for each mode using RF01 F06/F07 and F13. Include the current `loadChallenge` identity changes so that future tests intentionally assert stable identities only **after** refactoring.
-2. Design policy ownership. Prefer a small context-selected rule object/dispatcher to proliferating `if (challengeMode)` branches across dozens of actions; do not instantiate an additional game engine.
-3. Replace mode 1 action formula/availability overrides, mode 2 combat dispatch and mode 3 restart strategy sequentially; test each in isolation.
-4. Reconcile regular mode restoration, challenge slots, predictor-worker dependencies, `Data` snapshots and UI menus. Remove the old monkey-patch path only after parity.
-5. Update source maps, architecture/ADR, handoff evidence and any new test fixtures.
+Implementation should make reversibility obvious: reverting code preserves current save bytes and the RF02 recovery mechanism; no data migration is necessary. A merged prerequisite is not a substitute for testing: verify the RF03 browser, worker and CI gates against the actual source before relying on them.
 
-## Risks and rollout
+## Acceptance criteria (retain established A1–A8)
 
-A reload currently clears overwritten code. A policy-based version may change mode within one page lifecycle, which creates subtle differences if caches and queues are not reset. Do not change this user-visible transition policy without explicitly validating it. Mode 3 touches time accounting, so a "clean" generic restart could be wrong. Keep source implementation reversible and demonstrate migration-free rollback of user saves.
+- **A1:** Mode 0 and all three challenge modes reproduce the frozen pre-refactor player-visible action, resource, combat, speed, queue and restart outputs for identical synthetic states, with any justified numeric tolerance stated.
+- **A2:** References to global `restart`, `getSelfCombat`, `getTeamCombat` and the mode 1-affected `Action.BuyManaZ1`/Z3/Z5 methods remain stable across selection, load, import, resume, exit and reload; no mode uses replacement of these references.
+- **A3:** Challenge entry affects only the intended challenge slot, preserves normal data and RF02 backup/recovery contracts, respects overwrite confirmation, and resumes/exits without stale challenge policy.
+- **A4:** Mode 1 produces exact purchases and `totalMerchantMana` values at zero, small and cap-exceeding gold/merchant amounts, keeps Z3/Z5 unavailable, and retains 2× speed only while appropriate.
+- **A5:** Mode 2 self/team/zombie combat matches baseline at zero and nonzero teams/zombies and representative Feast, Ritual, prestige and guild/skill modifiers.
+- **A6:** Mode 3 restart matches recorded values and queue/town/timer outcomes around representative and boundary `totals.effectiveTime` values. Any non-positive budget correction is a separately approved deviation, not an implicit refactor.
+- **A7:** Foreground and real Worker predictions select identical policies and match actual mode-specific queued-action outcomes on field-level comparisons. Snapshot restoration and cache reuse cannot silently change mode.
+- **A8:** Mode transitions `0→1→0`, `0→2→0`, `0→3→0`, import, reload, challenge resume, normal/prestige loops and basic browser UI pass all affected regression checks.
 
-RF05 may start once the stable challenge contracts and model parity tests have landed, and the action-registration/order baseline is known. Separate instruction and PR required; no merge during planning.
+## Verification matrix and gates
+
+| Area | Required planned evidence |
+| --- | --- |
+| Baseline | Frozen pre-edit RF01 `test:rf01:challenges` outputs, field-level model fixtures and normal-mode control for all modes. Distinguish formerly *expected mutations* from frozen gameplay values. |
+| Mode 1 | `gold=0/12/300/400`, `totalMerchantMana=0/low/7500`, exact Z1 rewards and bounds, Z3/Z5 queue visibility, normal→challenge→normal speed restoration. |
+| Mode 2 | Zero and nonzero undead/team combinations, buffs, skill/armor, prestige, action combat, foreground and Worker prediction. |
+| Mode 3 | `totals.effectiveTime` near 0, 86,399, 86,400 and 86,401; restart counters, queue, town reset, snapshots and continuation. Record legacy non-positive behavior before proposing a correction. |
+| Persistence | Existing save, fresh challenge, confirmed/rejected overwrite, legacy inline challenge import, normal/challenge slot isolation, RF02 backup/rollback, exit/reload/resume and `ILSV01` export/import. |
+| Integration | `npm run check`; `npm run test:model`, `test:action`, `test:rf01:model`, `test:rf01:challenges`, `test:rf02:preflight`, `test:rf02:transaction`, `test:rf03:model`, `check:mechanics`, `test:browser`; new RF04 deterministic and Chrome Worker parity tests; `python scripts/check-xml.py`. Capture exact outcomes and skipped checks. |
+
+Use isolated test profiles and synthetic saves only; never commit player saves or exercise cloud credentials. See [cross-milestone matrix](validation-matrix.md) and [validation guide](../development/validation.md). These checks are **planned**, not reported as executed for this planning-only branch.
+
+## Decisions reserved for owner review
+
+| ID | Alternatives | Recommended default / consequence |
+| --- | --- | --- |
+| **RF04-Q01 — Legacy compatibility scope** | **A:** preserve three legacy challenge modes as compatibility layer; **B:** rescope RF04 directly to proposed Real World timeline variants. | **A.** Keeps the previously approved A1–A8 contract, veteran saves and RF05 stability. B changes product scope and requires a new acceptance/amendment; [Real World integration](../design/outer-loop/integration-with-refactoring.md) explicitly flags the conflict. |
+| **RF04-Q02 — Rule ownership** | **A:** compact, shared policy dispatcher in existing `challenges.js` with stable consumers; **B:** new dedicated classic-script policy file wired in each entry point. | **A.** Smallest refactor/script-order surface, subject to Worker-load feasibility. B may be justified at preparation if there is a demonstrable dependency cycle; record any chosen long-lived contract in an ADR. |
+| **RF04-Q03 — Non-positive Mana Burn duration** | **A:** preserve `4320000 - totals.effectiveTime * 50` exactly and characterize/flag non-positive values; **B:** clamp or reject non-positive budgets. | **A.** Avoids silent balance changes at/after 86,400 effective seconds. B is a gameplay correction requiring an explicit rule, user-facing consequences and separate regression evidence. |
+
+These are recommendations, **not recorded owner answers**. The charter A1–A8 remains operative unless the owner expressly accepts an amendment. Decisions D05/D06 for RF03 are already owner-approved and must not be reopened by RF04.
+
+## Risks, compatibility and documentation review
+
+- **Mode drift:** current `loadChallenge()` mutates executable objects while challenge exit reloads. Deterministic same-page selection is useful only when it preserves actual slot transitions and reset behavior.
+- **Prediction drift:** Worker lacks `challenges.js`; prediction helpers encode normal combat. Missing state registration, imported snapshot roots or stale caches may silently misrepresent challenge action times.
+- **Mode 3 reset divergence:** replacing the override with the normal restart path without studying its missing `currentLoop` / snapshot work could change actual outcomes. Capture both paths before deciding what to preserve.
+- **RF03 evidence:** PR #18 is merged, but its description still lists unverified Node/Chrome gates; obtain current checks and rerun baseline before any RF04 implementation claim.
+- **Navigation:** the RF register and handbook had stale RF02/RF03 delivery labels on this source revision; correct those alongside this plan. The existing RF04 handoff referred to obsolete `dmchurch`; correct the branch reference but leave preparation/implementation unauthorized.
+
+**Rollback:** revert only the eventual RF04 code/contract commits; preserve ordinary/challenge saves, RF02 import journal and prior backups. No new keys or one-way migration should be added under RF04.
+
+**Planning evidence:** source inspection of `main` at `1815ad7`; Orcha published `main` at `b8bf6bf07073823d108fd356c48916ea0cafd615`. No local repository command, Chrome run, Node suite, XML validation, GitHub Actions pass or owner milestone approval is asserted by this document.

@@ -1,0 +1,99 @@
+{
+  "milestone_id": "step3software/outer-loops#RF04",
+  "objective": "Replace challenge-specific runtime function/method overwrites with explicit stable rule selection while retaining modes 0–3, challenge save isolation and foreground/Worker predictor parity.",
+  "scope": {
+    "include": [
+      "Central mode-selected policy and stable global/Action function references",
+      "Exact legacy economy, combat, speed, visibility and restart behavior",
+      "Mode-aware prediction and snapshot/context handling",
+      "Regression fixtures for all transitions, saves, import/reload, worker parity"
+    ],
+    "exclude": [
+      "Removing or redesigning legacy challenges",
+      "Real World timeline variants or potion/outer-loop gameplay",
+      "New save schema, balance changes, action moves, new framework, deployment or merge"
+    ]
+  },
+  "acceptance_criteria": [
+    "A1: Frozen normal/challenge gameplay baseline values and outcomes match",
+    "A2: Global restart/combat and affected Action method identities remain stable",
+    "A3: Normal/challenge saves and RF02 recovery/overwrite/resume/exit semantics are preserved",
+    "A4: Mode 1 gold/mana/merchant and visibility behavior matches including limits",
+    "A5: Mode 2 combat formulas match for zero/nonzero members and modifiers",
+    "A6: Mode 3 restart budget and lifecycle match; non-positive boundary needs a recorded decision",
+    "A7: Foreground and Worker prediction use mode-aware parity with snapshot/cache correctness",
+    "A8: Three mode transition cycles, save/import/reload/resume and regression suites pass"
+  ],
+  "constraints": [
+    "Preserve AGENTS.md and legacy Orcha authority; no stage acceptance by file status",
+    "Use source main merge commit 1815ad7b52e9b976e92f11b845309bd9e0d80724",
+    "Preserve ILSV01, idleLoops1/idleLoopsChallenge and RF02 recovery journal",
+    "No new game mode, balance adjustment, migration, auto-merge, deployment or host activation",
+    "Do not claim unrun browser/Node/CI checks passed"
+  ],
+  "dependencies": [
+    {
+      "id": "step3software/outer-loops#RF01",
+      "kind": "hard",
+      "reason": "Source-backed characterization of all three legacy challenge modes; PR #4 merged"
+    },
+    {
+      "id": "step3software/outer-loops#RF02",
+      "kind": "hard",
+      "reason": "Protected normal/challenge slot and migration/recovery contracts; PR #16 merged"
+    },
+    {
+      "id": "step3software/outer-loops#RF03",
+      "kind": "hard",
+      "reason": "Pure rules, typed resources and worker-safe buff caps; PR #18 merged, verification must be checked"
+    },
+    {
+      "id": "step3software/outer-loops#RW",
+      "kind": "soft",
+      "reason": "Future Real World retirement creates RF04 scope tension; approved direction is not RF04 implementation permission"
+    }
+  ],
+  "decisions": [],
+  "open_questions": [
+    {
+      "id": "RF04-Q01",
+      "question": "Should RF04 preserve the three existing challenge modes for compatibility or be rescoped to Real World timeline variants?",
+      "options": [
+        "A — Preserve modes 1–3 as a compatibility layer within the existing A1–A8 charter",
+        "B — Rescope RF04 to new Real World timeline variants, requiring a separately accepted charter amendment"
+      ],
+      "recommended_default": "A — Preserve modes 1–3 as a compatibility layer within the existing A1–A8 charter",
+      "evidence_reference": "docs/design/outer-loop/integration-with-refactoring.md; docs/refactoring/RF04-challenge-rule-isolation.md"
+    },
+    {
+      "id": "RF04-Q02",
+      "question": "Where should the challenge policy dispatcher live?",
+      "options": [
+        "A — Use a compact shared dispatcher in existing challenges.js, with stable callers and explicit Worker inclusion",
+        "B — Create a separate classic-script policy file included by each runtime entry point"
+      ],
+      "recommended_default": "A — Use a compact shared dispatcher in existing challenges.js, with stable callers and explicit Worker inclusion",
+      "evidence_reference": "challenges.js; predictor-worker.js; docs/refactoring/decision-log.md#D07"
+    },
+    {
+      "id": "RF04-Q03",
+      "question": "How should Mana Burn handle a non-positive restart budget at 86,400+ cumulative effective seconds?",
+      "options": [
+        "A — Preserve the original formula; characterize and flag its non-positive boundary without changing gameplay",
+        "B — Introduce a clamp or rejection rule, with an explicitly accepted balance correction"
+      ],
+      "recommended_default": "A — Preserve the original formula; characterize and flag its non-positive boundary without changing gameplay",
+      "evidence_reference": "challenges.js; driver.js; docs/refactoring/RF04-challenge-rule-isolation.md#A6"
+    }
+  ],
+  "source_specification": "https://github.com/step3software/outer-loops/blob/main/docs/refactoring/RF04-challenge-rule-isolation.md",
+  "planning_evidence": {
+    "source_main_sha": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+    "source_pr": "https://github.com/step3software/outer-loops/pull/18",
+    "orcha_main_sha": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+    "status": "draft; documentation/source reviewed only",
+    "executed_checks": []
+  },
+  "plan_approval": null,
+  "implementation_authorization": null
+}

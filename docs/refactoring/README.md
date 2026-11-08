@@ -1,6 +1,6 @@
 # Outer Loops refactoring program — RF01–RF06
 
-**Approval/status (2026-10-17):** [RF01 regression coverage PR #4](https://github.com/step3software/outer-loops/pull/4) and prerequisite documentation PRs #1–#3 are **merged into `dmchurch`**. **RF02 implementation is in progress in [draft PR #16](https://github.com/step3software/outer-loops/pull/16), not merged or accepted**, with [readiness brief](rf02-readiness.md), [test matrix](rf02-test-matrix.md) and [implementation evidence](rf02-evidence.md). RF03–RF06 remain planned/unimplemented. These documents do not authorize persistence code edits, broader gameplay changes or merging.
+**Source observation (2026-11-08):** RF01 [PR #4](https://github.com/step3software/outer-loops/pull/4), RF02 [PR #16](https://github.com/step3software/outer-loops/pull/16) and RF03 [PR #18](https://github.com/step3software/outer-loops/pull/18) are **merged into `main`**. Their individual test/evidence gaps still require review. RF04–RF06 remain unimplemented; this [RF04 planning revision](RF04-challenge-rule-isolation.md) is proposed for owner review, not an accepted plan or code authorization. Orcha's legacy workflow record continues to own stage approval.
 
 **Repository:** `step3software/outer-loops` · default and approved canonical source branch `main`. These plans depend on the AI-development foundation in [the technical/gameplay audit](../audit/README.md) and [root agent instructions](../../AGENTS.md). Existing tests and files cited here refer to that baseline; agents must verify the current default branch and source before starting any milestone.
 
@@ -19,7 +19,7 @@ The **recommended delivery order is RF01 → RF02 → RF03 → RF04 → RF05 →
 
 ## RF01 implementation evidence
 
-[RF01 coverage and verification ledger](rf01-evidence.md) maps A1–A8 and F01–F15 to **merged** tests from [PR #4](https://github.com/step3software/outer-loops/pull/4), including synthetic legacy imports and reproducible Chrome/Worker scenarios. R01/R04/R08/R15 remain known risks (not gameplay fixes). **RF02's prerequisites and risks are documented** in the [readiness brief](rf02-readiness.md) and [matrix](rf02-test-matrix.md). Draft [PR #16](https://github.com/step3software/outer-loops/pull/16) implements a candidate pending full verification.
+[RF01 coverage and verification ledger](rf01-evidence.md) maps A1–A8 and F01–F15 to **merged** tests from [PR #4](https://github.com/step3software/outer-loops/pull/4), including synthetic legacy imports and reproducible Chrome/Worker scenarios. R01/R04/R08/R15 remain known risks (not gameplay fixes). **RF02's source implementation is merged** in [PR #16](https://github.com/step3software/outer-loops/pull/16); the [readiness brief](rf02-readiness.md) and [matrix](rf02-test-matrix.md) remain useful verification contracts. **RF03's source implementation is merged** in [PR #18](https://github.com/step3software/outer-loops/pull/18), with known limitations described in its [evidence ledger](rf03-evidence.md).
 
 ## Product-direction reconciliation — new Real World system
 
@@ -61,11 +61,11 @@ The milestone plans are **not** stand-alone authorization to fix findings unrela
 - [RF01: Regression coverage](RF01-regression-coverage.md) · [implementation evidence and coverage](rf01-evidence.md)
 - [RF02: Persistence safety](RF02-persistence-safety.md) · [implementation readiness](rf02-readiness.md) · [proposed safety test matrix](rf02-test-matrix.md)
 - [RF03: Gameplay rules / resources](RF03-gameplay-rules-and-resources.md)
-- [RF04: Challenge rule isolation](RF04-challenge-rule-isolation.md)
+- [RF04: Challenge rule isolation](RF04-challenge-rule-isolation.md) · [candidate machine-readable plan](RF04.plan.json)
 - [RF05: Action modules](RF05-action-module-organization.md)
 - [RF06: View decomposition](RF06-view-layer-decomposition.md)
 - [Validation matrix](validation-matrix.md)
 - [Decision log and unresolved choices](decision-log.md)
 - [Reusable implementation handoffs](handoffs/README.md)
 
-**Source delivery:** **RF01 Merged** · **RF02 Draft implementation in PR #16, pending tests/review/merge** · RF03 Planned · RF04 Planned · RF05 Planned · RF06 Planned. Orcha's legacy stage record must still reconcile the chat-approved scope and preparation before claiming formal workflow acceptance.
+**Source delivery:** **RF01 #4 merged** · **RF02 #16 merged** · **RF03 #18 merged** · **RF04 plan revision proposed (no implementation)** · RF05 Planned · RF06 Planned. This register is not Orcha stage acceptance; evidence and test gaps remain separate.
