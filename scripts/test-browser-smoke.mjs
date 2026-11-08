@@ -216,7 +216,9 @@ try {
     +"const accepted=processSave(payload);"
     +"const wrongShape=processSave('ILSV01'+LZString.compressToBase64('{\"stats\":[],\"buffs\":null}'));"
     +"const malformed=processSave('ILSV01this-is-not-valid-compression');"
-    +"return {accepted,wrongShape,malformed,unchanged:localStorage['idleLoops1']===prior,"
+    +"const wrongNested=processSave('ILSV01'+LZString.compressToBase64('{\"stats\":{},\"buffs\":{\"PrestigeCombat\":{\"amt\":\"bad\"}}}'));"
+    +"const unknownNested=processSave('ILSV01'+LZString.compressToBase64('{\"stats\":{\"FutureStat\":{\"exp\":1}}}'));"
+    +"return {accepted,wrongShape,malformed,wrongNested,unknownNested,unchanged:localStorage['idleLoops1']===prior,"
     +" challengeUnchanged:localStorage.getItem('idleLoopsChallenge')===other,"
     +" backupUnchanged:localStorage.getItem('idleLoopsImportBackupV1_normal')===backup,"
     +" journal:localStorage.getItem('idleLoopsImportPendingV1'),messageCount:messages.length};"
@@ -224,6 +226,8 @@ try {
   assert.equal(invalid.accepted,false);
   assert.equal(invalid.wrongShape,false);
   assert.equal(invalid.malformed,false);
+  assert.equal(invalid.wrongNested,false);
+  assert.equal(invalid.unknownNested,false);
   assert.equal(invalid.unchanged,true,'RF02 must not overwrite the prior active save');
   assert.equal(invalid.challengeUnchanged,true,'RF02 must not change challenge slot on rejection');
   assert.equal(invalid.backupUnchanged,true,'RF02 must not overwrite an existing recovery copy');
