@@ -218,7 +218,7 @@ var SaveImport = (() => {
                 while(pending.length){
                     const node=pending.pop();
                     if (Array.isArray(node)) {
-                        pending.push(...node);
+                        for(const value of node) pending.push(value);
                     } else if (record(node)) {
                         for(const [key,value] of Object.entries(node)){
                             if(!/^\d+$/.test(key) || +key>=log[0].length)
