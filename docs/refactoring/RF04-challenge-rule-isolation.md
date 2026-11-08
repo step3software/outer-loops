@@ -14,7 +14,7 @@ Replace challenge-time mutation of action methods and global function declaratio
 | Mode | Observed production path | Behavior to characterize and preserve |
 | --- | --- | --- |
 | **0 — normal** | [`actionList.js`](../../actionList.js), [`stats.js`](../../stats.js), [`driver.js`](../../driver.js) | Default merchant pricing, combat, restart budget and action visibility; no challenge-specific rule leakage. |
-| **1 — Mana Drought** | [`challenges.js`](../../challenges.js) replaces five `Action.BuyManaZ1`/Z3/Z5 callbacks and sets `gameSpeed = 2`. | Z1 `canStart` requires `totalMerchantMana > 0`; mana cost 1, gold rate 30, spending `min(gold,300)` per purchase, purchase `min(spendGold * 30,totalMerchantMana)`, merchant balance decremented, Z3/Z5 hidden. |
+| **1 — Mana Drought** | [`challenges.js`](../../challenges.js) replaces six `Action.BuyManaZ1`/Z3/Z5 callbacks and sets `gameSpeed = 2`. | Z1 `canStart` requires `totalMerchantMana > 0`; mana cost 1, gold rate 30, spending `min(gold,300)` per purchase, purchase `min(spendGold * 30,totalMerchantMana)`, merchant balance decremented, Z3/Z5 hidden. |
 | **2 — Noodle Arms** | `challenges.js` replaces global `getSelfCombat` and `getTeamCombat`. | Self = `max(getZombieStrength(), getTeamStrength()) / 2`; team = `getZombieStrength() + getTeamStrength()`, with underlying buff/prestige/skill multipliers unchanged. |
 | **3 — Mana Burn** | `challenges.js` replaces global `restart`. | `timeNeeded = 4320000 - totals.effectiveTime * 50` on restart; mode-specific reset order and queue behavior as observed. The override currently omits normal restart's `currentLoop` assignment and `Data.updateSnapshot`, an explicit parity risk, not permission to change balance. |
 
@@ -45,7 +45,7 @@ Implementation should make reversibility obvious: reverting code preserves curre
 ## Acceptance criteria (retain established A1–A8)
 
 - **A1:** Mode 0 and all three challenge modes reproduce the frozen pre-refactor player-visible action, resource, combat, speed, queue and restart outputs for identical synthetic states, with any justified numeric tolerance stated.
-- **A2:** References to global `restart`, `getSelfCombat`, `getTeamCombat` and the mode 1-affected `Action.BuyManaZ1`/Z3/Z5 methods remain stable across selection, load, import, resume, exit and reload; no mode uses replacement of these references.
+- **A2:** Within one JavaScript realm, references to global `restart`, `getSelfCombat`, `getTeamCombat` and the mode 1-affected `Action.BuyManaZ1`/Z3/Z5 methods stay stable through selection, load, import, resume and exit; a fresh page load constructs fresh definitions with the same non-patched contracts. No mode replaces those functions at runtime.
 - **A3:** Challenge entry affects only the intended challenge slot, preserves normal data and RF02 backup/recovery contracts, respects overwrite confirmation, and resumes/exits without stale challenge policy.
 - **A4:** Mode 1 produces exact purchases and `totalMerchantMana` values at zero, small and cap-exceeding gold/merchant amounts, keeps Z3/Z5 unavailable, and retains 2× speed only while appropriate.
 - **A5:** Mode 2 self/team/zombie combat matches baseline at zero and nonzero teams/zombies and representative Feast, Ritual, prestige and guild/skill modifiers.
