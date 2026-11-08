@@ -20,7 +20,7 @@
     "A3: Normal/challenge saves and RF02 recovery/overwrite/resume/exit semantics are preserved",
     "A4: Mode 1 gold/mana/merchant and visibility behavior matches including limits",
     "A5: Mode 2 combat formulas match for zero/nonzero members and modifiers",
-    "A6: Mode 3 restart budget and lifecycle match; non-positive boundary needs a recorded decision",
+    "A6: Mode 3 preserves the original restart formula, including non-positive values, with characterized queue/timer/lifecycle boundaries (RF04-Q03 A)",
     "A7: Foreground and Worker prediction use mode-aware parity with snapshot/cache correctness",
     "A8: Three mode transition cycles, save/import/reload/resume and regression suites pass"
   ],
@@ -53,45 +53,51 @@
       "reason": "Future Real World retirement creates RF04 scope tension; approved direction is not RF04 implementation permission"
     }
   ],
-  "decisions": [],
-  "open_questions": [
+  "decisions": [
     {
       "id": "RF04-Q01",
       "question": "Should RF04 preserve the three existing challenge modes for compatibility or be rescoped to Real World timeline variants?",
-      "options": [
+      "answer": "A — Preserve modes 1–3 as a compatibility layer within the existing A1–A8 charter",
+      "decided_by": "user",
+      "evidence_reference": "Explicit owner message in RF04 PR #19 planning conversation on 2026-11-08: \"RF04-Q01: A\"",
+      "alternatives": [
         "A — Preserve modes 1–3 as a compatibility layer within the existing A1–A8 charter",
         "B — Rescope RF04 to new Real World timeline variants, requiring a separately accepted charter amendment"
       ],
-      "recommended_default": "A — Preserve modes 1–3 as a compatibility layer within the existing A1–A8 charter",
-      "evidence_reference": "docs/design/outer-loop/integration-with-refactoring.md; docs/refactoring/RF04-challenge-rule-isolation.md"
+      "recorded_at": "2026-11-08"
     },
     {
       "id": "RF04-Q02",
       "question": "Where should the challenge policy dispatcher live?",
-      "options": [
+      "answer": "A — Use a compact shared dispatcher in existing challenges.js, with stable callers and explicit Worker inclusion",
+      "decided_by": "user",
+      "evidence_reference": "Explicit owner message in RF04 PR #19 planning conversation on 2026-11-08: \"RF04-Q02: A\"",
+      "alternatives": [
         "A — Use a compact shared dispatcher in existing challenges.js, with stable callers and explicit Worker inclusion",
         "B — Create a separate classic-script policy file included by each runtime entry point"
       ],
-      "recommended_default": "A — Use a compact shared dispatcher in existing challenges.js, with stable callers and explicit Worker inclusion",
-      "evidence_reference": "challenges.js; predictor-worker.js; docs/refactoring/decision-log.md#D07"
+      "recorded_at": "2026-11-08"
     },
     {
       "id": "RF04-Q03",
       "question": "How should Mana Burn handle a non-positive restart budget at 86,400+ cumulative effective seconds?",
-      "options": [
+      "answer": "A — Preserve the original formula; characterize and flag its non-positive boundary without changing gameplay",
+      "decided_by": "user",
+      "evidence_reference": "Explicit owner message in RF04 PR #19 planning conversation on 2026-11-08: \"RF04-Q03: A\"",
+      "alternatives": [
         "A — Preserve the original formula; characterize and flag its non-positive boundary without changing gameplay",
         "B — Introduce a clamp or rejection rule, with an explicitly accepted balance correction"
       ],
-      "recommended_default": "A — Preserve the original formula; characterize and flag its non-positive boundary without changing gameplay",
-      "evidence_reference": "challenges.js; driver.js; docs/refactoring/RF04-challenge-rule-isolation.md#A6"
+      "recorded_at": "2026-11-08"
     }
   ],
+  "open_questions": [],
   "source_specification": "https://github.com/step3software/outer-loops/blob/main/docs/refactoring/RF04-challenge-rule-isolation.md",
   "planning_evidence": {
     "source_main_sha": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
     "source_pr": "https://github.com/step3software/outer-loops/pull/18",
     "orcha_main_sha": "b8bf6bf07073823d108fd356c48916ea0cafd615",
-    "status": "draft; documentation/source reviewed only",
+    "status": "draft RF04 plan; RF04-Q01/Q02/Q03 owner choices recorded; formal plan approval and implementation authorization not given",
     "executed_checks": []
   },
   "plan_approval": null,

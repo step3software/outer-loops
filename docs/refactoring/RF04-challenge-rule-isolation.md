@@ -31,11 +31,11 @@ Replace challenge-time mutation of action methods and global function declaratio
 
 ## Excluded scope
 
-No new challenges, removal or retirement of legacy modes, timeline-variant conversion, new Real World/Totem/Potion mechanics, balancing or minimum-timer correction without owner acceptance, new save fields/schema, action renaming/reordering, tenth town, action-module split (RF05), view overhaul (RF06), runtime bundler/framework, cloud/account operations, deploy or merge.
+No new challenges, removal or retirement of legacy modes, timeline-variant conversion, new Real World/Totem/Potion mechanics, balancing or minimum-timer correction (RF04-Q03 A), new save fields/schema, action renaming/reordering, tenth town, action-module split (RF05), view overhaul (RF06), runtime bundler/framework, cloud/account operations, deploy or merge.
 
 ## Proposed architecture and delivery
 
-**One RF04 implementation milestone, two internal verification seams (not additional milestones).** The preferred design is a single small policy dispatcher/lookup in the existing classic-script runtime, with policy decisions made from explicit state rather than reassigned function declarations. Preserve existing action and global entry points; centralize mode-specific arithmetic in the existing owning files instead of scattering `if (challengeMode)` throughout unrelated actions. Share the policy with the Worker by a verified script inclusion and snapshot/run-data contract, not by assuming globals or DOM exist there. The exact layout is pending **RF04-Q02**.
+**One RF04 implementation milestone, two internal verification seams (not additional milestones).** The preferred design is a single small policy dispatcher/lookup in the existing classic-script runtime, with policy decisions made from explicit state rather than reassigned function declarations. Preserve existing action and global entry points; centralize mode-specific arithmetic in the existing owning files instead of scattering `if (challengeMode)` throughout unrelated actions. Share the policy with the Worker by a verified script inclusion and snapshot/run-data contract, not by assuming globals or DOM exist there. **RF04-Q02 A is owner-selected:** keep the compact shared policy dispatcher in existing `challenges.js`, with stable consumers and explicit Worker inclusion. Preparation must verify the actual classic-script/Worker load sequence and preserve this choice; any material deviation needs renewed owner direction.
 
 1. **Characterize and establish policy:** freeze mode 0–3 numeric/queue/save outputs from the PR #18 source, including `Action.BuyManaZ1` and global function identities. Extend deterministic source-backed fixtures before changing behavior; document mode ownership, policy read API and snapshot requirements. Implement the central selection seam and mode 1 with identical foreground outcomes.
 2. **Migrate and prove remaining policies:** move mode 2 combat and mode 3 restart selection into stable dispatch. Reconcile initialization, speed reset, browser reload, challenge-slot restore/import and foreground/Worker prediction. Remove remaining runtime overwrites only after comparing all characterized outputs. Produce one focused implementation PR with an ADR if applicable, test evidence and a rollback path.
@@ -60,21 +60,23 @@ Implementation should make reversibility obvious: reverting code preserves curre
 | Baseline | Frozen pre-edit RF01 `test:rf01:challenges` outputs, field-level model fixtures and normal-mode control for all modes. Distinguish formerly *expected mutations* from frozen gameplay values. |
 | Mode 1 | `gold=0/12/300/400`, `totalMerchantMana=0/low/7500`, exact Z1 rewards and bounds, Z3/Z5 queue visibility, normal→challenge→normal speed restoration. |
 | Mode 2 | Zero and nonzero undead/team combinations, buffs, skill/armor, prestige, action combat, foreground and Worker prediction. |
-| Mode 3 | `totals.effectiveTime` near 0, 86,399, 86,400 and 86,401; restart counters, queue, town reset, snapshots and continuation. Record legacy non-positive behavior before proposing a correction. |
+| Mode 3 | `totals.effectiveTime` near 0, 86,399, 86,400 and 86,401; restart counters, queue, town reset, snapshots and continuation. Record and flag legacy non-positive behavior without changing the formula (RF04-Q03 A). |
 | Persistence | Existing save, fresh challenge, confirmed/rejected overwrite, legacy inline challenge import, normal/challenge slot isolation, RF02 backup/rollback, exit/reload/resume and `ILSV01` export/import. |
 | Integration | `npm run check`; `npm run test:model`, `test:action`, `test:rf01:model`, `test:rf01:challenges`, `test:rf02:preflight`, `test:rf02:transaction`, `test:rf03:model`, `check:mechanics`, `test:browser`; new RF04 deterministic and Chrome Worker parity tests; `python scripts/check-xml.py`. Capture exact outcomes and skipped checks. |
 
 Use isolated test profiles and synthetic saves only; never commit player saves or exercise cloud credentials. See [cross-milestone matrix](validation-matrix.md) and [validation guide](../development/validation.md). These checks are **planned**, not reported as executed for this planning-only branch.
 
-## Decisions reserved for owner review
+## Owner decisions — recorded 2026-11-08
 
-| ID | Alternatives | Recommended default / consequence |
+The owner explicitly selected **A** for RF04-Q01, **A** for RF04-Q02 and **A** for RF04-Q03 in the RF04 planning conversation referring to [draft PR #19](https://github.com/step3software/outer-loops/pull/19).
+
+| ID | Owner-selected answer | Scope consequence |
 | --- | --- | --- |
-| **RF04-Q01 — Legacy compatibility scope** | **A:** preserve three legacy challenge modes as compatibility layer; **B:** rescope RF04 directly to proposed Real World timeline variants. | **A.** Keeps the previously approved A1–A8 contract, veteran saves and RF05 stability. B changes product scope and requires a new acceptance/amendment; [Real World integration](../design/outer-loop/integration-with-refactoring.md) explicitly flags the conflict. |
-| **RF04-Q02 — Rule ownership** | **A:** compact, shared policy dispatcher in existing `challenges.js` with stable consumers; **B:** new dedicated classic-script policy file wired in each entry point. | **A.** Smallest refactor/script-order surface, subject to Worker-load feasibility. B may be justified at preparation if there is a demonstrable dependency cycle; record any chosen long-lived contract in an ADR. |
-| **RF04-Q03 — Non-positive Mana Burn duration** | **A:** preserve `4320000 - totals.effectiveTime * 50` exactly and characterize/flag non-positive values; **B:** clamp or reject non-positive budgets. | **A.** Avoids silent balance changes at/after 86,400 effective seconds. B is a gameplay correction requiring an explicit rule, user-facing consequences and separate regression evidence. |
+| **RF04-Q01 — Legacy compatibility scope** | **A — Preserve all three original challenge modes as a compatibility layer.** | Preserve the existing A1–A8 behavior and veteran-save contracts. Do not replace the approved RF04 scope with future Real World timeline variants; see [Real World integration](../design/outer-loop/integration-with-refactoring.md). |
+| **RF04-Q02 — Rule ownership** | **A — Compact shared dispatcher in existing `challenges.js`, with stable consumers and explicit Worker inclusion.** | Keep the script surface small, verify Worker import ordering and snapshot propagation, and document the stable API in an ADR when implemented. Do not silently choose a new policy file. |
+| **RF04-Q03 — Non-positive Mana Burn duration** | **A — Preserve the original `4320000 - totals.effectiveTime * 50` formula, including non-positive results.** | Characterize and flag the boundary at `totals.effectiveTime >= 86400` without clamping or rejecting it. Any correction is a distinct, newly authorized change. |
 
-These are recommendations, **not recorded owner answers**. The charter A1–A8 remains operative unless the owner expressly accepts an amendment. Decisions D05/D06 for RF03 are already owner-approved and must not be reopened by RF04.
+**Authority boundary:** These selections resolve the three **design questions only**. They do **not** constitute separate acceptance of this revised plan, preparation/implementation authorization, PR merge approval or deployment approval. The existing A1–A8 charter stays in force; RF03 decisions D05/D06 remain unchanged.
 
 ## Risks, compatibility and documentation review
 
