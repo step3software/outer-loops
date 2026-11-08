@@ -218,7 +218,7 @@ var SaveImport = (() => {
                         pending.push(...node);
                     } else if (record(node)) {
                         for(const [key,value] of Object.entries(node)){
-                            if(!/^\\d+$/.test(key) || +key>=log[0].length)
+                            if(!/^\d+$/.test(key) || +key>=log[0].length)
                                 invalid("INVALID_LOG","Action log references an unknown field.");
                             pending.push(value);
                         }
