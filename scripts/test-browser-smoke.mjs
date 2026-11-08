@@ -231,21 +231,25 @@ try {
   assert.ok(invalid.messageCount>=3);
   console.log('PASS RF02 Chrome malformed JSON/compression/shape imports rejected without changing either save or recovery.');
 
-  const actualRecovery=await client.evaluate("(() => {"
-    +"const backup=JSON.parse(localStorage['idleLoopsImportBackupV1_normal']);"
-    +"const current=localStorage['idleLoops1'];"
-    +"window.confirm=()=>true;"
-    +"const restored=restorePreviousImport();"
-    +"return {restored,progress:towns[0].expWander,"
-    +" backedUp:backup.prior!==null,"
-    +" backupChanged:JSON.parse(localStorage['idleLoopsImportBackupV1_normal']).prior===current,"
-    +" journal:localStorage.getItem('idleLoopsImportPendingV1')};"
-    +"})()");
-  assert.equal(actualRecovery.restored,true,'prior import backup must be restorable');
-  assert.equal(actualRecovery.backedUp,true);
-  assert.equal(actualRecovery.backupChanged,true);
+  // Active-slot restoration now commits the byte-identical backup before
+  // triggering a clean reload. Read expected bytes before navigation.
+  const recoveryBefore=await client.evaluate("(() => ({"
+    +"prior:JSON.parse(localStorage.getItem('idleLoopsImportBackupV1_normal')).prior,"
+    +"current:localStorage.getItem('idleLoops1')}))()");
+  try { await client.evaluate("window.confirm=()=>true;restorePreviousImport(defaultSaveName)"); }
+  catch {/* expected navigation may invalidate the CDP evaluation */}
+  await pause(400);
+  await waitForBoot();
+  const actualRecovery=await client.evaluate("(() => ({"
+    +"restored:localStorage.getItem('idleLoops1'),"
+    +"rotated:JSON.parse(localStorage.getItem('idleLoopsImportBackupV1_normal')).prior,"
+    +"journal:localStorage.getItem('idleLoopsImportPendingV1')}))()");
+  assert.equal(actualRecovery.restored,recoveryBefore.prior,
+    'restore must use byte-identical previously persisted data');
+  assert.equal(actualRecovery.rotated,recoveryBefore.current,
+    'previous current save becomes the one recovery copy');
   assert.equal(actualRecovery.journal,null);
-  console.log('PASS RF02 Chrome previous-save restore control and bidirectional backup rotation.');
+  console.log('PASS RF02 Chrome exact-byte normal save recovery and bidirectional backup rotation.');
 
   // Failure injection at both quota-sensitive boundaries. A rejected import
   // must have EXACT prior bytes and preserve both previous backup copies.
@@ -414,6 +418,52 @@ try {
   assert.equal(oldPrestige.progress,0);
   assert.equal(oldPrestige.backup,true);
   console.log('PASS RF01 Chrome inherited prestige reset: 90 points once, 30-point perk, 60 remaining, retained upgrade and backup.');
+
+  // P19/P21: both previous copies are accessible after the user explicitly
+  // clears the two slots in this disposable browser test profile.
+  const preClear=await client.evaluate("(() => ({"
+    +"normal:localStorage.getItem('idleLoops1'),"
+    +"challenge:localStorage.getItem('idleLoopsChallenge'),"
+    +"prestige:localStorage.getItem('prestigeBackup')}))()");
+  assert.ok(preClear.normal && preClear.challenge);
+  try {await client.evaluate("window.confirm=()=>true;processSave('')");}
+  catch {/* confirmed deletion reloads the disposable game profile */}
+  await pause(400);
+  await waitForBoot();
+  const empty=await client.evaluate("(() => ({"
+    +"normal:localStorage.getItem('idleLoops1'),"
+    +"challenge:localStorage.getItem('idleLoopsChallenge'),"
+    +"normalBackup:JSON.parse(localStorage.getItem('idleLoopsImportBackupV1_normal')).prior,"
+    +"challengeBackup:JSON.parse(localStorage.getItem('idleLoopsImportBackupV1_challenge')).prior,"
+    +"prestige:localStorage.getItem('prestigeBackup')}))()");
+  assert.equal(empty.normal,'');
+  assert.equal(empty.challenge,'');
+  assert.equal(empty.normalBackup,preClear.normal);
+  assert.equal(empty.challengeBackup,preClear.challenge);
+  assert.equal(empty.prestige,preClear.prestige);
+  const inactiveRestore=await client.evaluate("window.confirm=()=>true;restorePreviousImport(challengeSaveName)");
+  assert.equal(inactiveRestore,true);
+  const inactiveState=await client.evaluate("(() => ({"
+    +"normal:localStorage.getItem('idleLoops1'),"
+    +"challenge:localStorage.getItem('idleLoopsChallenge'),"
+    +"mode:challengeSave.challengeMode}))()");
+  assert.equal(inactiveState.normal,'','inactive challenge recovery must not modify normal progress');
+  assert.equal(inactiveState.challenge,preClear.challenge);
+  assert.equal(inactiveState.mode,0,'inactive restore must not switch active gameplay mode');
+  try {await client.evaluate("window.confirm=()=>true;restorePreviousImport(defaultSaveName)");}
+  catch {/* normal restore triggers a reload */}
+  await pause(400);
+  await waitForBoot();
+  const recovered=await client.evaluate("(() => ({"
+    +"normal:localStorage.getItem('idleLoops1'),"
+    +"challenge:localStorage.getItem('idleLoopsChallenge'),"
+    +"prestige:localStorage.getItem('prestigeBackup'),"
+    +"journal:localStorage.getItem('idleLoopsImportPendingV1')}))()");
+  assert.equal(recovered.normal,preClear.normal);
+  assert.equal(recovered.challenge,preClear.challenge);
+  assert.equal(recovered.prestige,preClear.prestige);
+  assert.equal(recovered.journal,null);
+  console.log('PASS RF02 Chrome explicit clear and independent normal/challenge byte-exact recovery.');
 
   console.log('PASS Chrome: game boot, XML localization, 157 actions, Wander execution and save/reload.');
 } finally {
