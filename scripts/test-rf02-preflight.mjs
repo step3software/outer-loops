@@ -3,10 +3,21 @@
 // Does not boot a browser, mutate storage or consume private saves.
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
 import {loadGameModel} from './load-game-model.mjs';
 const require=createRequire(import.meta.url);
 const SaveImport=require('../save-import.js');
 
+const contract={
+    actions:[{name:'Wander',varName:'Wander',type:'progress'},
+        {name:'Train Dexterity',varName:'TrainDexterity',type:'normal'},
+        {name:'Buy Mana Z1',varName:'BuyManaZ1',type:'normal'},
+        {name:'Buy Mana Z3',varName:'BuyManaZ3',type:'normal'},
+        {name:'Buy Pickaxe',varName:'BuyPickaxe',type:'normal'}],
+    statNames:['Dex'],skillNames:['Combat'],buffNames:['PrestigeCombat'],
+    storyFlags:['loopingPotionMade'],storyVars:[],optionTypes:{fractionalMana:'boolean'}
+};
 const example={
     date:'2026-10-17T14:00:00.000Z',
     stats:{Dex:{statLevelExp:{exp:0},talentLevelExp:{exp:0}}},
@@ -19,6 +30,7 @@ const example={
     dungeons:[[]],trials:[[]],townsUnlocked:[0,1],
     options:{fractionalMana:true},extraOptions:{},
     prestigeValues:{prestigeCurrentPoints:0},
+    actionLog:[['story',0],[[0,1]]],
 };
 const old={
     stats:{},skills:{},buffs:{},maxTown:3,
@@ -30,7 +42,8 @@ const old={
 const codecs={
     decompress:text=>text,
     legacyDecode:text=>text,
-    allowedActionVars:['Wander'],
+    allowedActionVars:contract.actions.map(a=>a.varName),
+    contract,
 };
 const baseline=structuredClone(example);
 const current=SaveImport.prepare('ILSV01'+JSON.stringify(example),codecs);
@@ -38,7 +51,7 @@ assert.equal(current.encoding,'ILSV01');
 assert.equal(current.data.expWander,400);
 assert.equal(current.data.loadouts[0][0].name,'Train Dexterity');
 assert.deepEqual(example,baseline,'pure migration may not mutate input');
-assert.deepEqual(SaveImport.normalizeParsed(current.data).data,current.data,
+assert.deepEqual(SaveImport.normalizeParsed(current.data,codecs.allowedActionVars,contract).data,current.data,
     'applying pure migration twice must be idempotent');
 const legacy=SaveImport.prepare(JSON.stringify(old),codecs);
 assert.equal(legacy.encoding,'legacy');
@@ -47,7 +60,7 @@ assert.equal(legacy.data.challengeSave.challengeMode,2);
 assert.equal(legacy.data.challenge,undefined);
 assert.deepEqual(legacy.data.nextList.map(x=>x.name),['Buy Mana Z1','Buy Mana Z1']);
 assert.equal(legacy.data.loadouts[0][0].name,'Buy Pickaxe');
-assert.deepEqual(SaveImport.normalizeParsed(legacy.data).data,legacy.data);
+assert.deepEqual(SaveImport.normalizeParsed(legacy.data,codecs.allowedActionVars,contract).data,legacy.data);
 function rejects(data,code){
     assert.throws(()=>SaveImport.prepare(data,codecs), e=>e instanceof SaveImport.SaveImportError&&e.code===code,
         'expected '+code);
@@ -63,6 +76,17 @@ rejects('ILSV01{"stats":[]}','INVALID_OBJECT');
 rejects('ILSV01{"stats":{},"buffs":null}','INVALID_OBJECT');
 rejects('ILSV01{"stats":{},"unknownFutureField":{"valuable":1}}','UNSUPPORTED_FIELD');
 rejects('ILSV01{"stats":{},"expInventedFutureAction":123}','UNSUPPORTED_FIELD');
+rejects('ILSV01{"stats":{},"goodWander":1}','UNSUPPORTED_FIELD');
+rejects('ILSV01{"stats":{"FutureStat":{"exp":4}}}','UNSUPPORTED_FIELD');
+rejects('ILSV01{"stats":{"Dex":{"futureLevel":4}}}','UNSUPPORTED_FIELD');
+rejects('ILSV01{"stats":{},"buffs":{"PrestigeCombat":{"amt":"invalid"}}}','INVALID_NUMBER');
+rejects('ILSV01{"stats":{},"prestigeValues":{"prestigeCurrentPoints":"9999"}}','INVALID_NUMBER');
+rejects('ILSV01{"stats":{},"options":{"fractionalMana":"false"}}','INVALID_OPTION');
+rejects('ILSV01{"stats":{},"storyReqs":{"unknownFutureFlag":true}}','UNSUPPORTED_FIELD');
+rejects('ILSV01{"stats":{},"nextList":[{"name":"Unknown Future", "loops":1}]}','INVALID_QUEUE');
+rejects('ILSV01{"stats":{},"actionLog":[["story"],[[99]]]}','INVALID_LOG');
+assert.equal(SaveImport.prepareStoredJson('  { "stats": {}, "expWander": 20 }  ',codecs).data.expWander,20);
+
 // Verify real LZString compatibility and early expansion-size enforcement.
 const LZString=require('../lib/lz-string.min.js');
 const boundedCodecs={...codecs,boundedDecompress:SaveImport.decompressBoundedBase64};
@@ -78,10 +102,11 @@ assert.throws(
 const {evaluate}=loadGameModel({withViewStubs:true});
 const fromGame=evaluate(`(() => ({
     saveJson:JSON.stringify(doSave()),
-    allowedActionVars:totalActionList.map(action=>action.varName).filter(Boolean)
+    allowedActionVars:totalActionList.map(action=>action.varName).filter(Boolean),
+    contract:getImportContract()
 }))()`);
 const gameSave=SaveImport.prepare('ILSV01'+LZString.compressToBase64(fromGame.saveJson),{
-    ...boundedCodecs,allowedActionVars:fromGame.allowedActionVars
+    ...boundedCodecs,allowedActionVars:fromGame.allowedActionVars,contract:fromGame.contract
 });
 assert.deepEqual(gameSave.data,JSON.parse(fromGame.saveJson),
     'current game serializer must round-trip without losing recognized fields');
@@ -89,7 +114,7 @@ assert.equal(fromGame.allowedActionVars.length,157);
 const unexpected={...JSON.parse(fromGame.saveJson),expUnsupportedFutureAction:77};
 assert.throws(()=>SaveImport.prepare(
     'ILSV01'+LZString.compressToBase64(JSON.stringify(unexpected)),{
-        ...boundedCodecs,allowedActionVars:fromGame.allowedActionVars
+        ...boundedCodecs,allowedActionVars:fromGame.allowedActionVars,contract:fromGame.contract
     }),e=>e instanceof SaveImport.SaveImportError&&e.code==='UNSUPPORTED_FIELD');
 
 rejects('ILSV01{"stats":{},"nextList":"not a queue"}','INVALID_QUEUE');
@@ -107,4 +132,21 @@ assert.throws(
     ()=>SaveImport.prepare('ILSV01x',{decompress:()=>('x'.repeat(SaveImport.MAX_DECODED_CHARS+1)),legacyDecode:x=>x}),
     e=>e instanceof SaveImport.SaveImportError&&e.code==='TOO_LARGE'
 );
+
+const legacyEnv={self:{}};
+vm.createContext(legacyEnv);
+vm.runInContext(readFileSync(new URL('../helpers.js',import.meta.url),'utf8')+
+    '\nthis.legacyCodec={encode,decode,Base64}',legacyEnv);
+const legacyCodec=legacyEnv.legacyCodec;
+const olderPacked=legacyCodec.encode(JSON.stringify(example));
+const boundedLegacyDecode=text=>SaveImport.decompressBoundedLegacy(
+    text,legacyCodec.Base64.decode.bind(legacyCodec.Base64));
+assert.deepEqual(SaveImport.prepare(olderPacked,{...codecs,boundedLegacyDecode}).data,current.data);
+assert.throws(()=>SaveImport.decompressBoundedLegacy(
+    legacyCodec.encode('A'.repeat(4000)),legacyCodec.Base64.decode.bind(legacyCodec.Base64),128),
+    e=>e instanceof SaveImport.SaveImportError&&e.code==='TOO_LARGE');
+assert.throws(()=>SaveImport.decompressBoundedLegacy('@!',
+    legacyCodec.Base64.decode.bind(legacyCodec.Base64)),
+    e=>e instanceof SaveImport.SaveImportError&&e.code==='DECODE');
+
 console.log('PASS RF02 pure preflight: current and old envelope, side-effect-free/idempotent aliases, challenge conversion, corrupt/root/schema/size/unknown-field rejection.');
