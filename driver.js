@@ -406,9 +406,11 @@ function setResourceValue(resource, value) {
         throw new TypeError(`Invalid ${type} value for ${resource}`);
     }
     resources[resource] = value;
-    view.requestUpdate("updateResource", resource);
-    if (resource === "teamMembers" || resource === "armor" || resource === "zombie") {
-        view.requestUpdate("updateTeamCombat", null);
+    if (view) {
+        view.requestUpdate("updateResource", resource);
+        if (resource === "teamMembers" || resource === "armor" || resource === "zombie") {
+            view.requestUpdate("updateTeamCombat", null);
+        }
     }
 }
 
@@ -448,7 +450,7 @@ function resetResources() {
         resources[resource] = resourcesTemplate[resource];
     }
     if(getExploreProgress() >= 100 || prestigeValues['completedAnyPrestige']) addResource("glasses", true);
-    view.requestUpdate("updateResources", null);
+    if (view) view.requestUpdate("updateResources", null);
 }
 
 function changeActionAmount(amount) {
