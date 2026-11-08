@@ -1537,28 +1537,78 @@ function restoreInterruptedImport() {
 
 /** @param {string} slot */
 function restorePreviousImport(slot = saveName) {
+    if (slot !== defaultSaveName && slot !== challengeSaveName) {
+        alert("Choose the normal or challenge save to restore.");
+        return false;
+    }
     if (window.localStorage.getItem(importPendingKey) !== null) {
-        alert("An import recovery is pending. Reload the page before restoring an earlier save.");
+        alert("An import recovery is pending. Reload before restoring an earlier save.");
         return false;
     }
     const raw = window.localStorage.getItem(importBackupKey(slot));
     let backup;
+    try { backup = raw ? JSON.parse(raw) : null; }
+    catch { backup = null; }
+    if (!backup || backup.version !== 1 || backup.slot !== slot || typeof backup.prior !== "string" || !backup.prior) {
+        alert("No readable previous save is available for the selected mode.");
+        return false;
+    }
+    const label = slot === challengeSaveName ? "challenge" : "normal";
+    if (!confirm("Restore the previous " + label + " save? The other slot and prestige backup will remain unchanged.")) {
+        return false;
+    }
     try {
-        backup = raw ? JSON.parse(raw) : null;
-    } catch {
-        alert("The previous-save backup is unreadable. Leave it intact for manual recovery.");
+        // Validate without normalizing or changing the stored bytes.
+        const checked = SaveImport.prepareStoredJson(backup.prior, {
+            allowedActionVars: totalActionList.map(action => action.varName).filter(Boolean),
+            contract: getImportContract(),
+        });
+        const mode = checked.data.challengeSave?.challengeMode ?? 0;
+        if ((slot === challengeSaveName && mode === 0) || (slot === defaultSaveName && mode > 0)) {
+            throw new Error("The previous save does not match the selected slot.");
+        }
+        return applyProtectedRestore(slot, backup.prior);
+    } catch (error) {
+        const pending = window.localStorage.getItem(importPendingKey) !== null;
+        alert(pending
+            ? "Recovery is pending. Reload the page without clearing its data."
+            : error instanceof SaveImport.SaveImportError ? error.message : "Could not safely restore that save.");
         return false;
     }
-    if (!backup || backup.version !== 1 || backup.slot !== slot || !backup.prior) {
-        alert("No previous imported-over save is available for the current game mode.");
-        return false;
+}
+
+/**
+ * Restore byte-identical previously saved JSON into an explicit slot.
+ * Inactive-slot recovery never changes the live world or its active slot.
+ * Active-slot recovery reloads only after the journal is finalized.
+ */
+function applyProtectedRestore(slot, priorBytes) {
+    if (window.localStorage.getItem(importPendingKey) !== null) {
+        throw new Error("Resolve the pending import before restoring a backup.");
     }
-    if (!confirm("Restore the previous save for this game mode? Your current save will become the next recovery copy.")) {
-        return false;
+    const before = snapshotBeforeImport();
+    let journalWritten = false;
+    try {
+        putImportBytes(importPendingKey, JSON.stringify({version: 1, before}));
+        journalWritten = true;
+        putImportBytes(slot, priorBytes);
+        const current = before[slot];
+        if (current !== null && current !== "") {
+            putImportBytes(importBackupKey(slot), JSON.stringify({version: 1, slot, prior: current}));
+        }
+        putImportBytes(importPendingKey, null);
+    } catch (error) {
+        if (journalWritten) {
+            try { restoreInterruptedImport(); }
+            catch {
+                if (typeof stopGame === "function") stopGame();
+                throw new Error("Save rollback is pending; do not clear browser data.");
+            }
+        }
+        throw error;
     }
-    // Import through the same protected transaction. This allows restoring
-    // again rather than destroying the newer save on success.
-    return processSave("ILSV01" + LZString.compressToBase64(backup.prior));
+    if (slot === saveName) location.reload();
+    return true;
 }
 
 /**

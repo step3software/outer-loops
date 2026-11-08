@@ -435,6 +435,18 @@ var SaveImport = (() => {
         return output.join("");
     }
 
+
+    // Validate previously persisted JSON as-is. The candidate is used only
+    // for safety checks; callers must commit the original bytes unchanged.
+    function prepareStoredJson(raw, decoders) {
+        if (typeof raw!=="string" || !raw.length || raw.length>MAX_DECODED_CHARS)
+            invalid("TOO_LARGE","The saved backup cannot be validated.");
+        let parsed;
+        try { parsed=JSON.parse(raw); }
+        catch { invalid("INVALID_JSON","The saved backup is malformed."); }
+        return normalizeParsed(parsed, decoders.allowedActionVars ?? null, decoders.contract ?? {});
+    }
+
     function prepare(raw, decoders) {
         if (typeof raw !== "string") invalid("INVALID_INPUT", "Choose a text save export.");
         if (raw.length === 0) invalid("EMPTY", "An empty import is not a save.");
@@ -472,7 +484,7 @@ var SaveImport = (() => {
     }
 
     return Object.freeze({
-        prepare, validateParsed, normalizeParsed, decompressBoundedBase64, decompressBoundedLegacy, SaveImportError,
+        prepare, prepareStoredJson, validateParsed, normalizeParsed, decompressBoundedBase64, decompressBoundedLegacy, SaveImportError,
         MAX_ENCODED_CHARS, MAX_DECODED_CHARS
     });
 })();
