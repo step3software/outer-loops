@@ -24,6 +24,8 @@ The actual Github-source save-import.js and bundled LZString library were evalua
 
 The actual shipping transaction functions were independently evaluated in a synthetic JavaScript environment with exact-string storage. Twenty-one assertions passed for valid import, previous-copy restore, rejection without mutation, journal/active/backup quota faults, apply-time failure, intentional deletion, failed partial deletion and exact rollback. The tool-backed functional exercises were not the repository Node script or the real browser.
 
+A separate source-backed model exercise, using a no-DOM View facade and a stubbed snapshot initialization for the isolated evaluator, executed the unchanged game's loadDefaults/doSave and successfully prepared the generated save with all 157 action varNames recognized. The fresh synthetic save serialized to 13,109 JSON characters / 6,838 encoded characters (139 serialized fields) and returned an identical normalized object. This does not establish the limits for large progressed saves or replace the full Node/Chrome suites. The two RF02 script bodies also completed successfully in isolated V8 with Node API shims; they have not been executed under Node itself.
+
 ## Acceptance status
 
 | Gate | Required cases | Current evidence |

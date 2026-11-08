@@ -151,4 +151,16 @@ assert.equal(clearFailure.tx.processSave(''),false);
 assert.deepEqual(clearFailure.state(),beforeClear,'partial deletion must restore both slots');
 assert.equal(clearFailure.storage.getItem(pending),null);
 
+// Interrupted explicit deletion is recovered before the next game load.
+const interruptedClear=fixture();
+const beforeInterruptedClear=interruptedClear.state();
+interruptedClear.storage.setItem(pending,JSON.stringify({
+    version:1,before:interruptedClear.tx.snapshotBeforeImport()
+}));
+interruptedClear.storage.setItem('idleLoops1','');
+assert.equal(interruptedClear.tx.restoreInterruptedImport(),true);
+assert.deepEqual(interruptedClear.state(),beforeInterruptedClear,
+    'interrupted deletion must restore exact normal and challenge bytes');
+assert.equal(interruptedClear.storage.getItem(pending),null);
+
 console.log('PASS RF02 transaction: exact rollback on parse/quota/apply failure, interrupted journal recovery, previous-save restore, legacy challenge isolation and prestige backup retention.');
