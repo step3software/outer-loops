@@ -864,7 +864,8 @@ const Koviko = {
           canStart:(input) => (input.rep <= 0),
           effect:(r, k) => (r.rep--, k.dark += Math.floor(100 * (1 + buffs.Ritual.amt / 100)))},
         'Dark Ritual':{ affected:['ritual','soul'],
-          canStart:(input) => (input.rep <= -5), loop: {
+          canStart:(input) => (input.rep <= -5 &&
+            getBuffLevel('Ritual') + (input.ritual || 0) < getBuffCap('Ritual')), loop: {
           max:() => 1,
           cost:(p) => segment => 1000000 * (segment * 2 + 1),
           tick:(p, a, s, k) => offset => {
@@ -1018,7 +1019,7 @@ const Koviko = {
           r.artifacts += r.temp11 <= towns[3].goodArtifacts ? 1 : 0;
         }},
         'Imbue Mind':{ affected:['mind','soul'],
-          canStart:true, loop: {
+          canStart:(input) => (getBuffLevel('Imbuement') + (input.mind || 0) < getBuffCap('Imbuement')), loop: {
           max:() => 1,
           cost:(p) => segment => 100000000 * (segment * 5 + 1),
           tick:(p, a, s, k) => offset => {
@@ -1326,7 +1327,8 @@ const Koviko = {
           canStart:(input)=>(input.lpotions>0),
           effect:(r,k)=>(r.lpotions--,k.wunderkind+=100)},
         'Escape':{ affected:[''],
-          canStart:(input) => (input.totalTicks<=50*60),
+          // The runtime uses effectiveTime < 60, not <= 60.
+          canStart:(input) => (input.totalTicks<50*60),
           effect:(r) => (r.town=7)},
         'Open Portal':{ affected:[''],
           effect:(r,k) => (r.town=1,k.restoration+=2500*(1+getBuffLevel("Heroism") * 0.02))},
@@ -1620,7 +1622,12 @@ const Koviko = {
 
       // Reset the cache's index
       // returns false on cache miss
-      let cacheIsValid = this.cache.reset([state, affected]);
+      // A cap/buff edit changes ritual and imbuement eligibility even when the
+      // initial forecast resources are otherwise identical. Include rule inputs
+      // in the cache identity so updated caps cannot reuse stale predictions.
+      const buffRuleState = Object.fromEntries(buffList.map(name =>
+        [name, [getBuffLevel(name), getBuffCap(name)]]));
+      let cacheIsValid = this.cache.reset([state, affected, buffRuleState]);
 
 
       //Statistik parammeters

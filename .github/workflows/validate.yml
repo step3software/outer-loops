@@ -34,6 +34,8 @@ jobs:
         run: npm run test:rf02:preflight
       - name: RF02 storage transaction and injected failures
         run: npm run test:rf02:transaction
+      - name: RF03 pure gameplay rules and resource contract
+        run: npm run test:rf03:model
       - name: RW00 deterministic balance contracts
         timeout-minutes: 1
         run: npm run test:balance

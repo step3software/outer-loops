@@ -570,6 +570,7 @@ Data.registerAll({
     hearts,
     skills,
     buffs,
+    buffCaps,
     prestigeValues,
     townsUnlocked,
     completedActions,
@@ -1038,12 +1039,24 @@ function doLoad(toLoad) {
         }
     }
 
-    if (toLoad.buffCaps !== undefined) {
-        for (const property in buffCaps) {
-            if (toLoad.buffCaps.hasOwnProperty(property)) {
-                buffCaps[property] = toLoad.buffCaps[property];
-                inputElement(`buff${property}Cap`).value = buffCaps[property];
+    if (toLoad.buffCaps && typeof toLoad.buffCaps === "object") {
+        for (const property of buffList) {
+            if (Object.hasOwn(toLoad.buffCaps, property)) {
+                const storedCap = toLoad.buffCaps[property];
+                // Previously getBuffCap read parseInt(input.value). Preserve
+                // that legacy interpretation while enforcing today's hard cap.
+                if (typeof storedCap === "number" && Number.isFinite(storedCap) && storedCap >= 0) {
+                    setBuffCap(property, Math.min(Math.trunc(storedCap), buffHardCaps[property]));
+                }
             }
+        }
+    }
+    // The UI displays state, never supplies gameplay state. Loading is also
+    // valid without a DOM (e.g. the background predictor).
+    if (typeof document !== "undefined") {
+        for (const buff of buffList) {
+            const input = document.getElementById(`buff${buff}Cap`);
+            if (input) input.value = String(getBuffCap(buff));
         }
     }
 

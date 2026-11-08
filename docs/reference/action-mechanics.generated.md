@@ -955,7 +955,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Dark Sacrifice — `Action.DarkSacrifice`
 
-- **Identity:** `normal` / `Action` · `townNum=5` · `varName=DarkSacrifice` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5857)
+- **Identity:** `normal` / `Action` · `townNum=5` · `varName=DarkSacrifice` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5856)
 - **Cost:** mana `20000` · extra cost callback
 - **Gates:** visible `towns[5].getLevel("Meander") >= 25` · unlocked `getBuffLevel("Ritual") >= 60` · canStart `resources.blood >= 1`
 - **Growth:** stat weights `Int:0.2, Soul:0.8`; skills `Commune:100`
@@ -963,7 +963,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Dead Trial — `Action.DeadTrial`
 
-- **Identity:** `multipart` / `TrialAction` · `townNum=5` · `varName=DeadTrial` · `segments=4` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6001)
+- **Identity:** `multipart` / `TrialAction` · `townNum=5` · `varName=DeadTrial` · `segments=4` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6000)
 - **Cost:** mana `100000`
 - **Gates:** visible `towns[this.townNum].getLevel("Survey") >= 100` · unlocked `towns[this.townNum].getLevel("Survey") >= 100` · canStart `this.currentFloor() < trialFloors[this.trialNum]`
 - **Growth:** stat weights `Cha:0.25, Int:0.25, Luck:0.25, Soul:0.25`; skills `none`
@@ -972,7 +972,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Destroy Pylons — `Action.DestroyPylons`
 
-- **Identity:** `limited` / `Action` · `townNum=5` · `varName=Pylons` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5780)
+- **Identity:** `limited` / `Action` · `townNum=5` · `varName=Pylons` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5779)
 - **Cost:** mana `10000`
 - **Gates:** visible `towns[5].getLevel("Meander") >= 1` · unlocked `towns[5].getLevel("Meander") >= 5`
 - **Growth:** stat weights `Str:0.4, Dex:0.3, Int:0.3`; skills `none`
@@ -988,7 +988,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Journey Forth — `Action.JourneyForth`
 
-- **Identity:** `normal` / `Action` · `townNum=5` · `varName=JourneyForth` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6050)
+- **Identity:** `normal` / `Action` · `townNum=5` · `varName=JourneyForth` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6049)
 - **Cost:** mana `20000` · allowed `(checkActiveList ? getNumOnCurList : getNumOnList)("Open Portal") > 0 ? 2 : 1` · extra cost callback
 - **Gates:** visible `towns[5].getLevel("Meander") >= 75` · unlocked `towns[5].getLevel("Meander") >= 100` · canStart `resources.supplies`
 - **Growth:** stat weights `Con:0.4, Per:0.3, Spd:0.3`; skills `none`
@@ -996,7 +996,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Mana Well — `Action.ManaWell`
 
-- **Identity:** `limited` / `Action` · `townNum=5` · `varName=Wells` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5727)
+- **Identity:** `limited` / `Action` · `townNum=5` · `varName=Wells` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5726)
 - **Cost:** mana `Math.ceil(2500 * getSkillBonus("Spatiomancy"))` · goldCost() `Math.max(5000 - Math.floor(10 * effectiveTime), 0)`
 - **Gates:** visible `true` · unlocked `towns[5].getLevel("Meander") >= 2` · canStart `true`
 - **Growth:** stat weights `Str:0.6, Per:0.3, Int:0.1`; skills `none`
@@ -1004,7 +1004,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Meander — `Action.Meander`
 
-- **Identity:** `progress` / `Action` · `townNum=5` · `varName=Meander` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5682)
+- **Identity:** `progress` / `Action` · `townNum=5` · `varName=Meander` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5681)
 - **Cost:** mana `2500`
 - **Gates:** visible `true` · unlocked `true`
 - **Growth:** stat weights `Per:0.2, Con:0.2, Cha:0.2, Spd:0.3, Luck:0.1`; skills `none`
@@ -1012,7 +1012,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Purchase Supplies — `Action.PurchaseSupplies`
 
-- **Identity:** `normal` / `Action` · `townNum=5` · `varName=PurchaseSupplies` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5963)
+- **Identity:** `normal` / `Action` · `townNum=5` · `varName=PurchaseSupplies` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5962)
 - **Cost:** mana `2000` · allowed `1` · extra cost callback
 - **Gates:** visible `towns[5].getLevel("Meander") >= 50` · unlocked `towns[5].getLevel("Meander") >= 75` · canStart `resources.gold >= 500 && !resources.supplies`
 - **Growth:** stat weights `Cha:0.8, Luck:0.1, Soul:0.1`; skills `none`
@@ -1020,7 +1020,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Raise Zombie — `Action.RaiseZombie`
 
-- **Identity:** `normal` / `Action` · `townNum=5` · `varName=RaiseZombie` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5815)
+- **Identity:** `normal` / `Action` · `townNum=5` · `varName=RaiseZombie` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5814)
 - **Cost:** mana `10000` · extra cost callback
 - **Gates:** visible `towns[5].getLevel("Meander") >= 15` · unlocked `getSkillLevel("Dark") >= 1000` · canStart `resources.blood >= 1`
 - **Growth:** stat weights `Con:0.4, Int:0.3, Soul:0.3`; skills `Dark:100`
@@ -1044,7 +1044,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### The Spire — `Action.TheSpire`
 
-- **Identity:** `multipart` / `DungeonAction` · `townNum=5` · `varName=TheSpire` · `segments=9` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5896)
+- **Identity:** `multipart` / `DungeonAction` · `townNum=5` · `varName=TheSpire` · `segments=9` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L5895)
 - **Cost:** mana `100000`
 - **Gates:** visible `towns[5].getLevel("Meander") >= 5` · unlocked `(getSkillLevel("Combat") + getSkillLevel("Magic")) >= 35` · canStart `curFloor < dungeons[this.dungeonNum].length`
 - **Growth:** stat weights `Str:0.1, Dex:0.1, Spd:0.1, Con:0.1, Per:0.2, Int:0.2, Soul:0.2`; skills `Combat:100`; grants `Aspirant`
@@ -1064,15 +1064,15 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Escape — `Action.Escape`
 
-- **Identity:** `normal` / `Action` · `townNum=6` · `varName=Escape` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6392)
+- **Identity:** `normal` / `Action` · `townNum=6` · `varName=Escape` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6391)
 - **Cost:** mana `50000` · allowed `1`
-- **Gates:** visible `towns[6].getLevel("ExploreJungle") >= 75` · unlocked `towns[6].getLevel("ExploreJungle") >= 100` · canStart conditional / 3 return paths (see source)
+- **Gates:** visible `towns[6].getLevel("ExploreJungle") >= 75` · unlocked `towns[6].getLevel("ExploreJungle") >= 100` · canStart `escapeStarted || effectiveTime < 60`
 - **Growth:** stat weights `Dex:0.2, Spd:0.8`; skills `none`
 - **Effects:** zone unlock. **Story:** story checkpoints 1.
 
 ### Explore Jungle — `Action.ExploreJungle`
 
-- **Identity:** `progress` / `Action` · `townNum=6` · `varName=ExploreJungle` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6093)
+- **Identity:** `progress` / `Action` · `townNum=6` · `varName=ExploreJungle` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6092)
 - **Cost:** mana `25000`
 - **Gates:** visible `true` · unlocked `true`
 - **Growth:** stat weights `Per:0.2, Con:0.2, Cha:0.2, Spd:0.3, Luck:0.1`; skills `none`
@@ -1080,7 +1080,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Fight Jungle Monsters — `Action.FightJungleMonsters`
 
-- **Identity:** `multipart` / `MultipartAction` · `townNum=6` · `varName=FightJungleMonsters` · `segments=3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6133)
+- **Identity:** `multipart` / `MultipartAction` · `townNum=6` · `varName=FightJungleMonsters` · `segments=3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6132)
 - **Cost:** mana `30000`
 - **Gates:** visible `true` · unlocked `true` · canStart `true`
 - **Growth:** stat weights `Str:0.3, Dex:0.3, Per:0.4`; skills `Combat:2000`
@@ -1097,7 +1097,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Open Portal — `Action.OpenPortal`
 
-- **Identity:** `normal` / `Action` · `townNum=6` · `varName=OpenPortal` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6435)
+- **Identity:** `normal` / `Action` · `townNum=6` · `varName=OpenPortal` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6431)
 - **Cost:** mana `50000` · allowed `1`
 - **Gates:** visible `getExploreProgress() > 50` · unlocked `getExploreProgress() >= 75 && getSkillLevel("Restoration") >= 1000` · canStart `getSkillLevel("Restoration") >= 1000`
 - **Growth:** stat weights `Int:0.2, Luck:0.1, Soul:0.7`; skills `Restoration:2500`
@@ -1105,7 +1105,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Prepare Buffet — `Action.PrepareBuffet`
 
-- **Identity:** `normal` / `Action` · `townNum=6` · `varName=PrepareBuffet` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6304)
+- **Identity:** `normal` / `Action` · `townNum=6` · `varName=PrepareBuffet` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6303)
 - **Cost:** mana `30000` · extra cost callback
 - **Gates:** visible `towns[6].getLevel("ExploreJungle") >= 15` · unlocked `towns[6].getLevel("ExploreJungle") >= 20` · canStart `resources.herbs >= 10 && resources.blood > 0`
 - **Growth:** stat weights `Con:0.3, Per:0.1, Int:0.6`; skills `Alchemy:25, Gluttony:5`
@@ -1113,7 +1113,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Rescue Survivors — `Action.RescueSurvivors`
 
-- **Identity:** `multipart` / `MultipartAction` · `townNum=6` · `varName=Rescue` · `segments=3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6250)
+- **Identity:** `multipart` / `MultipartAction` · `townNum=6` · `varName=Rescue` · `segments=3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6249)
 - **Cost:** mana `25000`
 - **Gates:** visible `towns[6].getLevel("ExploreJungle") >= 10` · unlocked `towns[6].getLevel("ExploreJungle") >= 20` · canStart `true`
 - **Growth:** stat weights `Per:0.4, Dex:0.2, Cha:0.2, Spd:0.2`; skills `Restoration:25`
@@ -1138,7 +1138,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Totem — `Action.Totem`
 
-- **Identity:** `normal` / `Action` · `townNum=6` · `varName=Totem` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6352)
+- **Identity:** `normal` / `Action` · `townNum=6` · `varName=Totem` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6351)
 - **Cost:** mana `30000` · extra cost callback
 - **Gates:** visible `towns[6].getLevel("ExploreJungle") >= 25` · unlocked `towns[6].getLevel("ExploreJungle") >= 50` · canStart `resources.loopingPotion`
 - **Growth:** stat weights `Con:0.3, Per:0.2, Soul:0.5`; skills `Wunderkind:100`
@@ -1157,7 +1157,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Collect Interest — `Action.CollectInterest`
 
-- **Identity:** `normal` / `Action` · `townNum=7` · `varName=CollectInterest` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7087)
+- **Identity:** `normal` / `Action` · `townNum=7` · `varName=CollectInterest` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7083)
 - **Cost:** mana `1` · allowed `1`
 - **Gates:** visible `true` · unlocked `true` · canStart `true`
 - **Growth:** stat weights `Con:0.4, Per:0.3, Spd:0.3`; skills `Mercantilism:50`
@@ -1165,7 +1165,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Excursion — `Action.Excursion`
 
-- **Identity:** `progress` / `Action` · `townNum=7` · `varName=Excursion` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6478)
+- **Identity:** `progress` / `Action` · `townNum=7` · `varName=Excursion` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6474)
 - **Cost:** mana `25000` · goldCost() `(guild === "Thieves" || guild === "Explorer") ? 2 : 10`
 - **Gates:** visible `true` · unlocked `true` · canStart `resources.gold >= this.goldCost()`
 - **Growth:** stat weights `Per:0.2, Con:0.2, Cha:0.2, Spd:0.3, Luck:0.1`; skills `none`
@@ -1173,7 +1173,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Explorers Guild — `Action.ExplorersGuild`
 
-- **Identity:** `normal` / `Action` · `townNum=7` · `varName=ExplorersGuild` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6542)
+- **Identity:** `normal` / `Action` · `townNum=7` · `varName=ExplorersGuild` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6538)
 - **Cost:** mana `65000` · allowed `1`
 - **Gates:** visible `towns[7].getLevel("Excursion") >= 5` · unlocked `towns[7].getLevel("Excursion") >= 10` · canStart `guild === ""`
 - **Growth:** stat weights `Per:0.3, Cha:0.3, Int:0.2, Luck:0.2`; skills `none`
@@ -1181,7 +1181,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Guild Assassin — `Action.GuildAssassin`
 
-- **Identity:** `normal` / `Action` · `townNum=7` · `varName=GuildAssassin` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6968)
+- **Identity:** `normal` / `Action` · `townNum=7` · `varName=GuildAssassin` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6964)
 - **Cost:** mana `100000` · allowed `1`
 - **Gates:** visible `towns[this.townNum].getLevel("InsuranceFraud") >= 75` · unlocked `towns[this.townNum].getLevel("InsuranceFraud") >= 100` · canStart `guild === ""`
 - **Growth:** stat weights `Per:0.1, Cha:0.3, Dex:0.4, Luck:0.2`; skills `Assassin:100`
@@ -1189,7 +1189,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Insurance Fraud — `Action.InsuranceFraud`
 
-- **Identity:** `progress` / `Action` · `townNum=7` · `varName=InsuranceFraud` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6913)
+- **Identity:** `progress` / `Action` · `townNum=7` · `varName=InsuranceFraud` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6909)
 - **Cost:** mana `100000` · goldCost() `Math.floor(200 * getSkillBonus("Thievery"))` · allowed `towns[7].totalInsurance`
 - **Gates:** visible `towns[7].getLevel("RobWarehouse") >= 50` · unlocked `towns[7].getLevel("RobWarehouse") >= 100` · canStart `guild === "Thieves"`
 - **Growth:** stat weights `Dex:0.2, Spd:0.2, Int:0.3, Luck:0.3`; skills `Thievery:dynamic`
@@ -1197,7 +1197,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Invest — `Action.Invest`
 
-- **Identity:** `normal` / `Action` · `townNum=7` · `varName=Invest` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7030)
+- **Identity:** `normal` / `Action` · `townNum=7` · `varName=Invest` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7026)
 - **Cost:** mana `50000` · allowed `1`
 - **Gates:** visible `true` · unlocked `true` · canStart `resources.gold > 0`
 - **Growth:** stat weights `Con:0.4, Per:0.3, Spd:0.3`; skills `Mercantilism:100`
@@ -1205,7 +1205,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Leave City — `Action.LeaveCity`
 
-- **Identity:** `normal` / `Action` · `townNum=7` · `varName=LeaveCity` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7286)
+- **Identity:** `normal` / `Action` · `townNum=7` · `varName=LeaveCity` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7282)
 - **Cost:** mana `100000` · allowed `1` · extra cost callback
 - **Gates:** visible `true` · unlocked `true` · canStart `resources.key`
 - **Growth:** stat weights `Con:0.4, Per:0.3, Spd:0.3`; skills `none`
@@ -1213,7 +1213,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Pick Pockets — `Action.PickPockets`
 
-- **Identity:** `progress` / `Action` · `townNum=7` · `varName=PickPockets` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6804)
+- **Identity:** `progress` / `Action` · `townNum=7` · `varName=PickPockets` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6800)
 - **Cost:** mana `20000` · goldCost() `Math.floor(2 * getSkillBonus("Thievery"))` · allowed `towns[7].totalPockets`
 - **Gates:** visible `getSkillLevel("Thievery") > 0` · unlocked `getSkillLevel("Thievery") > 0` · canStart `guild === "Thieves"`
 - **Growth:** stat weights `Dex:0.4, Spd:0.4, Luck:0.2`; skills `Thievery:dynamic`
@@ -1221,7 +1221,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Purchase Key — `Action.PurchaseKey`
 
-- **Identity:** `normal` / `Action` · `townNum=7` · `varName=PurchaseKey` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7185)
+- **Identity:** `normal` / `Action` · `townNum=7` · `varName=PurchaseKey` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7181)
 - **Cost:** mana `20000` · goldCost() `1000000` · allowed `1` · extra cost callback
 - **Gates:** visible `true` · unlocked `true` · canStart `resources.gold >= 1000000 && !resources.key`
 - **Growth:** stat weights `Cha:0.8, Luck:0.1, Soul:0.1`; skills `none`
@@ -1229,7 +1229,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Rob Warehouse — `Action.RobWarehouse`
 
-- **Identity:** `progress` / `Action` · `townNum=7` · `varName=RobWarehouse` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6858)
+- **Identity:** `progress` / `Action` · `townNum=7` · `varName=RobWarehouse` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6854)
 - **Cost:** mana `50000` · goldCost() `Math.floor(20 * getSkillBonus("Thievery"))` · allowed `towns[7].totalWarehouses`
 - **Gates:** visible `towns[7].getLevel("PickPockets") >= 25` · unlocked `towns[7].getLevel("PickPockets") >= 100` · canStart `guild === "Thieves"`
 - **Growth:** stat weights `Dex:0.4, Spd:0.2, Int:0.2, Luck:0.2`; skills `Thievery:dynamic`
@@ -1237,7 +1237,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Secret Trial — `Action.SecretTrial`
 
-- **Identity:** `multipart` / `TrialAction` · `townNum=7` · `varName=STrial` · `segments=9` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7226)
+- **Identity:** `multipart` / `TrialAction` · `townNum=7` · `varName=STrial` · `segments=9` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7222)
 - **Cost:** mana `100000`
 - **Gates:** visible `storyMax >= 12 && getBuffLevel("Imbuement3") >= 7` · unlocked `storyMax >= 12 && getBuffLevel("Imbuement3") >= 7` · canStart `this.currentFloor() < trialFloors[this.trialNum]`
 - **Growth:** stat weights `Dex:0.11, Str:0.11, Con:0.11, Spd:0.11, Per:0.11, Cha:0.11, Int:0.11, Luck:0.11, Soul:0.11`; skills `none`
@@ -1246,7 +1246,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Seminar — `Action.Seminar`
 
-- **Identity:** `normal` / `Action` · `townNum=7` · `varName=Seminar` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7137)
+- **Identity:** `normal` / `Action` · `townNum=7` · `varName=Seminar` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7133)
 - **Cost:** mana `20000` · goldCost() `1000` · extra cost callback
 - **Gates:** visible `towns[this.townNum].getLevel("Survey") >= 100` · unlocked `towns[this.townNum].getLevel("Survey") >= 100` · canStart `resources.gold >= 1000`
 - **Growth:** stat weights `Cha:0.8, Luck:0.1, Soul:0.1`; skills `Leadership:200`
@@ -1262,7 +1262,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Thieves Guild — `Action.ThievesGuild`
 
-- **Identity:** `multipart` / `MultipartAction` · `townNum=7` · `varName=ThievesGuild` · `segments=3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6706)
+- **Identity:** `multipart` / `MultipartAction` · `townNum=7` · `varName=ThievesGuild` · `segments=3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L6702)
 - **Cost:** mana `75000` · allowed `1`
 - **Gates:** visible `towns[7].getLevel("Excursion") >= 20` · unlocked `towns[7].getLevel("Excursion") >= 25` · canStart `guild === "" && resources.reputation < 0`
 - **Growth:** stat weights `Dex:0.4, Per:0.3, Spd:0.3`; skills `Thievery:50, Practical:50`
@@ -1273,7 +1273,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Build Tower — `Action.BuildTower`
 
-- **Identity:** `progress` / `Action` · `townNum=8` · `varName=BuildTower` · `progressScaling=linear` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7407)
+- **Identity:** `progress` / `Action` · `townNum=8` · `varName=BuildTower` · `progressScaling=linear` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7403)
 - **Cost:** mana `250000`
 - **Gates:** visible `true` · unlocked `true` · canStart `resources.stone`
 - **Growth:** stat weights `Dex:0.1, Str:0.3, Con:0.3, Per:0.2, Spd:0.1`; skills `none`
@@ -1281,7 +1281,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Challenge Gods — `Action.ChallengeGods`
 
-- **Identity:** `multipart` / `TrialAction` · `townNum=8` · `varName=GFight` · `segments=9` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7532)
+- **Identity:** `multipart` / `TrialAction` · `townNum=8` · `varName=GFight` · `segments=9` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7528)
 - **Cost:** mana `50000`
 - **Gates:** visible `towns[this.townNum].getLevel("BuildTower") >= 100` · unlocked `towns[this.townNum].getLevel("BuildTower") >= 100` · canStart `this.currentFloor() < trialFloors[this.trialNum] && resources.power > 0 && resources.power < 8`
 - **Growth:** stat weights `Dex:0.11, Str:0.11, Con:0.11, Spd:0.11, Per:0.11, Cha:0.11, Int:0.11, Luck:0.11, Soul:0.11`; skills `Combat:500`
@@ -1290,7 +1290,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Gods Trial — `Action.GodsTrial`
 
-- **Identity:** `multipart` / `TrialAction` · `townNum=8` · `varName=GTrial` · `segments=9` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7453)
+- **Identity:** `multipart` / `TrialAction` · `townNum=8` · `varName=GTrial` · `segments=9` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7449)
 - **Cost:** mana `50000`
 - **Gates:** visible `towns[this.townNum].getLevel("BuildTower") >= 100` · unlocked `towns[this.townNum].getLevel("BuildTower") >= 100` · canStart `this.currentFloor() < trialFloors[this.trialNum] && resources.power < 7`
 - **Growth:** stat weights `Dex:0.11, Str:0.11, Con:0.11, Spd:0.11, Per:0.11, Cha:0.11, Int:0.11, Luck:0.11, Soul:0.11`; skills `Combat:250, Pyromancy:50, Restoration:50`
@@ -1299,7 +1299,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Imbue Soul — `Action.ImbueSoul`
 
-- **Identity:** `multipart` / `MultipartAction` · `townNum=8` · `varName=ImbueSoul` · `segments=3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7329)
+- **Identity:** `multipart` / `MultipartAction` · `townNum=8` · `varName=ImbueSoul` · `segments=3` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7325)
 - **Cost:** mana `5000000` · allowed `1`
 - **Gates:** visible `true` · unlocked `getBuffLevel("Imbuement") > 499 && getBuffLevel("Imbuement2") > 499` · canStart `loopCounter === 0 && getBuffLevel("Imbuement") > 499 && getBuffLevel("Imbuement2") > 499 && getBuffLevel("Imbuement3") < 7`
 - **Growth:** stat weights `Soul:1`; skills `none`; grants `Imbuement3`
@@ -1308,7 +1308,7 @@ Action identity, `varName`, town indexing, skills and stat weights are save/bala
 
 ### Restore Time — `Action.RestoreTime`
 
-- **Identity:** `normal` / `Action` · `townNum=8` · `varName=RestoreTime` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7661)
+- **Identity:** `normal` / `Action` · `townNum=8` · `varName=RestoreTime` · [source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L7657)
 - **Cost:** mana `7777777` · allowed `1`
 - **Gates:** visible `towns[this.townNum].getLevel("BuildTower") >= 100` · unlocked `towns[this.townNum].getLevel("BuildTower") >= 100` · canStart `resources.power >= 8`
 - **Growth:** stat weights `Luck:0.5, Soul:0.5`; skills `none`

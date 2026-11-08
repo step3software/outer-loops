@@ -131,7 +131,7 @@ const routes=scenario(`(() => {
     return {deltas,first,sticky,subsequent,at60:Action.Escape.canStart()};
 })()`);
 assert.deepEqual(routes.deltas,[2,2,1]);
-assert.deepEqual([routes.first,routes.sticky,routes.subsequent,routes.at60],[true,true,true,false]);
+assert.deepEqual([routes.first,routes.sticky,routes.subsequent,routes.at60],[true,false,false,false]);
 
 const restarted=scenario(`(() => {
     options.repeatLastAction=false;
@@ -247,12 +247,9 @@ const modes=scenario(`(() => {
 assert.deepEqual(modes.entries,[['Smash Pots',2,'knownGood'],['Pick Locks',3,'unchecked']]);
 assert.deepEqual(modes.fractions,[0.5,0.5]);
 
-const domless=loadGameModel().evaluate(`(() => {
-    try {getBuffCap("Imbuement");return "DOM-INDEPENDENT";}
-    catch(e){return String(e);}
-})()`);
-if(String(domless).includes('document'))
-    console.warn('KNOWN R04: DOM-less getBuffCap cannot evaluate without document; RF03 owns the pure-rule correction.');
+const domless=loadGameModel().evaluate('getBuffCap("Imbuement")');
+assert.equal(domless,500,'Imbuement cap rules must work without DOM');
+
 console.log('PASS RF01 extra: queued dungeon floor, undead trial, potion/Totem, typed limited loops and fractional mana controls.');
 
 console.log('PASS RF01 model: ordered registry, normal/progress/cost skip, limited known-good/unchecked, multipart, seeded dungeon, terminal Gods Trial, travel/Escape, restart, queue and interest.');

@@ -391,23 +391,66 @@ function addMana(amount) {
     timeNeeded += amount;
 }
 
-function addResource(resource, amount) {
-    if (Number.isFinite(amount)) resources[resource] += amount;
-    else resources[resource] = amount;
-    view.requestUpdate("updateResource", resource);
+// Resource types are defined by the loop-scoped template in saving.js.
+// Invalid mutations fail before state or view updates, including overflow.
+function resourceType(resource) {
+    if (!Object.hasOwn(resourcesTemplate, resource)) {
+        throw new TypeError(`Unknown resource: ${resource}`);
+    }
+    return typeof resourcesTemplate[resource];
+}
 
-    if (resource === "teamMembers" || resource === "armor" || resource === "zombie") view.requestUpdate("updateTeamCombat",null);
+function setResourceValue(resource, value) {
+    const type = resourceType(resource);
+    if (typeof value !== type || (type === "number" && !Number.isFinite(value))) {
+        throw new TypeError(`Invalid ${type} value for ${resource}`);
+    }
+    resources[resource] = value;
+    if (view) {
+        view.requestUpdate("updateResource", resource);
+        if (resource === "teamMembers" || resource === "armor" || resource === "zombie") {
+            view.requestUpdate("updateTeamCombat", null);
+        }
+    }
+}
+
+function addNumericResource(resource, amount) {
+    if (resourceType(resource) !== "number" || !Number.isFinite(amount) ||
+        !Number.isFinite(resources[resource]) ||
+        !Number.isFinite(resources[resource] + amount)) {
+        throw new TypeError(`Invalid numeric delta for ${resource}`);
+    }
+    setResourceValue(resource, resources[resource] + amount);
+}
+
+function setResourceFlag(resource, value) {
+    if (resourceType(resource) !== "boolean" || typeof value !== "boolean") {
+        throw new TypeError(`Invalid boolean flag for ${resource}`);
+    }
+    setResourceValue(resource, value);
+}
+
+// Compatibility adapter for existing action cost/reward call sites.
+function addResource(resource, amount) {
+    if (resourceType(resource) === "number") addNumericResource(resource, amount);
+    else setResourceFlag(resource, amount);
 }
 
 function resetResource(resource) {
-    resources[resource] = resourcesTemplate[resource];
-    view.requestUpdate("updateResource", resource);
+    setResourceValue(resource, resourcesTemplate[resource]);
 }
 
 function resetResources() {
-    resources = copyObject(resourcesTemplate);
+    // Data.registerAll snapshots the original resources object. Keep that
+    // reference stable across loops so foreground and worker snapshots agree.
+    for (const resource of Object.keys(resources)) {
+        if (!Object.hasOwn(resourcesTemplate, resource)) delete resources[resource];
+    }
+    for (const resource of Object.keys(resourcesTemplate)) {
+        resources[resource] = resourcesTemplate[resource];
+    }
     if(getExploreProgress() >= 100 || prestigeValues['completedAnyPrestige']) addResource("glasses", true);
-    view.requestUpdate("updateResources", null);
+    if (view) view.requestUpdate("updateResources", null);
 }
 
 function changeActionAmount(amount) {

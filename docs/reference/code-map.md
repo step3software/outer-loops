@@ -12,18 +12,18 @@ Navigation map for the repository's existing classic-script JavaScript. **Execut
 | `img/` | Action SVGs, logos and UI assets |
 | `lib/` | Vendored browser libraries; avoid changes without a specific reason |
 | `manifest.webmanifest` | Browser manifest |
-| `.github/workflows/static.yml` | Existing Pages deployment (push to `dmchurch` / manual trigger) |
+| `.github/workflows/static.yml` | Existing Pages deployment (inspect workflow triggers before any release) |
 
 ## Runtime systems
 
 | Path | Responsibility / anchors |
 | --- | --- |
-| `actionList.js` | `Action` classes, all registered `Action.*` definitions, `townNames`, `getActionPrototype`, cost and travel formulas |
-| `actions.js` | `Actions` queue, `tick`, action `loopsType` and multipart execution |
-| `driver.js` | `tick`, `executeGameTicks`, `recalcInterval`, `loopEnd`, `restart`, add/reset resources |
+| `actionList.js` | `Action` classes, registered `Action.*` definitions, `townNames`, `getActionPrototype`, read-only eligibility, costs and travel formulas |
+| `actions.js` | `Actions` queue, `tick`, `loopsType`, multipart execution and Escape first-positive-mana activation |
+| `driver.js` | `tick`, `executeGameTicks`, `recalcInterval`, `loopEnd`, `restart`, validated numeric/boolean resource operations and in-place resets |
 | `town.js` | `Town`, progress, limited and multipart variables |
-| `stats.js` | `Stat` / `Skill` / `Buff`, experience, scaling and bonuses |
-| `saving.js` | Global registries, `loadDefaults`, `load`, `doSave` / `doLoad`, `save`, `processSave`, story keys, options |
+| `stats.js` | `Stat` / `Skill` / `Buff`, experience, scaling, bonuses and model-state `getBuffCap`/`setBuffCap` |
+| `saving.js` | Global registries, typed resource and buff-cap defaults, `Data` snapshot roots, `loadDefaults`, `load`, `doSave` / `doLoad`, `save`, validated import/recovery, story keys, options |
 | `prestige.js` | Persistent prestige points/buffs, reset and balance multipliers |
 | `challenges.js` | Challenge-specific runtime overrides |
 | `talents.js` | Talent-related calculations |

@@ -12,11 +12,13 @@ These are **auditable findings**, not an assertion that every candidate is a rep
 
 **RF02 candidate:** [draft PR #16](https://github.com/step3software/outer-loops/pull/16) preflights decoded saves and uses a journaled backup/rollback boundary. Bounded decode and synthetic storage-failure checks were exercised in isolated V8, but full Chrome/CI evidence is outstanding. **R01 remains unresolved until the complete acceptance matrix passes.** Preserve ILSV01 and historic compatibility.
 
-### R02 — Numeric resource setter accepts NaN/Infinity as assignment (medium; confirmed code path)
+### R02 — Unsafe numeric resource assignment (medium; RF03 candidate correction)
 
 **Evidence:** `driver.js` `addResource(resource, amount)` adds a finite number, but assigns `amount` directly for **any** non-finite value. That path is required for boolean resources but also accepts `NaN` and `Infinity`. The `Invest` action contains an explicit guard/comment against non-finite gold in `actionList.js`.
 
 **Consequence:** an invalid numeric reward or calculation can poison resource state and later computations. Treat as a correctness boundary requiring schema-aware validation, not permission to prohibit boolean resources.
+
+**RF03 implementation candidate:** `driver.js` now validates template-typed numeric and boolean operations, nonfinite arithmetic results and unknown resource keys, while preserving the old `addResource` call signature for valid values. The isolated V8 model suite passed positive/negative/boolean/reset/invalid cases; full Node/Chrome/CI checks remain outstanding. Keep this finding open until reviewed and verified.
 
 **Acceptance:** verify boolean assignment still works; finite positive/negative numeric changes work; NaN/Infinity cannot silently corrupt numeric resources; test downstream actions and save serialization.
 
@@ -28,11 +30,13 @@ These are **auditable findings**, not an assertion that every candidate is a rep
 
 **Acceptance:** entering/exiting each challenge, isolated saves, changed queue, worker predictions and reload must be tested before touching the challenge code.
 
-### R04 — DOM-dependent buff cap from shared runtime code (medium; worker parity risk, unverified failure)
+### R04 — DOM-dependent buff cap from shared rules (medium; RF03 candidate correction)
 
 **Evidence:** `stats.js` `getBuffCap` reads a DOM element and checks `HTMLInputElement`. Runtime `Action.DarkRitual` / `Action.ImbueMind` call `getBuffCap` in `canStart`. `predictor-worker.js` imports `stats.js` and `actionList.js` but has no `document`.
 
 **Consequence:** evaluating this path in a DOM-less simulation *could* throw or diverge. **RF01 confirmed that directly calling `getBuffCap("Imbuement")` in the DOM-less Node model fails**; this does **not** establish that any specific background Worker ritual prediction actually fails. See [RF01 evidence](../refactoring/rf01-evidence.md) F10.
+
+**RF03 implementation candidate:** `getBuffCap` now reads `buffCaps` from registered game/snapshot state. The isolated DOM-less V8 model confirms cap reads and snapshot restoration; real Chrome/worker parity is pending. Do not claim the originally hypothetical Worker failure was reproduced.
 
 **Acceptance:** construct a queued ritual/imbue scenario with predictor on/off, foreground/background; ensure equivalent caps and no DOM access in worker code.
 
@@ -50,7 +54,7 @@ These are **auditable findings**, not an assertion that every candidate is a rep
 | --- | --- | --- | --- | --- |
 | R06 | High (business) | Confirmed repository metadata | No recognized root/software license for this fork or parent; rights for commercial distribution are not established | Review upstream rights/permissions before distribution; preserve attribution |
 | R07 | Medium | Partially addressed by merged RF01 PR #4 | No historic *authentic* save corpus or full end-to-end playthrough; RF01 now adds synthetic old-shaped imports, normal/challenge/prestige reset and browser-worker Wander parity tests | Keep extending fixtures without claiming real old-save compatibility or a full game simulation |
-| R08 | Medium | Source confirmed; RF01 predicate test | `Action.Escape.canStart` mutates `escapeStarted` at 59.99 effective seconds, remains sticky after 60, and returns false at 60 if not started; RF01 checks direct calls, not full scheduler parity | Audit queue/prediction side effects before RF03 pure-predicate refactor |
+| R08 | Medium | RF03 candidate correction; verification incomplete | `Action.Escape.canStart` originally mutated `escapeStarted` during eligibility. RF03 moves activation into `Actions.tick` on the first positive mana-spending step under 60 effective seconds; isolated V8 cases pass, real browser/worker parity remains pending | Verify zero-spend, boundary, sticky continuation, restart and queues before closing |
 | R09 | Medium | Source-confirmed integration risk | `GoogleCloud.init` polls availability of external Google scripts without a finite give-up branch | Add bounded failure handling and opt-in test-account smoke in a separate change |
 | R10 | Low | Incomplete/experimental feature | `talents.js` declares `playerTalents`, with tree edge drawing commented; it is not serialized by `doSave` | Do not describe the displayed talent tree as an established, saved ability system |
 | R11 | Medium | Source-confirmed behavior | `PrestigeUpgrade` calls `addBuffAmt` then subtracts cost; `addBuffAmt` is a no-op at the hard cap | Verify UI disallows at-cap purchase before concluding points can be lost; add explicit model guard if reproducible |

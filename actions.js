@@ -102,6 +102,18 @@ class Actions {
         // just in case
         if (manaToSpend < 0) manaToSpend = 0;
 
+        // Escape is sticky only after its first *positive* mana-spending step.
+        // Checking canStart, queue admission and zero-mana probes never commit.
+        if (curAction.name === "Escape" && manaToSpend > 0 && !escapeStarted) {
+            if (!curAction.canStart()) {
+                // The effective-time threshold must still hold at commitment.
+                this.currentPos++;
+                this.currentAction = null;
+                return 0;
+            }
+            escapeStarted = true;
+        }
+
         // we think we'll be spending manaToSpend, but we might not actually finish out the whole
         // amount if this is a multi-part progress action.
 
