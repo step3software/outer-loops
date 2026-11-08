@@ -306,20 +306,27 @@ function report(cal=calibration()) {
       ';escapeStarted=false;const ok=Action.Escape.canStart();' +
       'return {ok,sticky:escapeStarted};})()');
     assert.equal(state.ok,eligible);
-    assert.equal(state.sticky,eligible);
+    assert.equal(state.sticky,false,'Escape eligibility checks never activate the action');
   }
   const model=fresh();
   const sticky=unpack(model,'(() => {effectiveTime=59.99;escapeStarted=false;' +
     'const first=Action.Escape.canStart();effectiveTime=60;' +
     'return {first,next:Action.Escape.canStart(),sticky:escapeStarted};})()');
-  assert.deepEqual(sticky,{first:true,next:true,sticky:true});
+  assert.deepEqual(sticky,{first:true,next:false,sticky:false});
   model.evaluate('escapeStarted=false;townsUnlocked.push(6);' +
     'towns[6].expExploreJungle=towns[6].expFromLevel(100)');
   const admitted=admitQueueEdit(model,{op:'add',name:'Escape',loops:1});
   assert.equal(admitted.status,'admitted','earned-predicate synthetic unlock should admit edit');
   assert.equal(unpack(model,'escapeStarted'),false,
-    'policy observer may never call mutating Escape.canStart');
-  console.log('PASS RW00 Judgement -51/-50/-49/49/50/51 and Escape 59.99/60/sticky synthetic boundaries.');
+    'queue admission may never activate Escape before positive mana expenditure');
+  const active=fresh();
+  const activation=unpack(active,'(() => {' +
+    'options.repeatLastAction=false;actions.addAction("Escape",1);actions.restart();' +
+    'curTown=6;effectiveTime=59.99;const probe=actions.tick(0);' +
+    'const before=escapeStarted;const spent=actions.tick(1);effectiveTime=60.01;' +
+    'return {probe,before,spent,active:escapeStarted,sticky:Action.Escape.canStart()};})()');
+  assert.deepEqual(activation,{probe:0,before:false,spent:1,active:true,sticky:true});
+  console.log('PASS RW00 Judgement -51/-50/-49/49/50/51 and Escape pure eligibility, positive-spend commitment, 59.99/60/sticky boundaries.');
 }
 
 console.log('PASS RW00 contract suite (synthetic fixtures explicitly excluded from earned campaign evidence).');
