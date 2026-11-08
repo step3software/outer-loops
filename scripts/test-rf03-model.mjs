@@ -121,4 +121,41 @@ const rejected=scenario(`(() => {
 assert.deepEqual(rejected,{errors:11,overflow:true,safe:true,poisoned:true,
     badFlag:true,badNumeric:true,repaired:0});
 
+// Audit every registered visible/unlocked/canStart callback against a stable
+// gameplay-state projection. The scheduler itself still owns queue movement.
+const predicateAudit=scenario(`(() => {
+    stonesUsed={1:0,3:0,5:0,6:0};
+    const state=()=>JSON.stringify({
+        resources,escapeStarted,storyFlags,storyVars,totals,townsUnlocked,
+        completedActions,curTown,
+        levels:towns.map(t=>Object.entries(t)
+            .filter(([,v])=>typeof v==="number"||typeof v==="boolean"))
+    });
+    let checked=0;
+    const failures=[],mutations=[];
+    for(const [id,action] of Object.entries(Action)) {
+        if(!(action instanceof Action))continue;
+        for(const name of ["visible","unlocked","canStart"]) {
+            if(typeof action[name]!=="function")continue;
+            const before=state();checked++;
+            try {action[name]();}catch(e){failures.push(id+"."+name+": "+String(e));}
+            if(state()!==before)mutations.push(id+"."+name);
+        }
+    }
+    return {checked,failures,mutations};
+})()`);
+assert.ok(predicateAudit.checked>=400,"expected all registered action predicates");
+assert.deepEqual(predicateAudit.failures,[]);
+assert.deepEqual(predicateAudit.mutations,[]);
+
+const domlessResources=scenario(`(() => {
+    addResource("gold",3);setResourceFlag("stone",true);
+    const before={gold:resources.gold,stone:resources.stone};
+    resetResources();
+    return {before,after:{gold:resources.gold,stone:resources.stone},
+        registered:Data.rootObjects.resources===resources};
+})()`,false);
+assert.deepEqual(domlessResources,{before:{gold:3,stone:true},
+    after:{gold:0,stone:false},registered:true});
+
 console.log("PASS RF03 model: DOM-free caps and snapshots; pure predicates; Escape first positive-spend; typed resources, reset identity and invalid-value rejection.");
