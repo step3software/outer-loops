@@ -14,7 +14,7 @@
 - `actions.js`: first positive mana-spending step commits Escape activation if still eligible; no commit on queue inspection or zero-mana probes. `Actions.restart` retains the original reset.
 - `driver.js`: validated numeric/boolean setters and the old `addResource` signature for valid callers, with finite-result checks, worker-safe view guards and in-place registered resource reset.
 - `predictor.js`: change Escape forecast admission from `<= 60` to original runtime `< 60` boundary.
-- `scripts/test-rf01-model.mjs`: update two previously bug-preserving R04/R08 expectations; preserve 157-action registry fingerprint and unrelated R15 Gods Trial characterization.
+- `scripts/test-rf01-model.mjs` and `scripts/test-balance-contracts.mjs`: update previously bug-preserving R04/R08/RW00 expectations; the RW00 suite now verifies that a mere Escape predicate query leaves the flag false and actual positive spending makes it sticky. Preserve the 157-action registry fingerprint and unrelated R15 Gods Trial characterization.
 - `scripts/test-rf03-model.mjs`, `scripts/test-browser-smoke.mjs`, `package.json` and `.github/workflows/validate.yml`: add source-backed and browser/real-worker checks; no production dependencies or changes to challenges.
 
 ## Verification actually performed
@@ -28,6 +28,8 @@
 | Escape boundary and sticky run behavior | **Passed**, including predicate-only calls, zero mana, first positive step at 59.99, no first start at 60, continuation after 60 and restart | No real frame/deadline clock stress |
 | Buff-cap DOM-less snapshots | **Passed**, including defaults, changed values, reset/restore and invalid setter rejection | Actual Chrome UI and real Worker script pending |
 | Generated mechanics regeneration | **Baseline exact-match**, candidate reference regenerated from real 157-action model | Reproduced in isolated V8, not the Node generator executable |
+| Full registered predicate scan | **Passed:** 422 `visible`, `unlocked`, `canStart` queries evaluated without exceptions or tracked gameplay-state mutations | Synthetic default fixture, not all progression branches |
+| Changed JS/MJS syntax | **Passed:** parsed 12 relevant runtime/test files in V8 after removing only ESM import wrappers for MJS | Not the repository `npm run check` |
 
 ## Validation pending before acceptance
 
@@ -55,7 +57,7 @@ Also pending: real foreground and background predictor comparison for ritual/imb
 - **A1/A5/A6:** DOM-less rule and snapshot model tested; actual browser/worker/save roundtrip pending.
 - **A2/A3:** Escape predicate purity and first-spend boundary tested in the model; full browser queue/predictor parity pending.
 - **A4:** All 27 resource classes and invalid writes tested in the model; downstream browser economy cases pending.
-- **A7:** Registry count and regenerated mechanics observed; inherited RF01/RF02/balance/challenge/Chrome regression suites still pending.
+- **A7:** Registry count and regenerated mechanics observed; RW00 original Escape expectations updated and its positive-spend case added, but inherited RF01/RF02/balance/challenge/Chrome regression suites still pending.
 - **A8:** Function ownership documented here, in `docs/state-and-saving.md`, `docs/predictor.md` and `docs/reference/code-map.md`; evidence must be updated after CI.
 
 No save key, `ILSV01` envelope, action identifier, town number or production dependency was intentionally changed. RF02's import backups/journal must survive both code deployment and rollback. Do not rollback by replacing or clearing persisted saves. No automatic merge, Pages deployment or release.
