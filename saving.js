@@ -1465,6 +1465,19 @@ function importSave() {
 // Import recovery metadata is separate from the long-established prestige
 // backup. One last successful pre-import snapshot is retained for EACH slot.
 // All keys are private to this origin; user save exports remain ILSV01.
+
+function getImportContract() {
+    return {
+        actions: totalActionList.map(a=>({name:a.name,varName:a.varName,type:a.type})),
+        statNames: statList.slice(),
+        skillNames: skillList.slice(),
+        buffNames: buffList.slice(),
+        storyFlags: Object.keys(storyFlags),
+        storyVars: Object.keys(storyVars),
+        optionTypes: Object.fromEntries(Object.entries(options).map(([k,v])=>[k,typeof v])),
+    };
+}
+
 const importPendingKey = "idleLoopsImportPendingV1";
 function importBackupKey(slot) {
     return "idleLoopsImportBackupV1_" + (slot === challengeSaveName ? "challenge" : "normal");
@@ -1693,6 +1706,7 @@ function processSave(saveData) {
             boundedDecompress: SaveImport.decompressBoundedBase64,
             legacyDecode: text => decode(text),
             allowedActionVars: totalActionList.map(action => action.varName).filter(Boolean),
+            contract: getImportContract(),
         });
         return applyProtectedImport(candidate);
     } catch (error) {

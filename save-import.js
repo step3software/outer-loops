@@ -10,7 +10,8 @@ var SaveImport = (() => {
     const MAX_NODES = 400_000;
     const MAX_DEPTH = 80;
     const MAX_ACTIONS = 50_000;
-    const MAX_LOADOUTS = 64;
+    const MAX_LOADOUTS = 16;
+    const MAX_LEGACY_CODES = 400_000;
 
     class SaveImportError extends Error {
         constructor(code, message) {
@@ -101,8 +102,117 @@ var SaveImport = (() => {
         }
     }
 
-    function validateParsed(input, allowedActionVars = null) {
+
+    // The importing game passes its current registry as plain data: validation
+    // stays pure and recognizes only state that doLoad/doSave can roundtrip.
+    function validateDomain(input, contract = {}) {
+        const num = (v,label,min=0,integer=false) => {
+            if (typeof v!=="number" || !Number.isFinite(v) || v<min || (integer && !Number.isInteger(v)))
+                invalid("INVALID_NUMBER",label+" must be a finite number.");
+        };
+        const allowed = (value, keys,label) => {
+            if (!record(value)) invalid("INVALID_OBJECT",label+" must be an object.");
+            for (const key of Object.keys(value))
+                if (!keys.has(key)) invalid("UNSUPPORTED_FIELD",label+" contains an unsupported field.");
+        };
+        const named = (obj,names,label,check) => {
+            if (obj === undefined) return;
+            if (!record(obj)) invalid("INVALID_OBJECT",label+" must be an object.");
+            for (const [key,value] of Object.entries(obj)) {
+                if (names && !names.has(key)) invalid("UNSUPPORTED_FIELD",label+" contains an unknown entry.");
+                check(value,label+"."+key,key);
+            }
+        };
+        const level = (obj,label) => {
+            allowed(obj,new Set(["level","exp"]),label);
+            if (obj.level !== undefined) num(obj.level,label+".level",0,true);
+            if (obj.exp !== undefined) num(obj.exp,label+".exp");
+        };
+        named(input.stats,new Set(contract.statNames ?? ["Dex","Str","Con","Spd","Per","Cha","Int","Luck","Soul"]),"stats",(obj,label) => {
+            allowed(obj,new Set(["statLevelExp","talentLevelExp","soullessLevelExp","soulstone","prestigeBuff","exp","talent"]),label);
+            for (const key of ["statLevelExp","talentLevelExp","soullessLevelExp"]) if (obj[key]!==undefined) level(obj[key],label+"."+key);
+            for (const key of ["soulstone","exp","talent"]) if (obj[key]!==undefined) num(obj[key],label+"."+key);
+            if (obj.prestigeBuff!==undefined && !["PrestigePhysical","PrestigeMental"].includes(obj.prestigeBuff))
+                invalid("INVALID_OBJECT",label+" has an invalid modifier.");
+        });
+        named(input.skills,new Set(contract.skillNames ?? ["Combat","Magic","Practical","Alchemy","Crafting","Dark","Chronomancy","Pyromancy","Restoration","Spatiomancy","Mercantilism","Divine","Commune","Wunderkind","Gluttony","Thievery","Leadership","Assassin"]),"skills",(obj,label) => {
+            allowed(obj,new Set(["levelExp","statLevelExp","change","exp"]),label);
+            for (const key of ["levelExp","statLevelExp"]) if (obj[key]!==undefined) level(obj[key],label+"."+key);
+            if (obj.exp!==undefined) num(obj.exp,label+".exp");
+            if (obj.change!==undefined) {num(obj.change,label+".change",0,true);if(obj.change>3) invalid("INVALID_NUMBER",label+" has unsupported skill type.");}
+        });
+        const buffs=new Set(contract.buffNames ?? ["Ritual","Imbuement","Imbuement2","Feast","Aspirant","Heroism","Imbuement3","PrestigePhysical","PrestigeMental","PrestigeCombat","PrestigeSpatiomancy","PrestigeChronomancy","PrestigeBartering","PrestigeExpOverflow"]);
+        named(input.buffs,buffs,"buffs",(obj,label) => {
+            allowed(obj,new Set(["amt"]),label);
+            if (obj.amt!==undefined) num(obj.amt,label+".amt");
+        });
+        named(input.buffCaps,buffs,"buffCaps",(v,label)=>num(v,label));
+        named(input.prestigeValues,new Set(["prestigeCurrentPoints","prestigeTotalPoints","prestigeTotalCompletions","completedCurrentPrestige","completedAnyPrestige"]),"prestigeValues",(v,label,key) => {
+            if (key.startsWith("completed")) {
+                if (typeof v!=="boolean" && v!==0 && v!==1) invalid("INVALID_FLAG",label+" must be a boolean.");
+            } else num(v,label);
+        });
+        named(input.stonesUsed,new Set(["1","3","5","6"]),"stonesUsed",(v,label)=>num(v,label));
+        named(input.totals,new Set(["time","effectiveTime","borrowedTime","loops","actions"]),"totals",(v,label,k)=>num(v,label,k==="borrowedTime"?-Number.MAX_VALUE:0));
+        named(input.challengeSave,new Set(["challengeMode","inChallenge"]),"challengeSave",(v,label,k)=>{
+            if(k==="challengeMode"){num(v,label,0,true);if(v>3) invalid("INVALID_CHALLENGE",label+" is not supported.");}
+            else if(typeof v!=="boolean") invalid("INVALID_FLAG",label+" must be a boolean.");
+        });
+        named(input.storyReqs,contract.storyFlags?new Set(contract.storyFlags):null,"storyReqs",(v,label)=>{
+            if(typeof v!=="boolean") invalid("INVALID_FLAG",label+" must be a boolean.");
+        });
+        named(input.storyVars,contract.storyVars?new Set(contract.storyVars):null,"storyVars",(v,label)=>num(v,label,-Number.MAX_VALUE));
+        for (const name of ["options","extraOptions"]) {
+            named(input[name],contract.optionTypes?new Set(Object.keys(contract.optionTypes)):null,name,(v,label,k)=>{
+                const type=contract.optionTypes?.[k];
+                if ((type && typeof v!==type) || (!type && !["boolean","string","number"].includes(typeof v)))
+                    invalid("INVALID_OPTION",label+" has an unsupported type.");
+                if(typeof v==="number") num(v,label,-Number.MAX_VALUE);
+            });
+        }
+        for(const key of ["totalTalent","goldInvested","totalOfflineMs","storyMax","storyShowing","curLoadout","totalMoney","prestigeCurrentPoints","prestigeTotalPoints","numberOfPrestiges","updateRate","autosaveRate"])
+            if(input[key]!==undefined) num(input[key],key);
+        for(const key of ["repeatLast","pingOnPause","notifyOnPause","autoMaxTraining","highlightNew","hotkeys","responsiveUI","statColors","statHints","fractionalMana","repeatLastAction","keepCurrentList","bonusIsActive"])
+            if(input[key]!==undefined && typeof input[key]!=="boolean") invalid("INVALID_FLAG",key+" must be a boolean.");
+        if(input.version75!==undefined && typeof input.version75!=="boolean" && input.version75!==0 && input.version75!==1)
+            invalid("INVALID_FLAG","version75 is not a supported flag.");
+        if(input.currentTheme!==undefined && typeof input.currentTheme!=="string")
+            invalid("INVALID_OPTION","currentTheme must be text.");
+        for(const key of ["completedActions","loadoutnames","unreadActionStories"])
+            if(input[key]!==undefined && (!Array.isArray(input[key]) || input[key].some(x=>typeof x!=="string")))
+                invalid("INVALID_ARRAY",key+" must contain strings.");
+        if(input.hiddenVars!==undefined && (!Array.isArray(input.hiddenVars) || input.hiddenVars.some(x=>!Array.isArray(x)||x.some(y=>typeof y!=="string"))))
+            invalid("INVALID_HIDDEN","Hidden action lists must contain text.");
+        for(const name of ["dungeons","trials"]) {
+            if(input[name]===undefined) continue;
+            for(const [i,group] of input[name].entries()) {
+                if(!Array.isArray(group)) invalid("INVALID_ARRAY",name+" must contain floor lists.");
+                for(const [j,floor] of group.entries()) {
+                    if(floor===null) continue; // historically missing floors are reconstructed
+                    const label=name+"["+i+"]["+j+"]";
+                    allowed(floor,new Set(name==="dungeons"?["completed","ssChance","lastStat"]:["completed"]),label);
+                    if(floor.completed!==undefined) num(floor.completed,label+".completed",0,true);
+                    if(floor.ssChance!==undefined) num(floor.ssChance,label+".ssChance");
+                    if(floor.lastStat!==undefined && typeof floor.lastStat!=="string")
+                        invalid("INVALID_OBJECT",label+".lastStat must be text.");
+                }
+            }
+        }
+        if(input.actionLog!==undefined) {
+            // ActionLog.toJSON() returns extractStrings(entries): [dictionary, rows].
+            const log=input.actionLog;
+            if(Array.isArray(log)){
+                if(log.length!==2||!Array.isArray(log[0])||!Array.isArray(log[1])||
+                    log[0].some(v=>typeof v!=="string"&&(typeof v!=="number"||!Number.isFinite(v))))
+                    invalid("INVALID_LOG","Action log has an invalid compressed format.");
+            } else if(!record(log)||Object.keys(log).length)
+                invalid("INVALID_LOG","Action log has an unsupported format.");
+        }
+    }
+
+    function validateParsed(input, allowedActionVars = null, contract = {}) {
         const knownActionVars = allowedActionVars === null ? null : new Set(allowedActionVars);
+        const actionsByVar = contract.actions ? new Map(contract.actions.map(a=>[a.varName,a.type])) : null;
         if (!record(input)) invalid("INVALID_ROOT", "The save must contain a JSON object.");
         checkFiniteStructure(input);
 
@@ -114,7 +224,13 @@ var SaveImport = (() => {
         }
         for (const key of keys) {
             const dynamic = dynamicSaveField.exec(key);
-            if (!allowedFields.has(key) && !(dynamic && (knownActionVars === null || knownActionVars.has(dynamic[2])))) {
+            const actionType = dynamic && actionsByVar?.get(dynamic[2]);
+            const allowedFamily = !actionsByVar || !dynamic || (
+                (dynamic[1]==="exp" && actionType==="progress") ||
+                (dynamic[1]==="total" && ["limited","multipart"].includes(actionType)) ||
+                (["checked","good","goodTemp","searchToggler"].includes(dynamic[1]) && actionType==="limited")
+            );
+            if (!allowedFields.has(key) && !(dynamic && (knownActionVars === null || knownActionVars.has(dynamic[2])) && allowedFamily)) {
                 invalid("UNSUPPORTED_FIELD", "This save contains unsupported data fields. Keep your original export.");
             }
         }
@@ -177,14 +293,20 @@ var SaveImport = (() => {
         if (input.date !== undefined && Number.isNaN(Date.parse(input.date))) {
             invalid("INVALID_DATE", "The saved date is invalid.");
         }
-        if (input.actionLog !== undefined && !record(input.actionLog)) {
-            invalid("INVALID_LOG", "The action log is invalid.");
+        validateDomain(input,contract);
+        for(const [key,value] of Object.entries(input)){
+            const dynamic=dynamicSaveField.exec(key);
+            if(!dynamic || allowedFields.has(key)) continue;
+            if(dynamic[1]==="searchToggler") {
+                if(typeof value!=="boolean") invalid("INVALID_FLAG",key+" must be a boolean.");
+            } else if(!isFiniteNonnegative(value))
+                invalid("INVALID_NUMBER",key+" must be a finite nonnegative number.");
         }
         return input;
     }
 
-    function normalizeParsed(input, allowedActionVars = null) {
-        const copy = JSON.parse(JSON.stringify(validateParsed(input, allowedActionVars)));
+    function normalizeParsed(input, allowedActionVars = null, contract = {}) {
+        const copy = JSON.parse(JSON.stringify(validateParsed(input, allowedActionVars, contract)));
         const normalizeList = (list) => {
             for (const entry of list) if (aliases.has(entry.name)) entry.name = aliases.get(entry.name);
         };
@@ -302,7 +424,7 @@ var SaveImport = (() => {
         } catch {
             invalid("INVALID_JSON", "The save contains invalid JSON.");
         }
-        const normalized = normalizeParsed(parsed, decoders.allowedActionVars ?? null);
+        const normalized = normalizeParsed(parsed, decoders.allowedActionVars ?? null, decoders.contract ?? {});
         return {
             ...normalized,
             json:JSON.stringify(normalized.data),
