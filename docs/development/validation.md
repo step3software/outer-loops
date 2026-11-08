@@ -13,6 +13,7 @@ npm run test:rf01:challenges
 npm run test:rf02:preflight
 npm run test:rf02:transaction
 npm run test:rf03:model
+npm run test:rf04:model
 npm run check:mechanics
 python scripts/check-xml.py
 npm run test:browser
@@ -27,6 +28,14 @@ npm run test:browser
 `npm run test:rf03:model` runs synthetic source-backed, DOM-less checks for authoritative buff caps and snapshots, pure Escape eligibility, first positive mana-spending activation, all 18 numeric/nine boolean resources, nonfinite-result rejection and stable loop-reset references. `npm run test:browser` also checks edited cap inputs, rejected blank edits, save/reload and a real DOM-less Worker imported from classic game scripts. The existing RF01 Escape/R04 assertions now require the corrected behavior; R15 Gods Trial parity is unchanged.
 
 The separate [RF03 evidence ledger](../refactoring/rf03-evidence.md) records which checks actually ran. A successful isolated V8 model evaluation does **not** establish that Node, real Chrome, the complete worker predictor or full CI checks have run.
+
+## RF04 stable challenge policy (candidate)
+
+`npm run test:rf04:model` uses isolated production-source VMs for identities, mode 0–3 transitions, exact Mana Drought conversion, Noodle Arms combat, Mana Burn zero/negative budget and snapshotted merchant balance. `test:rf01:challenges` retains the baseline numeric outcomes but replaces its previously intentional callback-overwrite assertions with stable-identity assertions.
+
+`npm run test:browser` adds disposable Chrome/production-Worker comparisons for mode-specific Buy Mana Z1 trades, a mode-2 combat queue and a mode-3 queue. It also checks callback identity and the Mana Burn zero-budget boundary. Mode and merchant inventory are passed as forecast-only `runData`, not read from Worker-global challenge state.
+
+**Current evidence:** these tests are committed in [RF04 draft PR #21](https://github.com/step3software/outer-loops/pull/21), but no real Node/Chrome/CI run has yet been reported for its head. See [RF04 ledger](../refactoring/rf04-evidence.md).
 
 ## Documentation and Orcha integration
 
@@ -93,7 +102,7 @@ Use a *disposable* profile or exported test save. For each row, record browser, 
 | Export/import | Export a test save and import into disposable profile | Export prefix and restored state are coherent |
 | Predictor off/on | Compare predicted and actual short queue results | Predictor doesn't alter live state and forecasts remain plausible |
 | Background worker | Enable background predictor and edit queue | No worker errors or permanent stale predictions |
-| Challenge mode | Enter/exit a supported challenge in a test profile | Challenge overrides and original save slot behave correctly |
+| Challenge mode | Enter/exit a supported challenge in a test profile | Stable mode rules and independent normal/challenge slot behavior |
 | Prestige | In a suitable disposable progressed save, prestige | Selected permanent buffs persist; other progression resets as designed |
 | Responsive + theme | Resize viewport, switch themes, use keyboard | Controls, focus, tooltips and action bar remain usable |
 | Content editor | Open `/editor.html` and load XML/schema | Editor loads independently, without affecting game state |
