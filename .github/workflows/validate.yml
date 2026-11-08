@@ -36,6 +36,8 @@ jobs:
         run: npm run test:rf02:transaction
       - name: RF03 pure gameplay rules and resource contract
         run: npm run test:rf03:model
+      - name: RF04 stable challenge rule parity
+        run: npm run test:rf04:model
       - name: RW00 deterministic balance contracts
         timeout-minutes: 1
         run: npm run test:balance
