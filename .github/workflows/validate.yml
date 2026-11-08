@@ -3,7 +3,7 @@ name: Static validation
 on:
   pull_request:
   push:
-    branches: ["dmchurch"]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -30,6 +30,10 @@ jobs:
         run: npm run test:rf01:model
       - name: RF01 original challenge rules characterization
         run: npm run test:rf01:challenges
+      - name: RF02 pure preflight and legacy compatibility
+        run: npm run test:rf02:preflight
+      - name: RF02 storage transaction and injected failures
+        run: npm run test:rf02:transaction
       - name: RW00 deterministic balance contracts
         timeout-minutes: 1
         run: npm run test:balance

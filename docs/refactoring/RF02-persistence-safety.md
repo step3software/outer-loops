@@ -1,6 +1,6 @@
 # RF02 — Persistence safety
 
-**Status:** Preparation complete — documentation only; **implementation remains separately authorized and has not started**.
+**Status:** Implementation candidate in [draft PR #16](https://github.com/step3software/outer-loops/pull/16), unmerged and pending acceptance evidence. Source remains governed by the legacy Orcha approval record.
 - **Priority:** After RF01
 - **Hard dependencies:** RF01's current/legacy synthetic save, corrupt-import, challenge-slot and restart fixtures
 - **Enables:** Safe resource/state contracts in RF03 and challenge save transitions in RF04
@@ -61,4 +61,4 @@ Start from RF01 F08–F09 and add:
 
 Suggested implementation stages: (1) failing/characterization fixtures; (2) pure decode + normalized validation/migration API; (3) recoverable storage/commit boundary; (4) UI error handling + backward compatibility integration; (5) docs and end-to-end tests. Commit only completed slices that maintain readable legacy data. Rollback: revert the new import path while leaving backup data intact; document any new stored keys and how to read them with the previous build.
 
-RF03 can proceed once RF02's serialization/resource representation and current slot/backup invariants are stable. Start only on separately authorized implementation request; do not merge without review.
+RF03 can proceed once RF02's serialization/resource representation and current slot/backup invariants are stable. Implementation was explicitly requested after plan acceptance on 2026-11-07. Keep draft PR #16 unmerged until the full safety matrix, reviewed ADR, and separately authorized merge.

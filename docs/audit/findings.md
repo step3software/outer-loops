@@ -10,7 +10,7 @@ These are **auditable findings**, not an assertion that every candidate is a rep
 
 **Consequence:** if a nonempty decoded save is invalid JSON or incompatible, the existing local save can be overwritten before parsing fails. **RF01 reproduced this overwrite with nonempty invalid-JSON `ILSV01` data in an isolated Chrome profile** (see [RF01 evidence](../refactoring/rf01-evidence.md) F09), restoring the test slot afterward. This is a **data-loss risk** for users; no actual incident is asserted.
 
-**Acceptance for a future fix:** validate JSON and required structure before replacing any active save; keep the prior copy recoverable; demonstrate invalid, truncated, old-format and valid imports using a disposable profile. Preserve `ILSV01` and compatibility.
+**RF02 candidate:** [draft PR #16](https://github.com/step3software/outer-loops/pull/16) preflights decoded saves and uses a journaled backup/rollback boundary. Bounded decode and synthetic storage-failure checks were exercised in isolated V8, but full Chrome/CI evidence is outstanding. **R01 remains unresolved until the complete acceptance matrix passes.** Preserve ILSV01 and historic compatibility.
 
 ### R02 — Numeric resource setter accepts NaN/Infinity as assignment (medium; confirmed code path)
 

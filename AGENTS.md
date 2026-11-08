@@ -4,7 +4,7 @@ These instructions apply to the entire repository. Read [.orcha/repository.json]
 
 ## Project identity
 
-Outer Loops is an independently maintained fork of Idle Loops: `step3software/outer-loops`, forked from `dmchurch/omsi-loops`, ultimately descended from `omsi6/omsi6.github.io`. It is a browser-based incremental/time-loop game, not a Node server or bundled SPA. The current default branch is `dmchurch`. Upstream code has no GitHub-recognized license; do not assume commercial reuse rights or add a license without the rights holder's authorization. See `docs/reference/upstream-and-rights.md`.
+Outer Loops is an independently maintained fork of Idle Loops: `step3software/outer-loops`, forked from `dmchurch/omsi-loops`, ultimately descended from `omsi6/omsi6.github.io`. It is a browser-based incremental/time-loop game, not a Node server or bundled SPA. The current default branch is `main`. Upstream code has no GitHub-recognized license; do not assume commercial reuse rights or add a license without the rights holder's authorization. See `docs/reference/upstream-and-rights.md`.
 
 ## Shared process and authority
 
@@ -16,7 +16,7 @@ Use `standards_resolver` to verify applicable document hashes; record the revisi
 paths and hashes for the run. Links alone do not load instructions. Offline workers
 receive the host's captured text. Do not pin shared versions or require module adoption.
 
-The manifest preserves `dmchurch` as canonical source and `legacy` milestone
+The manifest preserves `main` as canonical source and `legacy` milestone
 authority. Existing Orcha workflow records retain stage/approval authority; the
 [RF register](docs/refactoring/README.md) retains source delivery history and links
 to canonical specifications. Do not create a competing status ledger or treat
@@ -62,7 +62,7 @@ The approved [RF01–RF06 planning register](docs/refactoring/README.md) is not 
 3. Update the relevant documentation and `docs/reference/action-catalog.md` when action definitions change. Record major decisions as ADRs in `docs/decisions/`.
 4. For documentation-only changes, run `npm run check`, XML validation when Python is available, and focused manifest/standards validation when `.orcha/` changes. For code changes, run the automated baseline and affected cases in [validation](docs/development/validation.md), including RF01 characterization checks. These are **not** a complete gameplay, save-migration or predictor-parity suite.
 5. Exercise relevant scenarios with `docs/development/validation.md`, including at least one save/reload and loop restart for state-affecting changes.
-6. Publish through the authorized host path as a draft PR against `dmchurch`. Include scope, changed mechanics if any, compatibility, exact revision, test evidence, and what was **not** tested. Verify the remote result before releasing owned writer protection. Do not merge without explicit authorization.
+6. Publish through the authorized host path as a draft PR against `main`. Include scope, changed mechanics if any, compatibility, exact revision, test evidence, and what was **not** tested. Verify the remote result before releasing owned writer protection. Do not merge without explicit authorization.
 
 ## Change-specific checks
 

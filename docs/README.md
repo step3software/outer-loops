@@ -1,6 +1,6 @@
 # Outer Loops engineering handbook
 
-Entry point for developers and coding agents. The code is authoritative; these documents describe the checked-in `dmchurch` lineage as of the documentation baseline and must evolve with behavior changes.
+Entry point for developers and coding agents. The code is authoritative; these documents describe the current `main` codebase, derived from the `dmchurch` lineage and must evolve with behavior changes.
 
 ## Read first
 
@@ -8,7 +8,7 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [Architecture](architecture.md) — classic-script load sequence, tick engine and state ownership
 - [Code map](reference/code-map.md) — where to inspect and change code
 - [Orcha adapter](development/ai-workflow.md) — current shared procedure routing, local branch/check rules, legacy authority and host handoff
-- [Repository manifest](../.orcha/repository.json) — `dmchurch` source, standards from Orcha `main`, local contracts; no automation activation
+- [Repository manifest](../.orcha/repository.json) — `main` source, standards from Orcha `main`, local contracts; no automation activation
 
 ## System guides
 

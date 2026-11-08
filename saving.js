@@ -1,4 +1,14 @@
 function startGame() {
+    // Before loading any potentially half-imported save, restore the last
+    // committed values from an interrupted RF02 import journal.
+    try {
+        if (restoreInterruptedImport()) {
+            alert("An interrupted save import was rolled back. Your previous saves were restored.");
+        }
+    } catch {
+        alert("Save recovery needs attention. Do not clear this site's data; export your saved files or contact support.");
+        return; // Never load potentially damaged import data as a new save.
+    }
     // load calls recalcInterval, which will start the callbacks
     load();
     setScreenSize();
@@ -1421,6 +1431,11 @@ function doSave() {
 }
 
 function save() {
+    // A previous import may have failed mid-apply. The original bytes must
+    // remain protected until the recovery journal has been replayed.
+    if (window.localStorage.getItem(importPendingKey) !== null) {
+        throw new Error("Save is blocked until the interrupted import is recovered.");
+    }
     const toSave = doSave();
     const saveJson = JSON.stringify(toSave);
     storeSaveJson(saveJson);
@@ -1447,35 +1462,320 @@ function importSave() {
     processSave(saveData);
 }
 
-function processSave(saveData) {
-    if (saveData === "") {
-        if (confirm("Importing nothing will delete your save. Are you sure you want to delete your save?")) {
-            challengeSave = {};
-            clearSave();
-        } else {
-            return;
+// Import recovery metadata is separate from the long-established prestige
+// backup. One last successful pre-import snapshot is retained for EACH slot.
+// All keys are private to this origin; user save exports remain ILSV01.
+
+function getImportContract() {
+    return {
+        actions: totalActionList.map(a=>({name:a.name,varName:a.varName,type:a.type})),
+        statNames: statList.slice(),
+        skillNames: skillList.slice(),
+        buffNames: buffList.slice(),
+        storyFlags: Object.keys(storyFlags),
+        storyVars: Object.keys(storyVars),
+        optionTypes: Object.fromEntries(Object.entries(options).map(([k,v])=>[k,typeof v])),
+    };
+}
+
+const importPendingKey = "idleLoopsImportPendingV1";
+function importBackupKey(slot) {
+    return "idleLoopsImportBackupV1_" + (slot === challengeSaveName ? "challenge" : "normal");
+}
+const importTrackedKeys = [
+    defaultSaveName, challengeSaveName, "prestigeBackup", "updateRate",
+    importBackupKey(defaultSaveName), importBackupKey(challengeSaveName),
+];
+
+/** @returns {Record<string,string|null>} */
+function snapshotBeforeImport() {
+    return Object.fromEntries(importTrackedKeys.map(key => [key, window.localStorage.getItem(key)]));
+}
+
+/** Store exact bytes or the absence of a key; unlike storeSaveJson, errors propagate. */
+function putImportBytes(key, value) {
+    const store = window.localStorage;
+    if (value === null) store.removeItem(key);
+    else store.setItem(key, value);
+    if (store.getItem(key) !== value) {
+        throw new Error("The browser did not finish writing the save.");
+    }
+}
+
+/**
+ * Recover an interrupted transaction, including both slots and the previously
+ * existing recovery copies. The journal remains if a restore write fails; a
+ * later boot can retry. No gameplay file, OAuth token or real save is logged.
+ */
+function restoreInterruptedImport() {
+    const raw = window.localStorage.getItem(importPendingKey);
+    if (raw === null) return false;
+    const journal = JSON.parse(raw);
+    if (journal?.version !== 1 || !journal.before || typeof journal.before !== "object"
+        || !importTrackedKeys.every(key => Object.hasOwn(journal.before, key)
+              && (journal.before[key] === null || typeof journal.before[key] === "string"))) {
+        throw new Error("Unrecognized save-recovery journal.");
+    }
+    // Free space held by candidate save(s), but keep the journal until every
+    // old value is verified. This also helps on a quota-constrained browser.
+    for (const slot of [defaultSaveName, challengeSaveName]) {
+        if (window.localStorage.getItem(slot) !== journal.before[slot]) {
+            window.localStorage.removeItem(slot);
         }
     }
-    let saveJson = "";
-    // idle loops save version 01. patch v0.94, moved from old save system to lzstring base 64
-    if (saveData.substr(0, 6) === "ILSV01") {
-        saveJson = LZString.decompressFromBase64(saveData.substr(6));
-    } else {
-        // handling for old saves from stopsign or patches prior to v0.94
-        saveJson = decode(saveData);
+    for (const key of importTrackedKeys) {
+        if (window.localStorage.getItem(key) !== journal.before[key]) {
+            putImportBytes(key, journal.before[key]);
+        }
     }
-    if (saveJson) {
-        storeSaveJson(saveJson);
+    window.localStorage.removeItem(importPendingKey);
+    if (window.localStorage.getItem(importPendingKey) !== null) {
+        throw new Error("The import recovery marker could not be cleared.");
     }
-    actions.clearActions();
-    actions.current = [];
-    load(null, saveJson);
-    pauseGame();
-    restart();
+    return true;
+}
+
+/** @param {string} slot */
+function restorePreviousImport(slot = saveName) {
+    if (slot !== defaultSaveName && slot !== challengeSaveName) {
+        alert("Choose the normal or challenge save to restore.");
+        return false;
+    }
+    if (window.localStorage.getItem(importPendingKey) !== null) {
+        alert("An import recovery is pending. Reload before restoring an earlier save.");
+        return false;
+    }
+    const raw = window.localStorage.getItem(importBackupKey(slot));
+    let backup;
+    try { backup = raw ? JSON.parse(raw) : null; }
+    catch { backup = null; }
+    if (!backup || backup.version !== 1 || backup.slot !== slot || typeof backup.prior !== "string" || !backup.prior) {
+        alert("No readable previous save is available for the selected mode.");
+        return false;
+    }
+    const label = slot === challengeSaveName ? "challenge" : "normal";
+    if (!confirm("Restore the previous " + label + " save? The other slot and prestige backup will remain unchanged.")) {
+        return false;
+    }
+    try {
+        // Validate without normalizing or changing the stored bytes.
+        const checked = SaveImport.prepareStoredJson(backup.prior, {
+            allowedActionVars: totalActionList.map(action => action.varName).filter(Boolean),
+            contract: getImportContract(),
+        });
+        const mode = checked.data.challengeSave?.challengeMode ?? 0;
+        if ((slot === challengeSaveName && mode === 0) || (slot === defaultSaveName && mode > 0)) {
+            throw new Error("The previous save does not match the selected slot.");
+        }
+        return applyProtectedRestore(slot, backup.prior);
+    } catch (error) {
+        const pending = window.localStorage.getItem(importPendingKey) !== null;
+        alert(pending
+            ? "Recovery is pending. Reload the page without clearing its data."
+            : error instanceof SaveImport.SaveImportError ? error.message : "Could not safely restore that save.");
+        return false;
+    }
+}
+
+/**
+ * Restore byte-identical previously saved JSON into an explicit slot.
+ * Inactive-slot recovery never changes the live world or its active slot.
+ * Active-slot recovery reloads only after the journal is finalized.
+ */
+function applyProtectedRestore(slot, priorBytes) {
+    if (window.localStorage.getItem(importPendingKey) !== null) {
+        throw new Error("Resolve the pending import before restoring a backup.");
+    }
+    const before = snapshotBeforeImport();
+    let journalWritten = false;
+    try {
+        putImportBytes(importPendingKey, JSON.stringify({version: 1, before}));
+        journalWritten = true;
+        putImportBytes(slot, priorBytes);
+        const current = before[slot];
+        if (current !== null && current !== "") {
+            putImportBytes(importBackupKey(slot), JSON.stringify({version: 1, slot, prior: current}));
+        }
+        putImportBytes(importPendingKey, null);
+    } catch (error) {
+        if (journalWritten) {
+            try { restoreInterruptedImport(); }
+            catch {
+                if (typeof stopGame === "function") stopGame();
+                throw new Error("Save rollback is pending; do not clear browser data.");
+            }
+        }
+        throw error;
+    }
+    if (slot === saveName) location.reload();
+    return true;
+}
+
+/**
+ * Apply a pure-preflighted save behind an exact-byte journal.
+ * A failed apply rolls back both slots; startup also rolls back an interrupted
+ * operation, rather than trusting an incompletely installed imported save.
+ *
+ * @param {ReturnType<typeof SaveImport.prepare>} prepared
+ */
+function applyProtectedImport(prepared) {
+    if (window.localStorage.getItem(importPendingKey) !== null) {
+        throw new Error("Resolve the previous interrupted import before importing another save.");
+    }
+
+    const previousSlot = saveName;
+    const importedMode = prepared.data.challengeSave?.challengeMode ?? 0;
+    const isChallengeImport = importedMode > 0;
+    if (!isChallengeImport && previousSlot === challengeSaveName) {
+        throw new Error("Exit your active challenge before importing a normal save.");
+    }
+    if (!isChallengeImport && prepared.data.challengeSave?.inChallenge) {
+        throw new Error("This normal save references an active challenge. Restore its matching challenge save first.");
+    }
+
+    const before = snapshotBeforeImport();
+    /** @type {Record<string,string>} */
+    const writes = {};
+    const target = isChallengeImport ? challengeSaveName : defaultSaveName;
+    writes[target] = prepared.json;
+
+    if (isChallengeImport && previousSlot === defaultSaveName) {
+        // Equivalent to beginning a challenge: keep current normal-world
+        // progress but record that a challenge should resume after reload.
+        const normal = JSON.parse(JSON.stringify(doSave()));
+        normal.challengeSave = {challengeMode: 0, inChallenge: true};
+        writes[defaultSaveName] = JSON.stringify(normal);
+    }
+
+    const journal = JSON.stringify({version: 1, before});
+    let journalWritten = false;
+    let loadStarted = false;
+    try {
+        // A failure at this step leaves both game slots/older backups intact.
+        putImportBytes(importPendingKey, journal);
+        journalWritten = true;
+        for (const [slot, bytes] of Object.entries(writes)) putImportBytes(slot, bytes);
+
+        saveName = target;
+        loadStarted = true;
+        load(isChallengeImport, prepared.json);
+        pauseGame();
+        restart();
+
+        // Backups are rotated only after the imported save has loaded. Any
+        // exception during rotation is covered by the journal above.
+        for (const slot of Object.keys(writes)) {
+            const prior = before[slot];
+            if (prior !== null && prior !== "") {
+                putImportBytes(importBackupKey(slot), JSON.stringify({
+                    version: 1, slot, prior
+                }));
+            }
+        }
+
+        window.localStorage.removeItem(importPendingKey);
+        if (window.localStorage.getItem(importPendingKey) !== null) {
+            throw new Error("Save import could not complete its recovery journal.");
+        }
+        return true;
+    } catch (error) {
+        // Even a partially written target is safe while the journal exists.
+        let restored = !journalWritten;
+        if (journalWritten) {
+            try {
+                restoreInterruptedImport();
+                restored = true;
+            } catch {
+                restored = false;
+            }
+        }
+        if (loadStarted && restored) {
+            saveName = previousSlot;
+            // Do not continue playing in state partially changed by doLoad.
+            // The journal has restored the previous saved bytes first.
+            location.reload();
+        }
+        if (!restored) {
+            if (typeof stopGame === "function") stopGame();
+            throw new Error("Save import failed and automatic recovery is pending. Reload to retry recovery; do not clear browser data.");
+        }
+        throw error;
+    } finally {
+        if (!loadStarted) saveName = previousSlot;
+    }
+}
+
+/**
+ * Existing clipboard, file, and Google Drive import entry point.
+ * The only blank-input deletion route is the explicit confirmation below;
+ * failed decompression or an invalid nonempty payload can never clear a save.
+ */
+function processSave(saveData) {
+    if (window.localStorage.getItem(importPendingKey) !== null) {
+        alert("Save recovery is pending. Reload this page and recover the previous save before importing or clearing anything.");
+        return false;
+    }
+    if (saveData === "") {
+        if (!confirm("Importing an empty save will delete BOTH normal and challenge progress. Export a backup first. Continue?")) {
+            return false;
+        }
+        // Intentional deletion is also a recoverable, journaled transaction.
+        // Do not remove the journal until both slots are confirmed cleared.
+        let journalWritten = false;
+        try {
+            const before = snapshotBeforeImport();
+            putImportBytes(importPendingKey, JSON.stringify({version:1,before}));
+            journalWritten = true;
+            for (const slot of [defaultSaveName, challengeSaveName]) {
+                if (before[slot]) putImportBytes(importBackupKey(slot), JSON.stringify({
+                    version:1,slot,prior:before[slot]
+                }));
+            }
+            putImportBytes(defaultSaveName, "");
+            putImportBytes(challengeSaveName, "");
+            putImportBytes(importPendingKey, null);
+        } catch {
+            let restored = !journalWritten;
+            if (journalWritten) {
+                try { restoreInterruptedImport(); restored = true; }
+                catch { restored = false; }
+            }
+            if (!restored && typeof stopGame === "function") stopGame();
+            alert(restored
+                ? "Could not safely delete the saves. Your previous progress was preserved."
+                : "Save recovery is pending. Do not clear browser data; reload to retry recovery.");
+            return false;
+        }
+        challengeSave = {};
+        location.reload();
+        return true;
+    }
+
+    try {
+        const candidate = SaveImport.prepare(saveData, {
+            boundedDecompress: SaveImport.decompressBoundedBase64,
+            boundedLegacyDecode: text => SaveImport.decompressBoundedLegacy(text, Base64.decode.bind(Base64)),
+            allowedActionVars: totalActionList.map(action => action.varName).filter(Boolean),
+            contract: getImportContract(),
+        });
+        return applyProtectedImport(candidate);
+    } catch (error) {
+        const recoveryPending = window.localStorage.getItem(importPendingKey) !== null;
+        const safeMessage = recoveryPending
+            ? "Automatic recovery is pending. Reload to retry recovery; do not clear browser data."
+            : error instanceof SaveImport.SaveImportError
+                ? error.message
+                : "The previous saved progress was preserved or restored.";
+        alert("Save import failed. " + safeMessage);
+        return false;
+    }
 }
 
 let overquotaWarned = false;
 function storeSaveJson(saveJson) {
+    if (window.localStorage.getItem(importPendingKey) !== null) {
+        throw new Error("Cannot write a save while import recovery is pending.");
+    }
     try {
         window.localStorage[saveName] = saveJson;
     } catch (e) {
