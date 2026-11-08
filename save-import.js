@@ -132,22 +132,25 @@ var SaveImport = (() => {
             if (obj.level !== undefined) num(obj.level,label+".level",0,true);
             if (obj.exp !== undefined) num(obj.exp,label+".exp");
         };
-        named(input.stats,new Set(contract.statNames ?? ["Dex","Str","Con","Spd","Per","Cha","Int","Luck","Soul"]),"stats",(obj,label) => {
-            allowed(obj,new Set(["statLevelExp","talentLevelExp","soullessLevelExp","soulstone","prestigeBuff","exp","talent"]),label);
+        named(input.stats,new Set(contract.statNames ?? ["Dex","Str","Con","Spd","Per","Cha","Int","Luck","Soul"]),"stats",(obj,label,key) => {
+            allowed(obj,new Set(["name","statLevelExp","talentLevelExp","soullessLevelExp","soulstone","prestigeBuff","exp","talent"]),label);
+            if(obj.name!==undefined && obj.name!==key) invalid("INVALID_OBJECT",label+" has mismatched identity.");
             for (const key of ["statLevelExp","talentLevelExp","soullessLevelExp"]) if (obj[key]!==undefined) level(obj[key],label+"."+key);
             for (const key of ["soulstone","exp","talent"]) if (obj[key]!==undefined) num(obj[key],label+"."+key);
             if (obj.prestigeBuff!==undefined && !["PrestigePhysical","PrestigeMental"].includes(obj.prestigeBuff))
                 invalid("INVALID_OBJECT",label+" has an invalid modifier.");
         });
-        named(input.skills,new Set(contract.skillNames ?? ["Combat","Magic","Practical","Alchemy","Crafting","Dark","Chronomancy","Pyromancy","Restoration","Spatiomancy","Mercantilism","Divine","Commune","Wunderkind","Gluttony","Thievery","Leadership","Assassin"]),"skills",(obj,label) => {
-            allowed(obj,new Set(["levelExp","statLevelExp","change","exp"]),label);
+        named(input.skills,new Set(contract.skillNames ?? ["Combat","Magic","Practical","Alchemy","Crafting","Dark","Chronomancy","Pyromancy","Restoration","Spatiomancy","Mercantilism","Divine","Commune","Wunderkind","Gluttony","Thievery","Leadership","Assassin"]),"skills",(obj,label,key) => {
+            allowed(obj,new Set(["name","levelExp","statLevelExp","change","exp"]),label);
+            if(obj.name!==undefined && obj.name!==key) invalid("INVALID_OBJECT",label+" has mismatched identity.");
             for (const key of ["levelExp","statLevelExp"]) if (obj[key]!==undefined) level(obj[key],label+"."+key);
             if (obj.exp!==undefined) num(obj.exp,label+".exp");
             if (obj.change!==undefined) {num(obj.change,label+".change",0,true);if(obj.change>3) invalid("INVALID_NUMBER",label+" has unsupported skill type.");}
         });
         const buffs=new Set(contract.buffNames ?? ["Ritual","Imbuement","Imbuement2","Feast","Aspirant","Heroism","Imbuement3","PrestigePhysical","PrestigeMental","PrestigeCombat","PrestigeSpatiomancy","PrestigeChronomancy","PrestigeBartering","PrestigeExpOverflow"]);
-        named(input.buffs,buffs,"buffs",(obj,label) => {
-            allowed(obj,new Set(["amt"]),label);
+        named(input.buffs,buffs,"buffs",(obj,label,key) => {
+            allowed(obj,new Set(["name","amt"]),label);
+            if(obj.name!==undefined && obj.name!==key) invalid("INVALID_OBJECT",label+" has mismatched identity.");
             if (obj.amt!==undefined) num(obj.amt,label+".amt");
         });
         named(input.buffCaps,buffs,"buffCaps",(v,label)=>num(v,label));
