@@ -1927,10 +1927,19 @@ function adjustActionListSize(amt) {
     saveUISettings();
 }
 
-function updateBuffCaps() {
-    for (const buff of buffList) {
-        inputElement(`buff${buff}Cap`).value = String(Math.min(parseInt(inputElement(`buff${buff}Cap`).value), buffHardCaps[buff]));
-        buffCaps[buff] = parseInt(inputElement(`buff${buff}Cap`).value);
+function updateBuffCaps(changedBuff) {
+    // The active input edits only its own cap, not potentially stale inputs.
+    // Keep the no-argument form for existing callers.
+    for (const buff of changedBuff === undefined ? buffList : [changedBuff]) {
+        const input = inputElement(`buff${buff}Cap`);
+        try {
+            const value = input.value.trim();
+            if (!/^\d+$/.test(value)) throw new RangeError(`Invalid buff cap for ${buff}`);
+            setBuffCap(buff, Number(value));
+        } catch (error) {
+            console.warn(error.message);
+        }
+        input.value = String(getBuffCap(buff));
     }
 }
 
