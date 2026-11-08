@@ -467,12 +467,19 @@ function getBuffLevel(buff) {
 
 /** @param {BuffName} buff */
 function getBuffCap(buff) {
-    // Fixme please! I need to have a storage in data space
-    const input = document.getElementById(`buff${buff}Cap`);
-    if (input instanceof HTMLInputElement) {
-        return parseInt(input.value)
+    if (!Object.hasOwn(buffCaps, buff)) {
+        throw new RangeError(`Unknown buff cap: ${buff}`);
     }
-    throw Error(`buff${buff}Cap not HTMLInputElement?`);
+    return buffCaps[buff];
+}
+
+/** @param {BuffName} buff @param {number} value */
+function setBuffCap(buff, value) {
+    if (!Object.hasOwn(buffHardCaps, buff) ||
+        !Number.isInteger(value) || value < 0 || value > buffHardCaps[buff]) {
+        throw new RangeError(`Invalid buff cap for ${buff}`);
+    }
+    buffCaps[buff] = value;
 }
 
 function getRitualBonus(min, max, speed)
