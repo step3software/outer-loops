@@ -32,18 +32,20 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [Evidence-based findings](audit/findings.md)
 - [Coverage and unverified behavior](audit/coverage.md)
 
-## Refactoring program — RF01 merged, RF02 prepared
+## Refactoring program — RF01–RF03 merged, RF04 draft
 
 - [RF01–RF06 milestone register and current status](refactoring/README.md)
 - [RF01 implemented regression coverage and remaining gaps](refactoring/rf01-evidence.md)
 - [RF02 persistence-safety charter](refactoring/RF02-persistence-safety.md)
 - [RF02 implementation readiness and source-based transaction proposal](refactoring/rf02-readiness.md)
-- [RF02 proposed save, import, quota and recovery tests](refactoring/rf02-test-matrix.md)
+- [RF02 safety acceptance matrix and correction evidence](refactoring/rf02-test-matrix.md)
+- [RF03 current verification](refactoring/rf03-evidence.md)
+- [RF04 candidate verification](refactoring/rf04-evidence.md)
 - [Cross-milestone validation matrix](refactoring/validation-matrix.md)
 - [Decision log and unresolved implementation choices](refactoring/decision-log.md)
 - [Implementation handoffs, including RF02](refactoring/handoffs/README.md)
 
-**RF02–RF06 implementation remains unstarted** until separately authorized. Documentation alone never permits a code change or merge.
+**RF02, RF03 and recovery correction #24 are merged; RF04 remains draft #21.** PR #23 delivers the Windows cleanup correction and current milestone records; all 20 selected checks pass, including timing, recovery, full browser/Worker smoke, cleanup regression and calibration. See [current evidence](refactoring/rf02-rf04-fix-evidence.md). RF04 retains its earlier candidate result; RF05–RF06, approvals, acceptance and deployment remain unchanged.
 
 ## Future Outer Loop / Real World design (not implemented)
 

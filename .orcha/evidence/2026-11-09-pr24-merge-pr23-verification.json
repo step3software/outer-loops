@@ -1,0 +1,955 @@
+{
+  "schema": "outer-loops.merge-reverification/v1",
+  "observed_at": "2026-11-09T20:01:25.920999+00:00",
+  "owner_request": "Review and merge PR #24 if it passes, then rerun the checks on #23 and update the milestone records.",
+  "orcha_main": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+  "pr24_review": {
+    "schema": "outer-loops.pr-review/v1",
+    "pr": 24,
+    "base": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+    "head": "8522b4564ae5d5abc034acaa6e728a79a8cb54fe",
+    "orcha_main": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+    "finding_count": 0,
+    "disposition": "Ready with disclosed limitations: bounded source review has no blocking findings and all 19 fresh local checks passed; no hosted CI result is claimed",
+    "shared_documents": [
+      {
+        "path": "AGENTS.md",
+        "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+        "git_blob_sha": "bb6f8c7efbe07383736ba6d02939bb557607b904",
+        "sha256": "9f749c4394130b150e4cdabeb4394b9465b2da018d35427f6ef2b9df2412deb6"
+      },
+      {
+        "path": "README.md",
+        "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+        "git_blob_sha": "4a7b7c7b9977902c2c7bf38fe4550811d218b7ce",
+        "sha256": "1d9c3c0ec439a8f2babae6f090ba34368d4ab17946705781a2ed3cdd2fa51858"
+      },
+      {
+        "path": "config/repositories.json",
+        "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+        "git_blob_sha": "e91edec4d7c53966f0880991dcc9fe7af1a1463e",
+        "sha256": "00f76eb618856b51f1c75ee191519a92b575e0231a4d1a2368693a5a76472056"
+      },
+      {
+        "path": "standards/catalog.json",
+        "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+        "git_blob_sha": "1a454e3a1dfb2707a95b8d18e4b11b098a0b4023",
+        "sha256": "42190a534f181561a705d509fdc3d95765d0d3a4cce0312a9760cf5607e32dd3"
+      },
+      {
+        "path": "docs/agent-workflows/review.md",
+        "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+        "git_blob_sha": "1cc0c3dbcadb43dfeb343bed13ae5623cbaec809",
+        "sha256": "7d7d57f531158bb14e71bdaa6103c1bced4ff50219f64e39519320d6b541fe8b"
+      },
+      {
+        "path": "docs/agent-workflows/pr-readiness.md",
+        "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+        "git_blob_sha": "718c4e7ab2411f00cb15ece98cfaa760f1b57115",
+        "sha256": "1fa2406bee3b8a39cfb9a0bed81ab08b56b0672b856fa1324710151d34084b0f"
+      },
+      {
+        "path": "docs/agent-workflows/fix.md",
+        "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+        "git_blob_sha": "e95f8ad2b992e349cbfba12b1d4d28a9bd8eac17",
+        "sha256": "5ccd0b047ab4f7afc906e3ab6a77c03eeda76b2f771ceb47322b4386e26c61c6"
+      },
+      {
+        "path": "docs/agent-workflows/intent-routing.md",
+        "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+        "git_blob_sha": "7444576390bcf93566aa207b7985ed1277b65a33",
+        "sha256": "fc05fdc681d2ae86eedcffad3edf7d8b81ddcfddfd9b7f60ff9bcedb8e096431"
+      },
+      {
+        "path": "docs/agent-workflows/documentation-consolidation.md",
+        "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+        "git_blob_sha": "3929db1f5b0f733a0393831a004ed98fb2d2757b",
+        "sha256": "bbdec70077948b73ae2782d7007c61cbc9c2a47b2f05815e6bcc1899e1a2f9a2"
+      },
+      {
+        "path": "docs/development-workflow.md",
+        "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+        "git_blob_sha": "ab5e4ecd2a34efd8944cb77faa58f103b77a69b5",
+        "sha256": "b304fc38cca8931196ab032b3c4aa014c4dee0bc2c89ca0f0988486702ea1818"
+      },
+      {
+        "path": "docs/pr-development-coordination.md",
+        "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+        "git_blob_sha": "e30ec4eb7f50441565d8ea5b466908b6c4049bf3",
+        "sha256": "8be2fd08b5ee8e89408a18918ab86c6c565025b4be71c77fc0420d0fc07cc7fd"
+      }
+    ],
+    "governing_project_documents": [
+      {
+        "path": "AGENTS.md",
+        "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+        "git_blob_sha": "93453dffa2e744cd3ada371878c69bf01ff4d9e7",
+        "sha256": "c41cf7961ca85a65bc6a798753f37721c42f71c34e44d6908da1c42f103f33c3"
+      },
+      {
+        "path": ".orcha/repository.json",
+        "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+        "git_blob_sha": "c9632210d57fcfd9e8e8086e31a86daf1992a47e",
+        "sha256": "7b827bd3ead0b69c5db34ed372c93aaf2b9441d0d18c7e781932cc908fb5a7ee"
+      },
+      {
+        "path": "docs/README.md",
+        "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+        "git_blob_sha": "703113c2cda384c33e1fe1e33b571b18f067ca41",
+        "sha256": "bc17710100509477943f38e1e3f23ef399964d4c69cd6a3e6350557c7a847784"
+      },
+      {
+        "path": "docs/AGENTS.md",
+        "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+        "git_blob_sha": "e7bc12e566cbc150037c55dff9ee70886c0c01bd",
+        "sha256": "e96cfee4b575814c78a75bbc493f69024183e738c50faeb9e39edb2dfde3813c"
+      },
+      {
+        "path": "docs/refactoring/AGENTS.md",
+        "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+        "git_blob_sha": "ff69cfc488e9301924ab50417b747fc1fcbaae82",
+        "sha256": "fe03a85d968515980e48a2a0ab133bb595e29aed8fc62ff77d3a8bcf2084380c"
+      },
+      {
+        "path": "docs/development/ai-workflow.md",
+        "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+        "git_blob_sha": "6bf8ccbab230051dbc26dadc03b105ef38a68d5b",
+        "sha256": "1f8eb838ca978944fcd8509c871ffff5cdc9524c255b224f5b02d85f6154fe0b"
+      },
+      {
+        "path": "docs/development/validation.md",
+        "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+        "git_blob_sha": "2a638486f524c541279313b3b751b6bde164e466",
+        "sha256": "517189f81d5d26d68896c8b230b9cf02179e287995903fdd9da9cd8a0373ae95"
+      },
+      {
+        "path": "docs/workflow/pr-review.md",
+        "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+        "git_blob_sha": "11354f38c3fe268a53332adb5efe3e9661088ec2",
+        "sha256": "46b7cae018eb35e215e0b8d057ef7d543a0f1dcbe54e46d90332e337ee6bc833"
+      },
+      {
+        "path": "docs/architecture.md",
+        "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+        "git_blob_sha": "82e28609a14e68e0a263ff95aa10492e6c63903e",
+        "sha256": "45f3f64467c3505dc45557f6850ec7cfa5fa41def468ced93fa569857d7e21f6"
+      },
+      {
+        "path": "docs/state-and-saving.md",
+        "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+        "git_blob_sha": "0e8668cc753961d60df84f52f645b7e80fdf6cb6",
+        "sha256": "e0bdb2fd060387fad7a0ef95b418216117282320c7025fe77b714417112e38c9"
+      },
+      {
+        "path": "docs/decisions/ADR-001-recoverable-save-import.md",
+        "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+        "git_blob_sha": "079800c574464ad016ae5f3b1092c589fbddb66d",
+        "sha256": "0b9fe3bb586d1f89bd7b71455094adfb98c9fedf5f8ab69fb150c50e1f3f1003"
+      }
+    ],
+    "resolved_standards": [
+      {
+        "module": "coordination",
+        "path": "docs/pr-development-coordination.md",
+        "sha256": "8be2fd08b5ee8e89408a18918ab86c6c565025b4be71c77fc0420d0fc07cc7fd"
+      },
+      {
+        "module": "intent-routing",
+        "path": "docs/agent-workflows/intent-routing.md",
+        "sha256": "fc05fdc681d2ae86eedcffad3edf7d8b81ddcfddfd9b7f60ff9bcedb8e096431"
+      },
+      {
+        "module": "intent-routing",
+        "path": "docs/agent-workflows/review.md",
+        "sha256": "7d7d57f531158bb14e71bdaa6103c1bced4ff50219f64e39519320d6b541fe8b",
+        "workflow": "review"
+      }
+    ],
+    "path_coverage": {
+      ".orcha/evidence/2026-11-09-rf02-rf04-fix.json": {
+        "coverage": "mechanically verified candidate/document hashes and local log digests; historical evidence, not new approval",
+        "sha256": "3732909db5f5dc2e1ee238bc7f589e2b8f9da99fec9cff7457f97fc97dcf95d1"
+      },
+      "docs/design/outer-loop/calculated-timing-baseline.md": {
+        "coverage": "mechanically verified by regeneration checks and provenance-only text comparison",
+        "sha256": "ca9d77422e9086712d66bc345569c616a529b4e8ff1f1bf499985e43854c4573"
+      },
+      "docs/development/validation.md": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "bcf41092737c3fd0b82a462095bb1643530a263d47c82274024b7cc4559e6a4b"
+      },
+      "docs/refactoring/rf02-rf04-fix-evidence.md": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "d2ff4038bc4537ffdbce911f6bd4ca6c5ca39771c60716d46973b28810276802"
+      },
+      "docs/reference/action-mechanics.generated.md": {
+        "coverage": "mechanically verified by regeneration checks and provenance-only text comparison",
+        "sha256": "e829feb453790166dcd13f974a92820580a74d3800ded15b4a3ec55e43dcaeeb"
+      },
+      "docs/reference/code-map.md": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "b5b28a47e1d1fc3c864c88d7bb2bf092cd14b7ea877ab9fe236a569569acf0f5"
+      },
+      "docs/state-and-saving.md": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "fce87e4311f0dd2a21cb56326e7b408f4facf140af5052a12629d1732f35b5c3"
+      },
+      "package.json": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "a1c35cab8a2209f51f532e429120b40f91c8a8c6fb9683ea7be4d50fc464f849"
+      },
+      "save-import.js": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "405ae0c19ac000a9604f4d252ec1d77389afe909467cd89cc0c578f88d457de5"
+      },
+      "saving.js": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "d42cdb558a56296329b707d5cc3a7d7892cdf341d048f32281e7242e5fe11558"
+      },
+      "scripts/balance/engine.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "123105aee2d3d07c070848e92f2e44afed8cca18a2544f3acfc7aa3c7ad59ce8"
+      },
+      "scripts/balance/potion-runner.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "0155cc99736b566fc8671080f994a2fc04c95647176987e4d95f852fb12560b8"
+      },
+      "scripts/balance/profiler.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "31236874c1b670995792a13fecdd2f3ac9a351a1a079716acd96b5155f2d980f"
+      },
+      "scripts/balance/supervisor-fixture-worker.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "5dcaaaaa53abea741d8e57024021efc23f22b5294bb279aa7f627faf906223eb"
+      },
+      "scripts/balance/supervisor.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "1c87aa00e93aa8aed59bf68a4c30350d2966b5a1bc9353d07fa46ac4a79aa545"
+      },
+      "scripts/browser-test-utils.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "e7d719f51127944b51fb7c3eeb811234a14008c1d997ff64a4f371ed9c249ce4"
+      },
+      "scripts/generate-action-mechanics.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "e835049915f5c2cc7d10d676b1e51937f3ac5e2709ad8ed04e8112514976dd04"
+      },
+      "scripts/generate-balance-timing-report.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "84a92f32a281a3b320940e5465d49b5491f035ab30f590eda41bb7b194b237c0"
+      },
+      "scripts/test-balance-browser.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "328d0c643003636901c1d4530e623fce94ae2a4e024fdf5b9966925f1d4e1cb0"
+      },
+      "scripts/test-balance-contracts.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "26fbb91d65c9491a28f1b553796e7b39a8bec143fc33ff8d145d1df265c53583"
+      },
+      "scripts/test-balance-performance.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "fb178088a2df3a350ae1f7e83bf6304ae67d2637d8b4599934c08360e7e7f287"
+      },
+      "scripts/test-balance-potion.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "0a5b4b732c2f109dc5e12b08f5bd1dd55e7e884678ee05fe50ab761711d1adfb"
+      },
+      "scripts/test-balance-source-identity.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "01a2b6f2722260653ba56d851e01ec5ce1524ef63b307583c737855b25e04416"
+      },
+      "scripts/test-balance-supervisor.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "b50a0ca66326eb773e7ff550d4c93166564e158c59cb477d1bea9c750ef671c9"
+      },
+      "scripts/test-browser-smoke.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "6d28687ce165e0324565fc06a48352a73b135b21f44bc922ec1cbaa383eaf3a8"
+      },
+      "scripts/test-rf02-preflight.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "5e29225e01d4e95426926c7a5fbb10318eb415bd1f218e4c99b4e110aa285119"
+      },
+      "scripts/test-rf02-transaction.mjs": {
+        "coverage": "substantively inspected against the actual base and affected callers/assertions",
+        "sha256": "9b893661c713c519d03a8d203325ab4cb73d5359f23c92799729c95c7e6341f1"
+      }
+    },
+    "standards_to_evidence": [
+      {
+        "requirement": "RF02 A1/A2/A3/A5/A6 and ADR001: validate before writes, stable option types, known legacy compatibility, pure normalization and exact-byte recovery",
+        "trace": [
+          "saving.js:getImportContract",
+          "save-import.js:validateDomain/normalizeParsed",
+          "saving.js:restorePreviousImport/applyProtectedRestore"
+        ],
+        "proof": [
+          "numeric/text reload-drift regression and malformed denial tests",
+          "transaction quota/apply/interruption and byte-equality assertions",
+          "complete Chrome clear/recover flow on both slots"
+        ],
+        "result": "satisfied for selected synthetic cases; authentic saves unverified"
+      },
+      {
+        "requirement": "Execution ceilings and recoverable errors remain enforced; changed harness tests must not weaken safety controls",
+        "trace": [
+          "engine.mjs:start/step/burstPolicyLoops",
+          "profiler.mjs:time/report",
+          "supervisor.mjs:runSupervised/residentBytes",
+          "measurement-worker.mjs"
+        ],
+        "proof": [
+          "original-error identity and post-budget diagnostics assertions",
+          "silent/active worker deadlines and cooperative/independent RSS ceiling assertions",
+          "unchanged full equivalence scenarios"
+        ],
+        "result": "satisfied by source tracing and focused assertions; all relevant fresh checks passed"
+      },
+      {
+        "requirement": "Classic boot order, all 157 actions/nine towns, ILSV01, challenge/prestige boundaries and real Worker behavior preserved",
+        "trace": [
+          "unchanged index/worker/action/driver/challenge source",
+          "source-backed RF01\u2013RF03 suites and full browser assertions"
+        ],
+        "result": "source invariants satisfied; all relevant fresh checks passed"
+      },
+      {
+        "requirement": "Generated documents/source calibration remain source-backed and fail on real changes",
+        "trace": [
+          "potionSourceIdentity",
+          "both generator check paths",
+          "unique-path LF/CRLF negative-control fixture"
+        ],
+        "result": "provenance-only generated changes mechanically verified; fresh checks passed"
+      },
+      {
+        "requirement": "Current Orcha/project standards, authorization, source provenance, no invented lifecycle acceptance or deployment",
+        "trace": [
+          "manifest and current Orcha resolver",
+          "system guide and evidence changes",
+          "unchanged Pages workflow",
+          "owner request explicitly authorizes only conditional #24 merge and #23 update"
+        ],
+        "result": "satisfied within bounded scope; all local historical log digests verified"
+      }
+    ],
+    "limits": [
+      "No hosted GitHub check runs or commit statuses were reported; do not claim CI passed",
+      "No formal self-approval review is submitted on the owner-authored PR",
+      "Authentic player saves, exhaustive predictor/UI/buff permutations, earned campaigns and production/cloud are not verified",
+      "Optional standalone performance benchmark is inspected but not run; engine ceilings are covered by regression tests",
+      "Known R15 discrepancy remains unchanged; pre-existing stale delivery labels are reconciled in #23 rather than attributed to this runtime patch",
+      "Windows profile cleanup failed in both calibration attempts, including the owned writable project temp root. The additional calibration command remains failed despite all 12 comparisons passing; do not label the complete 19-command run green."
+    ],
+    "checks": [
+      {
+        "check": "check-repo.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 17.7,
+        "log_sha256": "29c409417d6ca772b25c624daca9aa88343ce73abf67a6fb3cd42781cd90b747"
+      },
+      {
+        "check": "generate-balance-timing-report.mjs --check",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 1.59,
+        "log_sha256": "ea5f52212486d16ff79a2d0bd4bbe3c85fa0e839c343bd7cd0d1f445a15237c7"
+      },
+      {
+        "check": "test-game-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.3,
+        "log_sha256": "8258d57e18981ebc189df7204cf45d9e0331b5441868b0342408abae83eede6c"
+      },
+      {
+        "check": "test-action-execution.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.75,
+        "log_sha256": "fb6291679450b9002f168f5866bbe724fedb26e8286cd78722b7cdb4d6124637"
+      },
+      {
+        "check": "test-rf01-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 5.16,
+        "log_sha256": "4ebaf4fffd6a38f5325de9e3079d5a8363890f028b352b2ef50eb64992011cca"
+      },
+      {
+        "check": "test-rf01-challenges.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 2.97,
+        "log_sha256": "d4876b58207d075adba3107ffcf04c2562d29c993a877f5fa068438ac338d20d"
+      },
+      {
+        "check": "test-rf02-preflight.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.78,
+        "log_sha256": "9162f84e2fffbe9ae4b746d4809027d1fa5b57f3ba4483d3b6ed358d7a7f34c4"
+      },
+      {
+        "check": "test-rf02-transaction.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.33,
+        "log_sha256": "53cfbd30dd1435c6c95abd1e4f384c7a1085b654ed9e24a7fbcd9a79b973ab3d"
+      },
+      {
+        "check": "test-rf03-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 2.59,
+        "log_sha256": "918f34afa43f788849b0cba4b7de1c73d0a5f0deb66f043fcefb45693a1bc253"
+      },
+      {
+        "check": "test-balance-source-identity.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 1.83,
+        "log_sha256": "aa29963a854b11d394ded875ba1f42691de8f282dbc86ec9e1774439a8c53d1c"
+      },
+      {
+        "check": "test-balance-contracts.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 17.58,
+        "log_sha256": "df7b1857e64d6be07c3eb0ea160c175673119d4c9157c42ac49e9a5aa606bad3"
+      },
+      {
+        "check": "test-balance-equivalence.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 172.16,
+        "log_sha256": "9e5d62651c84b7013a388875044637aea9531fd92f2eb017bab352072cd7d677"
+      },
+      {
+        "check": "test-balance-supervisor.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 3.84,
+        "log_sha256": "f30c08125a453436ad9aad6c1bfc1000232620b3e785225f0e17ff6afff8d71d"
+      },
+      {
+        "check": "test-balance-potion.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 2.94,
+        "log_sha256": "f27b05c5596fe7dd594415e6375d99a0aaff8de900c924e47158f24c7d238a56"
+      },
+      {
+        "check": "test-balance-campaign-estimate.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 1.25,
+        "log_sha256": "a105dc4b5b03a37ff48efc4ad781e8c0fb89649c3b2fdd6a88f812277ad2444e"
+      },
+      {
+        "check": "generate-action-mechanics.mjs --check",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.42,
+        "log_sha256": "f21bd7e81d6b7f97dd43211e634f5ebbd0c5668f2160f5f24199480e39cc9f18"
+      },
+      {
+        "check": "check-xml.py",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.5,
+        "log_sha256": "94e0e6f4c909cf00e37393debc141064d43ebe828f9f3137970489a72e62b916"
+      },
+      {
+        "check": "test-browser-smoke.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 71.67,
+        "log_sha256": "2c7b1dd40f47575935954d6d3c2530758d94f4166ba43fdc9a6e8a2a3c5fa269"
+      },
+      {
+        "check": "test-balance-browser.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 20.78,
+        "log_sha256": "671348797120a39cf2de3319a43ea94ca93e471b352ad57faee19afc8e09b601"
+      }
+    ],
+    "reviewed_at": "2026-11-09T19:34:51.843276+00:00"
+  },
+  "pr24_merge": {
+    "pr": 24,
+    "merged": true,
+    "merge_sha": "baaa427ebd49e5fa05336a8498796799950453d3",
+    "head_sha": "8522b4564ae5d5abc034acaa6e728a79a8cb54fe",
+    "parents": [
+      "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "8522b4564ae5d5abc034acaa6e728a79a8cb54fe"
+    ],
+    "tree": "2535700c2335fa6f95f7f9dc64a93ca959935841",
+    "merged_at": "2026-11-09T19:35:30Z",
+    "verified_remote": true,
+    "records_pr_head_before": "2de3af6188183cf94c8ec1c0cddcbaa1d9926a98"
+  },
+  "pr23_reverification": {
+    "tested_head": "19169372b46d5ed0bf543253052ddb277d756b55",
+    "repository": "C:\\Users\\PhillipCurry\\projects\\codex\\games\\outer-loops-verified-main",
+    "checks": [
+      {
+        "check": "check-repo.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 70.39,
+        "log_sha256": "8301ab6cfa4ba06396b55d30a634ada470f36d9112601bb86fdf40362ad040e4",
+        "observed_output": [
+          "PASS 70 JS files, 101 Markdown files / 821 Markdown links, 49 local scripts, 157 cataloged actions."
+        ]
+      },
+      {
+        "check": "generate-balance-timing-report.mjs --check",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 15.61,
+        "log_sha256": "ea5f52212486d16ff79a2d0bd4bbe3c85fa0e839c343bd7cd0d1f445a15237c7",
+        "observed_output": [
+          "PASS calculated timing report is current."
+        ]
+      },
+      {
+        "check": "test-game-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.59,
+        "log_sha256": "8258d57e18981ebc189df7204cf45d9e0331b5441868b0342408abae83eede6c",
+        "observed_output": [
+          "PASS worker-like model: 157 actions, 9 towns, 9 stats, 18 skills, 14 buffs, level curve and prestige defaults."
+        ]
+      },
+      {
+        "check": "test-action-execution.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.81,
+        "log_sha256": "fb6291679450b9002f168f5866bbe724fedb26e8286cd78722b7cdb4d6124637",
+        "observed_output": [
+          "PASS queued Wander action: 250 mana, 200 progress XP, stat training and persisted town progress across queue restart."
+        ]
+      },
+      {
+        "check": "test-rf01-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 8.97,
+        "log_sha256": "4ebaf4fffd6a38f5325de9e3079d5a8363890f028b352b2ef50eb64992011cca",
+        "observed_output": [
+          "RF01 original ordered-registry fingerprint: e2033a91c69c508845eea537903a2355dc4a902db5b66f6b99be67ef99b3a7c9",
+          "PASS RF01 extra: queued dungeon floor, undead trial, potion/Totem, typed limited loops and fractional mana controls.",
+          "PASS RF01 model: ordered registry, normal/progress/cost skip, limited known-good/unchecked, multipart, seeded dungeon, terminal Gods Trial, travel/Escape, restart, queue and interest."
+        ]
+      },
+      {
+        "check": "test-rf01-challenges.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 5.2,
+        "log_sha256": "d4876b58207d075adba3107ffcf04c2562d29c993a877f5fa068438ac338d20d",
+        "observed_output": [
+          "PASS RF01 challenge characterization: Mana Drought, Noodle Arms, Mana Burn and isolated normal-mode restoration."
+        ]
+      },
+      {
+        "check": "test-rf02-preflight.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 1.95,
+        "log_sha256": "9162f84e2fffbe9ae4b746d4809027d1fa5b57f3ba4483d3b6ed358d7a7f34c4",
+        "observed_output": [
+          "PASS RF02 pure preflight: current and old envelope, side-effect-free/idempotent aliases, challenge conversion, corrupt/root/schema/size/unknown-field rejection and stable option types across reload."
+        ]
+      },
+      {
+        "check": "test-rf02-transaction.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.61,
+        "log_sha256": "53cfbd30dd1435c6c95abd1e4f384c7a1085b654ed9e24a7fbcd9a79b973ab3d",
+        "observed_output": [
+          "PASS RF02 transaction: exact rollback on parse/quota/apply failure, interrupted journal recovery, previous-save restore, legacy challenge isolation and prestige backup retention."
+        ]
+      },
+      {
+        "check": "test-rf03-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 6.92,
+        "log_sha256": "918f34afa43f788849b0cba4b7de1c73d0a5f0deb66f043fcefb45693a1bc253",
+        "observed_output": [
+          "PASS RF03 model: DOM-free caps and snapshots; pure predicates; Escape first positive-spend; typed resources, reset identity and invalid-value rejection."
+        ]
+      },
+      {
+        "check": "test-balance-source-identity.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 2.2,
+        "log_sha256": "aa29963a854b11d394ded875ba1f42691de8f282dbc86ec9e1774439a8c53d1c",
+        "observed_output": [
+          "PASS source identity: LF/CRLF checkouts match; changed source invalidates calibration."
+        ]
+      },
+      {
+        "check": "test-balance-contracts.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 105.22,
+        "log_sha256": "df7b1857e64d6be07c3eb0ea160c175673119d4c9157c42ac49e9a5aa606bad3",
+        "observed_output": [
+          "PASS RW00 queue negatives: locked/invisible, unknown, invalid count, unsupported edit, no state/RNG mutation.",
+          "PASS RW00 admission positives: add/count/enable/replay, actual restart, excess travel rejection.",
+          "PASS RW00 strict UI: defaults, cap synchronization, setting hashes and missing/wrong/invalid controls.",
+          "PASS RW00 actual Dark Ritual cap below/at/above eligibility and failed edit isolation.",
+          "PASS RW00 real limited-action reward path: missing/unchecked/checked are distinguished.",
+          "PASS RW00 clock: real driver ticks, seeded RNG, loop accounting, budget failures, no offline credit.",
+          "PASS RW00 report: calibration gate, false completion, accounting and incompatible runs rejected.",
+          "PASS RW00 Judgement -51/-50/-49/49/50/51 and Escape pure eligibility, positive-spend commitment, 59.99/60/sticky boundaries.",
+          "PASS RW00 contract suite (synthetic fixtures explicitly excluded from earned campaign evidence)."
+        ]
+      },
+      {
+        "check": "test-balance-equivalence.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 204.84,
+        "log_sha256": "9e5d62651c84b7013a388875044637aea9531fd92f2eb017bab352072cd7d677",
+        "observed_output": [
+          "PASS equivalence opening: 3000 reference calls, 36 accelerated calls.",
+          "PASS equivalence normal-training: 2000 reference calls, 24 accelerated calls.",
+          "PASS equivalence limited-resource: 500 reference calls, 108 accelerated calls.",
+          "PASS equivalence loop-exhaustion: 6000 reference calls, 72 accelerated calls.",
+          "PASS equivalence fractional-mana: 1000 reference calls, 12 accelerated calls.",
+          "PASS policy-burst equivalence: 64 production restart boundaries in one outer call.",
+          "PASS accelerated execution remains fail-closed without current calibration."
+        ]
+      },
+      {
+        "check": "test-balance-supervisor.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 4.45,
+        "log_sha256": "f30c08125a453436ad9aad6c1bfc1000232620b3e785225f0e17ff6afff8d71d",
+        "observed_output": [
+          "PASS process supervision: host timeout, cooperative and independent RSS ceilings, structured failure."
+        ]
+      },
+      {
+        "check": "test-balance-potion.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 5.28,
+        "log_sha256": "f27b05c5596fe7dd594415e6375d99a0aaff8de900c924e47158f24c7d238a56",
+        "observed_output": [
+          "PASS direct potion policy, repeated events, calculated sections and synthetic checkpoints."
+        ]
+      },
+      {
+        "check": "test-balance-campaign-estimate.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 4.47,
+        "log_sha256": "a105dc4b5b03a37ff48efc4ad781e8c0fb89649c3b2fdd6a88f812277ad2444e",
+        "observed_output": [
+          "PASS calculated C08\u2013C14 campaign baseline through Commerceville, Valley, and Restore Time."
+        ]
+      },
+      {
+        "check": "generate-action-mechanics.mjs --check",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.64,
+        "log_sha256": "f21bd7e81d6b7f97dd43211e634f5ebbd0c5668f2160f5f24199480e39cc9f18",
+        "observed_output": [
+          "PASS 157 generated action mechanics entries match runtime."
+        ]
+      },
+      {
+        "check": "check-xml.py",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.31,
+        "log_sha256": "94e0e6f4c909cf00e37393debc141064d43ebe828f9f3137970489a72e62b916",
+        "observed_output": [
+          "PASS 5 XML/Relax NG files are well-formed."
+        ]
+      },
+      {
+        "check": "test-browser-smoke.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 265.59,
+        "log_sha256": "0ba1fb7764b31ffbef0f8af004261067b9ea4f61c0be9a7509bdd5b5dbd31dd8",
+        "observed_output": [
+          "PASS RF02 Chrome quota failure injection: journal/write failures preserve exact original bytes.",
+          "PASS RF02 Chrome legacy inline challenge migration: separate slots, retained normal progress and safe exit.",
+          "PASS RF01/RF02 Chrome save fixtures: current ILSV01, two synthetic legacy forms, aliases, safe validation and recovery.",
+          "KNOWN R15: predictor grants Gods Trial power at floor 99; runtime grants at floor 100.",
+          "PASS RF01 predictor: actual Wander vs foreground and Worker, field parity for mana/stat XP, read-only forecast; Gods Trial R15 characterized.",
+          "PASS RF01 Chrome challenge entry/exit: modes 1\u20133, isolated slots and normal-game restoration after reload.",
+          "PASS RF01 Chrome inherited prestige reset: 90 points once, 30-point perk, 60 remaining, retained upgrade and backup.",
+          "PASS RF02 Chrome explicit clear and independent normal/challenge byte-exact recovery.",
+          "PASS Chrome: game boot, XML localization, 157 actions, Wander execution and save/reload.",
+          "Chrome profile cleanup incomplete: EPERM, Permission denied: 'C:\\Users\\PhillipCurry\\projects\\codex\\games\\outer-loops-verified-main\\.balance-results\\pr23-xhd4bmn_\\outerloops-smoke-9PvV73'"
+        ]
+      },
+      {
+        "check": "test-balance-browser.mjs",
+        "status": "failed",
+        "exit_code": 1,
+        "seconds": 75.69,
+        "log_sha256": "6b5aea99fa883c1ad9e4a27c54a2de7b887419e38e4d0b1dc62221fcfdd9c4f1",
+        "observed_output": [
+          "    at rmSync (node:fs:1282:18)",
+          "    at file:///C:/Users/PhillipCurry/projects/codex/games/outer-loops-verified-main/scripts/test-balance-browser.mjs:276:3",
+          "    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {",
+          "  errno: 1,",
+          "  code: 'EPERM',",
+          "  path: 'C:\\\\Users\\\\PhillipCurry\\\\projects\\\\codex\\\\games\\\\outer-loops-verified-main\\\\.balance-results\\\\pr23-xhd4bmn_\\\\outerloops-rw00-calibration-OJZFAS',",
+          "  syscall: 'rm'",
+          "}",
+          "",
+          "Node.js v24.22.1"
+        ]
+      }
+    ],
+    "browser_environment": {
+      "temp_root": "Owned unique directory beneath ignored .balance-results/",
+      "change": "Only child-process TEMP/TMP/TMPDIR; no source, assertions, confirmations or runtime limits changed",
+      "reason": "Default Windows temporary profile cleanup failed after all calibration assertions passed",
+      "prior_attempts_preserved": "results-initial.json and browser .attempt1.log files"
+    }
+  },
+  "authority": {
+    "mode": "legacy",
+    "lifecycle_stages": "unchanged",
+    "accepted_stage_artifacts_created": false,
+    "other_prs_merged": false,
+    "rf04_head_unchanged": "a6fc99653961c59b5be6e0aee2e9f673ec031a86",
+    "rf04_stack_preserved": "#19 -> #20 -> #21",
+    "deployment_or_services_activated": false,
+    "milestones_completed": false
+  },
+  "preserved_historical_records": [
+    {
+      "path": ".orcha/evidence/2026-11-09-rf02-rf04-verification.json",
+      "source_commit": "2de3af6188183cf94c8ec1c0cddcbaa1d9926a98",
+      "sha256": "80208b0a9325ed501311c1690f46d20af053b3e045459c2399246d34cb161081"
+    },
+    {
+      "path": ".orcha/evidence/2026-11-09-rf02-rf04-fix.json",
+      "source_commit": "2de3af6188183cf94c8ec1c0cddcbaa1d9926a98",
+      "sha256": "591fab24d3f2d7e5b749ccb6e1f633fc22b6ebe7a5a17b747387e3391ad9bdce"
+    }
+  ],
+  "limits": [
+    "No hosted GitHub check runs or commit statuses were reported; do not claim CI passed",
+    "No formal self-approval review is submitted on the owner-authored PR",
+    "Authentic player saves, exhaustive predictor/UI/buff permutations, earned campaigns and production/cloud are not verified",
+    "Optional standalone performance benchmark is inspected but not run; engine ceilings are covered by regression tests",
+    "Known R15 discrepancy remains unchanged; pre-existing stale delivery labels are reconciled in #23 rather than attributed to this runtime patch",
+    "Windows profile cleanup failed in both calibration attempts, including the owned writable project temp root. The additional calibration command remains failed despite all 12 comparisons passing; do not label the complete 19-command run green."
+  ],
+  "documentation_update": "Later documentation/evidence-only commit; runtime and test sources remain identical to the checked combined candidate and merged main.",
+  "postmerge_standards": {
+    "orcha_main": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+    "source_main": "baaa427ebd49e5fa05336a8498796799950453d3",
+    "documents": [
+      {
+        "module": "milestone-format",
+        "path": "docs/milestone-file-conventions.md",
+        "sha256": "3eddc165b4a508a6c605892a7a5bd60fa8ff1dfd915388569b526e6c75789c75"
+      },
+      {
+        "module": "milestone-state",
+        "path": "docs/repository-milestones.md",
+        "sha256": "809e4c9872ee1a6896a1bbaea1dbfca938c883f63de4446973fc5de5c6991d98"
+      },
+      {
+        "module": "coordination",
+        "path": "docs/pr-development-coordination.md",
+        "sha256": "8be2fd08b5ee8e89408a18918ab86c6c565025b4be71c77fc0420d0fc07cc7fd"
+      },
+      {
+        "module": "intent-routing",
+        "path": "docs/agent-workflows/intent-routing.md",
+        "sha256": "fc05fdc681d2ae86eedcffad3edf7d8b81ddcfddfd9b7f60ff9bcedb8e096431"
+      },
+      {
+        "module": "intent-routing",
+        "path": "docs/agent-workflows/review.md",
+        "sha256": "7d7d57f531158bb14e71bdaa6103c1bced4ff50219f64e39519320d6b541fe8b",
+        "workflow": "review"
+      }
+    ],
+    "governing_project_documents": [
+      {
+        "path": "AGENTS.md",
+        "revision": "baaa427ebd49e5fa05336a8498796799950453d3",
+        "git_blob_sha": "93453dffa2e744cd3ada371878c69bf01ff4d9e7",
+        "sha256": "c41cf7961ca85a65bc6a798753f37721c42f71c34e44d6908da1c42f103f33c3"
+      },
+      {
+        "path": ".orcha/repository.json",
+        "revision": "baaa427ebd49e5fa05336a8498796799950453d3",
+        "git_blob_sha": "c9632210d57fcfd9e8e8086e31a86daf1992a47e",
+        "sha256": "7b827bd3ead0b69c5db34ed372c93aaf2b9441d0d18c7e781932cc908fb5a7ee"
+      },
+      {
+        "path": "docs/README.md",
+        "revision": "baaa427ebd49e5fa05336a8498796799950453d3",
+        "git_blob_sha": "703113c2cda384c33e1fe1e33b571b18f067ca41",
+        "sha256": "bc17710100509477943f38e1e3f23ef399964d4c69cd6a3e6350557c7a847784"
+      },
+      {
+        "path": "docs/AGENTS.md",
+        "revision": "baaa427ebd49e5fa05336a8498796799950453d3",
+        "git_blob_sha": "e7bc12e566cbc150037c55dff9ee70886c0c01bd",
+        "sha256": "e96cfee4b575814c78a75bbc493f69024183e738c50faeb9e39edb2dfde3813c"
+      },
+      {
+        "path": "docs/refactoring/AGENTS.md",
+        "revision": "baaa427ebd49e5fa05336a8498796799950453d3",
+        "git_blob_sha": "ff69cfc488e9301924ab50417b747fc1fcbaae82",
+        "sha256": "fe03a85d968515980e48a2a0ab133bb595e29aed8fc62ff77d3a8bcf2084380c"
+      },
+      {
+        "path": "docs/development/ai-workflow.md",
+        "revision": "baaa427ebd49e5fa05336a8498796799950453d3",
+        "git_blob_sha": "6bf8ccbab230051dbc26dadc03b105ef38a68d5b",
+        "sha256": "1f8eb838ca978944fcd8509c871ffff5cdc9524c255b224f5b02d85f6154fe0b"
+      },
+      {
+        "path": "docs/development/validation.md",
+        "revision": "baaa427ebd49e5fa05336a8498796799950453d3",
+        "git_blob_sha": "eb951e8c0a24264b6926b6d220edfc7d6ecc0a52",
+        "sha256": "bcf41092737c3fd0b82a462095bb1643530a263d47c82274024b7cc4559e6a4b"
+      },
+      {
+        "path": "docs/architecture.md",
+        "revision": "baaa427ebd49e5fa05336a8498796799950453d3",
+        "git_blob_sha": "82e28609a14e68e0a263ff95aa10492e6c63903e",
+        "sha256": "45f3f64467c3505dc45557f6850ec7cfa5fa41def468ced93fa569857d7e21f6"
+      },
+      {
+        "path": "docs/state-and-saving.md",
+        "revision": "baaa427ebd49e5fa05336a8498796799950453d3",
+        "git_blob_sha": "d484662d34e150faf0e5557bbb5f08702e89b02d",
+        "sha256": "fce87e4311f0dd2a21cb56326e7b408f4facf140af5052a12629d1732f35b5c3"
+      },
+      {
+        "path": "docs/refactoring/README.md",
+        "revision": "baaa427ebd49e5fa05336a8498796799950453d3",
+        "git_blob_sha": "4634c7a03221f3e358d67a6baf150988ba97917d",
+        "sha256": "f95bc67545db3fea09313842c1e80df81b772f1a963bb8b6957984c27949904c"
+      }
+    ],
+    "authority_mode": "legacy",
+    "applicability": "Existing milestone status/evidence updates only; no new specifications, lifecycle transitions or acceptance artifacts"
+  },
+  "hosted_ci_observation": {
+    "pr24_head": "8522b4564ae5d5abc034acaa6e728a79a8cb54fe",
+    "pr24_check_runs": 0,
+    "pr24_commit_statuses": 0,
+    "merged_main": "baaa427ebd49e5fa05336a8498796799950453d3",
+    "merged_main_workflow_runs": 0,
+    "interpretation": "Fresh local checks passed; no hosted CI pass is inferred from absent runs or an empty combined pending status."
+  },
+  "cleanup_observation": {
+    "result": "The first #23 smoke check passed with a Windows EPERM profile-cleanup warning; all 12 calibration comparisons passed, but that first calibration command exited 1 in temporary-profile removal.",
+    "host_action": "No process was forcibly terminated. The completed smoke profile was removed natively after path verification. Both stock browser suites were then rerun with child-process TEMP/TMP/TMPDIR pointing to a unique ignored writable project folder; no source, assertions, confirmation choices or execution limits changed.",
+    "interpretation": "The initial cleanup failure remains failed evidence; only the independently executed final reruns supply their final result."
+  },
+  "initial_browser_attempts": [
+    {
+      "check": "test-browser-smoke.mjs",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 291.42,
+      "log_sha256": "6eeecb87a2b5bf30d46ca60511f5a57e484328306a2767369802d3d644ebb8ea",
+      "observed_output": [
+        "PASS RF02 Chrome malformed JSON/compression/shape imports rejected without changing either save or recovery.",
+        "PASS RF02 Chrome exact-byte normal save recovery and bidirectional backup rotation.",
+        "PASS RF02 Chrome quota failure injection: journal/write failures preserve exact original bytes.",
+        "PASS RF02 Chrome legacy inline challenge migration: separate slots, retained normal progress and safe exit.",
+        "PASS RF01/RF02 Chrome save fixtures: current ILSV01, two synthetic legacy forms, aliases, safe validation and recovery.",
+        "KNOWN R15: predictor grants Gods Trial power at floor 99; runtime grants at floor 100.",
+        "PASS RF01 predictor: actual Wander vs foreground and Worker, field parity for mana/stat XP, read-only forecast; Gods Trial R15 characterized.",
+        "PASS RF01 Chrome challenge entry/exit: modes 1\u20133, isolated slots and normal-game restoration after reload.",
+        "PASS RF01 Chrome inherited prestige reset: 90 points once, 30-point perk, 60 remaining, retained upgrade and backup.",
+        "PASS RF02 Chrome explicit clear and independent normal/challenge byte-exact recovery.",
+        "PASS Chrome: game boot, XML localization, 157 actions, Wander execution and save/reload.",
+        "Chrome profile cleanup incomplete: EPERM, Permission denied: 'C:\\Users\\PhillipCurry\\AppData\\Local\\Temp\\outerloops-smoke-i9yPDj'"
+      ]
+    },
+    {
+      "check": "test-balance-browser.mjs",
+      "status": "failed",
+      "exit_code": 1,
+      "seconds": 96.48,
+      "log_sha256": "b03be16f048c1f62b644a563ded3976cd8f65d4a696578c0bcceea6badf1ffb6",
+      "observed_output": [
+        "",
+        "Error: EPERM, Permission denied: 'C:\\Users\\PhillipCurry\\AppData\\Local\\Temp\\outerloops-rw00-calibration-KzGI9R'",
+        "    at rmSync (node:fs:1282:18)",
+        "    at file:///C:/Users/PhillipCurry/projects/codex/games/outer-loops-verified-main/scripts/test-balance-browser.mjs:276:3",
+        "    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {",
+        "  errno: 1,",
+        "  code: 'EPERM',",
+        "  path: 'C:\\\\Users\\\\PhillipCurry\\\\AppData\\\\Local\\\\Temp\\\\outerloops-rw00-calibration-KzGI9R',",
+        "  syscall: 'rm'",
+        "}",
+        "",
+        "Node.js v24.22.1"
+      ]
+    }
+  ],
+  "pr23_summary": {
+    "baseline_checks_passed": 18,
+    "additional_calibration_command": "failed during Windows profile removal after all 12 comparisons passed",
+    "calibration_retry": "failed at the same cleanup boundary with a writable project temp root",
+    "overall_19_command_suite_passed": false,
+    "runtime_sources_changed_for_retry": false
+  },
+  "final_documentation_checks": {
+    "npm_run_check": "passed, including timing report",
+    "xml": "passed",
+    "orcha_reference": "passed; workflow/domain compliance not inferred",
+    "diff_check": "passed",
+    "logs": {
+      "final-npm-check.log": {
+        "sha256": "b2fdf8ffd2591085a72a1b06934a7550d12893ef6e3ad750f68ce8eb3cf6c5e9",
+        "output": [
+          "> check",
+          "> node scripts/check-repo.mjs && node scripts/generate-balance-timing-report.mjs --check",
+          "",
+          "PASS 70 JS files, 101 Markdown files / 820 Markdown links, 49 local scripts, 157 cataloged actions.",
+          "PASS calculated timing report is current."
+        ]
+      },
+      "final-xml-check.log": {
+        "sha256": "94e0e6f4c909cf00e37393debc141064d43ebe828f9f3137970489a72e62b916",
+        "output": [
+          "PASS 5 XML/Relax NG files are well-formed."
+        ]
+      },
+      "final-standards-check.log": {
+        "sha256": "6b79924571230553c9aab64a1db43656007dbdb59160dbaa2d865e7a15d1dedf",
+        "output": [
+          "{\"repository\": \"step3software/outer-loops\", \"reference_valid\": true, \"records\": 0, \"standards_revision\": \"b8bf6bf07073823d108fd356c48916ea0cafd615\", \"authority_mode\": \"legacy\", \"workflow_verified\": false, \"domain_compliance\": \"not_inferred\", \"pending_modules\": [{\"id\": \"ux-governance\", \"version\": \"1.0.0\", \"status\": \"proposed\"}]}"
+        ]
+      }
+    },
+    "all_24_original_criterion_lines": "unchanged",
+    "historical_failure_and_correction_json": "unchanged",
+    "code_diff_from_merged_main": "none; documentation/evidence only"
+  }
+}

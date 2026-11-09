@@ -1073,5 +1073,41 @@
       "log_sha256": "aa591061dddfef9f8f56455532343bc1f2cfdaccafe001887e25265a694d6b87",
       "final_result": "passed after the documented test-harness correction"
     }
-  ]
+  ],
+  "publication": {
+    "main_fix": {
+      "pr": 24,
+      "url": "https://github.com/step3software/outer-loops/pull/24",
+      "branch": "fix/rf02-rf04-verification",
+      "head": "8522b4564ae5d5abc034acaa6e728a79a8cb54fe",
+      "remote_verified": true
+    },
+    "rf04_correction": {
+      "pr": 21,
+      "url": "https://github.com/step3software/outer-loops/pull/21",
+      "branch": "refactor/rf04-challenge-rule-isolation",
+      "head": "a6fc99653961c59b5be6e0aee2e9f673ec031a86",
+      "remote_verified": true
+    },
+    "milestone_records": {
+      "pr": 23,
+      "url": "https://github.com/step3software/outer-loops/pull/23",
+      "branch": "docs/rf02-rf04-verification-20261109"
+    },
+    "drafts": true,
+    "merged": false,
+    "deployment": false,
+    "github_pr_workflow_runs": "None returned for either published code candidate when checked; local passes are not GitHub CI passes"
+  },
+  "final_documentation_validation": {
+    "branch": "docs/rf02-rf04-verification-20261109",
+    "static": "passed: 68 JS files, 101 Markdown files, 819 links, 49 local scripts, 157 actions",
+    "xml": "passed: 5 XML/Relax NG files",
+    "standards": "passed against fresh Orcha main b8bf6bf07073823d108fd356c48916ea0cafd615; legacy authority, zero typed records, workflow/domain compliance not inferred",
+    "npm_run_check": "static passes; timing reference remains stale on this documentation-only branch because it retains main runtime sources. Separate code correction PR #24 and RF04 PR #21 pass this check. No pass is inferred on unchanged main.",
+    "A1_A8": "All 24 original criterion lines preserved byte-for-byte relative to fa9cb46fd3fd393d1e2b817d9e17744489c772db",
+    "historical_failure_record": "original bytes unchanged",
+    "owner_decisions": "retained; no new acceptance artifacts or workflow-stage changes",
+    "diff_check": "passed"
+  }
 }

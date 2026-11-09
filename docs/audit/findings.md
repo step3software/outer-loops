@@ -2,6 +2,8 @@
 
 These are **auditable findings**, not an assertion that every candidate is a reproduced bug. Evidence is linked to executable source. Severity is qualitative and assumes a future developer may modify the affected subsystem. Assign issues only after reproduction/triage.
 
+**November 9 delivery observation:** RF02 PR #16, RF03 PR #18 and recovery correction #24 are merged. Historical candidate labels below retain the original investigation context; [RF02 verification](../refactoring/rf02-evidence.md), [RF03 verification](../refactoring/rf03-evidence.md) and [RF04 candidate verification](../refactoring/rf04-evidence.md) own current executed results. Correction #24 resolved the `options.updateRate` recovery schema drift; the #23 cleanup correction passes all 20 selected checks. These observations do not close unrelated findings or accept milestones.
+
 ## Highest-priority findings
 
 ### R01 — Save import persists before validating (high; confirmed control flow, user impact untested)

@@ -10,10 +10,10 @@ import {CLOCK_VERSION} from './balance/clock.mjs';
 import {SCHEDULER_VERSION} from './balance/fast-scheduler.mjs';
 import {CALIBRATION_SCHEMA} from './balance/report.mjs';
 import {createPotionAcceleration,potionSourceIdentity} from './balance/potion-runner.mjs';
-import {browserBinary,stopBrowser,browserProfile} from './browser-test-utils.mjs';
+import {browserBinary,cleanupBrowser,browserProfile} from './browser-test-utils.mjs';
 import {spawn} from 'node:child_process';
 import {createServer} from 'node:http';
-import {existsSync, readFileSync, rmSync, statSync, mkdirSync, writeFileSync} from 'node:fs';
+import {existsSync, readFileSync, statSync, mkdirSync, writeFileSync} from 'node:fs';
 import {dirname, extname, join, resolve, sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -69,6 +69,13 @@ async function connect(url) {
   });
   let nextId=0;
   const pending=new Map();
+  function close() {
+    for(const p of pending.values()){
+      clearTimeout(p.timer);p.reject(Error('CDP connection closed'));
+    }
+    pending.clear();ws.close();
+  }
+  ws.addEventListener('close',close,{once:true});
   ws.addEventListener('message',event=>{
     let m;
     try { m=JSON.parse(event.data); } catch { return; }
@@ -92,7 +99,7 @@ async function connect(url) {
        || response.exceptionDetails.text);
     return response.result.value;
   }
-  return {send,evaluate,close:()=>ws.close()};
+  return {send,evaluate,close};
 }
 
 
@@ -103,7 +110,7 @@ const phase=getArg('--phase')??'calibration';
 if(!['calibration','boundaries'].includes(phase))throw Error('Unsupported browser phase');
 const output=getArg('--output');
 const profile=browserProfile('outerloops-rw00-calibration-');
-let chrome,client;
+let chrome,client,testError;
 try {
   await new Promise((resolve,reject)=>{
     server.once('error',reject);server.listen(0,'127.0.0.1',resolve);
@@ -266,12 +273,16 @@ try {
   }
   console.log('PASS RW00 real browser calibration: '+cases.length+' matched cases, '+browserVersion);
 }catch(error){
+  testError=error;
   console.error('FAIL RW00 real browser calibration: '+(error.stack||error));
   process.exitCode=1;
 }finally{
-  client?.close();
-  stopBrowser(chrome);
-  server.closeAllConnections?.();
-  await new Promise(done=>server.close(done));
-  rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:100});
+  try {await cleanupBrowser({child:chrome,client,profile});}
+  catch(error){
+    if(!testError)throw error;
+    console.error('Additional browser cleanup failure:',error);
+  } finally {
+    server.closeAllConnections?.();
+    await new Promise(done=>server.close(done));
+  }
 }

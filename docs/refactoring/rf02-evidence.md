@@ -1,57 +1,58 @@
-# RF02 — Persistence safety implementation evidence
+# RF02 — Persistence safety verification
 
-**Status:** Implementation candidate in [draft PR #16](https://github.com/step3software/outer-loops/pull/16), unmerged, not verified complete. Reuses previously authored code from [closed, unmerged PR #6](https://github.com/step3software/outer-loops/pull/6) and preserves current RW00 changes on main.
+**Status:** RF02 #16 and recovery correction #24 are merged. PR #23 delivers the
+Windows cleanup correction; all 20 selected checks pass, including byte-exact
+recovery, real Chrome/Worker and calibration teardown. Complete milestone
+acceptance remains separate; see current verification below.
 
-## Accepted scope and source
+## Recovery regression and result
 
-- RF02-D01: canonical source and draft PR target main; no publication or deployment changes.
-- RF02-D02: one previous imported-over save per normal/challenge slot, plus an independent recovery journal.
-- RF02-D03: reject incompatible unknown fields without changing existing saves.
-- Original external ILSV01 and recognized historical Base64/LZW inputs remain supported. No changed gameplay economy, action IDs, prestige formulas, challenge rules, Google OAuth or player data fixtures.
+After challenge/prestige transitions and explicit clear, restoration rejected a
+valid backup because `getImportContract()` inferred types from live options after
+localStorage had made `updateRate` a string. The new regression failed before
+repair with `string !== number`. Canonical option categories now define the
+contract; recognized numeric-text update rates normalize only in a clone.
+Malformed values remain rejected and the original backup bytes are preserved.
 
-## Candidate code
+The full repository browser suite now passes independent challenge restoration,
+then active normal restoration, after clearing both slots. Both saves and
+`prestigeBackup` match their pre-clear bytes and the transaction journal is clear.
+Preflight, byte-exact transaction/quota rollback, legacy imports, challenges,
+prestige, RF01/RF03 and real Worker assertions also pass on both candidates.
 
-- save-import.js contains pure validation of current and legacy saves, nested numeric/boolean/type schemas derived from current gameplay registries, guarded action fields/queues/compressed logs, and bounded expansion of both LZString and legacy Base64/LZW formats.
-- saving.js contains pre-import journal, exact-byte backup/restore, verified storage writes, load-time rollback, startup recovery and protected explicit deletion. Normal and challenge backup restoration are selected explicitly; inactive restoration does not switch gameplay, and active restoration reloads after a byte-identical commit.
-- index.html, predictor-worker.js and scripts/load-game-model.mjs preserve classic-script order and the current RW00 harness.
-- views/menu.view.js and lang/en-EN/game.xml offer separate normal/challenge restore controls.
-- New preflight and transaction scripts, updated real-browser smoke, validation workflow and package commands retain the original RF01 and RW00 suites.
-- The repository's canonical source instructions now reference main. The Pages deployment workflow remains untouched.
+## A1–A8 verification mapping
 
-## Tests executed in the implementation session
+| Criteria | Current evidence and disposition |
+| --- | --- |
+| A1/A2/A3 | Pure preflight, malformed-input, known legacy/current imports, idempotent option migration and transaction fault injection pass; authentic player-save coverage remains unverified. |
+| A4 | Current/legacy synthetic roundtrips and complete selected browser lifecycle now pass, including recovery of both slots. |
+| A5 | Exact-byte backup restore, bidirectional rotation, quota/apply/interruption rollback and post-clear independent recovery pass. The reported recovery blocker is resolved on main and the checked documentation candidate. |
+| A6 | Pure validator and actual shipping transaction code are tested without a live view; browser integrations pass. |
+| A7 | All selected RF01–RF03, balance, generated-reference, XML and full Chrome suites pass; RF04's additional model and browser assertions pass on its candidate. Broad unmodeled permutations remain unverified. |
+| A8 | [ADR 001](../decisions/ADR-001-recoverable-save-import.md), RF02-D01/D02/D03 and the [P01–P22 matrix](rf02-test-matrix.md) remain unchanged. Synthetic tests do not certify every historical shape or representative real-save size. |
 
-The actual GitHub-source save-import.js and bundled LZString library were evaluated in an isolated V8 runtime. Seven valid compress/decompress roundtrips, including Unicode and highly compressible strings, matched exactly. An over-limit expansion raised TOO_LARGE, a valid generated ILSV01 payload prepared correctly, and unknown dynamic action fields were rejected when the runtime action allowlist was supplied.
+## Shared verification corrections
 
-The actual shipping transaction functions were independently evaluated in a synthetic JavaScript environment with exact-string storage. Twenty-one assertions passed for valid import, previous-copy restore, rejection without mutation, journal/active/backup quota faults, apply-time failure, intentional deletion, failed partial deletion and exact rollback. The tool-backed functional exercises were not the repository Node script or the real browser.
+The profiler preserves original errors and post-budget diagnostics; the engine
+owns its execution ceiling and the parent watchdog still caps startup/time/RSS.
+Windows RSS sampling and browser discovery use native supported paths. Profile
+paths resolve short aliases before Chrome creates files. The line-ending fixture
+processes each physical source once, including RF04's repeated registry entry.
+Potion accounting/event fixtures now actually establish their synthetic premises.
+Full equivalence scenarios completed unchanged with a longer external deadline.
+Generated formulas and timing estimates remain unchanged; provenance is current.
 
-A separate source-backed model exercise, using a no-DOM View facade and a stubbed snapshot initialization for the isolated evaluator, executed the unchanged game's loadDefaults/doSave and successfully prepared the generated save with all 157 action varNames recognized. The fresh synthetic save serialized to 13,109 JSON characters / 6,838 encoded characters (139 serialized fields) and returned an identical normalized object. This does not establish the limits for large progressed saves or replace the full Node/Chrome suites. The two RF02 script bodies also completed successfully in isolated V8 with Node API shims; they have not been executed under Node itself.
+## Current verification and authority
 
-## Acceptance status
+[Windows cleanup fix and full rerun](../../.orcha/evidence/2026-11-09-windows-cleanup-verification.json) records **all 20 checks
+passing** at `68e012611ba425045c1db9a881c86b10120846f0` with ordinary system temporary storage and no host cleanup
+assistance. The formerly failing calibration now exits 0 after all 12 comparisons
+and strict teardown. Original failure and correction records remain unchanged
+historical evidence; their old failed outcomes are not rewritten.
 
-| Gate | Required cases | Current evidence |
-| --- | --- | --- |
-| A1 | P09–P17, P19, P22 | Partial isolated functional checks; full browser pending |
-| A2 | P01–P06, P18, P20 | Test source present; full legacy/browser exercise pending |
-| A3 | P02–P04, P07–P08 | Idempotency tests ported; full cross-mode verification pending |
-| A4 | P01, P05–P08 | Semantic roundtrips not fully executed |
-| A5 | P14–P17, P19, P21 | Partial rollback checks passed; reload/real Chrome pending |
-| A6 | Pure preflight + public doSave compatibility | Pure module exercised; full worker check pending |
-| A7 | RF01, challenge, prestige, predictor, RW00 | Full regression suite not executed |
-| A8 | Size/unknown-field/backup/rollback decisions | Explicit in ADR 001; representative save sizing pending |
-
-Run npm run check, npm run test:model, npm run test:action, both RF01 suites, both RF02 suites, npm run test:balance, npm run check:mechanics, Python XML check and npm run test:browser. No green CI or Chrome acceptance is claimed without evidence.
-
-## Risks and rollback
-
-Real historical player saves were not available; fixtures are synthetic. RF02 uses bounded LZW expansion for imports, while the original helper remains unchanged. Extreme storage quota conditions may leave a journal for boot retry and must never cause deleting site storage. Restoring previously persisted state does not guarantee unsaved activity. The deployment workflow still listens for the historical dmchurch branch; changing it requires separate authorization.
-
-Keep PR #16 draft and unmerged until the A1–A8 evidence and independent review gates are met.
-
-## Review remediation — five findings
-
-- **F01/F03:** Pure validation now checks nested names/fields, actual stat/skill/buff identity, finite numeric/boolean contracts, supported queue identity and action-specific dynamic field families; malformed or incompatible data is rejected before storage writes.
-- **F02:** Previous-save restoration validates raw persisted JSON without serializing it again. Journaled restoration writes the exact original byte string.
-- **F04:** The Save menu exposes independent normal/challenge restoration. An inactive-slot restore keeps the active save untouched and does not reload the current session.
-- **F05:** Legacy Base64/LZW decoding now checks expanded output per phrase and limits compressed code count. The original legacy `decode()` helper remains unchanged outside the RF02 path.
-
-**Focused verification:** The complete RF02 transaction test body and the pure preflight unit-test portion (excluding its Node model-loading section) passed with isolated V8/Node-style shims. Six representative legacy strings matched the original decoder and over-limit output was rejected. A separate source-backed no-DOM simulation successfully validated a progressed save produced by the actual serializer with **157 action definitions, 139 saved fields, and an array-valued action log**; malformed buffs and unsupported nested fields were rejected. A nonempty compressed action log with numeric dictionary-object keys also passed strict validation. Browser smoke was extended for exact-byte recovery after navigation and independent recovery of both slots following intentional clear. **The new Chrome cases and complete Node/CI suite have not been executed in this conversation.**
+The original RF02/RF03 implementations and correction #24 are merged. PR #23
+delivers the cleanup correction and these records; its provider page records the
+merge outcome under the owner's explicit conditional authorization. Original
+A1–A8, owner decisions and Orcha legacy stages are unchanged. Verification does
+not complete a milestone or establish deployment. RF04 #21 and its stack remain
+unchanged with their prior candidate evidence; this rerun does not reverify RF04.

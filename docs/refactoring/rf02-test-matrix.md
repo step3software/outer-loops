@@ -1,12 +1,12 @@
 # RF02 — prospective safety and compatibility test matrix
 
-**Status:** Acceptance matrix for [draft RF02 PR #16](https://github.com/step3software/outer-loops/pull/16). Some automated tests are authored and isolated V8 checks were executed; the full Node/browser/CI matrix is **not yet verified**. Consult [evidence ledger](rf02-evidence.md). The merged [RF01 evidence](rf01-evidence.md) covers a subset of positive compatibility cases and **reproduced R01**, and the RF02 draft browser test now asserts non-destructive rejection, exact restoration and independent recovery. The new browser tests are not yet verified as passing; a green historical RF01 result is not evidence for the current PR.
+**Status:** Safety acceptance matrix for merged RF02 #16 and correction #24. All 20 selected checks pass with the #23 Windows cleanup correction. [Current evidence](rf02-evidence.md) owns exact execution and limits; required coverage and original criteria remain unchanged.
 
 Use disposable synthetic data only; never real player exports, OAuth credentials or a normal browser profile. Run exact-slot-byte assertions when rejecting input. Run semantic comparisons (not raw JSON equality) after successful imports. Canonical implementation criteria remain [RF02 A1–A8](RF02-persistence-safety.md).
 
 ## 1. Synthetic fixture catalog
 
-Start from `scripts/rf01-fixtures.mjs` in merged `dmchurch`. Extend it with a **pure fixture builder**, deterministic time/seed where practical, a captured `doSave()` baseline and safe localStorage fault injection; keep fixture files compact and intent-labeled.
+Start from `scripts/rf01-fixtures.mjs` on canonical `main`. Extend it with a **pure fixture builder**, deterministic time/seed where practical, a captured `doSave()` baseline and safe localStorage fault injection; keep fixture files compact and intent-labeled.
 
 | Test | Inputs, mode or injected failure | Required assertion | RF02 gate |
 | --- | --- | --- | --- |

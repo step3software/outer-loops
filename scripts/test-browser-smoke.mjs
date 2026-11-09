@@ -3,10 +3,10 @@
 // Uses a fresh temporary profile; no production saves/accounts are accessed.
 import assert from 'node:assert/strict';
 import {makeRf01Fixtures} from './rf01-fixtures.mjs';
-import {browserBinary,stopBrowser,browserProfile} from './browser-test-utils.mjs';
+import {browserBinary,cleanupBrowser,browserProfile} from './browser-test-utils.mjs';
 import {spawn} from 'node:child_process';
 import {createServer} from 'node:http';
-import {existsSync, readFileSync, rmSync, statSync} from 'node:fs';
+import {existsSync, readFileSync, statSync} from 'node:fs';
 import {dirname, extname, join, resolve, sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -62,6 +62,13 @@ async function connect(url) {
   });
   let nextId=0;
   const pending=new Map();
+  function close() {
+    for(const p of pending.values()){
+      clearTimeout(p.timer);p.reject(Error('CDP connection closed'));
+    }
+    pending.clear();ws.close();
+  }
+  ws.addEventListener('close',close,{once:true});
   ws.addEventListener('message',event=>{
     let m;
     try { m=JSON.parse(event.data); } catch { return; }
@@ -91,11 +98,11 @@ async function connect(url) {
        || response.exceptionDetails.text);
     return response.result.value;
   }
-  return {send,evaluate,close:()=>ws.close()};
+  return {send,evaluate,close};
 }
 
 const profile=browserProfile('outerloops-smoke-');
-let chrome,client;
+let chrome,client,testError;
 try {
   await new Promise((resolve,reject)=>{
     server.once('error',reject);
@@ -648,16 +655,17 @@ try {
   console.log('PASS RF02 Chrome explicit clear and independent normal/challenge byte-exact recovery.');
 
   console.log('PASS Chrome: game boot, XML localization, 157 actions, Wander execution and save/reload.');
+} catch(error) {
+  testError=error;throw error;
 } finally {
-  client?.close();
-  stopBrowser(chrome);
-  if(server.listening) {
-    server.closeAllConnections?.();
-    await new Promise(resolve=>server.close(resolve));
+  try {await cleanupBrowser({child:chrome,client,profile});}
+  catch(error){
+    if(!testError)throw error;
+    console.error('Additional browser cleanup failure:',error);
+  } finally {
+    if(server.listening) {
+      server.closeAllConnections?.();
+      await new Promise(resolve=>server.close(resolve));
+    }
   }
-  // Chromium has child processes that may still flush cache after parent SIGKILL.
-  // Retrying cleanup is safe in this ephemeral dedicated profile.
-  await pause(300);
-  try {rmSync(profile,{recursive:true,force:true,maxRetries:15,retryDelay:100});}
-  catch(error) {console.warn('Chrome profile cleanup incomplete: '+error.message);}
 }

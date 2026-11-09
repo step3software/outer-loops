@@ -1,0 +1,869 @@
+{
+  "schema": "outer-loops.verification-observation/v1",
+  "date": "2026-11-09",
+  "task": "Verify RF02/RF03/RF04 and reconcile milestone delivery records; no runtime fixes, stage acceptance, merge or deployment",
+  "orcha_main": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+  "source_main": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+  "rf04_head": "82605f4ccf12678ab485d8fdc4bad81ae7495c9a",
+  "environment": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "node": "24.22.1",
+    "python": "3.12.14",
+    "source_checkout_eol": "Git core.autocrlf=true; CRLF runtime sources; generated checks reported as observed, not normalized into a pass",
+    "browser_adapter": "Windows Chrome --version discovery bypass only, plus acceptance of alert dialogs; no game/test/confirmation assertions changed"
+  },
+  "standards": [
+    {
+      "module": "milestone-format",
+      "path": "docs/milestone-file-conventions.md",
+      "sha256": "3eddc165b4a508a6c605892a7a5bd60fa8ff1dfd915388569b526e6c75789c75"
+    },
+    {
+      "module": "milestone-state",
+      "path": "docs/repository-milestones.md",
+      "sha256": "809e4c9872ee1a6896a1bbaea1dbfca938c883f63de4446973fc5de5c6991d98"
+    },
+    {
+      "module": "coordination",
+      "path": "docs/pr-development-coordination.md",
+      "sha256": "8be2fd08b5ee8e89408a18918ab86c6c565025b4be71c77fc0420d0fc07cc7fd"
+    },
+    {
+      "module": "intent-routing",
+      "path": "docs/agent-workflows/intent-routing.md",
+      "sha256": "fc05fdc681d2ae86eedcffad3edf7d8b81ddcfddfd9b7f60ff9bcedb8e096431"
+    },
+    {
+      "module": "intent-routing",
+      "path": "docs/agent-workflows/review.md",
+      "sha256": "7d7d57f531158bb14e71bdaa6103c1bced4ff50219f64e39519320d6b541fe8b"
+    }
+  ],
+  "governing_project_documents": [
+    {
+      "path": "AGENTS.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "93453dffa2e744cd3ada371878c69bf01ff4d9e7",
+      "sha256": "c41cf7961ca85a65bc6a798753f37721c42f71c34e44d6908da1c42f103f33c3"
+    },
+    {
+      "path": ".orcha/repository.json",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "c9632210d57fcfd9e8e8086e31a86daf1992a47e",
+      "sha256": "7b827bd3ead0b69c5db34ed372c93aaf2b9441d0d18c7e781932cc908fb5a7ee"
+    },
+    {
+      "path": "README.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "9b6d8125871d57452a3fbc2ae62b49775457bc84",
+      "sha256": "c8c2278ccb563a87c214f53e09b88ed75df2a723fce655bf077d35d7a33efaa5"
+    },
+    {
+      "path": "docs/README.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "703113c2cda384c33e1fe1e33b571b18f067ca41",
+      "sha256": "bc17710100509477943f38e1e3f23ef399964d4c69cd6a3e6350557c7a847784"
+    },
+    {
+      "path": "docs/AGENTS.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "e7bc12e566cbc150037c55dff9ee70886c0c01bd",
+      "sha256": "e96cfee4b575814c78a75bbc493f69024183e738c50faeb9e39edb2dfde3813c"
+    },
+    {
+      "path": "docs/refactoring/AGENTS.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "ff69cfc488e9301924ab50417b747fc1fcbaae82",
+      "sha256": "fe03a85d968515980e48a2a0ab133bb595e29aed8fc62ff77d3a8bcf2084380c"
+    },
+    {
+      "path": "docs/development/ai-workflow.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "6bf8ccbab230051dbc26dadc03b105ef38a68d5b",
+      "sha256": "1f8eb838ca978944fcd8509c871ffff5cdc9524c255b224f5b02d85f6154fe0b"
+    },
+    {
+      "path": "docs/development/validation.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "2a638486f524c541279313b3b751b6bde164e466",
+      "sha256": "517189f81d5d26d68896c8b230b9cf02179e287995903fdd9da9cd8a0373ae95"
+    },
+    {
+      "path": "docs/workflow/pr-review.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "11354f38c3fe268a53332adb5efe3e9661088ec2",
+      "sha256": "46b7cae018eb35e215e0b8d057ef7d543a0f1dcbe54e46d90332e337ee6bc833"
+    },
+    {
+      "path": "docs/workflow/docs-maintenance.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "99f5840f2d4facc7984f00dfa856a889f1ccaf0c",
+      "sha256": "c1a0ea1bbd3c4525fd843c9a25175a93d48801aeec8b6ffd0f6f6717d63cc6ed"
+    },
+    {
+      "path": "docs/refactoring/RF02-persistence-safety.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "e2ebe037bbd1ee2aea27e175ed8d948a997cb363",
+      "sha256": "e1f98ec485b727fa0d72ac72f761710fee15da5efc5271b9f7b2dae6836b524b"
+    },
+    {
+      "path": "docs/refactoring/RF03-gameplay-rules-and-resources.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "c89974455bc66deeeae9d214f48573763fc46302",
+      "sha256": "c574a98f18bc596bdff8a9756e6a3e57ac24c87e6cd3ec7472e7fe2479110a4d"
+    },
+    {
+      "path": "docs/refactoring/RF04-challenge-rule-isolation.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "48869006986e19015328bb621679816eb0d996e7",
+      "sha256": "6ba6e10ad119b401e62a3b363f221e0260263ee7e23a1365efb263aeb06913d2"
+    },
+    {
+      "path": "docs/state-and-saving.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "0e8668cc753961d60df84f52f645b7e80fdf6cb6",
+      "sha256": "e0bdb2fd060387fad7a0ef95b418216117282320c7025fe77b714417112e38c9"
+    },
+    {
+      "path": "docs/predictor.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "02fdde127ecf97ccd18fab303827ecadf44fb6fe",
+      "sha256": "e70579ba9bbf2ca1fd6241618d1e54121a542c7d0e56491d523f18f609d9b795"
+    },
+    {
+      "path": "views/AGENTS.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "9a3c7b0b9425da35f4a7c6571f9f19d001ca414c",
+      "sha256": "21f6b00ca7fb70536995528f6283c284123122d3b3551003fca5743c75fb775a"
+    },
+    {
+      "path": "lang/AGENTS.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "760c02ddd277c2202fd58bfd2abad6b987d15d20",
+      "sha256": "ee00d562570de3df5f5aeedf254987dd7cf76de80278c43725e3b147f70854c7"
+    }
+  ],
+  "extra_shared_documents": [
+    {
+      "path": "AGENTS.md",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "bb6f8c7efbe07383736ba6d02939bb557607b904",
+      "sha256": "9f749c4394130b150e4cdabeb4394b9465b2da018d35427f6ef2b9df2412deb6"
+    },
+    {
+      "path": "config/repositories.json",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "e91edec4d7c53966f0880991dcc9fe7af1a1463e",
+      "sha256": "00f76eb618856b51f1c75ee191519a92b575e0231a4d1a2368693a5a76472056"
+    },
+    {
+      "path": "README.md",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "4a7b7c7b9977902c2c7bf38fe4550811d218b7ce",
+      "sha256": "1d9c3c0ec439a8f2babae6f090ba34368d4ab17946705781a2ed3cdd2fa51858"
+    },
+    {
+      "path": "standards/catalog.json",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "1a454e3a1dfb2707a95b8d18e4b11b098a0b4023",
+      "sha256": "42190a534f181561a705d509fdc3d95765d0d3a4cce0312a9760cf5607e32dd3"
+    },
+    {
+      "path": "docs/agent-workflows/documentation-consolidation.md",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "3929db1f5b0f733a0393831a004ed98fb2d2757b",
+      "sha256": "bbdec70077948b73ae2782d7007c61cbc9c2a47b2f05815e6bcc1899e1a2f9a2"
+    },
+    {
+      "path": "docs/development-workflow.md",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "ab5e4ecd2a34efd8944cb77faa58f103b77a69b5",
+      "sha256": "b304fc38cca8931196ab032b3c4aa014c4dee0bc2c89ca0f0988486702ea1818"
+    },
+    {
+      "path": "docs/existing-backlog-adoption.md",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "2491c43f5eb608996cbc77fbb59573649d2eb2da",
+      "sha256": "f99a9bb7e2f9be4a5b5eb7a7f12b05f5b412e4b33a4f2a052d522cfa58f41fe5"
+    }
+  ],
+  "results": {
+    "main": [
+      {
+        "check": "check-repo.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 10.31,
+        "log_sha256": "8e708eceddf86d2d4afc2ff7ae3c30ae7697c1b163902f904c34fd5906c373a5"
+      },
+      {
+        "check": "generate-balance-timing-report.mjs --check",
+        "status": "failed",
+        "exit_code": 1,
+        "seconds": 3.56,
+        "log_sha256": "9bec103023ca0a4d1db6212176c667c6c202296d73cad7eaaf1f3564f8f9d192"
+      },
+      {
+        "check": "test-game-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.61,
+        "log_sha256": "8258d57e18981ebc189df7204cf45d9e0331b5441868b0342408abae83eede6c"
+      },
+      {
+        "check": "test-action-execution.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.44,
+        "log_sha256": "fb6291679450b9002f168f5866bbe724fedb26e8286cd78722b7cdb4d6124637"
+      },
+      {
+        "check": "test-rf01-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 1.81,
+        "log_sha256": "4ebaf4fffd6a38f5325de9e3079d5a8363890f028b352b2ef50eb64992011cca"
+      },
+      {
+        "check": "test-rf01-challenges.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.67,
+        "log_sha256": "d4876b58207d075adba3107ffcf04c2562d29c993a877f5fa068438ac338d20d"
+      },
+      {
+        "check": "test-rf02-preflight.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.36,
+        "log_sha256": "306223ac0744ff37a454635a622fc37fed90d8426350231c73a7179604d1b071"
+      },
+      {
+        "check": "test-rf02-transaction.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.19,
+        "log_sha256": "53cfbd30dd1435c6c95abd1e4f384c7a1085b654ed9e24a7fbcd9a79b973ab3d"
+      },
+      {
+        "check": "test-rf03-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.92,
+        "log_sha256": "918f34afa43f788849b0cba4b7de1c73d0a5f0deb66f043fcefb45693a1bc253"
+      },
+      {
+        "check": "test-balance-contracts.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 5.95,
+        "log_sha256": "df7b1857e64d6be07c3eb0ea160c175673119d4c9157c42ac49e9a5aa606bad3"
+      },
+      {
+        "check": "test-balance-equivalence.mjs",
+        "status": "timed_out",
+        "exit_code": null,
+        "seconds": 240.47,
+        "log_sha256": "28723afccc78cd34ae5b3123be812a9a7b37d3a24063f894b2f4adfb5613b80a"
+      },
+      {
+        "check": "test-balance-supervisor.mjs",
+        "status": "failed",
+        "exit_code": 1,
+        "seconds": 3.66,
+        "log_sha256": "241cdc8aef7c5369521e0f6678dacc28fa40205c677b4811ee2a3d64a8553f87"
+      },
+      {
+        "check": "test-balance-potion.mjs",
+        "status": "failed",
+        "exit_code": 1,
+        "seconds": 27.62,
+        "log_sha256": "983010fea1447ff992eeae62aaf04dd67c750ba00bf2812647cecf894d871fe4"
+      },
+      {
+        "check": "test-balance-campaign-estimate.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 30.05,
+        "log_sha256": "a105dc4b5b03a37ff48efc4ad781e8c0fb89649c3b2fdd6a88f812277ad2444e"
+      },
+      {
+        "check": "generate-action-mechanics.mjs --check",
+        "status": "failed",
+        "exit_code": 1,
+        "seconds": 2.44,
+        "log_sha256": "77a0dd3d976001daf0773c15d6c338bf6b4a2bbb9039c77f6a6da7a1acc027db"
+      },
+      {
+        "check": "check-xml.py",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 1.42,
+        "log_sha256": "94e0e6f4c909cf00e37393debc141064d43ebe828f9f3137970489a72e62b916"
+      },
+      {
+        "check": "test-browser-smoke.mjs",
+        "status": "failed",
+        "exit_code": 1,
+        "seconds": 1.41,
+        "log_sha256": "dbb6aadda4922c9732186bde165a8535100fd2e79eab0809f7070b282165a0a9"
+      },
+      {
+        "check": "test-browser-smoke.mjs with external Windows launch and alert-dialog adapter",
+        "status": "failed",
+        "failure": "restorePreviousImport(challengeSaveName) returned false after explicit clear",
+        "log_sha256": "549c0fba161f32db0811e30c3f01d82a216d711d4c9c4e9cc4630f78027bb863"
+      }
+    ],
+    "RF04": [
+      {
+        "check": "check-repo.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 16.69,
+        "log_sha256": "ec77cedc481f9e10c4a6f52f91a5a0a7ceb2b3fac9dbca389faa22549fb7a226"
+      },
+      {
+        "check": "generate-balance-timing-report.mjs --check",
+        "status": "failed",
+        "exit_code": 1,
+        "seconds": 5.08,
+        "log_sha256": "9bec103023ca0a4d1db6212176c667c6c202296d73cad7eaaf1f3564f8f9d192"
+      },
+      {
+        "check": "test-game-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.67,
+        "log_sha256": "8258d57e18981ebc189df7204cf45d9e0331b5441868b0342408abae83eede6c"
+      },
+      {
+        "check": "test-action-execution.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.55,
+        "log_sha256": "fb6291679450b9002f168f5866bbe724fedb26e8286cd78722b7cdb4d6124637"
+      },
+      {
+        "check": "test-rf01-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 3.22,
+        "log_sha256": "4ebaf4fffd6a38f5325de9e3079d5a8363890f028b352b2ef50eb64992011cca"
+      },
+      {
+        "check": "test-rf01-challenges.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 1.84,
+        "log_sha256": "d4876b58207d075adba3107ffcf04c2562d29c993a877f5fa068438ac338d20d"
+      },
+      {
+        "check": "test-rf02-preflight.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.89,
+        "log_sha256": "306223ac0744ff37a454635a622fc37fed90d8426350231c73a7179604d1b071"
+      },
+      {
+        "check": "test-rf02-transaction.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.25,
+        "log_sha256": "53cfbd30dd1435c6c95abd1e4f384c7a1085b654ed9e24a7fbcd9a79b973ab3d"
+      },
+      {
+        "check": "test-rf03-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 5.67,
+        "log_sha256": "918f34afa43f788849b0cba4b7de1c73d0a5f0deb66f043fcefb45693a1bc253"
+      },
+      {
+        "check": "test-rf04-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 8.72,
+        "log_sha256": "a76a7a697b19668a9a91b1b8800a2ab4e0a05246a0dcb2ab7a49502a49f72c1f"
+      },
+      {
+        "check": "test-balance-contracts.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 17.84,
+        "log_sha256": "df7b1857e64d6be07c3eb0ea160c175673119d4c9157c42ac49e9a5aa606bad3"
+      },
+      {
+        "check": "test-balance-equivalence.mjs",
+        "status": "timed_out",
+        "exit_code": null,
+        "seconds": 240.11,
+        "log_sha256": "1d6acce37106a1776c7c1d79549914e2172a217b87e034f64f3555ab4c05c0fb"
+      },
+      {
+        "check": "test-balance-supervisor.mjs",
+        "status": "failed",
+        "exit_code": 1,
+        "seconds": 1.52,
+        "log_sha256": "ba74b2aa9e9dcce13ab091cd18ac43c0e68903a10a1f9556f857742d2c2be27c"
+      },
+      {
+        "check": "test-balance-potion.mjs",
+        "status": "failed",
+        "exit_code": 1,
+        "seconds": 11.19,
+        "log_sha256": "67aa5c12528d66feb8a42d5806b5371c367958fd076933225e23580e9e8d88e0"
+      },
+      {
+        "check": "test-balance-campaign-estimate.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 9.28,
+        "log_sha256": "a105dc4b5b03a37ff48efc4ad781e8c0fb89649c3b2fdd6a88f812277ad2444e"
+      },
+      {
+        "check": "generate-action-mechanics.mjs --check",
+        "status": "failed",
+        "exit_code": 1,
+        "seconds": 1.78,
+        "log_sha256": "77a0dd3d976001daf0773c15d6c338bf6b4a2bbb9039c77f6a6da7a1acc027db"
+      },
+      {
+        "check": "check-xml.py",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.86,
+        "log_sha256": "94e0e6f4c909cf00e37393debc141064d43ebe828f9f3137970489a72e62b916"
+      },
+      {
+        "check": "test-browser-smoke.mjs",
+        "status": "failed",
+        "exit_code": 1,
+        "seconds": 1.39,
+        "log_sha256": "19e917300d591c91b5b51e902ed340923d40cd45cd5d49017c0a40afcca1840d"
+      },
+      {
+        "check": "test-browser-smoke.mjs with external Windows launch and alert-dialog adapter",
+        "status": "failed",
+        "failure": "restorePreviousImport(challengeSaveName) returned false after explicit clear",
+        "log_sha256": "7493ed07605daefa3ce2e954eedc14893baca178ba6c12b1bef440c31a0fc09a"
+      }
+    ]
+  },
+  "changed_path_coverage": {
+    "RF02": {
+      "base": "0f64bb2eddc88f5327ae53c3a5420ef0e4398807^",
+      "head": "0f64bb2eddc88f5327ae53c3a5420ef0e4398807",
+      "paths": [
+        {
+          "path": ".github/workflows/validate.yml",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": ".orcha/repository.json",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "AGENTS.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/README.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/audit/findings.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/audit/persistence-contract.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/decisions/ADR-001-recoverable-save-import.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/decisions/README.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/development/ai-workflow.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/development/validation.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/AGENTS.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/README.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/RF02-persistence-safety.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/decision-log.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/handoffs/RF02.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/rf02-evidence.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/rf02-readiness.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/rf02-test-matrix.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/state-and-saving.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "index.html",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "lang/en-EN/game.xml",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "package.json",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "predictor-worker.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "save-import.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "saving.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "scripts/load-game-model.mjs",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "scripts/test-browser-smoke.mjs",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "scripts/test-rf02-preflight.mjs",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "scripts/test-rf02-transaction.mjs",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "views/menu.view.js",
+          "coverage": "substantively inspected with focused executed checks"
+        }
+      ]
+    },
+    "RF03": {
+      "base": "0f64bb2eddc88f5327ae53c3a5420ef0e4398807",
+      "head": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "paths": [
+        {
+          "path": ".github/workflows/validate.yml",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "actionList.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "actions.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "docs/audit/findings.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/development/validation.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/predictor.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/RF03-gameplay-rules-and-resources.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/decision-log.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/handoffs/RF03.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/rf03-evidence.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/reference/action-mechanics.generated.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/reference/code-map.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/state-and-saving.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "driver.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "package.json",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "predictor.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "saving.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "scripts/test-balance-contracts.mjs",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "scripts/test-browser-smoke.mjs",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "scripts/test-rf01-model.mjs",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "scripts/test-rf03-model.mjs",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "stats.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "views/buffs.view.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "views/main.view.js",
+          "coverage": "substantively inspected with focused executed checks"
+        }
+      ]
+    },
+    "RF04": {
+      "base": "294e45ba54cb989ed2ea02fffe4002b54f9601ce",
+      "head": "82605f4ccf12678ab485d8fdc4bad81ae7495c9a",
+      "paths": [
+        {
+          "path": ".github/workflows/validate.yml",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "actionList.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "challenges.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "docs/README.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/architecture.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/audit/findings.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/decisions/ADR-002-challenge-policy-dispatch.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/decisions/README.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/development/validation.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/predictor.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/README.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/handoffs/README.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/handoffs/RF04.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/rf04-evidence.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/refactoring/validation-matrix.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/reference/action-mechanics.generated.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/reference/code-map.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "docs/state-and-saving.md",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "driver.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "package.json",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "predictor-worker.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "predictor.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "saving.js",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "scripts/load-game-model.mjs",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "scripts/test-browser-smoke.mjs",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "scripts/test-rf01-challenges.mjs",
+          "coverage": "mechanically checked or selectively inspected; no exhaustive semantic review"
+        },
+        {
+          "path": "scripts/test-rf04-model.mjs",
+          "coverage": "substantively inspected with focused executed checks"
+        },
+        {
+          "path": "stats.js",
+          "coverage": "substantively inspected with focused executed checks"
+        }
+      ]
+    }
+  },
+  "host_reconciliation": {
+    "result": "fresh",
+    "approval_records_sha256_unchanged": "063f3fec31b524f03a074202b87498738777164dcd3b0684c6d520a5673da9ed",
+    "milestones": [
+      {
+        "id": "step3software/outer-loops#RF02",
+        "delivery": "review",
+        "approval_stage": "proposed"
+      },
+      {
+        "id": "step3software/outer-loops#RF03",
+        "delivery": "review",
+        "approval_stage": "proposed"
+      },
+      {
+        "id": "step3software/outer-loops#RF04",
+        "delivery": "review",
+        "approval_stage": "proposed"
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "RF02-VERIFY-01",
+      "priority": "P2",
+      "requirement": "RF02 A5/P19/P21; RF04 A3/A8 inherits recovery contract",
+      "result": "confirmed browser failure on main and RF04",
+      "trigger": "normal/challenge lifecycle, prestige, explicit clear, restore inactive challenge backup",
+      "actual": "returns false; options.updateRate has an unsupported type",
+      "trace": [
+        "saving.js:getImportContract derives option types from current mutable values",
+        "saving.js:doLoad can restore updateRate directly from localStorage as string",
+        "save-import.js:validateDomain compares imported options with that live type",
+        "saving.js:restorePreviousImport preflight rejects its prior valid saved backup"
+      ],
+      "minimum_correction": "Use stable canonical option types or explicit legacy normalization; preserve byte-exact backed-up JSON and add numeric/string updateRate transitions to recovery tests. Runtime correction is outside this task."
+    }
+  ],
+  "limits": [
+    "No authentic player saves, live cloud/OAuth, complete campaign, deployment or exhaustive UI/security audit",
+    "Broad regression suite has generated-document failures, host-budget failures and incomplete equivalence; none converted into passes",
+    "Formal lifecycle stays proposed; direct owner decisions and PR evidence are not new accepted artifacts",
+    "RF04 stack/head remains unchanged; current main source-document changes are a separate draft PR"
+  ],
+  "final_documentation_validation": {
+    "static": "passed: 68 JS files, 100 Markdown files / 814 links, 49 local scripts, 157 actions",
+    "xml": "passed: 5 XML/Relax NG files",
+    "standards": "passed current main reference validation; legacy authority; zero typed milestone records expected; workflow/domain compliance not inferred",
+    "npm_run_check": "failed at existing stale calculated-timing report after static checks pass",
+    "RF02_RF03_RF04_A1_A8": "exact original criterion lines preserved",
+    "source_changes": "documentation and evidence only",
+    "diff_check": "passed",
+    "static_log_sha256": "7ea15dbaf0de607f69120e69145bb1fdba626f83c0c8c20d08c99f8cc1e60a4c"
+  },
+  "diagnostic": {
+    "result": {
+      "savedType": "number",
+      "liveContractType": "string",
+      "error": {
+        "code": "INVALID_OPTION",
+        "message": "options.updateRate has an unsupported type."
+      }
+    },
+    "source_backed_reproduction": "serialize current game with numeric options.updateRate, change live value to its localStorage string representation, getImportContract, prepareStoredJson of the prior save; INVALID_OPTION",
+    "script_sha256": "34378e77ec4c1961be9c0c972137156a4ca2fda8122240b55c09ea2f9068aadd",
+    "browser_adapter_sha256": "844003edf590bbb4e2178fd7b223c42d4e27bb54fe39cd1f5df9a626d7431534"
+  },
+  "publication": "The owner explicitly approved committing and publishing the reconciled milestone records as a draft PR on 2026-11-09. Final remote publication evidence belongs to the GitHub branch and PR; no merge or deployment is authorized."
+}

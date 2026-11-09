@@ -129,7 +129,18 @@ Both browser harnesses share installed Chrome/Chromium discovery. Windows uses
 an installed executable followed by a real CDP boot; other platforms retain the
 command/version probe. Expected blocking alerts are dismissed in the smoke
 suite; confirmations and all returned-value/storage assertions remain explicit.
-Profiles are temporary and cleanup targets only the owned browser process tree.
+Profiles are temporary. Both harnesses request `Browser.close` through their
+existing page connection, dispose pending CDP requests, and await the owned
+process exit before asynchronously removing the registered profile. Windows
+force termination is a bounded fallback; a remaining shutdown/removal failure
+fails the command. Cleanup preserves an earlier test failure and always closes
+the local server. An unregistered or redirected profile path is never removed.
+
+`npm run test:browser:cleanup` exercises real graceful Chrome exit and complete
+profile removal, idempotent cleanup, no-CDP forced fallback, startup cleanup and
+unowned-path rejection. It also runs before the full smoke suite through
+`npm run test:browser`. These checks use the normal system temporary directory;
+no external cleanup adapter or temporary-directory override is required.
 
 The balance profiler only records telemetry and preserves original errors;
 `BalanceEngine.step` enforces the declared execution ceiling from `start()`, and
@@ -148,3 +159,15 @@ to fit repeated actions within the real starting mana budget. These fixtures do
 not establish an earned campaign or official RW00 baseline.
 
 [RF02–RF04 correction run evidence](../refactoring/rf02-rf04-fix-evidence.md) records the tested candidates and limitations.
+
+## Current RF02–RF04 correction evidence
+
+Recovery correction #24 is merged. The Windows cleanup correction in
+[PR #23](https://github.com/step3software/outer-loops/pull/23) passes all 20 selected
+checks at `68e012611ba425045c1db9a881c86b10120846f0`, using the ordinary system temporary directory without an
+external adapter or host cleanup. Both full browser suites exit successfully;
+calibration retains all 12 original comparisons. The
+[current ledger](../refactoring/rf02-rf04-fix-evidence.md) links exact command/log
+results, source and standards hashes, review coverage and historical failures.
+RF04's unchanged draft retains its earlier result; no stage acceptance,
+deployment or later milestone authorization is inferred.

@@ -1,6 +1,6 @@
 # RF03 — Pure gameplay rules and typed resources
 
-**Status:** Planned — implementation candidate on a separate branch, not merged or accepted
+**Status:** Merged — PR #18; shared correction #24 is on main. All 20 selected checks pass on the #23 cleanup correction; see [evidence](rf03-evidence.md). No milestone acceptance is inferred.
 - **Priority:** After RF02
 - **Hard dependencies:** RF01's action/worker/predicate characterization and RF02's persistence contracts
 - **Enables:** RF04 stable challenge rules; RF06 UI-only rendering boundary
@@ -11,7 +11,7 @@
 
 Make core gameplay eligibility and calculations evaluable from **explicit game state without DOM access or hidden mutations**, and enforce finite numeric versus boolean resource semantics. This is a narrowly scoped behavior-preserving refactor plus intentional invalid-input safety correction, **not** a rebalance.
 
-### Observed coupling
+### Historical pre-RF03 coupling
 
 - `stats.js` `getBuffCap(buff)` currently reads `document.getElementById` and requires an `HTMLInputElement`, while `Action.DarkRitual.canStart` and related imbuement paths use it. `predictor-worker.js` has no DOM; [R04](../audit/findings.md) identifies possible parity failures.
 - `Action.Escape.canStart` in `actionList.js` sets `escapeStarted = true` while answering an eligibility query if `effectiveTime < 60`. Calling an eligibility predicate can therefore commit state even when the action never executes ([R08](../audit/findings.md)).
@@ -30,7 +30,7 @@ Make core gameplay eligibility and calculations evaluable from **explicit game s
 - **RF03-D05 A:** Strict typed resource enforcement, with no legacy sentinel exceptions. Reject unknown keys, strings, undefined, null, mismatched booleans and nonfinite numeric inputs/results before mutation.
 - **RF03-D06 A:** Escape activates only on the first **positive mana-spending execution step** under `effectiveTime < 60`. Probes, queue eligibility checks, paused/aborted actions and zero-spend ticks never activate it; activation remains sticky until restart.
 
-These are owner planning decisions, not approval to merge or deploy. The owner separately authorized implementation after the RF02 merge; the work remains in a draft, unmerged review branch.
+These are owner planning decisions, not approval to merge or deploy. The owner separately authorized implementation after the RF02 merge; the implementation merged in PR #18. Preparation PR #17 remains open separately; it is not evidence that the implementation is unmerged. No additional scope or approval follows.
 
 ## Explicitly excluded
 

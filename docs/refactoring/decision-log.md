@@ -37,4 +37,4 @@ After review of the RF02 implementation plan, the owner explicitly accepted the 
 | RF02-D02 | **A: one previous pre-import backup per slot plus recovery journal** | Preserve both save slots and prestigeBackup; verify rollback and interrupted boot |
 | RF02-D03 | **A: reject incompatible unknown fields without changing existing saves** | Preserve recognized legacy data; reject future unsupported state safely |
 
-The chosen design is documented in [ADR 001](../decisions/ADR-001-recoverable-save-import.md). The implementation remains unmerged and cannot be considered complete without [A1–A8 evidence](rf02-evidence.md) and owner-controlled merge.
+The chosen design is documented in [ADR 001](../decisions/ADR-001-recoverable-save-import.md). PR #16 and its bounded correction #24 are merged; milestone completion remains subject to [A1–A8 evidence](rf02-evidence.md) and owner-controlled acceptance.

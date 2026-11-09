@@ -1,6 +1,6 @@
 # RF04 — Challenge rule isolation
 
-**Status:** Planned — approved scope; implementation not authorized
+**Status:** Review — [draft PR #21](https://github.com/step3software/outer-loops/pull/21) remains unmerged at `a6fc99653961c59b5be6e0aee2e9f673ec031a86`, with its prior 20-check result. Shared correction #24 is merged on main; see [current evidence](rf04-evidence.md). Original criteria and approvals remain unchanged.
 - **Priority:** After RF03
 - **Hard dependencies:** RF01 challenge-mode characterization, RF02 challenge save boundaries, RF03 pure gameplay rule APIs
 - **Enables:** A stable action/runtime surface for RF05, fewer cross-system cases for RF06
