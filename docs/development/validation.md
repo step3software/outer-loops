@@ -113,3 +113,13 @@ The test profile may not have late-game unlocks. Do not bypass unlock conditions
 ## PR evidence convention
 
 Report **commands actually run**, manual cases actually observed, and untested risks. Include exact reproduction steps and optional anonymized/disposable fixture data for failures. Do not attach real saves or tokens. For a documentation-only PR, syntax/XML checks are adequate if no runtime behavior was changed, though browser validation remains unverified.
+
+## Current RF02–RF04 correction evidence
+
+The [correction ledger](../refactoring/rf02-rf04-fix-evidence.md) records the full
+native Node/Chrome/Worker runs at pinned correction commits. Both candidates pass
+all selected suites, including generated references, recovery and balance checks.
+This documentation branch retains unchanged main runtime sources; its existing
+timing-reference check remains stale until the separate code correction lands.
+Its static/link and XML checks are recorded independently, without treating a
+candidate pass as a passing check on unchanged main or as milestone acceptance.

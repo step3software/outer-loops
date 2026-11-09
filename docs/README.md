@@ -38,14 +38,14 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [RF01 implemented regression coverage and remaining gaps](refactoring/rf01-evidence.md)
 - [RF02 persistence-safety charter](refactoring/RF02-persistence-safety.md)
 - [RF02 implementation readiness and source-based transaction proposal](refactoring/rf02-readiness.md)
-- [RF02 safety acceptance matrix and remaining recovery gate](refactoring/rf02-test-matrix.md)
+- [RF02 safety acceptance matrix and correction evidence](refactoring/rf02-test-matrix.md)
 - [RF03 current verification](refactoring/rf03-evidence.md)
 - [RF04 candidate verification](refactoring/rf04-evidence.md)
 - [Cross-milestone validation matrix](refactoring/validation-matrix.md)
 - [Decision log and unresolved implementation choices](refactoring/decision-log.md)
 - [Implementation handoffs, including RF02](refactoring/handoffs/README.md)
 
-**RF02 and RF03 are merged; RF04 has an unmerged implementation in PR #21.** November 9 verification found passing focused cases and outstanding recovery/regression blockers; see [RF02](refactoring/rf02-evidence.md), [RF03](refactoring/rf03-evidence.md) and [RF04](refactoring/rf04-evidence.md) evidence. RF05–RF06 remain planned. Delivery observations do not advance Orcha approval stages or authorize another implementation or merge.
+**RF02 and RF03 are merged; RF04 remains draft PR #21.** The reported recovery/regression failures pass on both [correction candidates](refactoring/rf02-rf04-fix-evidence.md), including [draft fix PR #24](https://github.com/step3software/outer-loops/pull/24). Corrections are unmerged; RF05–RF06 remain planned, and approval stages, acceptance and deployment are unchanged.
 
 ## Future Outer Loop / Real World design (not implemented)
 

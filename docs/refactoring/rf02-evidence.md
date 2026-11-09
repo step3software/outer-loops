@@ -1,44 +1,59 @@
 # RF02 — Persistence safety verification
 
-**Status:** Merged in [PR #16](https://github.com/step3software/outer-loops/pull/16); verification incomplete, not milestone acceptance or deployment evidence.
-**Verified source:** `main` `1815ad7b52e9b976e92f11b845309bd9e0d80724`, which includes merged RF02 and RF03.
-**Current evidence:** [run record](../../.orcha/evidence/2026-11-09-rf02-rf04-verification.json).
+**Status:** Merged in [PR #16](https://github.com/step3software/outer-loops/pull/16).
+The backup recovery defect is corrected and verified in [draft correction PR #24](https://github.com/step3software/outer-loops/pull/24)
+at `8522b4564ae5d5abc034acaa6e728a79a8cb54fe`, and in the updated RF04 candidate. The correction is unmerged;
+this is passing candidate evidence, not complete milestone acceptance.
 
-## Current results
+## Recovery regression and result
 
-- **Passed:** source-backed RF02 preflight and transaction fault-injection Node scripts; RF01 model/challenge characterization; RF03 model; base game/action and balance-contract checks; campaign-estimate assertions; XML parsing.
-- **Passed in the adapted real-browser run:** legacy Base64/LZW import; malformed JSON/compression/shape rejection with both slots and existing recovery copies unchanged; byte-exact normal restoration and backup rotation; journal/active-write quota rejection; legacy inline challenge migration; normal/challenge entry and exit for modes 1–3; inherited prestige reset; foreground/real Worker Wander parity.
-- **Failed:** P19/P21 independent challenge restoration after explicit clear. After the existing challenge and prestige scenarios, both slots are cleared into their backups; `restorePreviousImport(challengeSaveName)` returns `false` instead of `true`. Reproduced at `scripts/test-browser-smoke.mjs:628` on main and `:729` on the RF04 candidate. Backup-byte assertions before restoration pass. The final normal-restoration assertions are not reached. The browser reports `options.updateRate has an unsupported type.` Source tracing and an isolated source-backed reproduction confirm live schema drift: `getImportContract()` derives `optionTypes` from current mutable option values, while `doLoad` can restore `updateRate` directly from string-valued localStorage. A backup with numeric `options.updateRate` is then rejected against the current string contract. The same numeric-save/string-contract case throws `INVALID_OPTION` in Node. Use stable canonical option types or explicit legacy normalization, retain byte-exact backup data, and regress both directions of numeric/string option changes before claiming recovery complete. No runtime repair is included here.
+After challenge/prestige transitions and explicit clear, restoration rejected a
+valid backup because `getImportContract()` inferred types from live options after
+localStorage had made `updateRate` a string. The new regression failed before
+repair with `string !== number`. Canonical option categories now define the
+contract; recognized numeric-text update rates normalize only in a clone.
+Malformed values remain rejected and the original backup bytes are preserved.
+
+The full repository browser suite now passes independent challenge restoration,
+then active normal restoration, after clearing both slots. Both saves and
+`prestigeBackup` match their pre-clear bytes and the transaction journal is clear.
+Preflight, byte-exact transaction/quota rollback, legacy imports, challenges,
+prestige, RF01/RF03 and real Worker assertions also pass on both candidates.
 
 ## A1–A8 verification mapping
 
-| Criteria | Evidence and disposition |
+| Criteria | Current evidence and disposition |
 | --- | --- |
-| A1/A2/A3 | Pure preflight, malformed-input and transaction tests pass; browser rejection, legacy import and migration cases pass. Authentic historical-save compatibility is not established. |
-| A4 | Current/legacy fixture and model roundtrips pass; complete cross-mode acceptance remains incomplete because the final recovery scenario fails. |
-| A5 | Normal exact-byte recovery and synthetic interrupted/quota/apply rollback pass; independent challenge recovery after clear fails in Chrome. **Unresolved.** |
-| A6 | Pure module and shipping transaction functions exercised; browser integrations observed. |
-| A7 | Focused RF01/RF02/RF03 and selected real Worker/browser cases pass; full browser and balance suites fail or remain incomplete. **Unresolved.** |
-| A8 | [ADR 001](../decisions/ADR-001-recoverable-save-import.md) and the [P01–P22 matrix](rf02-test-matrix.md) retain the bounded decode, unknown-field and recovery policy. Tests do not certify every historical save shape. |
+| A1/A2/A3 | Pure preflight, malformed-input, known legacy/current imports, idempotent option migration and transaction fault injection pass; authentic player-save coverage remains unverified. |
+| A4 | Current/legacy synthetic roundtrips and complete selected browser lifecycle now pass, including recovery of both slots. |
+| A5 | Exact-byte backup restore, bidirectional rotation, quota/apply/interruption rollback and post-clear independent recovery pass. The reported recovery blocker is resolved in the candidates. |
+| A6 | Pure validator and actual shipping transaction code are tested without a live view; browser integrations pass. |
+| A7 | All selected RF01–RF03, balance, generated-reference, XML and full Chrome suites pass; RF04's additional model and browser assertions pass on its candidate. Broad unmodeled permutations remain unverified. |
+| A8 | [ADR 001](../decisions/ADR-001-recoverable-save-import.md), RF02-D01/D02/D03 and the [P01–P22 matrix](rf02-test-matrix.md) remain unchanged. Synthetic tests do not certify every historical shape or representative real-save size. |
 
-## Verification conditions — November 9, 2026
+## Shared verification corrections
 
-Windows, Node.js 24.22.1 and Python 3.12.14; fresh isolated worktrees and synthetic fixtures only. The recorded checks ran the repository script entry points directly, equivalent to the package commands, with a 240-second host ceiling per entry point. No player saves or cloud accounts were used.
+The profiler preserves original errors and post-budget diagnostics; the engine
+owns its execution ceiling and the parent watchdog still caps startup/time/RSS.
+Windows RSS sampling and browser discovery use native supported paths. Profile
+paths resolve short aliases before Chrome creates files. The line-ending fixture
+processes each physical source once, including RF04's repeated registry entry.
+Potion accounting/event fixtures now actually establish their synthetic premises.
+Full equivalence scenarios completed unchanged with a longer external deadline.
+Generated formulas and timing estimates remain unchanged; provenance is current.
 
-The unmodified browser command cannot discover Windows Chrome: its POSIX `--version` probe times out. An external test-environment adapter selected the installed Chrome executable and dismissed expected `alert` dialogs in the disposable profile. It changed no game code, test assertion, confirmation decision or save fixture. Results below explicitly refer to that adapted browser run; ordinary CI/browser invocation is still a portability gap.
+## Provenance and authority
 
-## Shared regression blockers
+The [earlier failure record](../../.orcha/evidence/2026-11-09-rf02-rf04-verification.json)
+and its original source pins remain unchanged. The [correction evidence](rf02-rf04-fix-evidence.md)
+and [new machine-readable record](../../.orcha/evidence/2026-11-09-rf02-rf04-fix.json)
+record 19 passing checks on the main correction and 20 on RF04, including all
+full equivalence scenarios, native Chrome smoke/Worker and browser calibration.
+Current `main` is still `1815ad7b52e9b976e92f11b845309bd9e0d80724`; passing unmerged candidates do not repair that
+branch until owner-controlled integration.
 
-- `generate-balance-timing-report.mjs --check` fails: the generated report's source identity is stale. The captured regeneration retains the numerical estimates.
-- `generate-action-mechanics.mjs --check` fails: generated source references are stale (including shifted action line anchors). No gameplay correction is inferred.
-- `test-balance-equivalence.mjs` exceeds the 240-second host ceiling after partial equivalence passes; incomplete is not a pass.
-- `test-balance-supervisor.mjs` returns `budget_exceeded` where the test expects `complete`; `test-balance-potion.mjs` also encounters its runtime budget before the expected validation error. Host-load effects were not isolated, so these are failed verification gates, not established gameplay defects.
-- The complete adapted browser suite fails when restoring the challenge backup after explicit clear. The restore returns `false`; remaining post-failure browser assertions did not execute.
-
-Full campaign, authentic historical saves, broad predictor parity and live deployment remain unverified. The pre-existing R15 Gods Trial discrepancy remains outside this task.
-
-## Historical provenance and authority
-
-The prior [implementation-session ledger](https://github.com/step3software/outer-loops/blob/1815ad7b52e9b976e92f11b845309bd9e0d80724/docs/refactoring/rf02-evidence.md) preserves the isolated V8 roundtrips, transaction assertions, review remediations and their original limitations. November 9 Node/Chrome observations above supersede its unexecuted-check and unmerged labels; they do not rewrite those historical results.
-
-RF02-D01/D02/D03, the original ILSV01 envelope, normal/challenge slot names and immutable owner history are retained. Orcha's live approval stage is still `proposed`, with no accepted plan/preparation artifacts; observed merges and this verification do not fabricate them. Do not restart the merged implementation or clear recovery data. A follow-up fix needs its own authorized scope.
+All original A1–A8 criteria and owner decisions are retained. Orcha's legacy
+approval stage remains `proposed`; no accepted artifacts, milestone completion,
+merge or deployment are created. Authentic historical saves, exhaustive predictor
+permutations, earned campaign endpoints and official RW00 baselines remain
+unverified. The known R15 Gods Trial discrepancy remains outside this correction.

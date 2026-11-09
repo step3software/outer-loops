@@ -1,6 +1,6 @@
 # RF03 — Pure gameplay rules and typed resources
 
-**Status:** Merged — [PR #18](https://github.com/step3software/outer-loops/pull/18), 2026-11-08; focused model and browser checks passed on November 9, broader verification incomplete. See [evidence](rf03-evidence.md).
+**Status:** Merged — PR #18. Focused RF03 behavior and all selected regression checks pass in the [unmerged correction candidate](https://github.com/step3software/outer-loops/pull/24); see [evidence](rf03-evidence.md). No milestone acceptance is inferred.
 - **Priority:** After RF02
 - **Hard dependencies:** RF01's action/worker/predicate characterization and RF02's persistence contracts
 - **Enables:** RF04 stable challenge rules; RF06 UI-only rendering boundary

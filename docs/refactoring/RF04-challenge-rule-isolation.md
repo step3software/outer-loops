@@ -1,6 +1,6 @@
 # RF04 — Challenge rule isolation
 
-**Status:** Review — [draft implementation PR #21](https://github.com/step3software/outer-loops/pull/21) at `82605f4ccf12678ab485d8fdc4bad81ae7495c9a`; unmerged and verification incomplete. [Current verification](rf04-evidence.md) records passing focused checks and remaining blockers. This observation does not amend the charter or accept an Orcha stage.
+**Status:** Review — [draft PR #21](https://github.com/step3software/outer-loops/pull/21) at `a6fc99653961c59b5be6e0aee2e9f673ec031a86`; unmerged, 20 selected checks pass. See [current evidence](rf04-evidence.md). Original criteria and legacy approval stage are unchanged.
 - **Priority:** After RF03
 - **Hard dependencies:** RF01 challenge-mode characterization, RF02 challenge save boundaries, RF03 pure gameplay rule APIs
 - **Enables:** A stable action/runtime surface for RF05, fewer cross-system cases for RF06

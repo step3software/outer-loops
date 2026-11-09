@@ -1,25 +1,35 @@
 # RF03 — Gameplay rules and resource verification
 
-**Status:** Merged in [PR #18](https://github.com/step3software/outer-loops/pull/18); focused behavior verified, broader milestone verification incomplete.
-**Verified source:** `main` `1815ad7b52e9b976e92f11b845309bd9e0d80724`. RF02 PR #16 is merged; preparation PR #17 remains independently open.
-**Run record:** [November 9 evidence](../../.orcha/evidence/2026-11-09-rf02-rf04-verification.json).
+**Status:** Merged in [PR #18](https://github.com/step3software/outer-loops/pull/18).
+Focused behavior and all selected regression suites pass on the [main correction
+candidate](https://github.com/step3software/outer-loops/pull/24) and updated RF04 candidate. Preparation PR #17 remains separately
+open. This does not establish complete milestone acceptance.
 
 ## A1–A8 verification mapping
 
-| Criteria | Observed evidence | Result |
+| Criteria | Current executed evidence | Result |
 | --- | --- | --- |
-| A1/A5/A6 | Node DOM-less cap/default/snapshot tests; real Chrome edits Ritual to 17 and Imbuement to 5, rejects blank input, saves/reloads, and exercises production `predictor-worker.js` snapshots and cap-gated forecasts | Focused cases passed |
-| A2/A3 | Repeated Escape queries and 422 registered predicate checks; first positive spend, zero spend, aborted/paused scheduling, sticky continuation/reset; real foreground/Worker prediction below/at 60 seconds | Focused cases passed |
-| A4 | All 18 numeric/nine boolean resource classes, fractional/negative values, NaN/Infinity/wrong type/unknown key/overflow rejection before mutation, DOM-less calls and stable reset identity | Node cases passed |
-| A7 | RF01 model/challenge and RF02 preflight/transaction pass; real Wander prediction, challenge-slot transitions and prestige cases pass. Entire browser run later fails RF02 challenge recovery; balance and generated-reference checks fail or time out | Incomplete |
-| A8 | Ownership traced through `stats.js`, `saving.js`, `driver.js`, `actions.js`, `actionList.js`, views and `predictor.js`; source-backed assertions inspected | Covered for selected behavior, no exhaustive compliance claim |
+| A1/A5/A6 | DOM-less authoritative caps/defaults/snapshots; Chrome edits and rejects blank input, saves/reloads; production predictor Worker snapshots and cap-gated forecasts | Selected checks passed |
+| A2/A3 | Pure Escape queries and registered predicates; first positive spend, zero spend, abort/pause, sticky continuation/reset; foreground/Worker boundary forecasts | Selected checks passed |
+| A4 | 18 numeric/nine boolean resources, finite fractional/negative deltas, wrong-type/unknown/nonfinite/overflow rejection and in-place reset identity | Model checks passed |
+| A7 | Full base, RF01/RF02, balance, generated, XML and Chrome suites; inherited RF02 recovery failure now passes in both correction candidates | Reported regression blockers resolved in candidates |
+| A8 | Ownership remains in stats/saving/driver/actions and views; source-backed assertions retained | Selected behavior covered; no exhaustive compliance claim |
 
-## Shared environment and remaining gates
+No additional RF03 gameplay redesign was needed. RF03-D05 A, RF03-D06 A,
+all action/resource identities and existing save contracts remain unchanged.
 
-The [RF02 verification conditions](rf02-evidence.md#verification-conditions--november-9-2026) describe the exact Windows/Node/browser adapter, and its [shared regression blockers](rf02-evidence.md#shared-regression-blockers) record the generated-reference, host-budget and recovery failures on both revisions. These remain acceptance gaps here; focused passes are not a passing complete suite.
+## Provenance and authority
 
-## Historical provenance and authority
+The [earlier failure record](../../.orcha/evidence/2026-11-09-rf02-rf04-verification.json)
+and its original source pins remain unchanged. The [correction evidence](rf02-rf04-fix-evidence.md)
+and [new machine-readable record](../../.orcha/evidence/2026-11-09-rf02-rf04-fix.json)
+record 19 passing checks on the main correction and 20 on RF04, including all
+full equivalence scenarios, native Chrome smoke/Worker and browser calibration.
+Current `main` is still `1815ad7b52e9b976e92f11b845309bd9e0d80724`; passing unmerged candidates do not repair that
+branch until owner-controlled integration.
 
-The [prior implementation ledger](https://github.com/step3software/outer-loops/blob/1815ad7b52e9b976e92f11b845309bd9e0d80724/docs/refactoring/rf03-evidence.md) preserves the isolated V8 checks, follow-up test authorship and original pending gates. The current execution replaces its unmerged and never-executed labels; it does not claim green CI or complete campaign/save parity.
-
-RF03-D05 A and RF03-D06 A, A1–A8, save identities, challenge rules and RF02 backups remain unchanged. Orcha's live approval stage remains `proposed` with no accepted host artifacts. No new implementation, acceptance, merge or deployment is authorized by this record.
+All original A1–A8 criteria and owner decisions are retained. Orcha's legacy
+approval stage remains `proposed`; no accepted artifacts, milestone completion,
+merge or deployment are created. Authentic historical saves, exhaustive predictor
+permutations, earned campaign endpoints and official RW00 baselines remain
+unverified. The known R15 Gods Trial discrepancy remains outside this correction.

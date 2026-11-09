@@ -1,6 +1,6 @@
 # Refactoring milestone implementation handoffs
 
-These prompts are retained implementation handoffs, not permission to restart completed work. RF01, RF02 and RF03 have merged implementations. RF04 already has an unmerged candidate in PR #21. Consult the [program register](../README.md) and each milestone's current evidence before selecting remaining work; November 9 verification leaves recovery and regression gates open. RF05–RF06 remain planned and need separate implementation authorization.
+These prompts are retained implementation handoffs, not permission to restart completed work. RF01, RF02 and RF03 have merged implementations. RF04 already has an unmerged candidate in PR #21. Consult the [program register](../README.md) and each milestone's current evidence before selecting remaining work; the reported November 9 recovery and regression failures now pass on unmerged correction candidates. Milestone acceptance remains separate. RF05–RF06 remain planned and need separate implementation authorization.
 
 ## How to use
 
@@ -9,7 +9,7 @@ After the prior milestone's acceptance gate is satisfied, provide the intended a
 | Milestone | Implementation prompt | Readiness prerequisite |
 | --- | --- | --- |
 | RF01 | [Regression coverage — executed/merged](RF01.md) | **Completed in PR #4** |
-| RF02 | [Persistence safety — merged, verification incomplete](RF02.md) | [RF02 current verification](../rf02-evidence.md); do not duplicate PR #16 |
+| RF02 | [Persistence safety — merged, correction verified in draft](RF02.md) | [RF02 current verification](../rf02-evidence.md); do not duplicate PR #16 |
 | RF03 | [Gameplay rules/resources — merged](RF03.md) | [RF03 current verification](../rf03-evidence.md); preparation #17 remains open |
 | RF04 | [Challenge isolation — candidate in PR #21](RF04.md) | [RF04 current verification](../rf04-evidence.md); preserve the existing stack |
 | RF05 | [Action modules](RF05.md) | RF01 ordered registry tests; recommend RF02–RF04 landed |

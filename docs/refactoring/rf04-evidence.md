@@ -1,27 +1,39 @@
 # RF04 — Challenge-policy verification
 
-**Status:** Review — [draft implementation PR #21](https://github.com/step3software/outer-loops/pull/21) is unmerged; verification incomplete.
-**Candidate:** `82605f4ccf12678ab485d8fdc4bad81ae7495c9a`. **Actual base:** preparation PR #20 at `294e45ba54cb989ed2ea02fffe4002b54f9601ce`; planning PR #19 is its parent. Final intended integration target is `main`, not an update performed by this task.
-**Governing source:** `main` `1815ad7b52e9b976e92f11b845309bd9e0d80724`; the existing A1–A8 charter is preserved. This record evaluates the candidate, without importing its proposed plan/preparation into accepted source authority.
-**Run record:** [November 9 evidence](../../.orcha/evidence/2026-11-09-rf02-rf04-verification.json).
+**Status:** Review — [draft PR #21](https://github.com/step3software/outer-loops/pull/21)
+at `a6fc99653961c59b5be6e0aee2e9f673ec031a86` remains unmerged. All 20 selected checks pass after the bounded
+correction. The actual base is still `docs/rf04-implementation-preparation`
+at `294e45ba54cb989ed2ea02fffe4002b54f9601ce`: planning #19 → preparation #20
+→ implementation #21. No retargeting or lifecycle acceptance is implied.
 
 ## A1–A8 verification mapping
 
-| Criteria | Evidence | Result |
+| Criteria | Executed evidence | Result |
 | --- | --- | --- |
-| A1/A2 | Source-backed modes 0–3, stable callback identity across 0→1/2/3→0, normal-speed restoration; Chrome stable-identity assertions | Focused cases passed |
-| A3/A8 | RF02 preflight/transaction, browser legacy challenge import, isolated normal/challenge entry/exit and prestige; full browser then fails post-clear challenge-backup restoration inherited from main | Incomplete |
-| A4 | Exact Mana Drought purchase/spend and merchant budgets at zero/small/cap-exceeding amounts; Z3/Z5 visibility stays distinct from already-queued eligibility | Model and selected Chrome cases passed |
-| A5 | Noodle Arms self/team arithmetic compared with existing zombie/team functions; selected real Worker comparison | Focused cases passed; not every buff/guild permutation |
-| A6 | Mana Burn at total effective times 0/100/86399/86400/86401; original non-positive budgets and reset omissions retained | Model and selected Chrome cases passed |
-| A7 | Explicit forecast mode/current merchant budget, real production Worker snapshots and field parity; mode/budget cache identity inspected | Selected cases passed; broad predictor parity not established |
+| A1/A2 | Modes 0–3 and transitions, unchanged original numeric characterization, stable global/Action callback identities and normal speed restoration | Model and Chrome checks passed |
+| A3/A8 | RF02 transactions, legacy challenge imports, isolated entry/exit/reload/resume, prestige and independent post-clear recovery of both slots; full regression suite | Reported inherited blockers resolved in this candidate |
+| A4 | Exact Mana Drought zero/small/capped gold and merchant budgets; Z3/Z5 visibility remains distinct from queued eligibility | Model and selected Chrome checks passed |
+| A5 | Original zombie/team arithmetic and selected real Worker combat comparison | Selected checks passed; all buff/guild permutations not established |
+| A6 | Mana Burn boundaries at total effective times 0/100/86399/86400/86401; original zero/negative budgets and reset omissions retained | Model and selected Chrome checks passed |
+| A7 | Explicit mode/current merchant state, production Worker snapshots and forecast fields, mode/budget cache identity | Selected checks passed; broad predictor parity remains unverified |
 
-## Shared environment and remaining gates
+RF04-Q01/Q02/Q03 A and original A1–A8 are preserved. The correction does not
+grant new Real World gameplay scope, later milestones or service activation.
+The [original implementation ledger](https://github.com/step3software/outer-loops/blob/82605f4ccf12678ab485d8fdc4bad81ae7495c9a/docs/refactoring/rf04-evidence.md)
+preserves its historical owner decisions and unexecuted-check labels.
 
-The [RF02 verification conditions](rf02-evidence.md#verification-conditions--november-9-2026) describe the exact Windows/Node/browser adapter, and its [shared regression blockers](rf02-evidence.md#shared-regression-blockers) record the generated-reference, host-budget and recovery failures on both revisions. These remain acceptance gaps here; focused passes are not a passing complete suite.
+## Provenance and authority
 
-## Authority, provenance and next gate
+The [earlier failure record](../../.orcha/evidence/2026-11-09-rf02-rf04-verification.json)
+and its original source pins remain unchanged. The [correction evidence](rf02-rf04-fix-evidence.md)
+and [new machine-readable record](../../.orcha/evidence/2026-11-09-rf02-rf04-fix.json)
+record 19 passing checks on the main correction and 20 on RF04, including all
+full equivalence scenarios, native Chrome smoke/Worker and browser calibration.
+Current `main` is still `1815ad7b52e9b976e92f11b845309bd9e0d80724`; passing unmerged candidates do not repair that
+branch until owner-controlled integration.
 
-The [candidate's original evidence ledger](https://github.com/step3software/outer-loops/blob/82605f4ccf12678ab485d8fdc4bad81ae7495c9a/docs/refactoring/rf04-evidence.md) records its implementation claims and owner selections RF04-Q01/Q02/Q03 A. This verification adds executed evidence but grants no plan/preparation acceptance or implementation scope. Live Orcha approval remains `proposed`; all existing owner decisions and historical artifacts are retained.
-
-Do not mark RF04 complete or merge its stack. Resolve the failing recovery/browser and regression gates under separately authorized correction scope, then rerun affected checks at a fresh candidate. Preserve RF02 backup/journal data and the unrelated R15 finding.
+All original A1–A8 criteria and owner decisions are retained. Orcha's legacy
+approval stage remains `proposed`; no accepted artifacts, milestone completion,
+merge or deployment are created. Authentic historical saves, exhaustive predictor
+permutations, earned campaign endpoints and official RW00 baselines remain
+unverified. The known R15 Gods Trial discrepancy remains outside this correction.
