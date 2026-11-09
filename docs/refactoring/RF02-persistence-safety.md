@@ -1,6 +1,6 @@
 # RF02 — Persistence safety
 
-**Status:** Merged — PR #16. The reported recovery and regression blockers pass in [draft correction PR #24](https://github.com/step3software/outer-loops/pull/24); correction unmerged, milestone acceptance incomplete. See [current evidence](rf02-evidence.md).
+**Status:** Merged — PR #16 and recovery correction [#24](https://github.com/step3software/outer-loops/pull/24). #24 passed 19 checks before merge; updated #23 passes 18 baseline checks with an additional calibration cleanup failure. See [current evidence](rf02-evidence.md); approvals remain unchanged.
 - **Priority:** After RF01
 - **Hard dependencies:** RF01's current/legacy synthetic save, corrupt-import, challenge-slot and restart fixtures
 - **Enables:** Safe resource/state contracts in RF03 and challenge save transitions in RF04

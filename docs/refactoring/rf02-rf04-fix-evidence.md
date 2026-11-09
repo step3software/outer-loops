@@ -1,10 +1,20 @@
 # RF02–RF04 correction and verification evidence
 
-**Delivery:** RF02 #16 and RF03 #18 are merged. This bounded correction and RF04
-PR #21 remain unmerged candidates. Passing checks do not accept a milestone,
-advance Orcha's legacy `proposed` stage, merge code or establish deployment.
+**Delivery:** RF02 #16, RF03 #18 and the owner-authorized recovery correction
+[#24](https://github.com/step3software/outer-loops/pull/24) are merged. #24 passed a
+clean bounded review and all 19 fresh local checks at its exact head before merge.
+Main `baaa427ebd49e5fa05336a8498796799950453d3` has the identical tested tree. PR #23 incorporated that main commit
+and passed all 18 baseline checks at `19169372b46d5ed0bf543253052ddb277d756b55`; timing/recovery
+blockers are resolved. The additional calibration command matched all 12 cases
+but failed Windows cleanup on both attempts. The full 19-command run is not green.
+RF04 #21 remains a separate unmerged draft with its earlier
+20-check result. Verification/merge do not accept milestones or deploy the game.
 
-## Exact tested sources
+**Current run:** [Review, merge and post-merge verification](../../.orcha/evidence/2026-11-09-pr24-merge-pr23-verification.json)
+records all 27 reviewed PR paths, standards mapping, exact revisions and log hashes.
+The records below retain the earlier correction-run provenance.
+
+## Original correction runs — retained evidence
 
 | Candidate | Parent | Tested source commit | Executed checks |
 | --- | --- | --- | --- |
@@ -47,27 +57,31 @@ challenge modes 1–3, prestige, and byte-exact recovery of both slots after cle
 they use disposable profiles and synthetic saves.
 
 RF02 A5/P19/P21 and RF03/RF04's inherited recovery/regression blockers are resolved
-**in these candidates**. All original A1–A8 criteria and owner decisions remain.
+**on merged main and the checked #23 candidate**, and in the separate RF04 candidate. All original A1–A8 criteria and owner decisions remain.
 Authentic historical saves, every buff/guild/predictor permutation, complete earned
 campaigns, official RW00 baselines and live cloud/deployment remain unverified.
-The known R15 floor discrepancy is preserved. The earlier Windows profile cleanup
-failure was corrected by resolving the full profile path; both final browser
-harnesses exited successfully.
+The known R15 floor discrepancy is preserved. The original correction runs exited
+successfully after using full Windows profile paths. The post-merge reruns exposed
+a remaining cleanup failure, recorded below.
 
-## Review and rollback
+## Review, publication and rollback
 
-Keep all PRs draft and unmerged for owner review; preserve RF04's actual #19 → #20
-→ #21 stack. The milestone-record PR owns the consolidated delivery ledger.
-Revert correction commits to roll back code; retain all RF02 backup and recovery
-journal data. No production saves or accounts were used.
+The owner explicitly authorized reviewing and merging #24 if it passed; that merge
+is verified. PR #23 remains draft and unmerged for the updated milestone records.
+RF04 #21 and its #19 → #20 → #21 stack are unchanged. No other merge, lifecycle
+acceptance, deployment or service activation is implied. Revert the correction
+commits to roll back code while retaining all RF02 backup and journal data.
 
-## Published draft corrections
+The first post-merge browser attempts hit Windows temporary-profile cleanup errors:
+smoke returned success with a warning; calibration matched all 12 comparisons but
+returned failure during folder removal. Those attempts are retained. Both unchanged
+browser suites were rerun with disposable profiles in an owned ignored writable
+project folder. The final calibration attempt still failed during cleanup, so it
+remains a failed command despite the passing comparisons. No source, assertion,
+confirmation choice or execution limit was changed.
 
-[Main correction #24](https://github.com/step3software/outer-loops/pull/24) and
-[RF04 #21](https://github.com/step3software/outer-loops/pull/21) contain the verified
-source fixes. This [milestone-record PR #23](https://github.com/step3software/outer-loops/pull/23)
-remains documentation-only against unchanged main: static/link, XML and Orcha
-reference checks pass, while its inherited timing-reference check still awaits
-the code correction. This does not invalidate the passing fixed candidates and
-does not label unchanged main green. GitHub PR workflow runs were not returned
-for either published code head; no GitHub CI pass is claimed.
+The older failure and correction JSON records are preserved unchanged as historical
+observations. The new run record owns the current merged/rerun results. No hosted
+GitHub CI pass is claimed from local checks; authentic saves, exhaustive predictor
+permutations, earned campaigns, official RW00 baselines and R15 remain outside the
+verified scope.

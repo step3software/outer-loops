@@ -1,6 +1,6 @@
 # RF02 — prospective safety and compatibility test matrix
 
-**Status:** Safety acceptance matrix for merged RF02 PR #16. All selected recovery and regression checks pass in [draft correction PR #24](https://github.com/step3software/outer-loops/pull/24) and updated RF04 PR #21; corrections remain unmerged. [Current evidence](rf02-evidence.md) records execution and limits; coverage requirements below are retained.
+**Status:** Safety acceptance matrix for merged RF02 #16 and correction [#24](https://github.com/step3software/outer-loops/pull/24). Updated #23 passes 18 baseline checks with a separate calibration cleanup failure; RF04 retains its prior result. [Current evidence](rf02-evidence.md) owns execution and limits; required coverage remains.
 
 Use disposable synthetic data only; never real player exports, OAuth credentials or a normal browser profile. Run exact-slot-byte assertions when rejecting input. Run semantic comparisons (not raw JSON equality) after successful imports. Canonical implementation criteria remain [RF02 A1–A8](RF02-persistence-safety.md).
 

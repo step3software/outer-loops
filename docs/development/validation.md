@@ -151,10 +151,14 @@ not establish an earned campaign or official RW00 baseline.
 
 ## Current RF02–RF04 correction evidence
 
-The [correction ledger](../refactoring/rf02-rf04-fix-evidence.md) records the full
-native Node/Chrome/Worker runs at pinned correction commits. Both candidates pass
-all selected suites, including generated references, recovery and balance checks.
-This documentation branch retains unchanged main runtime sources; its existing
-timing-reference check remains stale until the separate code correction lands.
-Its static/link and XML checks are recorded independently, without treating a
-candidate pass as a passing check on unchanged main or as milestone acceptance.
+[Correction #24](https://github.com/step3software/outer-loops/pull/24) passed the
+bounded source review and all 19 fresh local checks before merging into main at
+`baaa427ebd49e5fa05336a8498796799950453d3`. PR #23 then incorporated that exact main commit without rewriting its
+history; all 18 baseline checks passed on `19169372b46d5ed0bf543253052ddb277d756b55`, including the
+previously stale timing report and full browser/Worker smoke. The additional
+calibration command passed its 12 comparisons but failed Windows profile cleanup
+on both attempts. This remaining command failure is not converted into a pass.
+The [current ledger](../refactoring/rf02-rf04-fix-evidence.md) and machine record
+separate executed results, historical observations and unverified acceptance.
+RF04's unchanged draft retains its earlier 20-check result; this task does not
+merge or broadly reverify RF04, accept a stage, or deploy anything.

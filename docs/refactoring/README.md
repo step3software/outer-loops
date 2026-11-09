@@ -1,14 +1,17 @@
 # Outer Loops refactoring program — RF01–RF06
 
-**Source delivery and correction verification (2026-11-09):** RF01 #4,
-RF02 #16 and RF03 #18 are merged. [Draft correction PR #24](https://github.com/step3software/outer-loops/pull/24) fixes RF02
-backup recovery and the reported verification failures; **19 selected checks pass**.
-RF04 [draft PR #21](https://github.com/step3software/outer-loops/pull/21) contains
-the same correction and **20 selected checks pass**, preserving its #19 → #20
-→ #21 stack. Both correction candidates remain unmerged. RF03 preparation #17
-remains independently open; RF05–RF06 remain planned. See [correction evidence](rf02-rf04-fix-evidence.md)
-and the [RF02](rf02-evidence.md), [RF03](rf03-evidence.md), [RF04](rf04-evidence.md)
-ledgers. Passing candidates do not advance Orcha stages or complete milestones.
+**Source delivery and verification (2026-11-09):** RF01 #4, RF02 #16 and RF03
+#18 are merged. [Recovery correction #24](https://github.com/step3software/outer-loops/pull/24)
+passed a clean bounded review and **19 fresh local checks**, then merged into main
+at `baaa427ebd49e5fa05336a8498796799950453d3`. Updated documentation PR #23 passes **all 18 baseline checks**,
+including the formerly stale timing report. The additional calibration command
+matched all 12 cases but failed Windows profile cleanup on both attempts; the
+complete 19-command run is not green. RF04 [draft #21](https://github.com/step3software/outer-loops/pull/21)
+remains unmerged and unchanged, with its prior 20-check result and #19 → #20 → #21
+stack retained. Preparation #17 remains open; RF05–RF06 remain planned. See the
+[current evidence](rf02-rf04-fix-evidence.md) and [RF02](rf02-evidence.md),
+[RF03](rf03-evidence.md), [RF04](rf04-evidence.md) ledgers. Approval stages,
+accepted artifacts and milestone acceptance are unchanged.
 
 **Repository:** `step3software/outer-loops` · default and approved canonical source branch `main`. These plans depend on the AI-development foundation in [the technical/gameplay audit](../audit/README.md) and [root agent instructions](../../AGENTS.md). Existing tests and files cited here refer to that baseline; agents must verify the current default branch and source before starting any milestone.
 
@@ -27,7 +30,7 @@ The **recommended delivery order is RF01 → RF02 → RF03 → RF04 → RF05 →
 
 ## RF01 implementation evidence
 
-[RF01 coverage and verification ledger](rf01-evidence.md) maps A1–A8 and F01–F15 to **merged** tests from [PR #4](https://github.com/step3software/outer-loops/pull/4), including synthetic legacy imports and reproducible Chrome/Worker scenarios. R01/R04/R08/R15 remain known risks (not gameplay fixes). **RF02's prerequisites and risks are documented** in the [readiness brief](rf02-readiness.md) and [matrix](rf02-test-matrix.md). Merged [PR #16](https://github.com/step3software/outer-loops/pull/16) delivers RF02 code; its [current evidence](rf02-evidence.md) records the recovery correction passing in an unmerged candidate.
+[RF01 coverage and verification ledger](rf01-evidence.md) maps A1–A8 and F01–F15 to **merged** tests from [PR #4](https://github.com/step3software/outer-loops/pull/4), including synthetic legacy imports and reproducible Chrome/Worker scenarios. R01/R04/R08/R15 remain known risks (not gameplay fixes). **RF02's prerequisites and risks are documented** in the [readiness brief](rf02-readiness.md) and [matrix](rf02-test-matrix.md). Merged [PR #16](https://github.com/step3software/outer-loops/pull/16) delivers RF02 code; its [current evidence](rf02-evidence.md) records the recovery correction merged in #24 and passing the updated #23 checks.
 
 ## Product-direction reconciliation — new Real World system
 

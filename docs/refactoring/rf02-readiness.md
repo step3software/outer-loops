@@ -1,6 +1,6 @@
 # RF02 readiness — persistence safety implementation brief
 
-**State:** Historical preparation record, based on `dmchurch` commit `3e74f16079d77fc5e5db947d7f97ad97cbff3cbc` (2026-10-17). RF02 PR #16 is now merged; the [current verification ledger](rf02-evidence.md) records passing unmerged correction candidates. Historical readiness below is not current implementation authority or milestone acceptance.
+**State:** Historical preparation record, based on `dmchurch` commit `3e74f16079d77fc5e5db947d7f97ad97cbff3cbc` (2026-10-17). RF02 PR #16 and recovery correction #24 are now merged; the [current verification ledger](rf02-evidence.md) records the passing post-merge #23 checks and separate RF04 candidate. Historical readiness below is not current implementation authority or milestone acceptance.
 
 **Canonical requirements:** [RF02 charter](RF02-persistence-safety.md) A1–A8. **Execute from:** [RF02 handoff](handoffs/RF02.md). **Fixtures and expected results:** [RF02 test/compatibility matrix](rf02-test-matrix.md). **Existing source contract:** [persistence audit](../audit/persistence-contract.md), [state guide](../state-and-saving.md), [RF01 evidence](rf01-evidence.md) and [finding R01](../audit/findings.md).
 
