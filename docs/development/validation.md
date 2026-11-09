@@ -114,6 +114,41 @@ The test profile may not have late-game unlocks. Do not bypass unlock conditions
 
 Report **commands actually run**, manual cases actually observed, and untested risks. Include exact reproduction steps and optional anonymized/disposable fixture data for failures. Do not attach real saves or tokens. For a documentation-only PR, syntax/XML checks are adequate if no runtime behavior was changed, though browser validation remains unverified.
 
+## RF02–RF04 correction verification
+
+`npm run test:rf02:preflight` exercises the save-option type-drift regression;
+`npm run test:rf02:transaction` retains exact stored bytes while exercising legacy
+numeric-text `updateRate` and quota/rollback faults. `npm run test:browser` runs
+the complete disposable-profile smoke suite, including recovery of both slots
+after explicit clear, challenge/prestige transitions and the real predictor Worker.
+RF04's branch also requires `npm run test:rf04:model` and its additional browser
+policy/identity assertions. Passing these checks is candidate evidence, not
+milestone acceptance or a deployment observation.
+
+Both browser harnesses share installed Chrome/Chromium discovery. Windows uses
+an installed executable followed by a real CDP boot; other platforms retain the
+command/version probe. Expected blocking alerts are dismissed in the smoke
+suite; confirmations and all returned-value/storage assertions remain explicit.
+Profiles are temporary and cleanup targets only the owned browser process tree.
+
+The balance profiler only records telemetry and preserves original errors;
+`BalanceEngine.step` enforces the declared execution ceiling from `start()`, and
+the independent parent supervisor covers process startup, elapsed time and RSS.
+The supervisor suite separately proves a silent startup deadline, an active
+infinite-loop deadline, cooperative memory failure and independently sampled
+resident-memory failure. Windows samples the owned PID using `tasklist`.
+
+`npm run test:balance:source` verifies that LF/CRLF materializations produce the
+same complete calibration source fingerprint and that actual source edits still
+invalidate it. Generated timing/mechanics checks normalize Markdown line endings
+only; source or numerical changes still require regeneration and review. Run the
+unchanged full equivalence scenarios to completion; a caller's short timeout is
+not a passing result. Potion event fixtures use labeled synthetic progression
+to fit repeated actions within the real starting mana budget. These fixtures do
+not establish an earned campaign or official RW00 baseline.
+
+[RF02–RF04 correction run evidence](../refactoring/rf02-rf04-fix-evidence.md) records the tested candidates and limitations.
+
 ## Current RF02–RF04 correction evidence
 
 The [correction ledger](../refactoring/rf02-rf04-fix-evidence.md) records the full

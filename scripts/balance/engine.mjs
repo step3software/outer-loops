@@ -40,7 +40,7 @@ export class BalanceEngine {
       calibration, quantumMs, maxBatchMs
     });
     this.profiler = (profiler === true || (mode === 'diagnostic' && profiler === false)) ?
-      new BalanceProfiler({budgetMs:maxHostMs}) : profiler || null;
+      new BalanceProfiler() : profiler || null;
     this.maxHostMs = maxHostMs;
     this.maxSimulatedSeconds = maxSimulatedSeconds;
     this.policyBoundaries = policyBoundaries;
@@ -101,6 +101,10 @@ export class BalanceEngine {
     }
     this.model.evaluate('restart()');
     this.started = true;
+    // The inner execution budget starts at the runnable measurement boundary.
+    // The parent supervisor independently caps process startup and fixture/UI
+    // preparation; setup cost must not consume a tiny synthetic run's budget.
+    this.startHostMs = hostPerformance.now();
     return this.snapshot();
   }
 

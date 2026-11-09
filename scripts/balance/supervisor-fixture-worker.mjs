@@ -12,8 +12,10 @@ if(mode==='complete'){
   globalThis.__residentLeak=Buffer.alloc(96*1024*1024,0x7f);
   while(true){}
 }else if(mode==='hang'){
-  process.send?.({type:'heartbeat',heapUsed:process.memoryUsage().heapUsed,
-    diagnostic:{checkpoint:'before-tight-loop'}});
+  await new Promise((resolve,reject)=>process.send({type:'heartbeat',heapUsed:process.memoryUsage().heapUsed,
+    diagnostic:{checkpoint:'before-tight-loop'}},error=>error?reject(error):resolve()));
+  while(true){}
+}else if(mode==='hang-silent'){
   while(true){}
 }else{
   throw new Error('unknown fixture mode');

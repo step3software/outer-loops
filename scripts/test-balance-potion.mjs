@@ -178,7 +178,8 @@ const incomplete=runPotionCampaign({root,seed:42,maxHostSeconds:.1,calibrationRe
 assert.equal(incomplete.status,'incomplete');
 assert.equal(assertPotionReport(incomplete),true);
 assert.equal(assertPotionPrefix(incomplete.prefix),true);
-assert.throws(()=>assertPotionReport({...incomplete,sections:[]}),/section reconciliation/);
+assert.throws(()=>assertPotionReport({...incomplete,sections:[],totalGameplaySeconds:1}),
+  /section reconciliation/,'a zero-progress timeout still needs a genuinely inconsistent negative-control report');
 assert.throws(()=>assertPotionPrefix({...incomplete.prefix,canonicalStateDigest:'bad'}),/canonical digest/);
 assert.equal(incomplete.endpointReached,null);
 assert.ok(incomplete.failure&&incomplete.missingMilestones.length>0);
@@ -272,6 +273,11 @@ for(const endpoint of ['potion-craft','potion-totem']){
 const repeats=new BalanceEngine({seed:42,mode:'reference',policyBoundaries:true,
   eventActions:['Wander'],maxHostMs:30000});
 assert.equal(repeats.edit({op:'add',name:'Wander',loops:2}).status,'admitted');
+// Explicitly synthetic timing fixture: a fresh ordinary loop has only 250
+// mana, so it cannot finish both 250-mana Wanders. Give this event test enough
+// persistent stat discounts and synthetic wall throughput without changing action
+// callbacks or the production loop-mana budget.
+repeats.model.evaluate('buffs.Imbuement2.amt=500;gameSpeed=100');
 repeats.start();repeats.burstPolicyLoops(2);
 const repeatedActions=repeats.events.filter(event=>event.type==='action_completed');
 assert.deepEqual(repeatedActions.map(event=>event.action),Array(4).fill('Wander'));

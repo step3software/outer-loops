@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import {loadGameModel} from './load-game-model.mjs';
 import {BalanceEngine} from './balance/engine.mjs';
+import {BalanceProfiler} from './balance/profiler.mjs';
 import {admitQueueEdit,queueSnapshot} from './balance/admission.mjs';
 import {createDefaultUiProfile,installUiProfile,readUiProfile,changeUiInput,
   assertMatchingUiProfiles,fingerprint} from './balance/ui-inputs.mjs';
@@ -328,5 +329,22 @@ function report(cal=calibration()) {
   assert.deepEqual(activation,{probe:0,before:false,spent:1,active:true,sticky:true});
   console.log('PASS RW00 Judgement -51/-50/-49/49/50/51 and Escape pure eligibility, positive-spend commitment, 59.99/60/sticky boundaries.');
 }
+
+// Expired measurement ceilings stop execution, but telemetry must still be
+// available for the structured incomplete report rather than throwing again.
+const telemetry=new BalanceProfiler();
+telemetry.startedAt-=60001;
+const originalFailure=new Error('original validation failure');
+assert.throws(()=>telemetry.time('failure',()=>{throw originalFailure;}),
+  error=>error===originalFailure,'profiling must preserve the original error');
+const expired=new BalanceEngine({profiler:true,maxHostMs:1});
+assert.equal(expired.edit({op:'add',name:'Wander',loops:1}).status,'admitted');
+expired.start();
+expired.startHostMs-=1000; // deterministically exhaust the 1-ms execution budget
+assert.throws(()=>expired.step(),error=>error.code==='budget_exceeded');
+const expiredDiagnostic=expired.diagnostics();
+assert.equal(expiredDiagnostic.status,'incomplete');
+assert.equal(expiredDiagnostic.state.completedActions,0);
+assert.ok(Number.isFinite(expiredDiagnostic.performance.hostMs));
 
 console.log('PASS RW00 contract suite (synthetic fixtures explicitly excluded from earned campaign evidence).');

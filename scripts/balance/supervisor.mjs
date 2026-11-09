@@ -17,18 +17,22 @@ function residentBytes(pid,callback) {
     return;
   }
   const windows=process.platform==='win32';
-  const command=windows?'powershell.exe':'ps';
-  const args=windows?['-NoProfile','-NonInteractive','-Command',
-      '(Get-Process -Id '+pid+' -ErrorAction Stop).WorkingSet64']:
+  // tasklist reads the OS working set without booting a PowerShell runtime
+  // for every 150-ms sample. The PID is checked before accepting its CSV row.
+  const command=windows?'tasklist.exe':'ps';
+  const args=windows?['/FI','PID eq '+pid,'/FO','CSV','/NH']:
     ['-o','rss=','-p',String(pid)];
   execFile(command,args,{timeout:1500,maxBuffer:4096,windowsHide:true},
     (error,stdout)=>{
       if(error){callback(error);return;}
-      const amount=Number(stdout.trim());
+      const row=windows?/^"[^"]*","(\d+)","[^"]*","[^"]*","([^"]*)"/m.exec(stdout.trim()):null;
+      const sample=windows&&row&&Number(row[1])===pid
+        ? row[2].replace(/[,.\s\u00a0]/g,'').replace(/K$/i,'') : windows?'':stdout.trim();
+      const amount=/^\d+$/.test(sample)?Number(sample):NaN;
       if(!Number.isFinite(amount)||amount<=0){
         callback(new Error('Invalid resident-memory sample'));return;
       }
-      callback(null,windows?amount:amount*1024);
+      callback(null,amount*1024);
     });
 }
 
