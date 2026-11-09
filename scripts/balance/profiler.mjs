@@ -3,9 +3,8 @@ import {performance} from 'node:perf_hooks';
 export const PROFILER_VERSION = 'rw00-balance-profiler/v1';
 
 export class BalanceProfiler {
-  constructor({budgetMs = 60000} = {}) {
+  constructor() {
     this.startedAt = performance.now();
-    this.budgetMs = budgetMs;
     this.timings = Object.create(null);
     this.counts = Object.create(null);
     this.batchCounts = Object.create(null);
@@ -19,11 +18,9 @@ export class BalanceProfiler {
       this.timings[name] = (this.timings[name] ?? 0) + performance.now() - start;
       this.counts[name] = (this.counts[name] ?? 0) + 1;
       this.peakHeapBytes = Math.max(this.peakHeapBytes, process.memoryUsage().heapUsed);
-      if (performance.now() - this.startedAt > this.budgetMs) {
-        const error = new Error('Profiling runtime budget exceeded');
-        error.code = 'budget_exceeded';
-        throw error;
-      }
+      // Telemetry must remain readable after the engine's budget expires and
+      // must never replace an operation's original error from this finally.
+      // BalanceEngine.step and the independent process supervisor own ceilings.
     }
   }
 

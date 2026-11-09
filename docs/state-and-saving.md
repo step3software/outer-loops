@@ -32,6 +32,8 @@ User-visible exported game saves use the prefix `ILSV01`, followed by LZString-c
 
 [Merged RF02 PR #16](https://github.com/step3software/outer-loops/pull/16) adds validation-before-import, bounded LZString and legacy LZW expansion, per-slot pre-import copies and an independent rollback journal. The Save menu offers separate normal/challenge restore paths. Full historical-save compatibility remains unproven; verify the actual RF02 tests before modifying these contracts.
 
+Import option types come from the existing numeric/string/boolean option categories, never the mutable live values. In particular, older `options.updateRate` / `extraOptions.updateRate` numeric text is validated and converted to a number in the pure normalized clone. Malformed text and other wrong option types still fail preflight. Backup restoration validates that clone but journals and restores the **original stored JSON bytes**, preserving whitespace and legacy representation. The RF02 preflight and transaction suites cover live localStorage type drift, numeric/text backups, idempotency and exact-byte rollback.
+
 Do not write a save migration based solely on an example save. Preserve imports from at least one older fixture when available, default missing fields safely and make repeated load/save idempotent.
 
 ## Loop restart is not prestige

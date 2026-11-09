@@ -12,7 +12,7 @@ const calibration=createCalibrationManifest({sourceHash:'performance-fixture',
   }});
 
 function run(mode) {
-  const profiler=new BalanceProfiler({budgetMs:60000});
+  const profiler=new BalanceProfiler();
   const engine=new BalanceEngine({mode,seed:42,profiler,calibration:mode==='reference'?undefined:calibration,
     maxHostMs:60000,maxSimulatedSeconds:targetMs/1000});
   assert.equal(engine.edit({op:'add',name:'Wander',loops:100000},

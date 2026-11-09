@@ -1496,7 +1496,11 @@ function getImportContract() {
         buffNames: buffList.slice(),
         storyFlags: Object.keys(storyFlags),
         storyVars: Object.keys(storyVars),
-        optionTypes: Object.fromEntries(Object.entries(options).map(([k,v])=>[k,typeof v])),
+        // Option types belong to the existing declared option categories, not
+        // mutable values (legacy localStorage updateRate values are strings).
+        optionTypes: Object.fromEntries(Object.keys(options).map(key=>[
+            key, isNumericOption(key) ? "number" : isStringOption(key) ? "string" : "boolean"
+        ])),
     };
 }
 
