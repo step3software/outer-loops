@@ -3,10 +3,10 @@
 // Uses a fresh temporary profile; no production saves/accounts are accessed.
 import assert from 'node:assert/strict';
 import {makeRf01Fixtures} from './rf01-fixtures.mjs';
-import {spawn, spawnSync} from 'node:child_process';
+import {browserBinary,stopBrowser,browserProfile} from './browser-test-utils.mjs';
+import {spawn} from 'node:child_process';
 import {createServer} from 'node:http';
-import {existsSync, mkdtempSync, readFileSync, rmSync, statSync} from 'node:fs';
-import {tmpdir} from 'node:os';
+import {existsSync, readFileSync, rmSync, statSync} from 'node:fs';
 import {dirname, extname, join, resolve, sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -33,13 +33,6 @@ const server = createServer((req, res) => {
     res.writeHead(500).end();
   }
 });
-const browserBinary = () => {
-  for(const candidate of [process.env.CHROME_BIN, 'google-chrome',
-      'google-chrome-stable', 'chromium', 'chromium-browser'].filter(Boolean)) {
-    if(spawnSync(candidate, ['--version'], {timeout:4000}).status === 0) return candidate;
-  }
-  throw Error('Google Chrome / Chromium not available; cannot run browser smoke test');
-};
 async function debugPort(profile, child) {
   const file = join(profile, 'DevToolsActivePort');
   for(let i=0;i<200;i++) {
@@ -72,6 +65,12 @@ async function connect(url) {
   ws.addEventListener('message',event=>{
     let m;
     try { m=JSON.parse(event.data); } catch { return; }
+    // Expected recovery/quota errors use blocking alert dialogs after reload.
+    // Dismiss alerts as a user would; confirmations remain controlled by each
+    // scenario and all returned values/storage assertions still run unchanged.
+    if(m.method==='Page.javascriptDialogOpening'&&m.params.type==='alert') {
+      send('Page.handleJavaScriptDialog',{accept:true}).catch(error=>console.error(error));
+    }
     const p=pending.get(m.id);
     if(!p)return;
     clearTimeout(p.timer); pending.delete(m.id);
@@ -95,7 +94,7 @@ async function connect(url) {
   return {send,evaluate,close:()=>ws.close()};
 }
 
-const profile=mkdtempSync(join(tmpdir(),'outerloops-smoke-'));
+const profile=browserProfile('outerloops-smoke-');
 let chrome,client;
 try {
   await new Promise((resolve,reject)=>{
@@ -107,7 +106,7 @@ try {
     '--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage',
     '--no-first-run','--disable-extensions','--remote-allow-origins=*',
     '--remote-debugging-port=0','--user-data-dir='+profile,url
-  ],{stdio:'ignore'});
+  ],{stdio:'ignore',windowsHide:true});
   const port=await debugPort(profile,chrome);
   client=await connect(await debuggerPage(port,url));
   await client.send('Runtime.enable');
@@ -651,7 +650,7 @@ try {
   console.log('PASS Chrome: game boot, XML localization, 157 actions, Wander execution and save/reload.');
 } finally {
   client?.close();
-  if(chrome && chrome.exitCode===null)chrome.kill('SIGKILL');
+  stopBrowser(chrome);
   if(server.listening) {
     server.closeAllConnections?.();
     await new Promise(resolve=>server.close(resolve));

@@ -73,3 +73,11 @@ Navigation map for the repository's existing classic-script JavaScript. **Execut
 | `package.json` | Type definitions and convenience check script; no application bundling |
 
 For exact changes to an action use [action catalog](action-catalog.md) and [change recipes](../development/recipes.md).
+
+## Shared verification helpers
+
+`scripts/browser-test-utils.mjs` owns test-only installed-browser discovery and
+cleanup of the disposable child process. `scripts/test-balance-source-identity.mjs`
+checks platform-independent calibration identity against actual source changes.
+See the [validation guide](../development/validation.md#rf02rf04-correction-verification)
+for budget ownership and the recovery regression commands.

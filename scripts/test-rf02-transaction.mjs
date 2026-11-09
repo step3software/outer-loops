@@ -21,6 +21,7 @@ const code=saving.slice(first,last);
 
 const original={
     stats:{},skills:{},buffs:{},expWander:100,
+    options:{updateRate:'50'},
     challengeSave:{challengeMode:0,inChallenge:false},
 };
 const candidate={
@@ -49,7 +50,7 @@ function fixture({failWrite=null,throwInLoad=false,active='idleLoops1'}={}) {
     };
     const world={
         SaveImport,LZString,totalActionList:[{varName:'Wander',type:'progress'}],window:{localStorage:storage},
-        getImportContract:()=>({actions:[{name:'Wander',varName:'Wander',type:'progress'}],statNames:['Dex'],skillNames:['Combat'],buffNames:['PrestigeCombat'],storyFlags:[],storyVars:[],optionTypes:{}}),
+        getImportContract:()=>({actions:[{name:'Wander',varName:'Wander',type:'progress'}],statNames:['Dex'],skillNames:['Combat'],buffNames:['PrestigeCombat'],storyFlags:[],storyVars:[],optionTypes:{updateRate:'number'}}),
         saveName:active,defaultSaveName:'idleLoops1',challengeSaveName:'idleLoopsChallenge',
         challengeSave:{challengeMode:0,inChallenge:false},
         doSave:()=>structuredClone(original),

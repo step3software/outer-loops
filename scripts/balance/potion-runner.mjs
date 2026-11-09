@@ -102,13 +102,15 @@ export const POTION_SOURCE_FILES = Object.freeze([
   'scripts/balance/potion-policy.mjs','scripts/balance/potion-runner.mjs',
   'scripts/balance/potion-estimate.mjs','scripts/balance/campaign-estimate.mjs',
   'scripts/measure-balance.mjs','scripts/generate-balance-timing-report.mjs',
-  'scripts/test-balance-browser.mjs','scripts/test-balance-equivalence.mjs'
+  'scripts/test-balance-browser.mjs','scripts/browser-test-utils.mjs','scripts/test-balance-equivalence.mjs'
 ]);
 
 export function potionSourceIdentity(root) {
   const hash=createHash('sha256'),files={};
   for(const path of POTION_SOURCE_FILES){
-    const bytes=readFileSync(join(root,path));
+    // Git can materialize the same text as LF or CRLF. Calibration must depend
+    // on logical source changes, not the checkout's platform newline policy.
+    const bytes=Buffer.from(readFileSync(join(root,path),'utf8').replace(/\r\n/g,'\n'),'utf8');
     files[path]=createHash('sha256').update(bytes).digest('hex');
     hash.update(path+'\0');hash.update(bytes);
   }

@@ -10,10 +10,10 @@ import {CLOCK_VERSION} from './balance/clock.mjs';
 import {SCHEDULER_VERSION} from './balance/fast-scheduler.mjs';
 import {CALIBRATION_SCHEMA} from './balance/report.mjs';
 import {createPotionAcceleration,potionSourceIdentity} from './balance/potion-runner.mjs';
-import {spawn, spawnSync} from 'node:child_process';
+import {browserBinary,stopBrowser,browserProfile} from './browser-test-utils.mjs';
+import {spawn} from 'node:child_process';
 import {createServer} from 'node:http';
-import {existsSync, mkdtempSync, readFileSync, rmSync, statSync, mkdirSync, writeFileSync} from 'node:fs';
-import {tmpdir} from 'node:os';
+import {existsSync, readFileSync, rmSync, statSync, mkdirSync, writeFileSync} from 'node:fs';
 import {dirname, extname, join, resolve, sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -40,16 +40,6 @@ const server = createServer((req, res) => {
     res.writeHead(500).end();
   }
 });
-const browserBinary = () => {
-  for(const candidate of [process.env.CHROME_BIN,
-      'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-      'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-      'google-chrome','google-chrome-stable','chromium','chromium-browser'].filter(Boolean)) {
-    if(candidate.includes('\\') && existsSync(candidate))return candidate;
-    if(spawnSync(candidate, ['--version'], {timeout:4000}).status === 0) return candidate;
-  }
-  throw Error('Google Chrome / Chromium not available; cannot run browser smoke test');
-};
 async function debugPort(profile, child) {
   const file = join(profile, 'DevToolsActivePort');
   for(let i=0;i<200;i++) {
@@ -112,7 +102,7 @@ const getArg=name=>{const i=args.indexOf(name);return i<0?null:args[i+1];};
 const phase=getArg('--phase')??'calibration';
 if(!['calibration','boundaries'].includes(phase))throw Error('Unsupported browser phase');
 const output=getArg('--output');
-const profile=mkdtempSync(join(tmpdir(),'outerloops-rw00-calibration-'));
+const profile=browserProfile('outerloops-rw00-calibration-');
 let chrome,client;
 try {
   await new Promise((resolve,reject)=>{
@@ -124,7 +114,7 @@ try {
     '--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage',
     '--no-first-run','--disable-extensions','--remote-allow-origins=*',
     '--remote-debugging-port=0','--user-data-dir='+profile,url
-  ],{stdio:'ignore'});
+  ],{stdio:'ignore',windowsHide:true});
   client=await connect(await debuggerPage(await debugPort(profile,chrome),url));
   const browserVersion=(await client.send('Browser.getVersion')).product;
   await client.send('Runtime.enable');await client.send('Page.enable');
@@ -280,10 +270,8 @@ try {
   process.exitCode=1;
 }finally{
   client?.close();
-  if(chrome&&chrome.exitCode===null){
-    chrome.kill('SIGTERM');
-    await new Promise(resolve=>{chrome.once('exit',resolve);setTimeout(resolve,2000);});
-  }
+  stopBrowser(chrome);
+  server.closeAllConnections?.();
   await new Promise(done=>server.close(done));
   rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:100});
 }

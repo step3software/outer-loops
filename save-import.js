@@ -33,6 +33,14 @@ var SaveImport = (() => {
         return typeof value === "number" && Number.isFinite(value) && value >= 0;
     }
 
+    // Older saves can contain the updateRate browser preference as numeric
+    // text. This specific compatibility form must not widen other option types.
+    function legacyUpdateRate(key, value) {
+        return key === "updateRate" && typeof value === "string"
+            && /^\d+(?:\.\d+)?$/.test(value.trim())
+            && Number.isFinite(Number(value));
+    }
+
     // All published doSave() keys, legacy option fields and historical aliases.
     // Unknown structured or primitive *top-level* fields are rejected rather
     // than discarded on the next autosave, including future outer-world state.
@@ -172,7 +180,8 @@ var SaveImport = (() => {
         for (const name of ["options","extraOptions"]) {
             named(input[name],contract.optionTypes?new Set(Object.keys(contract.optionTypes)):null,name,(v,label,k)=>{
                 const type=contract.optionTypes?.[k];
-                if ((type && typeof v!==type) || (!type && !["boolean","string","number"].includes(typeof v)))
+                if ((type && typeof v!==type && !(type==="number" && legacyUpdateRate(k,v)))
+                    || (!type && !["boolean","string","number"].includes(typeof v)))
                     invalid("INVALID_OPTION",label+" has an unsupported type.");
                 if(typeof v==="number") num(v,label,-Number.MAX_VALUE);
             });
@@ -338,6 +347,11 @@ var SaveImport = (() => {
         };
         if (copy.nextList) normalizeList(copy.nextList);
         if (copy.loadouts) for (const list of copy.loadouts) if (list) normalizeList(list);
+        for (const name of ["options", "extraOptions"]) {
+            if (copy[name] && legacyUpdateRate("updateRate", copy[name].updateRate)) {
+                copy[name].updateRate = Number(copy[name].updateRate);
+            }
+        }
         const legacyChallengeMode = copy.challenge && copy.challenge !== 0 ? copy.challenge : 0;
         if (legacyChallengeMode) {
             copy.challengeSave = {challengeMode: legacyChallengeMode, inChallenge: true};
