@@ -9,7 +9,7 @@ The application is built from mutable page-global objects and scalars, not a cen
 | Current run | `resources`, `timer`, `curTown`, `Actions.current`, multipart run counters | Reset/rebuilt on `restart()` / `Actions.restart()` |
 | Long-term progression | `towns` progress/completion totals, `stats` talents, `skills`, `buffs`, `completedActions`, `storyFlags` / `storyVars` | Carried across normal loops as governed by reset functions |
 | Persistent meta | `prestigeValues`, relevant prestige buffs, `totals`, loadouts, options | Special handling on save/load and prestige |
-| Challenge context | `challengeSave` and alternate save slot | Challenge overrides can alter functions globally |
+| Challenge context | `challengeSave` and alternate save slot | Stable policy selection; no runtime function replacement |
 | UI / browser preferences | `options`, `latestTheme`, `actionListHeight` | Some values are separately stored in `localStorage` |
 
 These are *categories*, not a schema guarantee for every field. Always inspect the actual `restart()`, `restartStats()`, `Town.restart()`, `Actions.restart()`, `doSave()` and `doLoad()` pathways for fields you edit.
@@ -32,6 +32,8 @@ User-visible exported game saves use the prefix `ILSV01`, followed by LZString-c
 
 [Merged RF02 PR #16](https://github.com/step3software/outer-loops/pull/16) adds validation-before-import, bounded LZString and legacy LZW expansion, per-slot pre-import copies and an independent rollback journal. The Save menu offers separate normal/challenge restore paths. Full historical-save compatibility remains unproven; verify the actual RF02 tests before modifying these contracts.
 
+Import option types come from the existing numeric/string/boolean option categories, never the mutable live values. In particular, older `options.updateRate` / `extraOptions.updateRate` numeric text is validated and converted to a number in the pure normalized clone. Malformed text and other wrong option types still fail preflight. Backup restoration validates that clone but journals and restores the **original stored JSON bytes**, preserving whitespace and legacy representation. The RF02 preflight and transaction suites cover live localStorage type drift, numeric/text backups, idempotency and exact-byte rollback.
+
 Do not write a save migration based solely on an example save. Preserve imports from at least one older fixture when available, default missing fields safely and make repeated load/save idempotent.
 
 ## Loop restart is not prestige
@@ -40,7 +42,11 @@ Do not write a save migration based solely on an example save. Preserve imports 
 
 `prestige.js` provides a **separate** larger reset via `prestigeUpgrade()` / `prestigeWithNewValues()`, carrying selected prestige bonuses and meta progress. Modifying normal restart logic can break prestige and vice versa; test both.
 
-`challenges.js` uses `loadChallenge()` to change action methods and other functions according to `challengeSave.challengeMode`. Challenge execution may not obey the normal mode's assumptions. Inspect `beginChallenge()`, `exitChallenge()` and `resumeChallenge()`.
+`challenges.js` provides a stable mode-selected policy: `loadChallenge()` applies game speed but does not overwrite Action methods or global combat/restart functions. `beginChallenge()`, `resumeChallenge()` and `exitChallenge()` preserve existing save-slot order, confirmation and reload-on-exit behavior. A normal legacy save lacking `challengeSave` defaults to mode 0; a newly started challenge retains the chosen mode when loading a blank slot. No RF02 journal key or `ILSV01` field changed.
+
+## RF04 forecast state versus saved state
+
+`challengeSave` remains serialized in the player save, but is not a `Data.registerAll` snapshot root. The merchant balance (`totalMerchantMana`) is already registered in virtualized `globals`. The predictor sends forecast-only `challengeMode` and `manaBought` in `runData.state.resources`, including them in cache identity. These fields do not modify the typed live `resources` object. See [predictor](predictor.md) and [RF04 evidence](refactoring/rf04-evidence.md).
 
 ## Snapshot system is distinct
 

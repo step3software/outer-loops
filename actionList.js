@@ -1053,7 +1053,10 @@ Action.BuyManaZ1 = new Action("Buy Mana Z1", {
         Luck: 0.1
     },
     manaCost() {
-        return 100;
+        return getChallengePolicy().buyManaZ1ManaCost();
+    },
+    canStart() {
+        return getChallengePolicy().buyManaZ1CanStart();
     },
     visible() {
         return towns[0].getLevel("Wander") >= 3;
@@ -1062,11 +1065,11 @@ Action.BuyManaZ1 = new Action("Buy Mana Z1", {
         return towns[0].getLevel("Wander") >= 20;
     },
     goldCost() {
-        return Math.floor(50 * getSkillBonus("Mercantilism") * adjustGoldCostFromPrestige());
+        return getChallengePolicy().buyManaZ1GoldCost(
+            () => Math.floor(50 * getSkillBonus("Mercantilism") * adjustGoldCostFromPrestige()));
     },
     finish() {
-        addMana(resources.gold * this.goldCost());
-        resetResource("gold");
+        getChallengePolicy().finishBuyManaZ1(this);
     },
 });
 
@@ -2999,7 +3002,7 @@ Action.BuyManaZ3 = new Action("Buy Mana Z3", {
         return !portalUsed;
     },
     visible() {
-        return true;
+        return getChallengePolicy().buyManaZ3Visible();
     },
     unlocked() {
         return true;
@@ -4807,7 +4810,7 @@ Action.BuyManaZ5 = new Action("Buy Mana Z5", {
         return !portalUsed;
     },
     visible() {
-        return true;
+        return getChallengePolicy().buyManaZ5Visible();
     },
     unlocked() {
         return true;

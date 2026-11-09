@@ -498,10 +498,12 @@ function getArmorLevel() {
 }
 
 function getSelfCombat() {
-    return ((getSkillLevel("Combat") + getSkillLevel("Pyromancy") * 5) 
-                * getArmorLevel() 
-                * (1 + getBuffLevel("Feast") * .05)) 
-                * prestigeBonus("PrestigeCombat");
+    return getChallengePolicy().selfCombat(
+        () => ((getSkillLevel("Combat") + getSkillLevel("Pyromancy") * 5)
+                * getArmorLevel()
+                * (1 + getBuffLevel("Feast") * .05))
+                * prestigeBonus("PrestigeCombat"),
+        getZombieStrength, getTeamStrength);
 }
 
 function getZombieStrength() {
@@ -521,7 +523,7 @@ function getTeamStrength() {
 }
 
 function getTeamCombat() {
-    return getSelfCombat() + getZombieStrength() + getTeamStrength();
+    return getChallengePolicy().teamCombat(getSelfCombat, getZombieStrength, getTeamStrength);
 }
 
 /** @param {SkillName} skill */

@@ -8,10 +8,15 @@ const complete=await runSupervised({modulePath:worker,args:['complete'],maxHostM
 assert.equal(complete.status,'complete');
 assert.deepEqual(complete.result,{status:'complete',value:42});
 
-const timeout=await runSupervised({modulePath:worker,args:['hang'],maxHostMs:250});
+// The short deadline also covers startup with no IPC evidence. Separately
+// allow a native process to start before proving an active tight loop is killed.
+const silentTimeout=await runSupervised({modulePath:worker,args:['hang-silent'],maxHostMs:250});
+assert.equal(silentTimeout.status,'budget_exceeded');
+assert.ok(silentTimeout.hostMs<2000,'startup/silent worker must retain its short hard deadline');
+const timeout=await runSupervised({modulePath:worker,args:['hang'],maxHostMs:2000});
 assert.equal(timeout.status,'budget_exceeded');
 assert.equal(timeout.lastDiagnostic?.checkpoint,'before-tight-loop');
-assert.ok(timeout.hostMs<2000,'hung worker must be killed by independent parent deadline');
+assert.ok(timeout.hostMs<3500,'active hung worker must be killed by independent parent deadline');
 
 const memory=await runSupervised({modulePath:worker,args:['memory'],maxHostMs:2000,maxHeapBytes:1024});
 assert.equal(memory.status,'memory_exceeded');

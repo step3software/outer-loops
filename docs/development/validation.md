@@ -13,6 +13,7 @@ npm run test:rf01:challenges
 npm run test:rf02:preflight
 npm run test:rf02:transaction
 npm run test:rf03:model
+npm run test:rf04:model
 npm run check:mechanics
 python scripts/check-xml.py
 npm run test:browser
@@ -27,6 +28,14 @@ npm run test:browser
 `npm run test:rf03:model` runs synthetic source-backed, DOM-less checks for authoritative buff caps and snapshots, pure Escape eligibility, first positive mana-spending activation, all 18 numeric/nine boolean resources, nonfinite-result rejection and stable loop-reset references. `npm run test:browser` also checks edited cap inputs, rejected blank edits, save/reload and a real DOM-less Worker imported from classic game scripts. The existing RF01 Escape/R04 assertions now require the corrected behavior; R15 Gods Trial parity is unchanged.
 
 The separate [RF03 evidence ledger](../refactoring/rf03-evidence.md) records which checks actually ran. A successful isolated V8 model evaluation does **not** establish that Node, real Chrome, the complete worker predictor or full CI checks have run.
+
+## RF04 stable challenge policy (candidate)
+
+`npm run test:rf04:model` uses isolated production-source VMs for identities, mode 0–3 transitions, exact Mana Drought conversion, Noodle Arms combat, Mana Burn zero/negative budget and snapshotted merchant balance. `test:rf01:challenges` retains the baseline numeric outcomes but replaces its previously intentional callback-overwrite assertions with stable-identity assertions.
+
+`npm run test:browser` adds disposable Chrome/production-Worker comparisons for mode-specific Buy Mana Z1 trades, a mode-2 combat queue and a mode-3 queue. It also checks callback identity and the Mana Burn zero-budget boundary. Mode and merchant inventory are passed as forecast-only `runData`, not read from Worker-global challenge state.
+
+**Current evidence:** these tests are committed in [RF04 draft PR #21](https://github.com/step3software/outer-loops/pull/21), but no real Node/Chrome/CI run has yet been reported for its head. See [RF04 ledger](../refactoring/rf04-evidence.md).
 
 ## Documentation and Orcha integration
 
@@ -93,7 +102,7 @@ Use a *disposable* profile or exported test save. For each row, record browser, 
 | Export/import | Export a test save and import into disposable profile | Export prefix and restored state are coherent |
 | Predictor off/on | Compare predicted and actual short queue results | Predictor doesn't alter live state and forecasts remain plausible |
 | Background worker | Enable background predictor and edit queue | No worker errors or permanent stale predictions |
-| Challenge mode | Enter/exit a supported challenge in a test profile | Challenge overrides and original save slot behave correctly |
+| Challenge mode | Enter/exit a supported challenge in a test profile | Stable mode rules and independent normal/challenge slot behavior |
 | Prestige | In a suitable disposable progressed save, prestige | Selected permanent buffs persist; other progression resets as designed |
 | Responsive + theme | Resize viewport, switch themes, use keyboard | Controls, focus, tooltips and action bar remain usable |
 | Content editor | Open `/editor.html` and load XML/schema | Editor loads independently, without affecting game state |
@@ -113,3 +122,38 @@ The test profile may not have late-game unlocks. Do not bypass unlock conditions
 ## PR evidence convention
 
 Report **commands actually run**, manual cases actually observed, and untested risks. Include exact reproduction steps and optional anonymized/disposable fixture data for failures. Do not attach real saves or tokens. For a documentation-only PR, syntax/XML checks are adequate if no runtime behavior was changed, though browser validation remains unverified.
+
+## RF02–RF04 correction verification
+
+`npm run test:rf02:preflight` exercises the save-option type-drift regression;
+`npm run test:rf02:transaction` retains exact stored bytes while exercising legacy
+numeric-text `updateRate` and quota/rollback faults. `npm run test:browser` runs
+the complete disposable-profile smoke suite, including recovery of both slots
+after explicit clear, challenge/prestige transitions and the real predictor Worker.
+RF04's branch also requires `npm run test:rf04:model` and its additional browser
+policy/identity assertions. Passing these checks is candidate evidence, not
+milestone acceptance or a deployment observation.
+
+Both browser harnesses share installed Chrome/Chromium discovery. Windows uses
+an installed executable followed by a real CDP boot; other platforms retain the
+command/version probe. Expected blocking alerts are dismissed in the smoke
+suite; confirmations and all returned-value/storage assertions remain explicit.
+Profiles are temporary and cleanup targets only the owned browser process tree.
+
+The balance profiler only records telemetry and preserves original errors;
+`BalanceEngine.step` enforces the declared execution ceiling from `start()`, and
+the independent parent supervisor covers process startup, elapsed time and RSS.
+The supervisor suite separately proves a silent startup deadline, an active
+infinite-loop deadline, cooperative memory failure and independently sampled
+resident-memory failure. Windows samples the owned PID using `tasklist`.
+
+`npm run test:balance:source` verifies that LF/CRLF materializations produce the
+same complete calibration source fingerprint and that actual source edits still
+invalidate it. Generated timing/mechanics checks normalize Markdown line endings
+only; source or numerical changes still require regeneration and review. Run the
+unchanged full equivalence scenarios to completion; a caller's short timeout is
+not a passing result. Potion event fixtures use labeled synthetic progression
+to fit repeated actions within the real starting mana budget. These fixtures do
+not establish an earned campaign or official RW00 baseline.
+
+[RF02–RF04 correction run evidence](../refactoring/rf02-rf04-fix-evidence.md) records the tested candidates and limitations.

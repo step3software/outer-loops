@@ -326,13 +326,14 @@ function prepareRestart() {
 }
 
 function restart() {
+    const policy = getChallengePolicy();
     shouldRestart = false;
     timer = 0;
     timeCounter = 0;
     effectiveTime = 0;
-    timeNeeded = timeNeededInitial;
+    timeNeeded = policy.restartTimeNeeded(timeNeededInitial, totals.effectiveTime);
     document.title = "Idle Loops";
-    currentLoop = totals.loops + 1; // don't let currentLoop get out of sync with totals.loops, that'd cause problems
+    if (policy.updateCurrentLoopOnRestart) currentLoop = totals.loops + 1;
     resetResources();
     restartStats();
     for (let i = 0; i < towns.length; i++) {
@@ -342,7 +343,7 @@ function restart() {
     actions.restart();
     view.requestUpdate("updateCurrentActionsDivs");
     view.requestUpdate("updateTrials", null);
-    if (needsDataSnapshots()) {
+    if (policy.updateSnapshotOnRestart && needsDataSnapshots()) {
         Data.updateSnapshot("restart", "base");
     }
 }

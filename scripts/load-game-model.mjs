@@ -10,6 +10,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const GAME_MODEL_SCRIPTS = Object.freeze([
     'data.js', 'localization.js', 'helpers.js', 'save-import.js', 'actionList.js',
     'driver.js', 'stats.js', 'actions.js', 'town.js', 'prestige.js', 'saving.js',
+    'challenges.js',
 ]);
 
 export function loadGameModel({ withViewStubs = false, withChallenges = false, rngSeed, clock } = {}) {
@@ -72,7 +73,9 @@ export function loadGameModel({ withViewStubs = false, withChallenges = false, r
     }
     sandbox.self = sandbox;
     vm.createContext(sandbox);
-    for (const name of [...GAME_MODEL_SCRIPTS, ...(withChallenges ? ['challenges.js'] : [])]) {
+    // withChallenges remains an accepted legacy test argument, but policies
+    // are now always loaded exactly once, as in the production Worker.
+    for (const name of GAME_MODEL_SCRIPTS) {
         const code = readFileSync(join(root, name), 'utf8');
         vm.runInContext(code, sandbox, {filename: name, timeout: 10_000});
     }

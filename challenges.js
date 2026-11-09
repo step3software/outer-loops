@@ -1,51 +1,77 @@
+// Stable, shared challenge policy (classic browser script and predictor Worker).
+"use strict";
+
+const normalChallengePolicy = Object.freeze({
+    gameSpeed: 1,
+    manaDrought: false,
+    buyManaZ1CanStart: () => true,
+    buyManaZ1ManaCost: () => 100,
+    buyManaZ1GoldCost: normalCost => normalCost(),
+    buyManaZ1Trade(gold, merchantMana, rate) {
+        return {spentGold: gold, manaGain: gold * rate, merchantRemaining: merchantMana};
+    },
+    finishBuyManaZ1(action) {
+        const trade = this.buyManaZ1Trade(resources.gold, totalMerchantMana, action.goldCost());
+        addMana(trade.manaGain);
+        if (this.manaDrought) {
+            totalMerchantMana = trade.merchantRemaining;
+            addResource("gold", -trade.spentGold);
+        } else {
+            resetResource("gold");
+        }
+    },
+    buyManaZ3Visible: () => true,
+    buyManaZ5Visible: () => true,
+    selfCombat: normalSelf => normalSelf(),
+    teamCombat: (self, zombie, team) => self() + zombie() + team(),
+    restartTimeNeeded: initial => initial,
+    updateCurrentLoopOnRestart: true,
+    updateSnapshotOnRestart: true,
+});
+const challengePolicies = Object.freeze({
+    0: normalChallengePolicy,
+    1: Object.freeze({
+        ...normalChallengePolicy,
+        gameSpeed: 2,
+        manaDrought: true,
+        buyManaZ1CanStart: (available = totalMerchantMana) => available > 0,
+        buyManaZ1ManaCost: () => 1,
+        buyManaZ1GoldCost: () => 30,
+        buyManaZ1Trade(gold, merchantMana, rate) {
+            const spentGold = Math.min(gold, 300);
+            const manaGain = Math.min(spentGold * rate, merchantMana);
+            return {spentGold, manaGain, merchantRemaining: merchantMana - manaGain};
+        },
+        buyManaZ3Visible: () => false,
+        buyManaZ5Visible: () => false,
+    }),
+    2: Object.freeze({
+        ...normalChallengePolicy,
+        selfCombat: (_normal, zombie, team) => Math.max(zombie(), team()) / 2,
+        teamCombat: (_self, zombie, team) => zombie() + team(),
+    }),
+    3: Object.freeze({
+        ...normalChallengePolicy,
+        // Owner RF04-Q03 A: no clamp, including non-positive time budgets.
+        restartTimeNeeded: (_initial, totalEffectiveTime) => 4320000 - totalEffectiveTime * 50,
+        // Preserve the original mode-3 restart omissions.
+        updateCurrentLoopOnRestart: false,
+        updateSnapshotOnRestart: false,
+    }),
+});
+function getActiveChallengeMode() {
+    const mode = challengeSave.challengeMode;
+    return Number.isInteger(mode) && mode >= 1 && mode <= 3 ? mode : 0;
+}
+function getChallengePolicy(mode = getActiveChallengeMode()) {
+    return challengePolicies[mode] || normalChallengePolicy;
+}
+let previouslyLoadedChallengeMode = 0;
 function loadChallenge() {
-    switch (challengeSave.challengeMode) {
-        case 1:
-            gameSpeed = 2;
-
-            Action.BuyManaZ1.canStart = function() {return totalMerchantMana > 0}
-            Action.BuyManaZ1.manaCost = function() {return 1;}
-            Action.BuyManaZ1.goldCost = function() {return 30;}
-            Action.BuyManaZ1.finish = function() {
-                let spendGold = Math.min(resources.gold, 300);
-                let buyMana = Math.min(spendGold * this.goldCost(), totalMerchantMana);
-                addMana(buyMana);
-                totalMerchantMana -= buyMana;
-                addResource("gold", -spendGold);
-            }
-
-            Action.BuyManaZ3.visible = function() {return false;}
-            Action.BuyManaZ5.visible = function() {return false;}
-            break;
-        case 2:
-            // @ts-ignore
-            getSelfCombat = function() {
-                return Math.max(getZombieStrength(), getTeamStrength()) / 2;
-            }
-            // @ts-ignore
-            getTeamCombat = function() {
-                return getZombieStrength() + getTeamStrength();
-            }
-            break;
-        case 3:
-            // @ts-ignore
-            restart = function() {
-                shouldRestart = false;
-                timer = 0;
-                timeCounter = 0;
-                effectiveTime = 0;
-                timeNeeded = 4320000 - totals.effectiveTime*50;
-                document.title = "Idle Loops";
-                resetResources();
-                restartStats();
-                for (let i = 0; i < towns.length; i++) {
-                    towns[i].restart();
-                }
-                view.requestUpdate("updateSkills");
-                actions.restart();
-                view.requestUpdate("updateCurrentActionsDivs");
-                view.requestUpdate("updateTrials", null);
-            }
-            break;
-    }
+    const mode = getActiveChallengeMode();
+    // The original modes 0/2/3 did not modify a manually selected game speed.
+    // Reset it only when leaving Mana Drought's forced 2× speed.
+    if (mode === 1) gameSpeed = 2;
+    else if (previouslyLoadedChallengeMode === 1) gameSpeed = 1;
+    previouslyLoadedChallengeMode = mode;
 }

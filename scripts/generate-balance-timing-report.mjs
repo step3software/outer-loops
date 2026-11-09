@@ -18,7 +18,7 @@ const markdown=`# Calculated original-campaign timing baseline
 > **Generated reference.** Run \`npm run write:balance:timing\` after changing game balance or calculation assumptions. \`npm run check:balance:timing\` fails when this report drifts. Do not hand-edit calculated values.
 
 **Status:** source-backed planning calculation, not an earned campaign simulation or an approved pacing target.  
-**Source identity:** \`${estimate.sourceRevision}\`  
+**Source identity:** \`${estimate.sourceRevision}\`<br>
 **Calculation schema:** \`${estimate.schema}\`
 
 ## Result summary
@@ -82,7 +82,7 @@ if(mode==='--write'){
   writeFileSync(output,markdown,'utf8');
   console.log('WROTE '+output);
 }else if(mode==='--check'){
-  let existing='';try{existing=readFileSync(output,'utf8');}catch{}
+  let existing='';try{existing=readFileSync(output,'utf8').replace(/\r\n/g,'\n');}catch{}
   if(existing!==markdown){console.error('Calculated timing report is stale. Run npm run write:balance:timing.');
     process.exitCode=1;}else console.log('PASS calculated timing report is current.');
 }else throw new RangeError('Use --write or --check');

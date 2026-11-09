@@ -10,6 +10,7 @@ importScripts(
     "town.js",
     "prestige.js",
     "saving.js",
+    "challenges.js",
     "predictor.js"
 );
 

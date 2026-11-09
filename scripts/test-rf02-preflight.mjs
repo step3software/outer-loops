@@ -149,4 +149,35 @@ assert.throws(()=>SaveImport.decompressBoundedLegacy('@!',
     legacyCodec.Base64.decode.bind(legacyCodec.Base64)),
     e=>e instanceof SaveImport.SaveImportError&&e.code==='DECODE');
 
-console.log('PASS RF02 pure preflight: current and old envelope, side-effect-free/idempotent aliases, challenge conversion, corrupt/root/schema/size/unknown-field rejection.');
+// A reload may restore updateRate from string-valued localStorage. The import
+// schema must stay numeric and accept the known old numeric-text representation,
+// regardless of the type currently held by the active game.
+const beforeOptionDrift=evaluate(`JSON.stringify(doSave())`);
+const driftedContract=evaluate(`(() => {
+    options.updateRate='200';
+    return getImportContract();
+})()`);
+assert.equal(driftedContract.optionTypes.updateRate,'number',
+    'live localStorage option types may not redefine the saved-data contract');
+const driftCodecs={...boundedCodecs,allowedActionVars:fromGame.allowedActionVars,
+    contract:driftedContract};
+assert.equal(SaveImport.prepareStoredJson(beforeOptionDrift,driftCodecs).data.options.updateRate,50);
+for(const rate of [50,'50','200.5']) {
+    const data=JSON.parse(beforeOptionDrift);
+    data.options.updateRate=rate;
+    const raw=' \n'+JSON.stringify(data,null,2)+' \n';
+    const restored=SaveImport.prepareStoredJson(raw,driftCodecs);
+    assert.equal(restored.data.options.updateRate,Number(rate),
+        'validation normalizes a clone; the transaction restores the original raw bytes');
+    const imported=SaveImport.prepare('ILSV01'+LZString.compressToBase64(raw),driftCodecs);
+    assert.equal(imported.data.options.updateRate,Number(rate));
+    assert.equal(SaveImport.normalizeParsed(imported.data,driftCodecs.allowedActionVars,
+        driftedContract).data.options.updateRate,Number(rate),'option migration must be idempotent');
+}
+for(const rate of ['', ' ', 'NaN', 'Infinity', '50fps', true, {}, []]) {
+    const data=JSON.parse(beforeOptionDrift);data.options.updateRate=rate;
+    assert.throws(()=>SaveImport.prepareStoredJson(JSON.stringify(data),driftCodecs),
+        e=>e instanceof SaveImport.SaveImportError&&e.code==='INVALID_OPTION',
+        'legacy option compatibility cannot admit malformed or wrong-type values');
+}
+console.log('PASS RF02 pure preflight: current and old envelope, side-effect-free/idempotent aliases, challenge conversion, corrupt/root/schema/size/unknown-field rejection and stable option types across reload.');

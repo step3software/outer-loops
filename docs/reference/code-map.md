@@ -25,7 +25,7 @@ Navigation map for the repository's existing classic-script JavaScript. **Execut
 | `stats.js` | `Stat` / `Skill` / `Buff`, experience, scaling, bonuses and model-state `getBuffCap`/`setBuffCap` |
 | `saving.js` | Global registries, typed resource and buff-cap defaults, `Data` snapshot roots, `loadDefaults`, `load`, `doSave` / `doLoad`, `save`, validated import/recovery, story keys, options |
 | `prestige.js` | Persistent prestige points/buffs, reset and balance multipliers |
-| `challenges.js` | Challenge-specific runtime overrides |
+| `challenges.js` | Stable challenge mode policy selected from `challengeSave`, shared by browser/Worker |
 | `talents.js` | Talent-related calculations |
 | `helpers.js`, `interval.js`, `polyfills.js` | Shared utilities and compatibility helpers |
 | `hotkeys.js` | Keyboard shortcuts |
@@ -52,7 +52,7 @@ Navigation map for the repository's existing classic-script JavaScript. **Execut
 
 | Path | Responsibility |
 | --- | --- |
-| `predictor.js`, `predictor-worker.js` | Forecast algorithm and background worker |
+| `predictor.js`, `predictor-worker.js` | Mode-aware forecast and Worker, with explicit challenge policy imports |
 | `data.js` | Registered global state, snapshots and deltas for simulation |
 | `statsgraph.js` | Stat progress graphing |
 | `editor.js`, `schema.js` | Experimental authoring UI and Relax NG model |
@@ -73,3 +73,11 @@ Navigation map for the repository's existing classic-script JavaScript. **Execut
 | `package.json` | Type definitions and convenience check script; no application bundling |
 
 For exact changes to an action use [action catalog](action-catalog.md) and [change recipes](../development/recipes.md).
+
+## Shared verification helpers
+
+`scripts/browser-test-utils.mjs` owns test-only installed-browser discovery and
+cleanup of the disposable child process. `scripts/test-balance-source-identity.mjs`
+checks platform-independent calibration identity against actual source changes.
+See the [validation guide](../development/validation.md#rf02rf04-correction-verification)
+for budget ownership and the recovery regression commands.

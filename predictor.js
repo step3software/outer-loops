@@ -604,13 +604,17 @@ const Koviko = {
          * @return {number} Combat skill of the team leader
          * @memberof Koviko.Predictor#helpers
          */
-        getSelfCombat: (r, k) => ( getSkillLevelFromExp(k.combat) +  getSkillLevelFromExp(k.pyromancy) * 5) * h.getArmorLevel(r,k) * (1 + getBuffLevel("Feast") * 0.05) * prestigeBonus("PrestigeCombat"),
+        getSelfCombat: (r, k) => getChallengePolicy(r.challengeMode).selfCombat(
+          () => (getSkillLevelFromExp(k.combat) + getSkillLevelFromExp(k.pyromancy) * 5) * h.getArmorLevel(r,k) * (1 + getBuffLevel("Feast") * 0.05) * prestigeBonus("PrestigeCombat"),
+          () => h.getZombieStrength(r, k), () => h.getTeamStrength(r, k)),
 
         getZombieStrength: (r, k) => (( getSkillLevelFromExp(k.dark) * (r.zombie||0) / 2 * Math.max(getBuffLevel("Ritual") / 100, 1)) * (1 + getBuffLevel("Feast") * 0.05)) * prestigeBonus("PrestigeCombat"),
 
         getTeamStrength: (r, k) => (( getSkillLevelFromExp(k.combat) +  getSkillLevelFromExp(k.restoration) * 4) * ((r.team||0) / 2) * (r.adventures?h.getGuildRankBonus(r.adventures):1) * h.getSkillBonusInc(k.leadership))  * (1 + getBuffLevel("Feast") * 0.05) * prestigeBonus("PrestigeCombat"),
 
-        getTeamCombat: (r, k) => (h.getSelfCombat(r, k) + h.getZombieStrength(r, k) + h.getTeamStrength(r, k)),
+        getTeamCombat: (r, k) => getChallengePolicy(r.challengeMode).teamCombat(
+          () => h.getSelfCombat(r, k), () => h.getZombieStrength(r, k),
+          () => h.getTeamStrength(r, k)),
 
         getRewardSS: (dNum) => Math.floor(Math.pow(10, dNum) * Math.pow(1 + getSkillLevel("Divine") / 60, 0.25)),
 
@@ -750,17 +754,16 @@ const Koviko = {
           effect:(r) => (r.gold -= 10, r.glasses = true)},
         'Found Glasses':{ affected:['']},
         'Buy Mana Z1':{ affected:['mana','gold','manaBought'],
+          canStart:(r) => getChallengePolicy(r.challengeMode).buyManaZ1CanStart(r.manaBought),
+          manaCost:(r) => getChallengePolicy(r.challengeMode).buyManaZ1ManaCost(),
           effect:(r) => {
-          if (r.isManaDrought) {
-            let spendGold = Math.min(r.gold, 300);
-            let buyMana = Math.min(spendGold *  Action.BuyManaZ1.goldCost(), r.manaBought);
-            r.mana+=buyMana;
-            r.manaBought-=buyMana;
-            r.gold-=spendGold;
-          } else {
-            r.mana += r.gold *  Action.BuyManaZ1.goldCost();
-            r.gold = 0;
-        }}},
+            const policy = getChallengePolicy(r.challengeMode);
+            const rate = policy.buyManaZ1GoldCost(() => Action.BuyManaZ1.goldCost());
+            const trade = policy.buyManaZ1Trade(r.gold, r.manaBought, rate);
+            r.mana += trade.manaGain;
+            r.manaBought = trade.merchantRemaining;
+            r.gold -= trade.spentGold;
+          }},
         'Meet People':{ affected:['']},
         'Train Strength':{ affected:['']},
         'Short Quest':{ affected:['gold'],
@@ -1583,11 +1586,11 @@ const Koviko = {
         state.resources.glasses=true;
       }
 
-      //Challenge Mode
-        if ((typeof challengeSave!="undefined")&&(challengeSave.challengeMode==1)) {
-          state.resources.isManaDrought=true;
-          state.resources.manaBought=7500;
-        }
+      // Run data, not Worker-global challengeSave, owns prediction policy.
+      // Current merchant inventory persists across loops in the inherited game.
+      const forecastChallengeMode = getActiveChallengeMode();
+      state.resources.challengeMode = forecastChallengeMode;
+      state.resources.manaBought = totalMerchantMana;
 
 
       /**
@@ -1627,7 +1630,8 @@ const Koviko = {
       // in the cache identity so updated caps cannot reuse stale predictions.
       const buffRuleState = Object.fromEntries(buffList.map(name =>
         [name, [getBuffLevel(name), getBuffCap(name)]]));
-      let cacheIsValid = this.cache.reset([state, affected, buffRuleState]);
+      let cacheIsValid = this.cache.reset([state, affected, buffRuleState,
+        forecastChallengeMode, totalMerchantMana]);
 
 
       //Statistik parammeters

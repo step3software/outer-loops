@@ -1,6 +1,6 @@
 # Outer Loops refactoring program — RF01–RF06
 
-**Source observation (2026-11-08):** RF01 [PR #4](https://github.com/step3software/outer-loops/pull/4), RF02 [PR #16](https://github.com/step3software/outer-loops/pull/16) and RF03 [PR #18](https://github.com/step3software/outer-loops/pull/18) are **merged into `main`**. Their individual test/evidence gaps still require review. RF04–RF06 remain unimplemented. The owner accepted the [RF04 plan](RF04-challenge-rule-isolation.md) in chat on 2026-11-08; source plan [PR #19](https://github.com/step3software/outer-loops/pull/19) remains draft/unmerged. An [RF04 file-level preparation candidate](rf04-preparation.md) is available, but Orcha's legacy workflow record still shows the stage as proposed and a separate implementation grant is required.
+**Source observation (2026-11-08):** RF01 [PR #4](https://github.com/step3software/outer-loops/pull/4), RF02 [PR #16](https://github.com/step3software/outer-loops/pull/16) and RF03 [PR #18](https://github.com/step3software/outer-loops/pull/18) are **merged into `main`**. Their individual test/evidence gaps still require review. RF05–RF06 remain unimplemented. The owner accepted the [RF04 plan](RF04-challenge-rule-isolation.md) and explicitly authorized implementation in chat on 2026-11-08. Source plan [PR #19](https://github.com/step3software/outer-loops/pull/19), preparation [PR #20](https://github.com/step3software/outer-loops/pull/20) and implementation [draft PR #21](https://github.com/step3software/outer-loops/pull/21) are stacked, unmerged and not yet verified. Orcha's legacy workflow stage remains separate and has not been advanced.
 
 **Repository:** `step3software/outer-loops` · default and approved canonical source branch `main`. These plans depend on the AI-development foundation in [the technical/gameplay audit](../audit/README.md) and [root agent instructions](../../AGENTS.md). Existing tests and files cited here refer to that baseline; agents must verify the current default branch and source before starting any milestone.
 
@@ -61,11 +61,11 @@ The milestone plans are **not** stand-alone authorization to fix findings unrela
 - [RF01: Regression coverage](RF01-regression-coverage.md) · [implementation evidence and coverage](rf01-evidence.md)
 - [RF02: Persistence safety](RF02-persistence-safety.md) · [implementation readiness](rf02-readiness.md) · [proposed safety test matrix](rf02-test-matrix.md)
 - [RF03: Gameplay rules / resources](RF03-gameplay-rules-and-resources.md)
-- [RF04: Challenge rule isolation](RF04-challenge-rule-isolation.md) · [owner-reviewed plan](RF04.plan.json) · [file-level preparation](rf04-preparation.md) · [executable preparation contract](RF04.preparation.json)
+- [RF04: Challenge rule isolation](RF04-challenge-rule-isolation.md) · [owner-reviewed plan](RF04.plan.json) · [preparation](rf04-preparation.md) · [implementation evidence](rf04-evidence.md) · [file-level contract](RF04.preparation.json)
 - [RF05: Action modules](RF05-action-module-organization.md)
 - [RF06: View decomposition](RF06-view-layer-decomposition.md)
 - [Validation matrix](validation-matrix.md)
 - [Decision log and unresolved choices](decision-log.md)
 - [Reusable implementation handoffs](handoffs/README.md)
 
-**Source delivery:** **RF01 #4 merged** · **RF02 #16 merged** · **RF03 #18 merged** · **RF04 plan owner-accepted in chat; preparation candidate, no implementation** · RF05 Planned · RF06 Planned. This register is not Orcha stage acceptance; evidence and test gaps remain separate.
+**Source delivery:** **RF01 #4 merged** · **RF02 #16 merged** · **RF03 #18 merged** · **RF04 implementation candidate PR #21, not merged/verified** · RF05 Planned · RF06 Planned. This register is not Orcha stage acceptance; evidence and test gaps remain separate.

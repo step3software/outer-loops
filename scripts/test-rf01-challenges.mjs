@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // RF01: characterization of all three *existing* challenge modes in separate
-// disposable VM contexts. Source intentionally retains its monkey patches.
+// disposable VM contexts. Source now preserves global and Action references; numerical characterization is retained.
 import assert from 'node:assert/strict';
 import {loadGameModel} from './load-game-model.mjs';
 
@@ -21,7 +21,7 @@ const drought=run(`(() => {
         acquired:timeNeeded-original,remaining:totalMerchantMana,gold:resources.gold};
 })()`);
 assert.equal(drought.speed,2);
-assert.equal(drought.overridden,true);
+assert.equal(drought.overridden,false);
 assert.equal(drought.manaCost,1);
 assert.equal(drought.rate,30);
 assert.equal(drought.visibleZ3,false);
@@ -42,7 +42,7 @@ const noodle=run(`(() => {
         expectedTeam:getZombieStrength()+getTeamStrength(),
         normalSelf,normalTeam};
 })()`);
-assert.equal(noodle.changed,true);
+assert.equal(noodle.changed,false);
 assert.equal(noodle.self,noodle.expectedSelf);
 assert.equal(noodle.team,noodle.expectedTeam);
 assert.ok(noodle.normalSelf!==noodle.self||noodle.normalTeam!==noodle.team);
@@ -60,7 +60,7 @@ const burn=run(`(() => {
         mana:resources.gold,actions:actions.current.length,
         challenge:challengeSave.challengeMode};
 })()`);
-assert.equal(burn.changed,true);
+assert.equal(burn.changed,false);
 assert.equal(burn.timeNeeded,4320000-5000);
 assert.equal(burn.curTown,0);
 assert.equal(burn.position,0);

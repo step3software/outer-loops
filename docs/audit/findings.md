@@ -24,11 +24,11 @@ These are **auditable findings**, not an assertion that every candidate is a rep
 
 ### R03 — Challenge modes overwrite executable functions (medium; confirmed architecture)
 
-**Evidence:** `challenges.js` `loadChallenge` replaces `Action.BuyManaZ1` callbacks in mode 1, combat functions in mode 2 and global `restart` in mode 3. `exitChallenge` performs a page reload.
+**Baseline evidence:** Before RF04, `loadChallenge` replaced Buy Mana Z1/Z3/Z5 callbacks, combat functions and global `restart` for modes 1–3. **RF04 implementation candidate:** [draft PR #21](https://github.com/step3software/outer-loops/pull/21) uses stable mode policies; browser/Worker and CI verification is not yet established. See [RF04 evidence](../refactoring/rf04-evidence.md).
 
-**Consequence:** assumptions about stable function identity, predictor snapshots and in-place switching may not hold. Not necessarily a bug: it is the current implementation, and leaving through reload is intentional.
+**Consequence:** the original overwrites risk stale mode behavior and inconsistent prediction. The RF04 candidate removes function replacement but still needs cross-mode browser, save and Worker verification. Exit reload remains intentional.
 
-**Acceptance:** entering/exiting each challenge, isolated saves, changed queue, worker predictions and reload must be tested before touching the challenge code.
+**Acceptance:** entering/exiting each mode, isolated slots, queued actions, real Worker predictions and reload must pass before R03 can close. Tests present in a PR are not passing evidence.
 
 ### R04 — DOM-dependent buff cap from shared rules (medium; RF03 candidate correction)
 

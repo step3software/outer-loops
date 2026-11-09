@@ -13,7 +13,7 @@ The predictor's job is to model likely effects of the planned action queue. It i
 
 `predictor-worker.js` explicitly imports:
 
-`data.js`, `localization.js`, `helpers.js`, `save-import.js`, `actionList.js`, `driver.js`, `stats.js`, `actions.js`, `town.js`, `prestige.js`, `saving.js`, and `predictor.js`.
+`data.js`, `localization.js`, `helpers.js`, `save-import.js`, `actionList.js`, `driver.js`, `stats.js`, `actions.js`, `town.js`, `prestige.js`, `saving.js`, `challenges.js`, and `predictor.js`.
 
 It calls `loadDefaults()`, constructs `Koviko.initWorkerPredictor()` and exchanges typed messages with the page. Message categories include `setOptions`, `verifyDefaultIds`, `importSnapshots`, `startUpdate`, `getSnapshots`, `update`, `endUpdate` and `error`. New simulation dependencies must work in **both** these execution environments.
 
@@ -30,6 +30,14 @@ An algorithm that writes around registered state, mutates unsnapshotted objects,
 `stats.js` `getBuffCap` reads `saving.js`'s authoritative `buffCaps`, never an `HTMLInputElement`. The existing saved `buffCaps` field is also a registered `Data` snapshot root and is projected into browser inputs; the worker can evaluate cap-dependent ritual and imbuement predicates without DOM. Loop resources are validated against `resourcesTemplate` and reset in place to preserve `Data.rootObjects.resources` identity. `Escape.canStart` only reads state; `Actions.tick` commits its sticky flag upon the first positive mana-spending execution step. The predictor's Escape threshold uses strict `< 60` effective seconds. `Koviko.Prediction` for Dark Ritual and Imbue Mind also applies the corresponding cap against current buff level plus predicted queue gains; the predictor cache includes all buff levels and caps in its reset identity, preventing stale forecasts after a cap edit.
 
 The predictor's internal `state.resources` is a separate forecast model; it is not an excuse to introduce arbitrary keys into the gameplay `resources` object. Browser and actual-worker prediction parity must be validated for relevant queues; a DOM-less Node model alone is insufficient.
+
+## RF04 challenge policy forecasts
+
+Original challenge mode selection overwrote Action methods, combat functions and `restart`, while the Worker did not import `challenges.js`. RF04 uses `getChallengePolicy(mode)` from the same browser/Worker classic script. Existing entry point function identities remain stable and policy helpers have no DOM dependencies.
+
+The forecast carries `state.resources.challengeMode` and `state.resources.manaBought` (the current `totalMerchantMana`) in serialized `runData`. The Worker's default unsnapshotted `challengeSave` is not the selected mode. Buy Mana Z1's modeled admission, mana cost, gold conversion and purchase use that mode; combat helpers call the same policies as runtime. The cache identity includes mode, merchant mana and RF03 buff/cap state. Mana Burn's non-positive budget and missing normal-only reset operations are preserved; a forecast spanning that boundary still needs dedicated field-level validation.
+
+Actual Chrome and production `predictor-worker.js` comparisons were added to the smoke suite; they are **not claimed passing** until executed. See [RF04 evidence](refactoring/rf04-evidence.md).
 
 ## Change checklist
 

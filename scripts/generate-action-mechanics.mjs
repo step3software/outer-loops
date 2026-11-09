@@ -104,7 +104,7 @@ for(let zone=0;zone<zones.length;zone++){
     for(const a of actions){
         const position=source.indexOf('Action.'+a.id+' = new ');
         const line=position<0?'':source.slice(0,position).split('\n').length;
-        const link=line?'[source](https://github.com/step3software/outer-loops/blob/dmchurch/actionList.js#L'+line+')':'source location unknown';
+        const link=line?'[source](https://github.com/step3software/outer-loops/blob/main/actionList.js#L'+line+')':'source location unknown';
         lines.push('### '+a.name+' — '+inline('Action.'+a.id), '');
         lines.push('- **Identity:** '+inline(a.type)+' / '+inline(a.className)+
             ' · '+inline('townNum='+a.zone)+' · '+inline('varName='+a.varName)+
@@ -138,7 +138,7 @@ if(process.argv.includes('--emit')) {
         Buffer.from(output,'utf8').toString('base64')+'\n');
 } else if(process.argv.includes('--check')) {
     let current;
-    try { current=readFileSync(path,'utf8'); }catch{current='';}
+    try { current=readFileSync(path,'utf8').replace(/\r\n/g,'\n'); }catch{current='';}
     if(current!==output) {
         console.error('FAIL action mechanics reference differs from initialized Action definitions. Run --write.');
         process.exitCode=1;
