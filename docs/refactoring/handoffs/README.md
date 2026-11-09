@@ -1,6 +1,6 @@
 # Refactoring milestone implementation handoffs
 
-These prompts are retained implementation handoffs, not permission to restart completed work. RF01, RF02 and RF03 have merged implementations. RF04 already has an unmerged candidate in PR #21. Consult the [program register](../README.md) and each milestone's current evidence before selecting remaining work; correction #24 is merged and updated #23 passes 18 baseline checks, with a separate calibration cleanup failure. RF04 remains unmerged; milestone acceptance remains separate. RF05–RF06 remain planned and need separate implementation authorization.
+These prompts are retained implementation handoffs, not permission to restart completed work. RF01, RF02 and RF03 have merged implementations. RF04 already has an unmerged candidate in PR #21. Consult the [program register](../README.md) and each milestone's current evidence before selecting remaining work; correction #24 is merged and the #23 cleanup correction passes all 20 selected checks. RF04 remains unmerged; milestone acceptance remains separate. RF05–RF06 remain planned and need separate implementation authorization.
 
 ## How to use
 

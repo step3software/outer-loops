@@ -45,7 +45,7 @@ Entry point for developers and coding agents. The code is authoritative; these d
 - [Decision log and unresolved implementation choices](refactoring/decision-log.md)
 - [Implementation handoffs, including RF02](refactoring/handoffs/README.md)
 
-**RF02, RF03 and correction #24 are merged; RF04 remains draft #21.** Updated #23 passes all 18 baseline checks, including timing, recovery and browser/Worker smoke. The additional calibration command matches all 12 cases but fails Windows cleanup. See [current evidence](refactoring/rf02-rf04-fix-evidence.md). RF04 retains its earlier result; RF05–RF06, approvals, acceptance and deployment are unchanged.
+**RF02, RF03 and recovery correction #24 are merged; RF04 remains draft #21.** PR #23 delivers the Windows cleanup correction and current milestone records; all 20 selected checks pass, including timing, recovery, full browser/Worker smoke, cleanup regression and calibration. See [current evidence](refactoring/rf02-rf04-fix-evidence.md). RF04 retains its earlier candidate result; RF05–RF06, approvals, acceptance and deployment remain unchanged.
 
 ## Future Outer Loop / Real World design (not implemented)
 

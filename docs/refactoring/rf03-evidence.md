@@ -1,11 +1,9 @@
 # RF03 — Gameplay rules and resource verification
 
-**Status:** Merged in [PR #18](https://github.com/step3software/outer-loops/pull/18).
-Focused behavior and regressions passed before [correction #24](https://github.com/step3software/outer-loops/pull/24)
-merged into main. All 18 baseline checks pass on updated #23; the additional
-calibration command fails Windows cleanup after 12 matched comparisons. RF04
-retains its earlier 20-check result, and preparation #17 remains open. Milestone
-acceptance remains separate.
+**Status:** RF03 #18 and shared correction #24 are merged. All 20 selected checks
+pass on the #23 cleanup correction, including the full balance and browser/Worker
+regressions. No RF03 gameplay redesign was needed. Preparation #17 remains
+separately open; milestone acceptance is unchanged.
 
 ## A1–A8 verification mapping
 
@@ -20,20 +18,17 @@ acceptance remains separate.
 No additional RF03 gameplay redesign was needed. RF03-D05 A, RF03-D06 A,
 all action/resource identities and existing save contracts remain unchanged.
 
-## Provenance and authority
+## Current verification and authority
 
-The earlier [failure record](../../.orcha/evidence/2026-11-09-rf02-rf04-verification.json)
-and [correction run](../../.orcha/evidence/2026-11-09-rf02-rf04-fix.json) remain
-unchanged historical evidence. The [current review/merge/rerun record](../../.orcha/evidence/2026-11-09-pr24-merge-pr23-verification.json)
-records a clean bounded review of all 27 PR #24 paths and 19 fresh passing checks,
-its owner-authorized merge into `main` at `baaa427ebd49e5fa05336a8498796799950453d3`, and 18 passing baseline checks
-on PR #23's combined candidate `19169372b46d5ed0bf543253052ddb277d756b55`. The additional calibration
-command matched all 12 cases but failed during Windows profile cleanup, including
-on retry. The timing/recovery blockers are resolved; the full 19-command run is
-not green because that teardown failure remains.
+[Windows cleanup fix and full rerun](../../.orcha/evidence/2026-11-09-windows-cleanup-verification.json) records **all 20 checks
+passing** at `68e012611ba425045c1db9a881c86b10120846f0` with ordinary system temporary storage and no host cleanup
+assistance. The formerly failing calibration now exits 0 after all 12 comparisons
+and strict teardown. Original failure and correction records remain unchanged
+historical evidence; their old failed outcomes are not rewritten.
 
-All original A1–A8 and owner decisions remain. Orcha's legacy stages and accepted
-artifacts are unchanged; verification and a code merge do not complete milestones
-or establish deployment. Authentic saves, exhaustive predictor/buff permutations,
-earned campaign endpoints and official RW00 baselines remain unverified; R15 is
-preserved. RF04 #21 remains a separate unmerged candidate on its existing stack.
+The original RF02/RF03 implementations and correction #24 are merged. PR #23
+delivers the cleanup correction and these records; its provider page records the
+merge outcome under the owner's explicit conditional authorization. Original
+A1–A8, owner decisions and Orcha legacy stages are unchanged. Verification does
+not complete a milestone or establish deployment. RF04 #21 and its stack remain
+unchanged with their prior candidate evidence; this rerun does not reverify RF04.

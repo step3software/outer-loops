@@ -162,14 +162,12 @@ not establish an earned campaign or official RW00 baseline.
 
 ## Current RF02–RF04 correction evidence
 
-[Correction #24](https://github.com/step3software/outer-loops/pull/24) passed the
-bounded source review and all 19 fresh local checks before merging into main at
-`baaa427ebd49e5fa05336a8498796799950453d3`. PR #23 then incorporated that exact main commit without rewriting its
-history; all 18 baseline checks passed on `19169372b46d5ed0bf543253052ddb277d756b55`, including the
-previously stale timing report and full browser/Worker smoke. The additional
-calibration command passed its 12 comparisons but failed Windows profile cleanup
-on both attempts. This remaining command failure is not converted into a pass.
-The [current ledger](../refactoring/rf02-rf04-fix-evidence.md) and machine record
-separate executed results, historical observations and unverified acceptance.
-RF04's unchanged draft retains its earlier 20-check result; this task does not
-merge or broadly reverify RF04, accept a stage, or deploy anything.
+Recovery correction #24 is merged. The Windows cleanup correction in
+[PR #23](https://github.com/step3software/outer-loops/pull/23) passes all 20 selected
+checks at `68e012611ba425045c1db9a881c86b10120846f0`, using the ordinary system temporary directory without an
+external adapter or host cleanup. Both full browser suites exit successfully;
+calibration retains all 12 original comparisons. The
+[current ledger](../refactoring/rf02-rf04-fix-evidence.md) links exact command/log
+results, source and standards hashes, review coverage and historical failures.
+RF04's unchanged draft retains its earlier result; no stage acceptance,
+deployment or later milestone authorization is inferred.

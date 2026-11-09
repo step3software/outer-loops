@@ -1,6 +1,6 @@
 # RF02 — Persistence safety
 
-**Status:** Merged — PR #16 and recovery correction [#24](https://github.com/step3software/outer-loops/pull/24). #24 passed 19 checks before merge; updated #23 passes 18 baseline checks with an additional calibration cleanup failure. See [current evidence](rf02-evidence.md); approvals remain unchanged.
+**Status:** Merged — PR #16 and recovery correction #24. [PR #23](https://github.com/step3software/outer-loops/pull/23) delivers the Windows cleanup fix; all 20 selected checks pass. See [current evidence](rf02-evidence.md); original acceptance criteria and approval stages remain unchanged.
 - **Priority:** After RF01
 - **Hard dependencies:** RF01's current/legacy synthetic save, corrupt-import, challenge-slot and restart fixtures
 - **Enables:** Safe resource/state contracts in RF03 and challenge save transitions in RF04

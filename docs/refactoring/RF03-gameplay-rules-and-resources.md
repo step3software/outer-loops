@@ -1,6 +1,6 @@
 # RF03 — Pure gameplay rules and typed resources
 
-**Status:** Merged — PR #18; shared correction #24 is now on main. Updated #23 passes 18 baseline checks; the additional calibration command fails Windows cleanup after passing its comparisons. See [evidence](rf03-evidence.md); no milestone acceptance is inferred.
+**Status:** Merged — PR #18; shared correction #24 is on main. All 20 selected checks pass on the #23 cleanup correction; see [evidence](rf03-evidence.md). No milestone acceptance is inferred.
 - **Priority:** After RF02
 - **Hard dependencies:** RF01's action/worker/predicate characterization and RF02's persistence contracts
 - **Enables:** RF04 stable challenge rules; RF06 UI-only rendering boundary

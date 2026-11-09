@@ -1,16 +1,13 @@
 # Outer Loops refactoring program — RF01–RF06
 
-**Source delivery and verification (2026-11-09):** RF01 #4, RF02 #16 and RF03
-#18 are merged. [Recovery correction #24](https://github.com/step3software/outer-loops/pull/24)
-passed a clean bounded review and **19 fresh local checks**, then merged into main
-at `baaa427ebd49e5fa05336a8498796799950453d3`. Updated documentation PR #23 passes **all 18 baseline checks**,
-including the formerly stale timing report. The additional calibration command
-matched all 12 cases but failed Windows profile cleanup on both attempts; the
-complete 19-command run is not green. RF04 [draft #21](https://github.com/step3software/outer-loops/pull/21)
-remains unmerged and unchanged, with its prior 20-check result and #19 → #20 → #21
-stack retained. Preparation #17 remains open; RF05–RF06 remain planned. See the
-[current evidence](rf02-rf04-fix-evidence.md) and [RF02](rf02-evidence.md),
-[RF03](rf03-evidence.md), [RF04](rf04-evidence.md) ledgers. Approval stages,
+**Source delivery and verification (2026-11-09):** RF01 #4, RF02 #16, RF03 #18
+and recovery correction #24 are merged. [PR #23](https://github.com/step3software/outer-loops/pull/23)
+delivers the Windows browser-cleanup correction and milestone records: **all 20
+checks pass**, including full Chrome/Worker smoke, strict cleanup and the 12-case
+calibration. [Current evidence](rf02-rf04-fix-evidence.md) records exact revisions,
+standards hashes and preserved historical failures. RF04 [draft #21](https://github.com/step3software/outer-loops/pull/21)
+is unchanged and unmerged, retaining its prior 20-check result and #19 → #20 → #21
+stack. Preparation #17 remains open; RF05–RF06 remain planned. Approval stages,
 accepted artifacts and milestone acceptance are unchanged.
 
 **Repository:** `step3software/outer-loops` · default and approved canonical source branch `main`. These plans depend on the AI-development foundation in [the technical/gameplay audit](../audit/README.md) and [root agent instructions](../../AGENTS.md). Existing tests and files cited here refer to that baseline; agents must verify the current default branch and source before starting any milestone.
