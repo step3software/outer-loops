@@ -146,3 +146,5 @@ unchanged full equivalence scenarios to completion; a caller's short timeout is
 not a passing result. Potion event fixtures use labeled synthetic progression
 to fit repeated actions within the real starting mana budget. These fixtures do
 not establish an earned campaign or official RW00 baseline.
+
+[RF02–RF04 correction run evidence](../refactoring/rf02-rf04-fix-evidence.md) records the tested candidates and limitations.

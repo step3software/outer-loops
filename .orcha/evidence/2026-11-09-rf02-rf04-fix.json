@@ -1,0 +1,1077 @@
+{
+  "schema": "outer-loops.fix-verification/v1",
+  "observed_at": "2026-11-09T16:56:26.320781+00:00",
+  "task": "Owner-authorized RF02 backup recovery correction and RF02\u2013RF04 verification repairs; update records and publish drafts; no merge, deployment or lifecycle acceptance",
+  "source_main": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+  "source_rf04": "82605f4ccf12678ab485d8fdc4bad81ae7495c9a",
+  "orcha_main": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+  "candidates": {
+    "main": {
+      "base": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "tested_source_commit": "2499810dc324b882b8f013f91290a8d4eb48372b",
+      "branch": "fix/rf02-rf04-verification",
+      "changed_files": [
+        {
+          "path": "docs/design/outer-loop/calculated-timing-baseline.md",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "cb5d00025011f7e4cbc2fa1dc0017a0b632d33df",
+          "sha256": "ca9d77422e9086712d66bc345569c616a529b4e8ff1f1bf499985e43854c4573"
+        },
+        {
+          "path": "docs/development/validation.md",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "b396ea4c85abd3e925a4a18647458af8ba087736",
+          "sha256": "6f509eee0345cb4979b0f927e8985102982594b58f8f60487733424466cb50cf"
+        },
+        {
+          "path": "docs/reference/action-mechanics.generated.md",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "a2e643d9a6cbffdbd085768146075db64c66abfb",
+          "sha256": "e829feb453790166dcd13f974a92820580a74d3800ded15b4a3ec55e43dcaeeb"
+        },
+        {
+          "path": "docs/reference/code-map.md",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "168d3c6b71f992604852bc648c6380a81a296744",
+          "sha256": "b5b28a47e1d1fc3c864c88d7bb2bf092cd14b7ea877ab9fe236a569569acf0f5"
+        },
+        {
+          "path": "docs/state-and-saving.md",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "d484662d34e150faf0e5557bbb5f08702e89b02d",
+          "sha256": "fce87e4311f0dd2a21cb56326e7b408f4facf140af5052a12629d1732f35b5c3"
+        },
+        {
+          "path": "package.json",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "e4bda0662af147b8221b8022a9cf22472f30b8c0",
+          "sha256": "a1c35cab8a2209f51f532e429120b40f91c8a8c6fb9683ea7be4d50fc464f849"
+        },
+        {
+          "path": "save-import.js",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "e9d69d1d70568f7c2ef757720077716e3d99fa60",
+          "sha256": "405ae0c19ac000a9604f4d252ec1d77389afe909467cd89cc0c578f88d457de5"
+        },
+        {
+          "path": "saving.js",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "7502ad6576530e45fda9488417686c0fbe77533c",
+          "sha256": "d42cdb558a56296329b707d5cc3a7d7892cdf341d048f32281e7242e5fe11558"
+        },
+        {
+          "path": "scripts/balance/engine.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "75b6e7bb2f60488c2d78703c3b7375b0347656e2",
+          "sha256": "123105aee2d3d07c070848e92f2e44afed8cca18a2544f3acfc7aa3c7ad59ce8"
+        },
+        {
+          "path": "scripts/balance/potion-runner.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "e40d104a0c87c72a2d5ef496fe0ae266a2a0b818",
+          "sha256": "0155cc99736b566fc8671080f994a2fc04c95647176987e4d95f852fb12560b8"
+        },
+        {
+          "path": "scripts/balance/profiler.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "9b870785224ec4a2cd811fca2aa0d37803e4b581",
+          "sha256": "31236874c1b670995792a13fecdd2f3ac9a351a1a079716acd96b5155f2d980f"
+        },
+        {
+          "path": "scripts/balance/supervisor-fixture-worker.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "fbf0788a0c20372fa3406eba2dd1d15a62f81dbf",
+          "sha256": "5dcaaaaa53abea741d8e57024021efc23f22b5294bb279aa7f627faf906223eb"
+        },
+        {
+          "path": "scripts/balance/supervisor.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "d1ad973dc24a1cd158904a06982fa34edd8799a6",
+          "sha256": "1c87aa00e93aa8aed59bf68a4c30350d2966b5a1bc9353d07fa46ac4a79aa545"
+        },
+        {
+          "path": "scripts/browser-test-utils.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "3c4c434b0546d62c799a7ea2295dfb93d3bb4c79",
+          "sha256": "e7d719f51127944b51fb7c3eeb811234a14008c1d997ff64a4f371ed9c249ce4"
+        },
+        {
+          "path": "scripts/generate-action-mechanics.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "07937a1e50d267d4fc64d91aa8878aa662c047ca",
+          "sha256": "e835049915f5c2cc7d10d676b1e51937f3ac5e2709ad8ed04e8112514976dd04"
+        },
+        {
+          "path": "scripts/generate-balance-timing-report.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "e082b9f5970208f1d3e896139412ff287028f6d7",
+          "sha256": "84a92f32a281a3b320940e5465d49b5491f035ab30f590eda41bb7b194b237c0"
+        },
+        {
+          "path": "scripts/test-balance-browser.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "4a54e10e14b5905080fc9c2da9625184790eccef",
+          "sha256": "328d0c643003636901c1d4530e623fce94ae2a4e024fdf5b9966925f1d4e1cb0"
+        },
+        {
+          "path": "scripts/test-balance-contracts.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "5ad91c9719d8e79fa09e652de0bdb59d9ff50f2c",
+          "sha256": "26fbb91d65c9491a28f1b553796e7b39a8bec143fc33ff8d145d1df265c53583"
+        },
+        {
+          "path": "scripts/test-balance-performance.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "15ba1afcb8708e071f503dd4e744ba4ca89050c6",
+          "sha256": "fb178088a2df3a350ae1f7e83bf6304ae67d2637d8b4599934c08360e7e7f287"
+        },
+        {
+          "path": "scripts/test-balance-potion.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "c1b5d6f792e8cc11a5b74a02b3d6a4ecbcea4284",
+          "sha256": "0a5b4b732c2f109dc5e12b08f5bd1dd55e7e884678ee05fe50ab761711d1adfb"
+        },
+        {
+          "path": "scripts/test-balance-source-identity.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "b515008ae5c811a352dfa0a055a66f53c1f06832",
+          "sha256": "01a2b6f2722260653ba56d851e01ec5ce1524ef63b307583c737855b25e04416"
+        },
+        {
+          "path": "scripts/test-balance-supervisor.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "29f9ec44a7fa2c46111690cbe4742e77ce6ad37e",
+          "sha256": "b50a0ca66326eb773e7ff550d4c93166564e158c59cb477d1bea9c750ef671c9"
+        },
+        {
+          "path": "scripts/test-browser-smoke.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "b0f0119d93ac24f16d08a3402db3bfb24e182795",
+          "sha256": "6d28687ce165e0324565fc06a48352a73b135b21f44bc922ec1cbaa383eaf3a8"
+        },
+        {
+          "path": "scripts/test-rf02-preflight.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "6bd1a1f10c2de51ec083c2ad661b0bf2ed623f45",
+          "sha256": "5e29225e01d4e95426926c7a5fbb10318eb415bd1f218e4c99b4e110aa285119"
+        },
+        {
+          "path": "scripts/test-rf02-transaction.mjs",
+          "revision": "2499810dc324b882b8f013f91290a8d4eb48372b",
+          "git_blob_sha": "7429cf58bae905c041426ddd1383a130edff25fc",
+          "sha256": "9b893661c713c519d03a8d203325ab4cb73d5359f23c92799729c95c7e6341f1"
+        }
+      ]
+    },
+    "rf04": {
+      "base": "82605f4ccf12678ab485d8fdc4bad81ae7495c9a",
+      "tested_source_commit": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+      "branch": "refactor/rf04-challenge-rule-isolation",
+      "changed_files": [
+        {
+          "path": "docs/design/outer-loop/calculated-timing-baseline.md",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "c106018a3eab3df0ef7fd84c02cc838ad1087d28",
+          "sha256": "24835de0c156f80c46b115e095cdf4e6bb370b41c9c0c9b6a0e57e81a2ca47b8"
+        },
+        {
+          "path": "docs/development/validation.md",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "798fe5274e55933b40a5208bbc1a0c160814333c",
+          "sha256": "728fdebeefd955bee5f4ba4a977e557597a2efa694a15de49d585c425db540fc"
+        },
+        {
+          "path": "docs/reference/action-mechanics.generated.md",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "26db8595f11b0b3f1247a9751fc6bd86272f004c",
+          "sha256": "c36cfe459f131292d5f190fba19fd40803a09a0f8058a482383afa858f37ff70"
+        },
+        {
+          "path": "docs/reference/code-map.md",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "bb4e25074db581ca938a6adcbad2a6b1e574e777",
+          "sha256": "cfe522b39d6fcca8af3c9222669664f3812a650d9d3ccd3086f07771d7606546"
+        },
+        {
+          "path": "docs/state-and-saving.md",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "b3c8cce336b87e58dd791da4e8d214ea0a4cd7c3",
+          "sha256": "2f21311165a5e15411d4639fd8e8bd6dd94a97417b1be0280c4acf83eb1db7df"
+        },
+        {
+          "path": "package.json",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "697acd2d92311e3db33a8228cb1f3c0b47aaf19d",
+          "sha256": "a982d34ba349341b4d2b4c1ac2a6d3630d85c6f2866b625256b1421ffb9a6f6c"
+        },
+        {
+          "path": "save-import.js",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "e9d69d1d70568f7c2ef757720077716e3d99fa60",
+          "sha256": "405ae0c19ac000a9604f4d252ec1d77389afe909467cd89cc0c578f88d457de5"
+        },
+        {
+          "path": "saving.js",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "14b0f59e22e3a4dd37c18144679a4d88c1dd28a5",
+          "sha256": "82f6528609fc5dac8bddba119438bfd0544968b446daa852b0d69b14a431d99f"
+        },
+        {
+          "path": "scripts/balance/engine.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "75b6e7bb2f60488c2d78703c3b7375b0347656e2",
+          "sha256": "123105aee2d3d07c070848e92f2e44afed8cca18a2544f3acfc7aa3c7ad59ce8"
+        },
+        {
+          "path": "scripts/balance/potion-runner.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "e40d104a0c87c72a2d5ef496fe0ae266a2a0b818",
+          "sha256": "0155cc99736b566fc8671080f994a2fc04c95647176987e4d95f852fb12560b8"
+        },
+        {
+          "path": "scripts/balance/profiler.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "9b870785224ec4a2cd811fca2aa0d37803e4b581",
+          "sha256": "31236874c1b670995792a13fecdd2f3ac9a351a1a079716acd96b5155f2d980f"
+        },
+        {
+          "path": "scripts/balance/supervisor-fixture-worker.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "fbf0788a0c20372fa3406eba2dd1d15a62f81dbf",
+          "sha256": "5dcaaaaa53abea741d8e57024021efc23f22b5294bb279aa7f627faf906223eb"
+        },
+        {
+          "path": "scripts/balance/supervisor.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "d1ad973dc24a1cd158904a06982fa34edd8799a6",
+          "sha256": "1c87aa00e93aa8aed59bf68a4c30350d2966b5a1bc9353d07fa46ac4a79aa545"
+        },
+        {
+          "path": "scripts/browser-test-utils.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "3c4c434b0546d62c799a7ea2295dfb93d3bb4c79",
+          "sha256": "e7d719f51127944b51fb7c3eeb811234a14008c1d997ff64a4f371ed9c249ce4"
+        },
+        {
+          "path": "scripts/generate-action-mechanics.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "07937a1e50d267d4fc64d91aa8878aa662c047ca",
+          "sha256": "e835049915f5c2cc7d10d676b1e51937f3ac5e2709ad8ed04e8112514976dd04"
+        },
+        {
+          "path": "scripts/generate-balance-timing-report.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "e082b9f5970208f1d3e896139412ff287028f6d7",
+          "sha256": "84a92f32a281a3b320940e5465d49b5491f035ab30f590eda41bb7b194b237c0"
+        },
+        {
+          "path": "scripts/test-balance-browser.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "4a54e10e14b5905080fc9c2da9625184790eccef",
+          "sha256": "328d0c643003636901c1d4530e623fce94ae2a4e024fdf5b9966925f1d4e1cb0"
+        },
+        {
+          "path": "scripts/test-balance-contracts.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "5ad91c9719d8e79fa09e652de0bdb59d9ff50f2c",
+          "sha256": "26fbb91d65c9491a28f1b553796e7b39a8bec143fc33ff8d145d1df265c53583"
+        },
+        {
+          "path": "scripts/test-balance-performance.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "15ba1afcb8708e071f503dd4e744ba4ca89050c6",
+          "sha256": "fb178088a2df3a350ae1f7e83bf6304ae67d2637d8b4599934c08360e7e7f287"
+        },
+        {
+          "path": "scripts/test-balance-potion.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "c1b5d6f792e8cc11a5b74a02b3d6a4ecbcea4284",
+          "sha256": "0a5b4b732c2f109dc5e12b08f5bd1dd55e7e884678ee05fe50ab761711d1adfb"
+        },
+        {
+          "path": "scripts/test-balance-source-identity.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "b515008ae5c811a352dfa0a055a66f53c1f06832",
+          "sha256": "01a2b6f2722260653ba56d851e01ec5ce1524ef63b307583c737855b25e04416"
+        },
+        {
+          "path": "scripts/test-balance-supervisor.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "29f9ec44a7fa2c46111690cbe4742e77ce6ad37e",
+          "sha256": "b50a0ca66326eb773e7ff550d4c93166564e158c59cb477d1bea9c750ef671c9"
+        },
+        {
+          "path": "scripts/test-browser-smoke.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "dc90400196174c21f5507332ecc8f94a5f527456",
+          "sha256": "09f91656a7468c713a032158d98ec875ac9b113e5184d65c0e788c80f2c0cefb"
+        },
+        {
+          "path": "scripts/test-rf02-preflight.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "6bd1a1f10c2de51ec083c2ad661b0bf2ed623f45",
+          "sha256": "5e29225e01d4e95426926c7a5fbb10318eb415bd1f218e4c99b4e110aa285119"
+        },
+        {
+          "path": "scripts/test-rf02-transaction.mjs",
+          "revision": "7b6b17c0855028d2c59838f08b0582f33f1e7fde",
+          "git_blob_sha": "7429cf58bae905c041426ddd1383a130edff25fc",
+          "sha256": "9b893661c713c519d03a8d203325ab4cb73d5359f23c92799729c95c7e6341f1"
+        }
+      ]
+    }
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "node": "24.22.1",
+    "python": "3.12.14",
+    "eol": "LF/CRLF normalized only for text identity and generated Markdown comparison",
+    "browser": "Installed Chrome; native repository harness, disposable profiles; no external preloader",
+    "per_check_external_ceiling_seconds": 1800,
+    "execution": "Sequential checks on each candidate; parent process limits and VM execution guards retained"
+  },
+  "standards": [
+    {
+      "module": "milestone-format",
+      "path": "docs/milestone-file-conventions.md",
+      "sha256": "3eddc165b4a508a6c605892a7a5bd60fa8ff1dfd915388569b526e6c75789c75"
+    },
+    {
+      "module": "milestone-state",
+      "path": "docs/repository-milestones.md",
+      "sha256": "809e4c9872ee1a6896a1bbaea1dbfca938c883f63de4446973fc5de5c6991d98"
+    },
+    {
+      "module": "coordination",
+      "path": "docs/pr-development-coordination.md",
+      "sha256": "8be2fd08b5ee8e89408a18918ab86c6c565025b4be71c77fc0420d0fc07cc7fd"
+    },
+    {
+      "module": "intent-routing",
+      "path": "docs/agent-workflows/intent-routing.md",
+      "sha256": "fc05fdc681d2ae86eedcffad3edf7d8b81ddcfddfd9b7f60ff9bcedb8e096431"
+    },
+    {
+      "module": "intent-routing",
+      "path": "docs/agent-workflows/fix.md",
+      "sha256": "5ccd0b047ab4f7afc906e3ab6a77c03eeda76b2f771ceb47322b4386e26c61c6",
+      "workflow": "fix"
+    }
+  ],
+  "governing_project_documents": [
+    {
+      "path": ".orcha/repository.json",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "c9632210d57fcfd9e8e8086e31a86daf1992a47e",
+      "sha256": "7b827bd3ead0b69c5db34ed372c93aaf2b9441d0d18c7e781932cc908fb5a7ee"
+    },
+    {
+      "path": "AGENTS.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "93453dffa2e744cd3ada371878c69bf01ff4d9e7",
+      "sha256": "c41cf7961ca85a65bc6a798753f37721c42f71c34e44d6908da1c42f103f33c3"
+    },
+    {
+      "path": "README.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "9b6d8125871d57452a3fbc2ae62b49775457bc84",
+      "sha256": "c8c2278ccb563a87c214f53e09b88ed75df2a723fce655bf077d35d7a33efaa5"
+    },
+    {
+      "path": "docs/AGENTS.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "e7bc12e566cbc150037c55dff9ee70886c0c01bd",
+      "sha256": "e96cfee4b575814c78a75bbc493f69024183e738c50faeb9e39edb2dfde3813c"
+    },
+    {
+      "path": "docs/README.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "703113c2cda384c33e1fe1e33b571b18f067ca41",
+      "sha256": "bc17710100509477943f38e1e3f23ef399964d4c69cd6a3e6350557c7a847784"
+    },
+    {
+      "path": "docs/architecture.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "82e28609a14e68e0a263ff95aa10492e6c63903e",
+      "sha256": "45f3f64467c3505dc45557f6850ec7cfa5fa41def468ced93fa569857d7e21f6"
+    },
+    {
+      "path": "docs/design/outer-loop/decisions.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "90dc156ae5e389ac0fb54e82c63438cbf69d6a4b",
+      "sha256": "bf17fbb06494aaa3a1623307fea4ac298b083d931e029bc45e0657fc75bb009f"
+    },
+    {
+      "path": "docs/development/ai-workflow.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "6bf8ccbab230051dbc26dadc03b105ef38a68d5b",
+      "sha256": "1f8eb838ca978944fcd8509c871ffff5cdc9524c255b224f5b02d85f6154fe0b"
+    },
+    {
+      "path": "docs/development/recipes.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "a4e1e5f2960d8ad315d5cdc1c4f753cea95ca770",
+      "sha256": "ad5ba44ba54202e97d2277f10e9d53cd3f89eca7fec0beb62dd23d7050fa99cf"
+    },
+    {
+      "path": "docs/development/validation.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "2a638486f524c541279313b3b751b6bde164e466",
+      "sha256": "517189f81d5d26d68896c8b230b9cf02179e287995903fdd9da9cd8a0373ae95"
+    },
+    {
+      "path": "docs/predictor.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "02fdde127ecf97ccd18fab303827ecadf44fb6fe",
+      "sha256": "e70579ba9bbf2ca1fd6241618d1e54121a542c7d0e56491d523f18f609d9b795"
+    },
+    {
+      "path": "docs/refactoring/AGENTS.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "ff69cfc488e9301924ab50417b747fc1fcbaae82",
+      "sha256": "fe03a85d968515980e48a2a0ab133bb595e29aed8fc62ff77d3a8bcf2084380c"
+    },
+    {
+      "path": "docs/refactoring/RF02-persistence-safety.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "e2ebe037bbd1ee2aea27e175ed8d948a997cb363",
+      "sha256": "e1f98ec485b727fa0d72ac72f761710fee15da5efc5271b9f7b2dae6836b524b"
+    },
+    {
+      "path": "docs/refactoring/RF03-gameplay-rules-and-resources.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "c89974455bc66deeeae9d214f48573763fc46302",
+      "sha256": "c574a98f18bc596bdff8a9756e6a3e57ac24c87e6cd3ec7472e7fe2479110a4d"
+    },
+    {
+      "path": "docs/refactoring/RF04-challenge-rule-isolation.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "48869006986e19015328bb621679816eb0d996e7",
+      "sha256": "6ba6e10ad119b401e62a3b363f221e0260263ee7e23a1365efb263aeb06913d2"
+    },
+    {
+      "path": "docs/reference/code-map.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "58f9f66f5b101c99e02a5b143538879082b85aca",
+      "sha256": "b5f340d2ae9de2bd8a6fb994e2c2d3f911e1e4c5feea5a95febb07cb0f83bc98"
+    },
+    {
+      "path": "docs/state-and-saving.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "0e8668cc753961d60df84f52f645b7e80fdf6cb6",
+      "sha256": "e0bdb2fd060387fad7a0ef95b418216117282320c7025fe77b714417112e38c9"
+    },
+    {
+      "path": "docs/workflow/docs-maintenance.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "99f5840f2d4facc7984f00dfa856a889f1ccaf0c",
+      "sha256": "c1a0ea1bbd3c4525fd843c9a25175a93d48801aeec8b6ffd0f6f6717d63cc6ed"
+    },
+    {
+      "path": "docs/workflow/feature-or-bug-fix.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "543f98a4e530a9c122d178d62f8e5b59a9108a5b",
+      "sha256": "18355715f8f90f990c4b218258fd22a4c639953481a9a9f10c0c3eb2006f72c8"
+    },
+    {
+      "path": "docs/workflow/pr-review.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "11354f38c3fe268a53332adb5efe3e9661088ec2",
+      "sha256": "46b7cae018eb35e215e0b8d057ef7d543a0f1dcbe54e46d90332e337ee6bc833"
+    },
+    {
+      "path": "lang/AGENTS.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "760c02ddd277c2202fd58bfd2abad6b987d15d20",
+      "sha256": "ee00d562570de3df5f5aeedf254987dd7cf76de80278c43725e3b147f70854c7"
+    },
+    {
+      "path": "views/AGENTS.md",
+      "revision": "1815ad7b52e9b976e92f11b845309bd9e0d80724",
+      "git_blob_sha": "9a3c7b0b9425da35f4a7c6571f9f19d001ca414c",
+      "sha256": "21f6b00ca7fb70536995528f6283c284123122d3b3551003fca5743c75fb775a"
+    }
+  ],
+  "rf04_effective_instructions": [
+    {
+      "path": ".orcha/repository.json",
+      "revision": "82605f4ccf12678ab485d8fdc4bad81ae7495c9a",
+      "git_blob_sha": "c9632210d57fcfd9e8e8086e31a86daf1992a47e",
+      "sha256": "7b827bd3ead0b69c5db34ed372c93aaf2b9441d0d18c7e781932cc908fb5a7ee"
+    },
+    {
+      "path": "AGENTS.md",
+      "revision": "82605f4ccf12678ab485d8fdc4bad81ae7495c9a",
+      "git_blob_sha": "93453dffa2e744cd3ada371878c69bf01ff4d9e7",
+      "sha256": "c41cf7961ca85a65bc6a798753f37721c42f71c34e44d6908da1c42f103f33c3"
+    },
+    {
+      "path": "docs/AGENTS.md",
+      "revision": "82605f4ccf12678ab485d8fdc4bad81ae7495c9a",
+      "git_blob_sha": "e7bc12e566cbc150037c55dff9ee70886c0c01bd",
+      "sha256": "e96cfee4b575814c78a75bbc493f69024183e738c50faeb9e39edb2dfde3813c"
+    },
+    {
+      "path": "docs/refactoring/AGENTS.md",
+      "revision": "82605f4ccf12678ab485d8fdc4bad81ae7495c9a",
+      "git_blob_sha": "ff69cfc488e9301924ab50417b747fc1fcbaae82",
+      "sha256": "fe03a85d968515980e48a2a0ab133bb595e29aed8fc62ff77d3a8bcf2084380c"
+    }
+  ],
+  "extra_shared_documents": [
+    {
+      "path": "AGENTS.md",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "bb6f8c7efbe07383736ba6d02939bb557607b904",
+      "sha256": "9f749c4394130b150e4cdabeb4394b9465b2da018d35427f6ef2b9df2412deb6"
+    },
+    {
+      "path": "README.md",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "4a7b7c7b9977902c2c7bf38fe4550811d218b7ce",
+      "sha256": "1d9c3c0ec439a8f2babae6f090ba34368d4ab17946705781a2ed3cdd2fa51858"
+    },
+    {
+      "path": "config/repositories.json",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "e91edec4d7c53966f0880991dcc9fe7af1a1463e",
+      "sha256": "00f76eb618856b51f1c75ee191519a92b575e0231a4d1a2368693a5a76472056"
+    },
+    {
+      "path": "docs/agent-workflows/documentation-consolidation.md",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "3929db1f5b0f733a0393831a004ed98fb2d2757b",
+      "sha256": "bbdec70077948b73ae2782d7007c61cbc9c2a47b2f05815e6bcc1899e1a2f9a2"
+    },
+    {
+      "path": "docs/agent-workflows/fix.md",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "e95f8ad2b992e349cbfba12b1d4d28a9bd8eac17",
+      "sha256": "5ccd0b047ab4f7afc906e3ab6a77c03eeda76b2f771ceb47322b4386e26c61c6"
+    },
+    {
+      "path": "docs/development-workflow.md",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "ab5e4ecd2a34efd8944cb77faa58f103b77a69b5",
+      "sha256": "b304fc38cca8931196ab032b3c4aa014c4dee0bc2c89ca0f0988486702ea1818"
+    },
+    {
+      "path": "docs/existing-backlog-adoption.md",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "2491c43f5eb608996cbc77fbb59573649d2eb2da",
+      "sha256": "f99a9bb7e2f9be4a5b5eb7a7f12b05f5b412e4b33a4f2a052d522cfa58f41fe5"
+    },
+    {
+      "path": "standards/catalog.json",
+      "revision": "b8bf6bf07073823d108fd356c48916ea0cafd615",
+      "git_blob_sha": "1a454e3a1dfb2707a95b8d18e4b11b098a0b4023",
+      "sha256": "42190a534f181561a705d509fdc3d95765d0d3a4cce0312a9760cf5607e32dd3"
+    }
+  ],
+  "previous_failure_observation": {
+    "url": "https://github.com/step3software/outer-loops/blob/fa9cb46fd3fd393d1e2b817d9e17744489c772db/.orcha/evidence/2026-11-09-rf02-rf04-verification.json",
+    "sha256": "80208b0a9325ed501311c1690f46d20af053b3e045459c2399246d34cb161081",
+    "preserved": true
+  },
+  "regression_before": {
+    "check": "test-rf02-preflight.mjs with the new live-type-drift assertion before the runtime correction",
+    "result": "failed: actual string, expected number",
+    "log_sha256": "3761619dd85461e5720a162ae7544c34f1e1713a3df9f8b3103f5b8a47e44927"
+  },
+  "checks": {
+    "main": [
+      {
+        "check": "check-repo.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 6.28,
+        "log_sha256": "e81066b613972ed7637537db549b4d29acdab9b72ef3b53fcfac730b0424561d",
+        "observed_output": [
+          "PASS 70 JS files, 99 Markdown files / 784 Markdown links, 49 local scripts, 157 cataloged actions."
+        ]
+      },
+      {
+        "check": "generate-balance-timing-report.mjs --check",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 2.2,
+        "log_sha256": "ea5f52212486d16ff79a2d0bd4bbe3c85fa0e839c343bd7cd0d1f445a15237c7",
+        "observed_output": [
+          "PASS calculated timing report is current."
+        ]
+      },
+      {
+        "check": "test-game-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.3,
+        "log_sha256": "8258d57e18981ebc189df7204cf45d9e0331b5441868b0342408abae83eede6c",
+        "observed_output": [
+          "PASS worker-like model: 157 actions, 9 towns, 9 stats, 18 skills, 14 buffs, level curve and prestige defaults."
+        ]
+      },
+      {
+        "check": "test-action-execution.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.27,
+        "log_sha256": "fb6291679450b9002f168f5866bbe724fedb26e8286cd78722b7cdb4d6124637",
+        "observed_output": [
+          "PASS queued Wander action: 250 mana, 200 progress XP, stat training and persisted town progress across queue restart."
+        ]
+      },
+      {
+        "check": "test-rf01-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 1.84,
+        "log_sha256": "4ebaf4fffd6a38f5325de9e3079d5a8363890f028b352b2ef50eb64992011cca",
+        "observed_output": [
+          "RF01 original ordered-registry fingerprint: e2033a91c69c508845eea537903a2355dc4a902db5b66f6b99be67ef99b3a7c9",
+          "PASS RF01 extra: queued dungeon floor, undead trial, potion/Totem, typed limited loops and fractional mana controls.",
+          "PASS RF01 model: ordered registry, normal/progress/cost skip, limited known-good/unchecked, multipart, seeded dungeon, terminal Gods Trial, travel/Escape, restart, queue and interest."
+        ]
+      },
+      {
+        "check": "test-rf01-challenges.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.55,
+        "log_sha256": "d4876b58207d075adba3107ffcf04c2562d29c993a877f5fa068438ac338d20d",
+        "observed_output": [
+          "PASS RF01 challenge characterization: Mana Drought, Noodle Arms, Mana Burn and isolated normal-mode restoration."
+        ]
+      },
+      {
+        "check": "test-rf02-preflight.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.5,
+        "log_sha256": "9162f84e2fffbe9ae4b746d4809027d1fa5b57f3ba4483d3b6ed358d7a7f34c4",
+        "observed_output": [
+          "PASS RF02 pure preflight: current and old envelope, side-effect-free/idempotent aliases, challenge conversion, corrupt/root/schema/size/unknown-field rejection and stable option types across reload."
+        ]
+      },
+      {
+        "check": "test-rf02-transaction.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.28,
+        "log_sha256": "53cfbd30dd1435c6c95abd1e4f384c7a1085b654ed9e24a7fbcd9a79b973ab3d",
+        "observed_output": [
+          "PASS RF02 transaction: exact rollback on parse/quota/apply failure, interrupted journal recovery, previous-save restore, legacy challenge isolation and prestige backup retention."
+        ]
+      },
+      {
+        "check": "test-rf03-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 1.45,
+        "log_sha256": "918f34afa43f788849b0cba4b7de1c73d0a5f0deb66f043fcefb45693a1bc253",
+        "observed_output": [
+          "PASS RF03 model: DOM-free caps and snapshots; pure predicates; Escape first positive-spend; typed resources, reset identity and invalid-value rejection."
+        ]
+      },
+      {
+        "check": "test-balance-source-identity.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 1.22,
+        "log_sha256": "aa29963a854b11d394ded875ba1f42691de8f282dbc86ec9e1774439a8c53d1c",
+        "observed_output": [
+          "PASS source identity: LF/CRLF checkouts match; changed source invalidates calibration."
+        ]
+      },
+      {
+        "check": "test-balance-contracts.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 2.53,
+        "log_sha256": "df7b1857e64d6be07c3eb0ea160c175673119d4c9157c42ac49e9a5aa606bad3",
+        "observed_output": [
+          "PASS RW00 queue negatives: locked/invisible, unknown, invalid count, unsupported edit, no state/RNG mutation.",
+          "PASS RW00 admission positives: add/count/enable/replay, actual restart, excess travel rejection.",
+          "PASS RW00 strict UI: defaults, cap synchronization, setting hashes and missing/wrong/invalid controls.",
+          "PASS RW00 actual Dark Ritual cap below/at/above eligibility and failed edit isolation.",
+          "PASS RW00 real limited-action reward path: missing/unchecked/checked are distinguished.",
+          "PASS RW00 clock: real driver ticks, seeded RNG, loop accounting, budget failures, no offline credit.",
+          "PASS RW00 report: calibration gate, false completion, accounting and incompatible runs rejected.",
+          "PASS RW00 Judgement -51/-50/-49/49/50/51 and Escape pure eligibility, positive-spend commitment, 59.99/60/sticky boundaries.",
+          "PASS RW00 contract suite (synthetic fixtures explicitly excluded from earned campaign evidence)."
+        ]
+      },
+      {
+        "check": "test-balance-equivalence.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 275.86,
+        "log_sha256": "9e5d62651c84b7013a388875044637aea9531fd92f2eb017bab352072cd7d677",
+        "observed_output": [
+          "PASS equivalence opening: 3000 reference calls, 36 accelerated calls.",
+          "PASS equivalence normal-training: 2000 reference calls, 24 accelerated calls.",
+          "PASS equivalence limited-resource: 500 reference calls, 108 accelerated calls.",
+          "PASS equivalence loop-exhaustion: 6000 reference calls, 72 accelerated calls.",
+          "PASS equivalence fractional-mana: 1000 reference calls, 12 accelerated calls.",
+          "PASS policy-burst equivalence: 64 production restart boundaries in one outer call.",
+          "PASS accelerated execution remains fail-closed without current calibration."
+        ]
+      },
+      {
+        "check": "test-balance-supervisor.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 4.17,
+        "log_sha256": "f30c08125a453436ad9aad6c1bfc1000232620b3e785225f0e17ff6afff8d71d",
+        "observed_output": [
+          "PASS process supervision: host timeout, cooperative and independent RSS ceilings, structured failure."
+        ]
+      },
+      {
+        "check": "test-balance-potion.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 2.3,
+        "log_sha256": "f27b05c5596fe7dd594415e6375d99a0aaff8de900c924e47158f24c7d238a56",
+        "observed_output": [
+          "PASS direct potion policy, repeated events, calculated sections and synthetic checkpoints."
+        ]
+      },
+      {
+        "check": "test-balance-campaign-estimate.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.94,
+        "log_sha256": "a105dc4b5b03a37ff48efc4ad781e8c0fb89649c3b2fdd6a88f812277ad2444e",
+        "observed_output": [
+          "PASS calculated C08\u2013C14 campaign baseline through Commerceville, Valley, and Restore Time."
+        ]
+      },
+      {
+        "check": "generate-action-mechanics.mjs --check",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.44,
+        "log_sha256": "f21bd7e81d6b7f97dd43211e634f5ebbd0c5668f2160f5f24199480e39cc9f18",
+        "observed_output": [
+          "PASS 157 generated action mechanics entries match runtime."
+        ]
+      },
+      {
+        "check": "check-xml.py",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.38,
+        "log_sha256": "94e0e6f4c909cf00e37393debc141064d43ebe828f9f3137970489a72e62b916",
+        "observed_output": [
+          "PASS 5 XML/Relax NG files are well-formed."
+        ]
+      },
+      {
+        "check": "test-browser-smoke.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 85.67,
+        "log_sha256": "2c7b1dd40f47575935954d6d3c2530758d94f4166ba43fdc9a6e8a2a3c5fa269",
+        "observed_output": [
+          "PASS RF02 Chrome legacy Base64/LZW encoding accepted without changing the export envelope.",
+          "PASS RF02 Chrome malformed JSON/compression/shape imports rejected without changing either save or recovery.",
+          "PASS RF02 Chrome exact-byte normal save recovery and bidirectional backup rotation.",
+          "PASS RF02 Chrome quota failure injection: journal/write failures preserve exact original bytes.",
+          "PASS RF02 Chrome legacy inline challenge migration: separate slots, retained normal progress and safe exit.",
+          "PASS RF01/RF02 Chrome save fixtures: current ILSV01, two synthetic legacy forms, aliases, safe validation and recovery.",
+          "KNOWN R15: predictor grants Gods Trial power at floor 99; runtime grants at floor 100.",
+          "PASS RF01 predictor: actual Wander vs foreground and Worker, field parity for mana/stat XP, read-only forecast; Gods Trial R15 characterized.",
+          "PASS RF01 Chrome challenge entry/exit: modes 1\u20133, isolated slots and normal-game restoration after reload.",
+          "PASS RF01 Chrome inherited prestige reset: 90 points once, 30-point perk, 60 remaining, retained upgrade and backup.",
+          "PASS RF02 Chrome explicit clear and independent normal/challenge byte-exact recovery.",
+          "PASS Chrome: game boot, XML localization, 157 actions, Wander execution and save/reload."
+        ]
+      },
+      {
+        "check": "test-balance-browser.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 22.11,
+        "log_sha256": "671348797120a39cf2de3319a43ea94ca93e471b352ad57faee19afc8e09b601",
+        "observed_output": [
+          "PASS RW00 real browser calibration: 12 matched cases, Chrome/156.0.8078.80"
+        ]
+      }
+    ],
+    "rf04": [
+      {
+        "check": "check-repo.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 6.92,
+        "log_sha256": "78a692a0d69b9e8ba86fc3d8a204346fc949476d4cd129904d3250ed3cfc11ec",
+        "observed_output": [
+          "PASS 71 JS files, 102 Markdown files / 844 Markdown links, 49 local scripts, 157 cataloged actions."
+        ]
+      },
+      {
+        "check": "generate-balance-timing-report.mjs --check",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.58,
+        "log_sha256": "ea5f52212486d16ff79a2d0bd4bbe3c85fa0e839c343bd7cd0d1f445a15237c7",
+        "observed_output": [
+          "PASS calculated timing report is current."
+        ]
+      },
+      {
+        "check": "test-game-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.77,
+        "log_sha256": "8258d57e18981ebc189df7204cf45d9e0331b5441868b0342408abae83eede6c",
+        "observed_output": [
+          "PASS worker-like model: 157 actions, 9 towns, 9 stats, 18 skills, 14 buffs, level curve and prestige defaults."
+        ]
+      },
+      {
+        "check": "test-action-execution.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.98,
+        "log_sha256": "fb6291679450b9002f168f5866bbe724fedb26e8286cd78722b7cdb4d6124637",
+        "observed_output": [
+          "PASS queued Wander action: 250 mana, 200 progress XP, stat training and persisted town progress across queue restart."
+        ]
+      },
+      {
+        "check": "test-rf01-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 4.47,
+        "log_sha256": "4ebaf4fffd6a38f5325de9e3079d5a8363890f028b352b2ef50eb64992011cca",
+        "observed_output": [
+          "RF01 original ordered-registry fingerprint: e2033a91c69c508845eea537903a2355dc4a902db5b66f6b99be67ef99b3a7c9",
+          "PASS RF01 extra: queued dungeon floor, undead trial, potion/Totem, typed limited loops and fractional mana controls.",
+          "PASS RF01 model: ordered registry, normal/progress/cost skip, limited known-good/unchecked, multipart, seeded dungeon, terminal Gods Trial, travel/Escape, restart, queue and interest."
+        ]
+      },
+      {
+        "check": "test-rf01-challenges.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 1.48,
+        "log_sha256": "d4876b58207d075adba3107ffcf04c2562d29c993a877f5fa068438ac338d20d",
+        "observed_output": [
+          "PASS RF01 challenge characterization: Mana Drought, Noodle Arms, Mana Burn and isolated normal-mode restoration."
+        ]
+      },
+      {
+        "check": "test-rf02-preflight.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 1.02,
+        "log_sha256": "9162f84e2fffbe9ae4b746d4809027d1fa5b57f3ba4483d3b6ed358d7a7f34c4",
+        "observed_output": [
+          "PASS RF02 pure preflight: current and old envelope, side-effect-free/idempotent aliases, challenge conversion, corrupt/root/schema/size/unknown-field rejection and stable option types across reload."
+        ]
+      },
+      {
+        "check": "test-rf02-transaction.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.55,
+        "log_sha256": "53cfbd30dd1435c6c95abd1e4f384c7a1085b654ed9e24a7fbcd9a79b973ab3d",
+        "observed_output": [
+          "PASS RF02 transaction: exact rollback on parse/quota/apply failure, interrupted journal recovery, previous-save restore, legacy challenge isolation and prestige backup retention."
+        ]
+      },
+      {
+        "check": "test-rf03-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 3.98,
+        "log_sha256": "918f34afa43f788849b0cba4b7de1c73d0a5f0deb66f043fcefb45693a1bc253",
+        "observed_output": [
+          "PASS RF03 model: DOM-free caps and snapshots; pure predicates; Escape first positive-spend; typed resources, reset identity and invalid-value rejection."
+        ]
+      },
+      {
+        "check": "test-rf04-model.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 2.8,
+        "log_sha256": "a76a7a697b19668a9a91b1b8800a2ab4e0a05246a0dcb2ab7a49502a49f72c1f",
+        "observed_output": [
+          "PASS RF04 stable challenge policies: modes 0-3, identical callback identities, exact Mana Drought, Noodle Arms, Mana Burn boundary and snapshot budget."
+        ]
+      },
+      {
+        "check": "test-balance-source-identity.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.39,
+        "log_sha256": "aa29963a854b11d394ded875ba1f42691de8f282dbc86ec9e1774439a8c53d1c",
+        "observed_output": [
+          "PASS source identity: LF/CRLF checkouts match; changed source invalidates calibration."
+        ]
+      },
+      {
+        "check": "test-balance-contracts.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 2.12,
+        "log_sha256": "df7b1857e64d6be07c3eb0ea160c175673119d4c9157c42ac49e9a5aa606bad3",
+        "observed_output": [
+          "PASS RW00 queue negatives: locked/invisible, unknown, invalid count, unsupported edit, no state/RNG mutation.",
+          "PASS RW00 admission positives: add/count/enable/replay, actual restart, excess travel rejection.",
+          "PASS RW00 strict UI: defaults, cap synchronization, setting hashes and missing/wrong/invalid controls.",
+          "PASS RW00 actual Dark Ritual cap below/at/above eligibility and failed edit isolation.",
+          "PASS RW00 real limited-action reward path: missing/unchecked/checked are distinguished.",
+          "PASS RW00 clock: real driver ticks, seeded RNG, loop accounting, budget failures, no offline credit.",
+          "PASS RW00 report: calibration gate, false completion, accounting and incompatible runs rejected.",
+          "PASS RW00 Judgement -51/-50/-49/49/50/51 and Escape pure eligibility, positive-spend commitment, 59.99/60/sticky boundaries.",
+          "PASS RW00 contract suite (synthetic fixtures explicitly excluded from earned campaign evidence)."
+        ]
+      },
+      {
+        "check": "test-balance-equivalence.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 38.14,
+        "log_sha256": "9e5d62651c84b7013a388875044637aea9531fd92f2eb017bab352072cd7d677",
+        "observed_output": [
+          "PASS equivalence opening: 3000 reference calls, 36 accelerated calls.",
+          "PASS equivalence normal-training: 2000 reference calls, 24 accelerated calls.",
+          "PASS equivalence limited-resource: 500 reference calls, 108 accelerated calls.",
+          "PASS equivalence loop-exhaustion: 6000 reference calls, 72 accelerated calls.",
+          "PASS equivalence fractional-mana: 1000 reference calls, 12 accelerated calls.",
+          "PASS policy-burst equivalence: 64 production restart boundaries in one outer call.",
+          "PASS accelerated execution remains fail-closed without current calibration."
+        ]
+      },
+      {
+        "check": "test-balance-supervisor.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 3.72,
+        "log_sha256": "f30c08125a453436ad9aad6c1bfc1000232620b3e785225f0e17ff6afff8d71d",
+        "observed_output": [
+          "PASS process supervision: host timeout, cooperative and independent RSS ceilings, structured failure."
+        ]
+      },
+      {
+        "check": "test-balance-potion.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 2.14,
+        "log_sha256": "f27b05c5596fe7dd594415e6375d99a0aaff8de900c924e47158f24c7d238a56",
+        "observed_output": [
+          "PASS direct potion policy, repeated events, calculated sections and synthetic checkpoints."
+        ]
+      },
+      {
+        "check": "test-balance-campaign-estimate.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 2.5,
+        "log_sha256": "a105dc4b5b03a37ff48efc4ad781e8c0fb89649c3b2fdd6a88f812277ad2444e",
+        "observed_output": [
+          "PASS calculated C08\u2013C14 campaign baseline through Commerceville, Valley, and Restore Time."
+        ]
+      },
+      {
+        "check": "generate-action-mechanics.mjs --check",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.53,
+        "log_sha256": "f21bd7e81d6b7f97dd43211e634f5ebbd0c5668f2160f5f24199480e39cc9f18",
+        "observed_output": [
+          "PASS 157 generated action mechanics entries match runtime."
+        ]
+      },
+      {
+        "check": "check-xml.py",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 0.77,
+        "log_sha256": "94e0e6f4c909cf00e37393debc141064d43ebe828f9f3137970489a72e62b916",
+        "observed_output": [
+          "PASS 5 XML/Relax NG files are well-formed."
+        ]
+      },
+      {
+        "check": "test-browser-smoke.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 61.8,
+        "log_sha256": "2e9f42b860e701b0e4157951c3dc296631b6b302923bbd7838d656d12c1a9710",
+        "observed_output": [
+          "PASS RF02 Chrome malformed JSON/compression/shape imports rejected without changing either save or recovery.",
+          "PASS RF02 Chrome exact-byte normal save recovery and bidirectional backup rotation.",
+          "PASS RF02 Chrome quota failure injection: journal/write failures preserve exact original bytes.",
+          "PASS RF02 Chrome legacy inline challenge migration: separate slots, retained normal progress and safe exit.",
+          "PASS RF01/RF02 Chrome save fixtures: current ILSV01, two synthetic legacy forms, aliases, safe validation and recovery.",
+          "KNOWN R15: predictor grants Gods Trial power at floor 99; runtime grants at floor 100.",
+          "PASS RF01 predictor: actual Wander vs foreground and Worker, field parity for mana/stat XP, read-only forecast; Gods Trial R15 characterized.",
+          "PASS RF01 Chrome challenge entry/exit: modes 1\u20133, isolated slots and normal-game restoration after reload.",
+          "PASS RF04 Chrome: stable identities, Mana Drought, Noodle Arms and Mana Burn, real Worker snapshots.",
+          "PASS RF01 Chrome inherited prestige reset: 90 points once, 30-point perk, 60 remaining, retained upgrade and backup.",
+          "PASS RF02 Chrome explicit clear and independent normal/challenge byte-exact recovery.",
+          "PASS Chrome: game boot, XML localization, 157 actions, Wander execution and save/reload."
+        ]
+      },
+      {
+        "check": "test-balance-browser.mjs",
+        "status": "passed",
+        "exit_code": 0,
+        "seconds": 12.8,
+        "log_sha256": "671348797120a39cf2de3319a43ea94ca93e471b352ad57faee19afc8e09b601",
+        "observed_output": [
+          "PASS RW00 real browser calibration: 12 matched cases, Chrome/156.0.8078.80"
+        ]
+      }
+    ]
+  },
+  "corrections": [
+    "Stable saved option types use the existing declared option categories; only known updateRate numeric text is normalized in a pure clone; original recovery bytes remain untouched",
+    "Profiler telemetry preserves original failures and remains readable after the execution budget; engine starts that budget at start(); parent still caps startup/time/RSS",
+    "Windows Chrome discovery and owned-process cleanup shared by both browser harnesses; expected alerts dismissed without changing confirmations or assertions",
+    "Windows RSS sampling uses tasklist for the exact child PID; separate silent/active watchdog assertions retain time and memory limits",
+    "Potion negative control always creates inconsistent accounting; repeated event fixture uses explicitly synthetic persistent progression to fit four completions across two normal loops",
+    "Complete calibration source fingerprint ignores checkout CRLF only, includes the shared browser helper, and still rejects real source edits",
+    "Regenerated timing and action references change only provenance; formula text and numerical timing estimates unchanged; mechanics links use canonical main",
+    "Full equivalence scenarios are unchanged and completed rather than being stopped by the earlier external 240-second cutoff",
+    "Windows temporary browser profiles use canonical full paths before Chrome creates files; LF/CRLF fixtures rewrite unique physical paths once even when the loaded-source registry repeats a path"
+  ],
+  "authority": {
+    "mode": "legacy",
+    "lifecycle_stage": "proposed",
+    "accepted_artifacts_created": false,
+    "rf02_merged_pr": 16,
+    "rf03_merged_pr": 18,
+    "rf04_unmerged_pr": 21,
+    "rf04_actual_base": "docs/rf04-implementation-preparation",
+    "rf04_base_sha": "294e45ba54cb989ed2ea02fffe4002b54f9601ce",
+    "milestones_completed": false
+  },
+  "limits": [
+    "Passing tested candidates are unmerged corrections; main remains at its recorded source until owner-controlled integration",
+    "A1\u2013A8 criterion text and existing owner decisions are preserved; passing selected scenarios does not certify every acceptance permutation",
+    "No authentic player saves, cloud/OAuth, complete earned campaign, official RW00 baseline or live deployment verification",
+    "Known R15 Gods Trial floor 99 predictor / floor 100 runtime discrepancy preserved and characterized",
+    "Repository standards reference validation passed on all three branches; zero typed state records are expected in legacy mode; workflow/domain compliance is not inferred",
+    "Optional standalone scheduler performance benchmark and official campaign measurements were not rerun; the required balance regression entry points and real-browser calibration passed"
+  ],
+  "intermediate_attempts": [
+    {
+      "candidate": "main",
+      "check": "test-balance-browser.mjs",
+      "result": "failed",
+      "log_sha256": "659c8231be7442a4aa532a0b6d318126630de752c00d5cb985f41dc44c865720",
+      "final_result": "passed after the documented test-harness correction"
+    },
+    {
+      "candidate": "rf04",
+      "check": "test-balance-source-identity.mjs",
+      "result": "failed",
+      "log_sha256": "aa591061dddfef9f8f56455532343bc1f2cfdaccafe001887e25265a694d6b87",
+      "final_result": "passed after the documented test-harness correction"
+    }
+  ]
+}
