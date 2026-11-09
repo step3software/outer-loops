@@ -1,6 +1,6 @@
 # RF02 — Persistence safety
 
-**Status:** Implementation candidate in [draft PR #16](https://github.com/step3software/outer-loops/pull/16), unmerged and pending acceptance evidence. Source remains governed by the legacy Orcha approval record.
+**Status:** Merged — [PR #16](https://github.com/step3software/outer-loops/pull/16), 2026-11-07 (America/New_York); verification incomplete. See [current evidence and recovery blocker](rf02-evidence.md). Legacy Orcha approval stage remains separate.
 - **Priority:** After RF01
 - **Hard dependencies:** RF01's current/legacy synthetic save, corrupt-import, challenge-slot and restart fixtures
 - **Enables:** Safe resource/state contracts in RF03 and challenge save transitions in RF04
@@ -9,7 +9,7 @@
 
 ## Objective
 
-Make importing, migrating and writing game progress **validation-first, recoverable and testable** while retaining the established save/export contract. Currently `saving.js` `processSave` may call `storeSaveJson` **before** `load` parses an imported JSON payload (audit [R01](../audit/findings.md)). RF02 must remove that irreversible ordering risk without rewriting game rules or making existing saves unusable.
+Make importing, migrating and writing game progress **validation-first, recoverable and testable** while retaining the established save/export contract. The pre-RF02 `saving.js` `processSave` could call `storeSaveJson` **before** `load` parses an imported JSON payload (audit [R01](../audit/findings.md)). RF02 must remove that irreversible ordering risk without rewriting game rules or making existing saves unusable.
 
 ## Prepared after RF01 merge
 
@@ -61,4 +61,4 @@ Start from RF01 F08–F09 and add:
 
 Suggested implementation stages: (1) failing/characterization fixtures; (2) pure decode + normalized validation/migration API; (3) recoverable storage/commit boundary; (4) UI error handling + backward compatibility integration; (5) docs and end-to-end tests. Commit only completed slices that maintain readable legacy data. Rollback: revert the new import path while leaving backup data intact; document any new stored keys and how to read them with the previous build.
 
-RF03 can proceed once RF02's serialization/resource representation and current slot/backup invariants are stable. Implementation was explicitly requested after plan acceptance on 2026-11-07. Keep draft PR #16 unmerged until the full safety matrix, reviewed ADR, and separately authorized merge.
+RF03 can proceed once RF02's serialization/resource representation and current slot/backup invariants are stable. Implementation was explicitly requested after plan acceptance on 2026-11-07. PR #16 is merged; do not restart its implementation. The November 9 verification found a failing challenge-backup recovery case, so A1–A8 are not declared complete. Further runtime corrections and their merges require separate authorization.

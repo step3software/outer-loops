@@ -44,4 +44,4 @@ When editing an action, cost formula, prestige, option, save field or resource:
 
 ## Limitations
 
-The RF03 Chrome smoke now includes real foreground/`predictor-worker.js` snapshot-protocol comparisons for edited caps and the Escape boundary, but these new cases have not yet been executed in normal CI. Static syntax validation cannot demonstrate that predictions match real game state. Record the exact predicted vs. actual discrepancy, queue and save conditions in the PR when behavior is uncertain.
+The RF03 Chrome smoke now includes real foreground/`predictor-worker.js` snapshot-protocol comparisons for edited caps and the Escape boundary, and those focused cases passed in the November 9 adapted Windows Chrome run; the complete browser suite later failed challenge-backup recovery. See [RF03 evidence](refactoring/rf03-evidence.md). This is local execution evidence, not a passing CI result. Static syntax validation cannot demonstrate that predictions match real game state. Record the exact predicted vs. actual discrepancy, queue and save conditions in the PR when behavior is uncertain.
