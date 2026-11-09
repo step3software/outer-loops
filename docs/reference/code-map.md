@@ -76,8 +76,11 @@ For exact changes to an action use [action catalog](action-catalog.md) and [chan
 
 ## Shared verification helpers
 
-`scripts/browser-test-utils.mjs` owns test-only installed-browser discovery and
-cleanup of the disposable child process. `scripts/test-balance-source-identity.mjs`
+`scripts/browser-test-utils.mjs` owns test-only installed-browser discovery,
+awaited shutdown and guarded removal of registered disposable profiles.
+`scripts/test-browser-cleanup.mjs` verifies real graceful shutdown/removal and
+the bounded fallback, idempotency, startup and denied-path cases.
+`scripts/test-balance-source-identity.mjs`
 checks platform-independent calibration identity against actual source changes.
 See the [validation guide](../development/validation.md#rf02rf04-correction-verification)
 for budget ownership and the recovery regression commands.

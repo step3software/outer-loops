@@ -129,7 +129,18 @@ Both browser harnesses share installed Chrome/Chromium discovery. Windows uses
 an installed executable followed by a real CDP boot; other platforms retain the
 command/version probe. Expected blocking alerts are dismissed in the smoke
 suite; confirmations and all returned-value/storage assertions remain explicit.
-Profiles are temporary and cleanup targets only the owned browser process tree.
+Profiles are temporary. Both harnesses request `Browser.close` through their
+existing page connection, dispose pending CDP requests, and await the owned
+process exit before asynchronously removing the registered profile. Windows
+force termination is a bounded fallback; a remaining shutdown/removal failure
+fails the command. Cleanup preserves an earlier test failure and always closes
+the local server. An unregistered or redirected profile path is never removed.
+
+`npm run test:browser:cleanup` exercises real graceful Chrome exit and complete
+profile removal, idempotent cleanup, no-CDP forced fallback, startup cleanup and
+unowned-path rejection. It also runs before the full smoke suite through
+`npm run test:browser`. These checks use the normal system temporary directory;
+no external cleanup adapter or temporary-directory override is required.
 
 The balance profiler only records telemetry and preserves original errors;
 `BalanceEngine.step` enforces the declared execution ceiling from `start()`, and
